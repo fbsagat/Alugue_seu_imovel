@@ -97,7 +97,6 @@ def eventos(request, pk):
             gasto_tt = f'{valor_br(str(agreg_2["total"]))}'
 
     if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
-        pass
         pag_m_gast = valor_br(str(agreg_1["total"] - agreg_2["total"]))
 
     if '3' in itens_eventos and pesquisa_req:
@@ -338,7 +337,9 @@ def botaoteste(request):
 
     if executar == 5 or executar == 100:
         if Imovei.objects.filter(do_locador=usuario).count() > 0:
+            count = 0
             for x in range(fict_multi * fict_qtd['gasto']):
+                count += 1
                 aleatorio = gastos_ficticios()
                 form = FormGasto()
                 gasto = form.save(commit=False)
@@ -348,12 +349,14 @@ def botaoteste(request):
                 gasto.data = aleatorio.get('data')
                 gasto.observacoes = aleatorio.get('observacoes')
                 gasto.save()
-            messages.success(request, f"Criados {fict_qtd['gasto']} gastos")
+            messages.success(request, f"Criados {count} gastos")
         else:
             messages.error(request, "Primeiro crie imóveis")
 
     if executar == 6 or executar == 100:
+        count = 0
         for x in range(fict_multi * fict_qtd['nota']):
+            count += 1
             aleatorio = anotacoes_ficticias()
             form = FormAnotacoes()
             nota = form.save(commit=False)
@@ -362,7 +365,7 @@ def botaoteste(request):
             nota.data_registro = aleatorio.get('data_registro')
             nota.texto = aleatorio.get('texto')
             nota.save()
-        messages.success(request, f"Criadas {fict_qtd['nota']} anotações")
+        messages.success(request, f"Criadas {count} anotações")
 
     if executar == 150:
         count = 0

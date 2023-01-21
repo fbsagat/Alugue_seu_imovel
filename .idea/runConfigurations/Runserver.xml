@@ -1,13 +1,13 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Runserver" type="PythonConfigurationType" factoryName="Python">
-    <module name="Administrador de Locação" />
+    <module name="administrador_de_locacao" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
-    <option name="SDK_HOME" value="C:\Users\Felipe\Documents\Administrador de Locação\venv\Scripts\python.exe" />
-    <option name="SDK_NAME" value="Python 3.10 (Administrador de Locação)" />
+    <option name="SDK_HOME" value="D:\Documentos\GitHub\administrador_de_locacao\venv\Scripts\python.exe" />
+    <option name="SDK_NAME" value="Python 3.10 (administrador_de_locacao) (2)" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
