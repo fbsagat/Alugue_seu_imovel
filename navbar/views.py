@@ -261,7 +261,7 @@ class EditarGrup(LoginRequiredMixin, UpdateView):
     form_class = FormimovelGrupo
 
     def get_success_url(self):
-        return reverse_lazy('navbar:Criar Grupo Imoveis')
+        return reverse_lazy('navbar:Criar Grupo Imóveis')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(ImovGrupo, pk=self.kwargs['pk'], do_usuario=self.request.user)

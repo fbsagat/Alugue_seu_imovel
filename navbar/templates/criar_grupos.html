@@ -11,11 +11,10 @@
 
 {% block content %}
 
-<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex
-justify-center items-center bg-no-repeat"
-        style="background-image: url('{% static 'images/wp2752752-buildings-wallpapers.jpg' %}');">
-    <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
-        <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-white">
+<container class="flex justify-center items-center">
+
+    <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
             <form method="post">
                 {% csrf_token %}
                 <fieldset class="form-group">
@@ -35,15 +34,15 @@ justify-center items-center bg-no-repeat"
                         <tbody>
                         <td colspan="13">
                         </td>
-                        {% for item in grupos %}
+                        {% for grupo in grupos %}
                         <tr>
                             <th scope="col">{{ forloop.counter }}</th>
-                            <th scope="col">{{ item.nome }}</th>
+                            <th scope="col">{{ grupo.nome }}</th>
                             <th scope="col"><a class="link-primary"
-                                               href="{% url 'navbar:Editar Grupo Imóveis' item.id %}">Editar</a>
+                                               href="{% url 'navbar:Editar Grupo Imóveis' grupo.pk %}">Editar</a>
                             </th>
                             <th scope="col"><a class="link-danger"
-                                               href="{% url 'navbar:Excluir Grupo Imóveis' item.id %}">Excluir</a>
+                                               href="{% url 'navbar:Excluir Grupo Imóveis' grupo.pk %}">Excluir</a>
                             </th>
                         </tr>
                         {% endfor %}
@@ -68,6 +67,7 @@ justify-center items-center bg-no-repeat"
             </form>
         </container>
     </div>
-</header>
+
+</container>
 
 {% endblock %}
