@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block titulo %}
+Página dos Pagamentos do Administrador de Locação
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+{% if pagamentos %}
+<container class="container-fluid row">
+
+    <div class="col text-center text-justify">
+        <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+            <thead>
+            <tr>
+                <th scope="col" style="cursor:default;"></th>
+                <th scope="col" style="cursor:default;">Contrato de Origem</th>
+                <th scope="col" style="cursor:default;">Valor</th>
+                <th scope="col" style="cursor:default;">Data do pagam.</th>
+                <th scope="col" style="cursor:default;">Forma de Pag.</th>
+                <th scope="col" style="cursor:default;">Recibo</th>
+                <th scope="col" style="cursor:default;">Excluir</th>
+            </tr>
+            </thead>
+
+            {% for pagamento in pagamentos %}
+            {% if forloop.counter|divisibleby:2 %}
+            {% else %}
+            <tbody>
+            <tr>
+                <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
+                <th scope="col " style="cursor:default;" title="{{ pagamento.ao_contrato }}">
+                    {{ pagamento.ao_contrato }}
+                </th>
+                <th scope="col" style="cursor:default;">{{ pagamento.valor_br }}</th>
+                <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
+                <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
+                {% if pagamento.recibo %}
+                <th scope="col"><a class="link-primary" href="{% url 'navbar:Recibo Entregue' pagamento.pk %}"
+                                   title="Entregue ao locatário">✅</a></th>
+                {% else %}
+                <th scope="col"><a class="link-primary" href="{% url 'navbar:Recibo Entregue' pagamento.pk %}"
+                                   title="Não entregue ao locatário">️✖️</a></th>
+                {% endif %}
+                <th scope="col"><a class="link-danger" href="{% url 'navbar:Excluir Pagamento' pagamento.pk %}"
+                                   title="Excluir">❌</a>
+                </th>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+    <div class="col text-center text-justify">
+        <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+            <thead>
+            <tr>
+                <th scope="col" style="cursor:default;"></th>
+                <th scope="col" style="cursor:default;">Contrato de Origem</th>
+                <th scope="col" style="cursor:default;">Valor</th>
+                <th scope="col" style="cursor:default;">Data do pagam.</th>
+                <th scope="col" style="cursor:default;">Forma de Pag.</th>
+                <th scope="col" style="cursor:default;">Recibo</th>
+                <th scope="col" style="cursor:default;">Excluir</th>
+            </tr>
+            </thead>
+
+            {% for pagamento in pagamentos %}
+            {% if forloop.counter|divisibleby:2 %}
+            <tbody>
+            <tr>
+                <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
+                <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato }}">
+                    {{ pagamento.ao_contrato }}
+                </th>
+                <th scope="col" style="cursor:default;">{{ pagamento.valor_br }}</th>
+                <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
+                <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
+                {% if pagamento.recibo %}
+                <th scope="col"><a class="link-primary" href="{% url 'navbar:Recibo Entregue' pagamento.pk %}"
+                                   title="Entregue ao locatário">✅</a></th>
+                {% else %}
+                <th scope="col"><a class="link-primary" href="{% url 'navbar:Recibo Entregue' pagamento.pk %}"
+                                   title="Não entregue ao locatário">️✖️</a></th>
+                {% endif %}
+                <th scope="col"><a class="link-danger" href="{% url 'navbar:Excluir Pagamento' pagamento.pk %}"
+                                   title="Excluir">❌</a>
+                </th>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</container>
+
+{% else %}
+<container class="container-fluid text-center text-justify">
+    {% include 'nenhum_registrado.html' %}
+</container>
+{% endif %}
+
+{% endblock %}

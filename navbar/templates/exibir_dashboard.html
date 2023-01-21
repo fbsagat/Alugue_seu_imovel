@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block titulo %}
+Página do Dashboard do Administrador de Locação
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+{% if locatarios %}
+
+{% else %}
+{% include 'bemvindo.html' %}
+{% endif %}
+
+{% endblock %}
+
+
+{% block scripts %}
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block titulo %}
+Página de Anotações do Administrador de Locação
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<container class="container-fluid pt-1 d-flex justify-content-center">
+    {% if anotacoes %}
+
+    <div class="col ms-1">
+        <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+            <thead>
+            <tr>
+                <th scope="col" style="cursor:default;"></th>
+                <th scope="col" style="cursor:default;">Titulo</th>
+                <th scope="col" style="cursor:default;">Data</th>
+                <th scope="col" style="cursor:default;">Anotações</th>
+                <th scope="col" style="cursor:default;">Editar</th>
+                <th scope="col" style="cursor:default;">Excluir</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {% for anotacao in anotacoes %}
+            <tr>
+                <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
+                <th scope="col" style="cursor:default;">{{ anotacao.titulo }}</th>
+                <th scope="col" style="cursor:default;">{{ anotacao.data_registro|date:"d/m/Y" }}</th>
+                <th scope="col" style="cursor:default;">{{ anotacao.texto }}</th>
+                <th scope="col"><a class="link-primary" href="{% url 'navbar:Editar Anotação' anotacao.pk %}"
+                                   title="Editar">✒️</a></th>
+                <th scope="col"><a class="link-danger" href="{% url 'navbar:Excluir Anotação' anotacao.pk %}"
+                                   title="Excluir">❌</a></th>
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</container>
+
+{% else %}
+{% include 'nenhum_registrado.html' %}
+{% endif %}
+
+{% endblock %}

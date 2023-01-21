@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Página de Perfil do Administrador de Locação
+{% endblock %}
+
+{% block content %}
+
+{% if imoveis %}
+
+<div class="container-fluid pt-1 text-center text-justify">
+    <br>
+    <div class="container-xxl">
+        <p class="fs-3">Você tem {{ imoveis_qtd }} Imóve{% if imoveis_qtd < 1 %}l{% else %}is{% endif %} Ativos:</p>
+        <div class="row row-cols-5 row-cols-md-3 g-3">
+            {% for imovel in imoveis %}
+            <div class="col">
+                <div class="card bg-black bg-opacity-75 border-dark h-100">
+                    <div class="card-header">{{ forloop.counter }}. {{ imovel.nome }} - {{ imovel.grupo }}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">End.: {{ imovel.endereco }}</p>
+                        <p class="card-text">Matrícula de Energia: {{ imovel.uc_energia }}</p>
+                        <p class="card-text">Matrícula de Saneamento: {{ imovel.uc_agua }}</p>
+                        <p class="card-text">Registrado em: {{ imovel.data_registro }}</p>
+                        <p class="card-text">Com: {{ imovel.com_locatario }}</p>
+                        <p class="card-text">Valor do aluguel: {{ imovel.contrato_atual.valor_br }} </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+{% elif locatarios %}
+
+<div class="container-fluid pt-1  text-center text-justify">
+    <br>
+    <div class="container-xxl">
+        <p class="fs-3">Você tem {{ locatario_qtd }} Locatário{% if locatario_qtd > 1 %}s{% endif %} Ativos:</p>
+        <div class="row row-cols-5 row-cols-md-3 g-3">
+            {% for locatario in locatarios %}
+            <div class="col">
+                <div class="card bg-black bg-opacity-75 border-dark h-100">
+                    <div class="card-header">{{ forloop.counter }}. {{ locatario.nome }}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Ocupação: {{ locatario.ocupacao }}</p>
+                        <p class="card-text">RG: {{ locatario.RG }} / CPF: {{ locatario.CPF }}</p>
+                        <p class="card-text">Telefone 1: {{ locatario.telefone1 }} / Telefone 2:
+                            {{locatario.telefone2 }}</p>
+                        <p class="card-text">Email: {{ locatario.email }}</p>
+                        <p class="card-text">Nacionalidade: {{ locatario.nacionalidade }} / Estado Civil:
+                            {{locatario.get_estadocivil_display }}
+                            {% for imovel in locatario.com_imoveis.all %}
+                        <p class="card-text">Em: {{ imovel.nome }}/{{ imovel.grupo }} </p>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% elif contratos %}
+
+<div class="container-fluid pt-1  text-center text-justify">
+    <br>
+    <div class="container-xxl">
+        <p class="fs-3">Você tem {{ contrato_qtd }} Contrato{% if contrato_qtd > 1 %}s{% endif %} Ativos:</p>
+        <div class="row row-cols-5 row-cols-md-3 g-3">
+            {% for contrato in contratos %}
+            <div class="col">
+                <div class="card bg-black bg-opacity-75 border-dark h-100">
+                    <div class="card-header">{{ forloop.counter }}. Com: {{ contrato.do_locatario }}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Em: {{contrato.do_imovel.nome }} - {{contrato.do_imovel.grupo }}</p>
+                        <p class="card-text">End.: {{contrato.do_imovel.endereco }}</p>
+                        <p class="card-text">De: {{ contrato.data_registro|date:"d/m/Y" }} Até:
+                            {{ contrato.data_saida|date:"d/m/Y" }}</p>
+                        <p class="card-text">Mensalidade: {{ contrato.valor_br }} / Dia de vencimento:
+                            {{contrato.dia_vencimento }}</p>
+                        <p class="card-text">Em mãos: {{ contrato.em_maos }} / Valor do contrato:
+                            {{ contrato.valor_do_contrato }}</p>
+                        <p class="card-text">Total Quitado: {{ cpntrato.total_quitado }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% else %}
+{% include 'bemvindo.html' %}
+{% endif %}
+
+{% endblock %}

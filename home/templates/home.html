@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block titulo %}
+Bem Vindo ao Administrador de Locação
+{% endblock %}
+
+{% block head %}
+<style>
+    #id_email{
+    width: 100%;
+    color: #000000;
+    padding: 5px 5px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Administrador de Locação</h1>
+            <p class="lead">Administre Seus Imóveis Locados aqui!</p>
+        </div>
+    </div>
+
+    <h3 class="text-xl md:text-xl py-5">
+        É só criar sua conta, Cadastrar seus inquilinos, Cadastrar seus imóveis e o resto fica fácil!
+        <ion-icon name="happy-outline"></ion-icon>
+    </h3>
+
+    <h4 class="text-sm md:text-lg pb-3">
+        Quer começar? Coloque o seu melhor e-mail abaixo.
+    </h4>
+
+    <form method="post" class="w-6/12 justify-center">
+        {% csrf_token %}
+        <div class="flex flex-grow items-stretch">
+            {{ form }}
+            <button class="bg-blue-600 font-medium md:font-normal flex justify-center items-center py-2 px-3 md:px-0 rounded-br-sm rounded-tr-sm md:text-2xl"
+                    type="submit">
+                            <span>
+                                Acessar
+                            </span>
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
+        </div>
+    </form>
+
+    <a href="{% url 'home:Login' %}"><p class="text-center py-1">Já tenho Cadastro</p></a>
+
+</div>
+
+{% endblock %}

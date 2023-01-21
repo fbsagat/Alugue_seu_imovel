@@ -1,0 +1,383 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+<nav style="z-index: 20;" class="navbar w-full items-center align-middle py-1 px-1 fixed border-b-2 bg-dark">
+
+
+    <div class="flex justify-content-start">
+
+        <!-- LOGO -->
+        <div class="ps-1">
+            <a href="/">
+                <img width="40" height="40" class="d-inline-block" src="{% static 'images/logo.png' %}">
+            </a>
+        </div>
+
+        <!-- BEM-VINDO DISTINTIVO -->
+        <div class="ps-1">
+            <a href="/">
+                <div class="badge bg-black text-white text-wrap border-b-2" style="width: 9rem;">
+                    Administrador de Locação Ultimate
+                </div>
+            </a>
+        </div>
+
+        <!-- BLOCK TITULO -->
+        <div class="ps-1 text-nowrap flex-fill" style="width: 350px">
+            <p class="fs-4">/{{ request.user.username }}/{{ block_titulo }}</p>
+        </div>
+    </div>
+
+    <!-- DASHBOARD EVENTOS ATIVOS -->
+    <div class="flex justify-content-center">
+
+        <!-- BOTAO DASHBOARD -->
+        <div class="ps-1">
+            <a href="{% url 'navbar:DashBoard' request.user.pk %}">
+                <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
+                    DashBoard
+                </button>
+            </a>
+        </div>
+
+        <!-- BOTAO EVENTOS -->
+        <div class="ps-1">
+            <a href="{% url 'home:Eventos' request.user.pk %}">
+                <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
+                    Eventos
+                </button>
+            </a>
+        </div>
+
+        <!-- BOTAO ATIVOS -->
+        <div class="btn-group ps-1">
+            <button type="button" class="dropdown-toggle bg-blue-700 text-white p-1 px-3 rounded-md"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                Ativos
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'home:Check Imóveis' request.user.pk %}">Imóveis Ativos</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'home:Check Locatários' request.user.pk %}">Locatários
+                    Ativos</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'home:Check Contratos' request.user.pk %}">Contratos
+                    Ativos</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+
+    <!-- REGISTRAR GERAR HISTÓRICO -->
+    <div class="flex justify-content-center">
+
+        <!-- REGISTRAR -->
+        <div class="ps-2">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    Registrar
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal3" class="dropdown-item" href="#">Pagamento</a>
+                    </li>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal4" class="dropdown-item" href="#">Gasto</a></li>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal5" class="dropdown-item" href="#">Locatário</a>
+                    </li>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal6" class="dropdown-item" href="#">Contrato</a>
+                    </li>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal8" class="dropdown-item" href="#">Imóvel</a>
+                    </li>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal7" class="dropdown-item" href="#">Anotação</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- GERAR -->
+        <div class="ps-2">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    Gerar
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Recibo</a></li>
+                    <li><a class="dropdown-item" href="#">Tabela</a></li>
+                    <li><a class="dropdown-item" href="#">Contrato</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- HISTÓRICO -->
+        <div class="ps-2">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    Histórico
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'navbar:Pagamentos' request.user.pk %}">Pagamentos</a>
+                    </li>
+                    <li><a class="dropdown-item" href="{% url 'navbar:Gastos' request.user.pk %}">Gastos</a></li>
+                    <li><a class="dropdown-item" href="{% url 'navbar:Imóveis' request.user.pk %}">Imóveis</a></li>
+                    <li><a class="dropdown-item" href="{% url 'navbar:Locatários' request.user.pk %}">Locatários</a>
+                    </li>
+                    <li><a class="dropdown-item" href="{% url 'navbar:Contratos' request.user.pk %}">Contratos</a>
+                    </li>
+                    <li><a class="dropdown-item" href="{% url 'navbar:Anotações' request.user.pk %}">Anotações</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDITAR PERFIL SAIR -->
+    <div class="flex justify-content-end">
+
+        <!-- EDITAR PERFIL -->
+        <div class="ps-1">
+            <a href="{% url 'home:Editar Perfil' request.user.pk %}">
+                <button class="bg-blue-900 text-white p-1 px-2 rounded-md">
+                    Editar Perfil
+                </button>
+            </a>
+        </div>
+
+        <!-- SAIR -->
+        <div class="ps-1">
+            <a href="{% url 'home:Logout' %}">
+                <button class="bg-blue-900 text-white p-1 px-2 rounded-md">
+                    Sair
+                </button>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- MODAL3 PAGAMENTO -->
+<div class="modal fade" id="modal3" tabindex="-1" aria-labelledby="MODAL3_PAGAMENTO" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="MODAL3_PAGAMENTO">Registrar Pagamento</h1>
+            </div>
+            <div class="">
+                <div class="modal-body">
+                    <form action="{% url 'navbar:Registrar Pagamento' %}" method="POST" class="mask-x_form ps-5 pe-5">
+                        {% csrf_token %}
+                        {{ form_pagamento|crispy }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- MODAL4 GASTO -->
+<div class="modal fade" id="modal4" tabindex="-1" aria-labelledby="MODAL4_GASTO" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="MODAL4_GASTO">Registrar Gasto</h1>
+            </div>
+            <div class="">
+                <div class="modal-body">
+                    <form action="{% url 'navbar:Registrar Gasto' %}" method="POST" enctype="multipart/form-data"
+                          class="mask-x_form ps-5 pe-5">
+                        {% csrf_token %}
+                        {{ form_gasto|crispy }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- MODAL5 LOCATARIO -->
+<div class="modal modal-lg fade" id="modal5" tabindex="-1" aria-labelledby="MODAL5_LOCATARIO" aria-hidden="true">
+    <div class="modal-dialog  modal-scrollable">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="MODAL5_LOCATARIO">Registrar Locatário</h1>
+            </div>
+            <div class="">
+                <div class="modal-body">
+                    <form class="mask-x_form ps-5 pe-5" action="{% url 'navbar:Registrar Locatario' %}" method="POST"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form_locatario.nome|as_crispy_field }}
+                        <div class="row">
+                            <div class="col">
+                                {{ form_locatario.RG|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_locatario.CPF|as_crispy_field }}
+                            </div>
+                        </div>
+                        {{ form_locatario.ocupacao|as_crispy_field }}
+                        <div class="row">
+                            <div class="col">
+                                {{ form_locatario.telefone1|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_locatario.telefone2|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                {{ form_locatario.estadocivil|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_locatario.nacionalidade|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                {{ form_locatario.email|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_locatario.docs|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
+                            </button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL6 CONTRATO -->
+<div class="modal fade modal-lg" id="modal6" tabindex="-1" aria-labelledby="MODAL6_CONTRATO" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="MODAL6_CONTRATO">Registrar Contrato</h1>
+            </div>
+            <div class="">
+                <div class="modal-body">
+                    <form action="{% url 'navbar:Registrar Contrato' %}" method="POST" class="mask-x_form ps-5 pe-5">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col">
+                                {{ form_contrato.do_locatario|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_contrato.do_imovel|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                {{ form_contrato.data_entrada|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_contrato.data_saida|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                {{ form_contrato.valor_mensal|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_contrato.dia_vencimento|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL7 IMÓVEL -->
+<div class="modal fade modal-lg" id="modal8" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="MODAL7_IMÓVEL">Registrar Imóvel</h1>
+            </div>
+            <div class="">
+                <div class="modal-body">
+                    <form action="{% url 'navbar:Registrar Imóvel' %}" method="POST" class="ps-5 pe-5">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col">
+                                {{ form_imovel.nome|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_imovel.grupo|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="flex d-flex justify-content-end">
+                            <a href="{% url 'navbar:Criar Grupo Imóveis' %}"><small class="float-end link-primary">
+                                Criar grupos de imóveis</small>
+                                <ion-icon name="create-outline"></ion-icon>
+                            </a></div>
+                        {{ form_imovel.endereco|as_crispy_field }}
+                        <div class="row">
+                            <div class="col">
+                                {{ form_imovel.uc_energia|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_imovel.uc_agua|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL8 ANOTAÇÃO -->
+<div class="modal fade" id="modal7" tabindex="-1" aria-labelledby="MODAL8_ANOTAÇÃO" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="MODAL8_ANOTAÇÃO">Registrar Anotação</h1>
+            </div>
+            <div class="">
+                <div class="modal-body">
+                    <form action="{% url 'navbar:Registrar Anotação' %}" method="POST"
+                          class="ps-5 pe-5">
+                        {% csrf_token %}
+                        {{ form_notas.titulo|as_crispy_field }}
+                        {{ form_notas.data_registro|as_crispy_field }}
+                        {{ form_notas.texto|as_crispy_field }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

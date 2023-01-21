@@ -1,0 +1,50 @@
+{% if page_obj %}
+
+<style>
+.pagination {
+  --bs-pagination-color: #adadad;
+  --bs-pagination-bg: #000000;
+  --bs-pagination-border-color: #404040;
+  --bs-pagination-hover-color: #ffffff;
+  --bs-pagination-hover-bg: #adadad;
+}
+</style>
+
+
+<div class="mt-1">
+    <nav aria-label="">
+        <ul class="pagination pagination-sm justify-content-center">
+            {% if page_obj.has_previous %}
+            {% if request.GET.nome %}
+            <li class="page-item"><a class="page-link" href="?page=1&nome={{request.GET.nome}}">&laquo; Primeira</a>
+            </li>
+            <li class="page-item"><a class="page-link"
+                                     href="?page={{ page_obj.previous_page_number }}&nome={{request.GET.nome}}">Anterior</a>
+            </li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; Primeira</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            <li class="page-item">
+                <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</span>
+            </li>
+            {% if page_obj.has_next %}
+            {% if request.GET.nome %}
+            <li class="page-item"><a class="page-link"
+                                     href="?page={{ page_obj.next_page_number }}&nome={{request.GET.nome}}">Próxima</a>
+            </li>
+            <li class="page-item"><a class="page-link"
+                                     href="?page={{ page_obj.paginator.num_pages }}&nome={{request.GET.nome}}">Última
+                &raquo;</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última
+                &raquo;</a></li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}

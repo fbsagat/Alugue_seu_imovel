@@ -1,0 +1,102 @@
+{% block head %}
+
+{% load crispy_forms_tags %}
+
+<style>
+.modal-header .close {
+    float: right !important;
+    margin-right: -30px !important;
+    margin-top: -30px !important;
+    background-color: white !important;
+    border-radius: 15px !important;
+    width: 30px !important;
+    height: 30px !important;
+    opacity: 1 !important;
+}
+
+</style>
+
+{% endblock %}
+
+{% if request.resolver_match.url_name == 'home' %}
+
+<section class='flex flex-col md:flex-row items-center border-gray-900 border-b-8' style="min-height: 70vh;">
+    <div class="md:w-1/2 flex flex-col justify-center text-center md:text-left p-5 md:p-10 ">
+        <h2 class="md:text-5xl text-4xl font-semibold mb-4">
+            Enjoy on your TV.
+        </h2>
+        <h5 class="md:text-xl text-lg">
+            Watch on Smart TVs, Playstation, Xbox, Chromecast, Apple TV, Blu-ray players, and more.
+        </h5>
+    </div>
+    <div class='md:w-1/2 flex justify-center items-center'>
+        <img src="" class="w-8/12" alt="">
+    </div>
+</section>
+
+{% else %}
+
+<footer class=" px-10 py-2">
+
+    <ul class="flex justify-between items-center">
+
+        <li>&copy; 2022 - 2023</li>
+        <li> Versão 1.4.8</li>
+        {% if user.is_authenticated %}
+        <a href="" data-bs-toggle="modal" data-bs-target="#modal1">Fale com o Desenvolvedor</a>
+        {% endif %}
+        {% if debug %}
+        <li>
+            <form method="POST" action="{% url 'home:botaoteste' %}">
+                {% csrf_token %}
+                {{ botao_admin.as_p }}
+                <button type="submit" class="mt-1 btn btn-primary">GO!</button>
+            </form>
+        </li>
+        {% endif %}
+    </ul>
+</footer>
+
+{% endif %}
+
+<!-- MODAL -->
+<div class="modal fade modal-xl" id="modal1" tabindex="-1" aria-labelledby="MODAL" aria-hidden="true">
+
+    <div class="modal-dialog modal-scrollable">
+
+        <div class="modal-content bg-dark border border-white text-white">
+
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="MODAL">Fale com o Desenvolvedor</h1>
+            </div>
+
+            <div class="">
+                <div class="modal-body">
+                    <p class="text-start ps-5 pe-5">
+                        Elogios, reclamaçoes, dúvidas, sujestões e report de bugs são bem
+                        vindos! Exagere nos elogios, manere nos xingamentos, ou só reclame mesmo XD, e as
+                        dúvidas serão respondidas o mais breve possível. Em caso de sujestão, por favor, descreva com
+                        o máximo de detalhes possível. Envie imagem se quiser, principalmente no report de bugs,
+                        obrigado!
+                    </p>
+                    <br>
+                    <form action="{% url 'home:Mensagem pro Desenvolvedor' %}" method="POST"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {{ form_mensagem|crispy }}
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+{{ pageinfo }}

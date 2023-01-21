@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Página de Editar Perfil do Administrador de Locação
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<container class="flex text-center items-center">
+
+    <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-white">
+        <form class="mask-x_form" method="post">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Editar perfil de {{ user.username }}</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" type="submit">Confirmar</button>
+            <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" onClick="history.go(-1)">Voltar
+            </button>
+        </form>
+
+        {% if form.first_name %}
+        <br><br>
+        <small><a href="{% url 'home:Mudar Senha' %}">Quer mudar sua senha?</a></small>
+        <br>
+        <small><a href="{% url 'home:Apagar Conta' user.id %}">Quer excluir sua conta?
+            <ion-icon name="trash-outline"></ion-icon>
+        </a></small>
+        {% endif %}
+    </container>
+    </div>
+
+</container>
+
+{% endblock %}

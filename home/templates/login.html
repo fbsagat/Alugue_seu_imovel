@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Página de login do Administrador de Locação
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<container class="flex justify-center items-center">
+
+    <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <form method="post">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Faça Login para continuar</legend>
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="justify-center items-center">
+                    <button class="bg-blue-600 py-1 my-2 px-3 w-full text-white md:text-lg rounded-md" type="submit">
+                        Fazer
+                        Login
+                    </button>
+                    <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" onClick="history.go(-1)">
+                        Voltar
+                    </button>
+                </div>
+            </form>
+            <small>
+                Não tem uma conta ainda? <p><a href="{% url 'home:Criar Conta' %}">Clique aqui para criar uma conta</a>
+            </p>
+            </small>
+        </div>
+    </container>
+
+</container>
+
+{% endblock %}
