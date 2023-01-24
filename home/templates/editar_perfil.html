@@ -12,28 +12,58 @@ Página de Editar Perfil do Administrador de Locação
 
 {% block content %}
 
-<container class="flex text-center items-center">
+<container class="flex justify-center text-center items-center">
 
-    <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-white">
-        <form class="mask-x_form" method="post">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Editar perfil de {{ user.username }}</legend>
+    <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <form class="mask-x_form" method="post">
+                {% csrf_token %}
+                {% if form.username %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Editar perfil de {{ user.username }}</legend>
+                    <div class="row">
+                        <div class="col">
+                            {{ form.username|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form.first_name|as_crispy_field }}
+                        </div>
+                    </div>
+                    {{ form.last_name|as_crispy_field }}
+                    <div class="row">
+                        <div class="col">
+                            {{ form.email|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form.telefone|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form.RG|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form.CPF|as_crispy_field }}
+                        </div>
+                    </div>
+                </fieldset>
+                {% else %}
                 {{ form|crispy }}
-            </fieldset>
-            <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" type="submit">Confirmar</button>
-            <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" onClick="history.go(-1)">Voltar
-            </button>
-        </form>
+                {% endif %}
+                <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" type="submit">Confirmar</button>
+                <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" onClick="history.go(-1)">Voltar
+                </button>
+            </form>
 
-        {% if form.first_name %}
-        <br><br>
-        <small><a href="{% url 'home:Mudar Senha' %}">Quer mudar sua senha?</a></small>
-        <br>
-        <small><a href="{% url 'home:Apagar Conta' user.id %}">Quer excluir sua conta?
-            <ion-icon name="trash-outline"></ion-icon>
-        </a></small>
-        {% endif %}
+            {% if form.first_name %}
+            <br><br>
+            <small><a href="{% url 'home:Mudar Senha' %}">Quer mudar sua senha?</a></small>
+            <br>
+            <small><a href="{% url 'home:Apagar Conta' user.id %}">Quer excluir sua conta?
+                <ion-icon name="trash-outline"></ion-icon>
+            </a></small>
+            {% endif %}
+        </div>
     </container>
     </div>
 

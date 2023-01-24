@@ -18,17 +18,13 @@ def contratos_ficticios(request, locador):
     data_entrada = fake.date_between(datetime.now().date() + timedelta(days=-215),
                                      datetime.now().date() + timedelta(days=-145))
 
-    data_12meses = data_entrada + timedelta(days=365)
-    data_6_meses = data_entrada + timedelta(days=184)
-
-    data_saida = choice([data_6_meses, data_12meses])
+    duracao = choice([6, 12])
 
     valor_mensal = randrange(99999, 199999)
     dia_vencimento = randrange(1, 28)
 
     return {'do_locatario': do_locatario, 'do_imovel': do_imovel, 'data_entrada': data_entrada,
-            'data_saida': data_saida,
-            'valor_mensal': valor_mensal, 'dia_vencimento': dia_vencimento}
+            'duracao': duracao, 'valor_mensal': valor_mensal, 'dia_vencimento': dia_vencimento}
 
 
 def locatarios_ficticios():
@@ -63,7 +59,6 @@ def imoveis_ficticios():
     grupo = choice(grupos_disponiveis)
     data_registro = fake.date_time_between_dates(datetime.now() + timedelta(days=-410),
                                                  datetime.now() + timedelta(days=-390))
-    print(data_registro)
 
     return {'nome': nome, 'endereco': endereco, 'uc_energia': uc_energia, 'uc_agua': uc_agua, 'grupo': grupo,
             'data_registro': data_registro}
@@ -80,8 +75,7 @@ def pagamentos_ficticios():
 
     entrada = contrato_escolhido.data_entrada
     saida = contrato_escolhido.data_saida
-
-    data_pagamento = fake.date_between(entrada, saida)
+    data_pagamento = fake.date_between(entrada, saida())
 
     pix_vista = randrange(0, 1)
     todas = randrange(0, 4)

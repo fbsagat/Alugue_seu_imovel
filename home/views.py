@@ -14,7 +14,7 @@ from home.funcoes_proprias import valor_br
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.models import Usuario, Imovei, Locatario, Contrato, Pagamento, Gasto, Anotacoe
-from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin
+from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormUsuario
 from navbar.forms import FormLocatario, FormImovel, FormimovelGrupo, ImovGrupo, FormContrato, FormPagamento, FormGasto, \
     FormAnotacoes
 
@@ -75,7 +75,6 @@ def eventos(request, pk):
             itens_eventos = form.cleaned_data['itens_eventos']
             qtd_eventos = form.cleaned_data['qtd']
             ordem_eventos = int(form.cleaned_data['ordem_eventos'])
-            print(data_eventos_f)
             if ordem_eventos == 2:
                 ordem = ''
             elif ordem_eventos == 1:
@@ -185,20 +184,17 @@ class CriarConta(CreateView):
 class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     template_name = 'editar_perfil.html'
     model = Usuario
-    fields = ['username', 'first_name', 'last_name', 'email', 'telefone']
+    fields = ['username', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF']
 
     def get_success_url(self):
         return reverse("navbar:DashBoard", kwargs={"pk": self.request.user.pk})
 
-    success_message = 'Perfil editado com sucesso!'
+    def get_success_message(self, cleaned_data):
+        success_message = 'Perfil editado com sucesso!'
+        return success_message
 
     def get_object(self):
         return self.request.user
-
-    # def get_form(self):
-    #     form = super(EditarPerfil, self).get_form(CriarContaForm)
-    #     form.fields['telefone'].widget.attrs.update({'class': 'mask-telefone2'})
-    #     return form
 
 
 class ApagarConta(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
@@ -231,6 +227,7 @@ def mensagem_desenvolvedor(request):
 def botaoteste(request):
     form_adm = FormAdmin(request.POST, initial={'p_usuario': request.user})
     fict_qtd = settings.FICT_QTD
+    executar = fict_multi = int
     if form_adm.is_valid():
         usuario = form_adm.cleaned_data['p_usuario']
         fict_multi = int(form_adm.data['multiplicar_por'])
@@ -306,7 +303,7 @@ def botaoteste(request):
                 contrato.do_locatario = aleatorio.get('do_locatario')
                 contrato.do_imovel = aleatorio.get('do_imovel')
                 contrato.data_entrada = aleatorio.get('data_entrada')
-                contrato.data_saida = aleatorio.get('data_saida')
+                contrato.duracao = aleatorio.get('duracao')
                 contrato.valor_mensal = aleatorio.get('valor_mensal')
                 contrato.dia_vencimento = aleatorio.get('dia_vencimento')
                 contrato.save()

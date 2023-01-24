@@ -63,7 +63,6 @@ class FormLocatario(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FormLocatario, self).__init__(*args, **kwargs)
-
         self.fields['CPF'].widget.attrs.update({'class': 'mask-cpf'})
         self.fields['telefone1'].widget.attrs.update({'class': 'mask-telefone1'})
         self.fields['telefone2'].widget.attrs.update({'class': 'mask-telefone2'})
@@ -73,10 +72,10 @@ class FormContrato(ModelForm):
     class Meta:
         model = Contrato
         exclude = ['do_locador', 'em_posse', 'rescindido', 'data_criacao', 'pagamentos_feitos']
-        fields = ['do_locatario', 'do_imovel', 'data_entrada', 'data_saida', 'valor_mensal', 'dia_vencimento']
+        fields = ['do_locatario', 'do_imovel', 'data_entrada', 'duracao', 'valor_mensal', 'dia_vencimento']
         widgets = {
             'data_entrada': DateInput(),
-            'data_saida': DateInput(),
+            'duracao': Numeros(),
             'valor_mensal': Numeros(),
             'dia_vencimento': Numeros(),
         }

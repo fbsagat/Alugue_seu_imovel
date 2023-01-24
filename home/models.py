@@ -1,7 +1,6 @@
 from django.db import models
 from datetime import datetime
-from django.db.models.constraints import CheckConstraint
-from django.db.models import Q, F
+from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -14,8 +13,10 @@ class Usuario(AbstractUser):
     contratos = models.ManyToManyField('Contrato', blank=True)
     gastos = models.ManyToManyField('Gasto', blank=True)
     anotacoes = models.ManyToManyField('Anotacoe', blank=True)
-
+    RG = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números')
+    CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números')
     telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números')
+
     locat_slots = models.IntegerField(default=5)
     data_eventos_i = models.DateField(blank=True, null=True)
     itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=[1, 2, 3, 4, 5, 6])
@@ -131,22 +132,17 @@ class Contrato(models.Model):
     do_imovel = models.ForeignKey(Imovei, on_delete=models.CASCADE, verbose_name='do imóvel')
 
     data_entrada = models.DateField(blank=False, verbose_name='Data de Entrada')
-    data_saida = models.DateField(blank=False, verbose_name='Data de Saída')
+    duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)')
     valor_mensal = models.CharField(max_length=9, verbose_name='Valor Mensal (R$): ', blank=False,
                                     help_text='Digite apenas números')
     dia_vencimento = models.IntegerField(blank=False, validators=[MaxValueValidator(28), MinValueValidator(1)],
                                          verbose_name='Dia do vencimento', help_text='(1-28)')
-    em_posse = models.BooleanField(default=False, null=False, help_text='Marque quando receber a sua via assinada e '
-                                                                       'registrada em cartório')
+    em_posse = models.BooleanField(default=False, null=False,
+                                   help_text='Marque quando receber a sua via assinada e registrada em cartório')
     rescindido = models.BooleanField(default=False, null=False, help_text='Marque caso haja rescisão do contrato')
     vencido = models.BooleanField(default=False, null=False)
     data_de_rescisao = models.DateField(blank=True, verbose_name='Data da rescisão', null=True)
     data_registro = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        constraints = [
-            CheckConstraint(check=Q(data_saida__gt=F('data_entrada')), name='entrada_saida'),
-        ]
 
     def get_absolute_url(self):
         return reverse('navbar:Contratos', args=[str(self.pk), ])
@@ -169,6 +165,10 @@ class Contrato(models.Model):
 
     def em_maos(self):
         return 'Sim' if self.em_posse else 'Não'
+
+    def data_saida(self):
+        data = self.data_entrada + relativedelta(months=self.duracao)
+        return data
 
 
 lista_pagamentos = (

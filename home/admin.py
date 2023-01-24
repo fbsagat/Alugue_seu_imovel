@@ -40,7 +40,7 @@ class ImoveisAdmin(admin.ModelAdmin):
 
 @admin.register(Contrato)
 class ContratosAdmin(admin.ModelAdmin):
-    list_display = ('do_locador', 'do_locatario',  'do_imovel',  'data_entrada',  'data_saida',  'valor_mensal',
+    list_display = ('do_locador', 'do_locatario',  'do_imovel',  'data_entrada',  'duracao',  'valor_mensal',
                     'data_registro')
     list_filter = ('em_posse',  'rescindido',  'vencido')
 

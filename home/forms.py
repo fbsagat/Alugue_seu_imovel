@@ -45,7 +45,7 @@ class FormAdmin(forms.Form):
 class FormUsuario(ModelForm):
     class Meta:
         model = Usuario
-        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefone']
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF']
 
 
 mostrar_em_eventos = (
