@@ -31,14 +31,16 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
     pdf.drawString(rect_pos_x + 5, rect_pos_y + rect_alt - 15, 'RECIBO DE PAGAMENTO DE ALUGUEL')
 
     pdf.setFont('Helvetica-Bold', 8)
-    pdf.drawString(rect_pos_x + rect_lar - 180, rect_pos_y + rect_alt - 10,
+    pdf.drawString(rect_pos_x + rect_lar - 213, rect_pos_y + rect_alt - 10,
                    f'Cód. recibo: {dados["cod_recibo"][recibo_n - 1]} / Cód. contrato: {dados["cod_contrato"]}')
-    pdf.drawString(rect_pos_x + 3, rect_pos_y + 3, f'Cód. recibo: {dados["cod_recibo"][recibo_n - 1]} / Cód. contrato: '
-                                                   f'{dados["cod_contrato"]}')
+
+    pdf.drawString(rect_pos_x + 12, rect_pos_y + 3,
+                   f'Cód. recibo: {dados["cod_recibo"][recibo_n - 1]} / Cód. contrato: '
+                   f'{dados["cod_contrato"]}')
 
     pdf.setFont('Helvetica-Bold', 10)
 
-    texto_estilo = ParagraphStyle('My Para style', fontName='Times-Roman', fontSize=12, borderPadding=(20, 20, 20),
+    texto_estilo = ParagraphStyle('My Para style', fontName='Times-Roman', fontSize=11, borderPadding=(20, 20, 20),
                                   leading=14, alignment=1)
     texto = Paragraph(
         f'Eu, <b>{dados["nome_locador"]}</b>, inscrito no RG sob o nº {dados["rg_locd"]}'
@@ -49,13 +51,13 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
         f'{dados["mes_e_ano"][(2 * (recibo_n - 1)) + 1]}</b> (Parcela {recibo_n} de um total '
         f'de {parcelas}), de um imóvel localizado no endereço: {dados["endereco"]}, declarando '
         f'portanto, plena, total e irrevogável quitação do mês referido a partir de então.'
-        f' <BR/><BR/><i> Para maior clareza firmo o presente em {dados["cidade"]},'
+        f' <BR/><BR/><i> Para maior clareza firmo o presente em<BR/><BR/>{dados["cidade"]},'
         f' {dados["data"]}.</i><BR/><BR/><BR/>'
         f'___________________________________________________________________________________'
         f'<BR/>{dados["nome_locador"]}',
         texto_estilo)
     texto.wrapOn(pdf, 525, 110)
-    texto.drawOn(pdf, rect_pos_x + 5, rect_pos_y + 20)
+    texto.drawOn(pdf, rect_pos_x + 5, rect_pos_y + 15)
 
 
 def gerar_uma_pagina(pdf, parcelas, pag_centro, pag_alt, pag_lar, pag_n, dados):
@@ -72,7 +74,7 @@ def gerar_uma_pagina(pdf, parcelas, pag_centro, pag_alt, pag_lar, pag_n, dados):
 
 
 # Principal:
-def gerar_recibos(dados):
+def gerar_recibos(dados, local):
     """ Ex:
     infos = {'cod_recibo': ['465736', '463416', '125736', '465676', '465756', '465346', '474936'],
          'cod_contrato': '4536-3382', 'nome_locador': 'FÁBIO AUGUSTO MACEDO DOS SANTOS', 'rg_locd': '5667789',
@@ -84,7 +86,7 @@ def gerar_recibos(dados):
          'data': '________________, ____ de _________ de ________'}
     """
 
-    pdf = canvas.Canvas(rf'{MEDIA_ROOT}gerados/recibos - {dados["cod_contrato"]}.pdf', pagesize=A4)
+    pdf = canvas.Canvas(rf'{MEDIA_ROOT}/{local}', pagesize=A4)
     pdf.setAuthor(f'{dados["nome_locador"]}')
     pdf.setTitle(f'Recibos do contrato {dados["cod_contrato"]} página 1')
     pdf.setCreator('www.administradordelocacao.com.br')

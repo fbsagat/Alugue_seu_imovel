@@ -11,9 +11,9 @@ class LocatarioAdmin(admin.ModelAdmin):
 
 
 campos = list(UserAdmin.fieldsets)
-campos.append(
-    ('Registros', {'fields': ('locatarios', 'imoveis', 'contratos', 'gastos')}),
-)
+# campos.append(
+#     ('Registros', {'fields': ('locatarios', 'imoveis', 'contratos', 'gastos')}),
+# )
 
 UserAdmin.fieldsets = tuple(campos)
 admin.site.register(Usuario, UserAdmin)

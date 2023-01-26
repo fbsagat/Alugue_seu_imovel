@@ -1,3 +1,5 @@
+import locale
+
 from Adm_de_Locacao import settings
 from datetime import datetime, date, timedelta, time
 
@@ -13,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from home.funcoes_proprias import valor_br
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
-from home.models import Usuario, Imovei, Locatario, Contrato, Pagamento, Gasto, Anotacoe
+from home.models import Usuario, Imovei, Locatario, Contrato, Pagamento, Gasto, Anotacoe, Recibo
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormUsuario
 from navbar.forms import FormLocatario, FormImovel, FormimovelGrupo, ImovGrupo, FormContrato, FormPagamento, FormGasto, \
     FormAnotacoes
@@ -234,7 +236,7 @@ def botaoteste(request):
         executar = int(form_adm.data['executar'])
 
     if executar == 170:
-        messages.success(request, f"Teste {executar}")
+        messages.success(request, f"Teste")
 
     if executar == 1 or executar == 100:
         count = 0
@@ -280,7 +282,13 @@ def botaoteste(request):
                 imovel.do_locador = usuario
                 imovel.nome = aleatorio.get('nome')
                 imovel.grupo = aleatorio.get('grupo')
+                imovel.cep = aleatorio.get('cep')
                 imovel.endereco = aleatorio.get('endereco')
+                imovel.numero = aleatorio.get('numero')
+                imovel.complemento = aleatorio.get('complemento')
+                imovel.bairro = aleatorio.get('bairro')
+                imovel.cidade = aleatorio.get('cidade')
+                imovel.estado = aleatorio.get('estado')
                 imovel.uc_energia = aleatorio.get('uc_energia')
                 imovel.uc_agua = aleatorio.get('uc_agua')
                 imovel.data_registro = aleatorio.get('data_registro')

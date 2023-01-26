@@ -150,5 +150,5 @@ MESSAGE_TAGS = {
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-FICT_QTD = {'locatario': 10, 'imovel_g': 3, 'imovel': 10, 'contrato': 1, 'pagamento': 6, 'gasto': 2, 'nota': 2,
+FICT_QTD = {'locatario': 10, 'imovel_g': 3, 'imovel': 10, 'contrato': 1, 'pagamento': 3, 'gasto': 3, 'nota': 2,
             'user': 5}

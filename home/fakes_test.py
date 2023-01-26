@@ -52,7 +52,13 @@ def imov_grupo_fict():
 
 def imoveis_ficticios():
     nome = fake.neighborhood()
-    endereco = fake.address()
+    cep = fake.postcode()
+    endereco = fake.street_address()
+    numero = fake.building_number()
+    complemento = fake.street_name()
+    bairro = fake.bairro()
+    cidade = fake.city()
+    estado = fake.administrative_unit()
     uc_energia = randrange(100000000, 999999999)
     uc_agua = randrange(100000000, 999999999)
     grupos_disponiveis = ImovGrupo.objects.all()
@@ -60,7 +66,8 @@ def imoveis_ficticios():
     data_registro = fake.date_time_between_dates(datetime.now() + timedelta(days=-410),
                                                  datetime.now() + timedelta(days=-390))
 
-    return {'nome': nome, 'endereco': endereco, 'uc_energia': uc_energia, 'uc_agua': uc_agua, 'grupo': grupo,
+    return {'nome': nome, 'cep': cep, 'numero': numero, 'complemento': complemento, 'bairro': bairro, 'cidade': cidade,
+            'estado': estado, 'endereco': endereco, 'uc_energia': uc_energia, 'uc_agua': uc_agua, 'grupo': grupo,
             'data_registro': data_registro}
 
 

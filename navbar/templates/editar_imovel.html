@@ -20,24 +20,37 @@
 
                 <div class="row">
                     <div class="col">
-                        {{ form.nome|as_crispy_field }}
+                        {{ form_imovel.cep|as_crispy_field }}
                     </div>
                     <div class="col">
-                        {{ form.grupo|as_crispy_field }}
+                        {{ form_imovel.bairro|as_crispy_field }}
                     </div>
                 </div>
-                <div class="flex d-flex justify-content-end">
-                    <a href="{% url 'navbar:Criar Grupo Imóveis' %}"><small class="float-end link-primary">
-                        Criar/Editar grupos de imóveis</small>
-                        <ion-icon name="create-outline"></ion-icon>
-                    </a></div>
-                {{ form.endereco|as_crispy_field }}
                 <div class="row">
                     <div class="col">
-                        {{ form.uc_energia|as_crispy_field }}
+                        {{ form_imovel.endereco|as_crispy_field }}
                     </div>
                     <div class="col">
-                        {{ form.uc_agua|as_crispy_field }}
+                        {{ form_imovel.complemento|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ form_imovel.numero|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                        {{ form_imovel.cidade|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                        {{ form_imovel.estado|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ form_imovel.uc_energia|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                        {{ form_imovel.uc_agua|as_crispy_field }}
                     </div>
                 </div>
 

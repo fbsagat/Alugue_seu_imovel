@@ -11,6 +11,7 @@ spOptions = {
 $(function(){
     $('.mask-cpf, #id_CPF').mask('000.000.000-00', {reverse: true, placeholder: '___.___.___-__'});
     $('.mask-valor').mask("#.##0,00", {reverse: true});
+    $('.mask-cep').mask('00000-000');
     $('.mask-telefone1, .mask-telefone2, #id_telefone').mask(SPMaskBehavior, spOptions);
 
     $('.mask-x_form').submit(function(){

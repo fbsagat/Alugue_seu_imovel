@@ -1,3 +1,6 @@
+from random import randrange
+import random
+import string
 from django.db import models
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -8,16 +11,12 @@ from home.funcoes_proprias import valor_br
 
 
 class Usuario(AbstractUser):
-    locatarios = models.ManyToManyField('Locatario', blank=True)
-    imoveis = models.ManyToManyField('Imovei', blank=True)
-    contratos = models.ManyToManyField('Contrato', blank=True)
-    gastos = models.ManyToManyField('Gasto', blank=True)
     anotacoes = models.ManyToManyField('Anotacoe', blank=True)
     RG = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números')
     CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números')
     telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números')
 
-    locat_slots = models.IntegerField(default=5)
+    locat_slots = models.IntegerField(default=2)
     data_eventos_i = models.DateField(blank=True, null=True)
     itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=[1, 2, 3, 4, 5, 6])
     qtd_eventos = models.IntegerField(blank=True, null=True, default=10)
@@ -47,9 +46,8 @@ class Locatario(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
     com_imoveis = models.ManyToManyField('Imovei', blank=True, related_name='imoveis')
     com_contratos = models.ManyToManyField('Contrato', blank=True, related_name='contratos')
-
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
-    docs = models.ImageField(upload_to='documentos/%Y/%m/', blank=True, verbose_name='Documentos')
+    docs = models.ImageField(upload_to='locatarios_documentos/%Y/%m/', blank=True, verbose_name='Documentos')
     RG = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números')
     CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números')
     ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
@@ -101,12 +99,17 @@ class ImoveiManager(models.Manager):
 class Imovei(models.Model):
     do_locador = models.ForeignKey('Usuario', blank=False, on_delete=models.CASCADE)
     com_locatario = models.ForeignKey('Locatario', blank=True, null=True, on_delete=models.SET_NULL)
-    contrato_atual = models.ForeignKey('Contrato', blank=True, null=True, on_delete=models.SET_NULL)
-    # /\ one to one corrige
+    contrato_atual = models.OneToOneField('Contrato', blank=True, null=True, on_delete=models.SET_NULL)
     grupo = models.ForeignKey('ImovGrupo', blank=True, null=True, on_delete=models.SET_NULL)
 
     nome = models.CharField(max_length=25, blank=False, verbose_name='Rótulo')
+    cep = models.CharField(max_length=9, blank=False, verbose_name='CEP')
     endereco = models.CharField(max_length=150, blank=False, verbose_name='Endereço')
+    numero = models.IntegerField(blank=False, validators=[MaxValueValidator(99999), MinValueValidator(1)])
+    complemento = models.CharField(max_length=80, blank=True)
+    bairro = models.CharField(max_length=30, blank=False)
+    cidade = models.CharField(max_length=30, blank=False)
+    estado = models.CharField(max_length=22, blank=False)
     uc_energia = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Energia')
     uc_agua = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Saneamento')
     data_registro = models.DateTimeField(default=datetime.now)
@@ -125,6 +128,16 @@ class Imovei(models.Model):
         return False if self.com_locatario is None else True
 
 
+# Gerar o codigo para o contrato:
+def gerar_codigo_contrato():
+    codigos_existentes = list(Contrato.objects.all().values("codigo").values_list('codigo', flat=True))
+    while True:
+        con_codigo = ''.join(
+            random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
+        if con_codigo not in codigos_existentes:
+            return f'{con_codigo[:5]}-{con_codigo[5:]}'
+
+
 class Contrato(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE,
@@ -141,7 +154,9 @@ class Contrato(models.Model):
                                    help_text='Marque quando receber a sua via assinada e registrada em cartório')
     rescindido = models.BooleanField(default=False, null=False, help_text='Marque caso haja rescisão do contrato')
     vencido = models.BooleanField(default=False, null=False)
+    codigo = models.CharField(null=True, editable=False, max_length=11, default=gerar_codigo_contrato)
     data_de_rescisao = models.DateField(blank=True, verbose_name='Data da rescisão', null=True)
+    recibos_pdf = models.CharField(max_length=230)
     data_registro = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
@@ -153,9 +168,6 @@ class Contrato(models.Model):
 
     def valor_br(self):
         return valor_br(self.valor_mensal)
-
-    def valor_do_contrato(self):
-        pass
 
     def total_quitado(self):
         pass
@@ -169,6 +181,14 @@ class Contrato(models.Model):
     def data_saida(self):
         data = self.data_entrada + relativedelta(months=self.duracao)
         return data
+
+
+class Recibo(models.Model):
+    do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
+    codigo = models.CharField(blank=False, null=False, editable=False, max_length=11)
+    data_pagm_ref = models.DateField(null=False, blank=False)
+    pago = models.BooleanField(default=False)
+    entregue = models.BooleanField(default=False, null=False)
 
 
 lista_pagamentos = (
@@ -209,7 +229,7 @@ class Gasto(models.Model):
     valor = models.CharField(max_length=9, verbose_name='Valor Gasto (R$): ', blank=False)
     data = models.DateTimeField(blank=False)
     observacoes = models.TextField(max_length=500, blank=True, verbose_name='Observações')
-    comprovante = models.ImageField(upload_to='comprovante', blank=True, verbose_name='Comporvante')
+    comprovante = models.ImageField(upload_to='gastos_comprovantes/%Y/%m/', blank=True, verbose_name='Comporvante')
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def get_alsolute_url(self):
@@ -252,7 +272,7 @@ class MensagemDev(models.Model):
     titulo = models.CharField(blank=False, max_length=100)
     mensagem = models.TextField(blank=False)
     tipo_msg = models.IntegerField(blank=False, choices=lista_mensagem)
-    imagem = models.ImageField(upload_to='mensagens/', blank=True)
+    imagem = models.ImageField(upload_to='mensagens_ao_dev/%Y/%m/', blank=True)
 
     def get_absolute_url(self):
         return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])

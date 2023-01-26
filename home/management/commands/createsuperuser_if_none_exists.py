@@ -23,6 +23,13 @@ class Command(BaseCommand):
         password = options["password"]
         email = options["email"]
 
-        User.objects.create_superuser(username=username, password=password, email=email)
+        first = 'Fábio'
+        last = 'Augusto Macedo dos Santos'
+        RG = '4852497'
+        CPF = '00522233295'
+        telefone = '91985707819'
+
+        User.objects.create_superuser(username=username, password=password, email=email, first_name=first,
+                                      last_name=last, RG=RG, CPF=CPF, telefone=telefone)
 
         self.stdout.write(f'Local user "{username}" was created')

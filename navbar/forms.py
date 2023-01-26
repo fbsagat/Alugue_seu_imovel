@@ -100,14 +100,14 @@ class FormImovel(ModelForm):
     class Meta:
         model = Imovei
         exclude = ['do_locador', 'data_registro']
-        fileds = ['nome', 'grupo', 'endereco', 'uc_energia', 'uc_agua']
-        widgets = {
-            'endereco': Textarea(attrs={'class': 'form-control'}),
-        }
+        fileds = ['nome', 'grupo', 'cep', 'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'estado',
+                  'uc_energia', 'uc_agua']
 
     def __init__(self, user, *args, **kwargs):
         super(FormImovel, self).__init__(*args, **kwargs)
         self.fields['grupo'].queryset = ImovGrupo.objects.filter(do_usuario=user)
+        self.fields['cep'].widget.attrs.update({'class': 'mask-cep'})
+        self.fields['cep'].widget.attrs.update({'id': 'id_CEP'})
 
 
 class FormAnotacoes(ModelForm):
