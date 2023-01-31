@@ -49,9 +49,9 @@ Página dos Gastos do Administrador de Locação
                 {% else %}
                 <th scope="col" style="cursor:default;" title="Sem registro">✖️</th>
                 {% endif %}
-                <th scope="col"><a class="link-primary" href="{% url 'navbar:Editar Gasto' gasto.pk %}"
+                <th scope="col"><a class="link-primary" href="{% url 'home:Editar Gasto' gasto.pk %}"
                                    title="Editar">✒️</a></th>
-                <th scope="col"><a class="link-danger" href="{% url 'navbar:Excluir Gasto' gasto.pk %}"
+                <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Gasto' gasto.pk %}"
                                    title="Excluir">❌</a></th>
                 {% endif %}
                 {% endfor %}
@@ -94,9 +94,9 @@ Página dos Gastos do Administrador de Locação
                 {% else %}
                 <th scope="col" style="cursor:default;" title="Sem registro">✖️</th>
                 {% endif %}
-                <th scope="col"><a class="link-primary" href="{% url 'navbar:Editar Gasto' gasto.pk %}"
+                <th scope="col"><a class="link-primary" href="{% url 'home:Editar Gasto' gasto.pk %}"
                                    title="Editar">✒️</a></th>
-                <th scope="col"><a class="link-danger" href="{% url 'navbar:Excluir Gasto' gasto.pk %}"
+                <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Gasto' gasto.pk %}"
                                    title="Excluir">❌</a></th>
                 {% endif %}
                 {% endfor %}

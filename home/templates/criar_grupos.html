@@ -39,10 +39,10 @@
                             <th scope="col">{{ forloop.counter }}</th>
                             <th scope="col">{{ grupo.nome }}</th>
                             <th scope="col"><a class="link-primary"
-                                               href="{% url 'navbar:Editar Grupo Imóveis' grupo.pk %}">Editar</a>
+                                               href="{% url 'home:Editar Grupo Imóveis' grupo.pk %}">Editar</a>
                             </th>
                             <th scope="col"><a class="link-danger"
-                                               href="{% url 'navbar:Excluir Grupo Imóveis' grupo.pk %}">Excluir</a>
+                                               href="{% url 'home:Excluir Grupo Imóveis' grupo.pk %}">Excluir</a>
                             </th>
                         </tr>
                         {% endfor %}

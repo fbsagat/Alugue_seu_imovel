@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Gerador de Recibos do Administrador de Locação
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<container class="container-xxl pt-1 text-center text-justify">
+
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        <container
+                class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
+
+            <div class="p-1">
+                {{ form.ordem_eventos|as_crispy_field }}
+            </div>
+
+            <div class="p-1">
+                <button class="bg-blue-600 py-2 px-3 text-white rounded-md form-control-sm" type="submit">Ir
+                </button>
+            </div>
+
+        </container>
+
+    </form>
+
+</container>
+
+{% endblock %}

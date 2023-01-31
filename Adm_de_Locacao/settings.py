@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
 
     'home',
-    'navbar',
 
     'crispy_forms',
     'crispy_bootstrap5',
@@ -65,8 +64,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'navbar.new_context.titulo_pag',
-                'navbar.new_context.forms_da_navbar',
+                'home.new_context.titulo_pag',
+                'home.new_context.forms_da_navbar',
             ],
         },
     },

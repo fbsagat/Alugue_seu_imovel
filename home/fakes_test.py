@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from faker import Faker
 from random import randrange, choice
+
 from home.models import ImovGrupo, Locatario, Imovei, Contrato
 
 locales = 'pt_BR'

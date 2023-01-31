@@ -1,9 +1,7 @@
 from django.contrib import admin
-from navbar.forms import Mascara
+from home.forms import Mascara
 from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, MensagemDev, ImovGrupo
 from django.contrib.auth.admin import UserAdmin
-
-# Register your models here.
 
 
 class LocatarioAdmin(admin.ModelAdmin):
@@ -11,9 +9,6 @@ class LocatarioAdmin(admin.ModelAdmin):
 
 
 campos = list(UserAdmin.fieldsets)
-# campos.append(
-#     ('Registros', {'fields': ('locatarios', 'imoveis', 'contratos', 'gastos')}),
-# )
 
 UserAdmin.fieldsets = tuple(campos)
 admin.site.register(Usuario, UserAdmin)

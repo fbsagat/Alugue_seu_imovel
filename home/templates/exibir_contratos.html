@@ -47,10 +47,10 @@ Página dos Contratos do Administrador de Locação
             <th scope="col" style="cursor:default;">{{ contrato.dia_vencimento }}</th>
 
             {% if contrato.em_posse %}
-            <th scope="col"><a class="link-primary" href="{% url 'navbar:Contrato Recebido' contrato.pk %}"
+            <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
                                title="Em mãos">✅️</a></th>
             {% else %}
-            <th scope="col"><a class="link-primary" href="{% url 'navbar:Contrato Recebido' contrato.pk %}"
+            <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
                                title="Não recebido">✖️</a></th>
             {% endif %}
 
@@ -58,10 +58,10 @@ Página dos Contratos do Administrador de Locação
             <th scope="col" style="cursor:default;"><a class="link-primary" title="Contrato Vencido">️✖️</a></th>
             {% else %}
             {% if contrato.rescindido %}
-            <th scope="col"><a class="link-primary" href="{% url 'navbar:Rescindir Contrato' contrato.pk %}"
+            <th scope="col"><a class="link-primary" href="{% url 'home:Rescindir Contrato' contrato.pk %}"
                                title="Reativar">️✖️</a></th>
             {% else %}
-            <th scope="col"><a class="link-primary" href="{% url 'navbar:Rescindir Contrato' contrato.pk %}"
+            <th scope="col"><a class="link-primary" href="{% url 'home:Rescindir Contrato' contrato.pk %}"
                                title="Rescindir">✅</a></th>
             {% endif %}
             {% endif %}
@@ -70,9 +70,9 @@ Página dos Contratos do Administrador de Locação
             <th scope="col" style="cursor:default;" title="Edição bloqueada">🔒</th>
             <th scope="col" style="cursor:default;" title="Exclusão bloqueada">🔒</th>
             {% else %}
-            <th scope="col"><a class="link-primary" href="{% url 'navbar:Editar Contrato' contrato.pk %}"
+            <th scope="col"><a class="link-primary" href="{% url 'home:Editar Contrato' contrato.pk %}"
                                title="Editar">✒️</a></th>
-            <th scope="col"><a class="link-danger" href="{% url 'navbar:Excluir Contrato' contrato.pk %}"
+            <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Contrato' contrato.pk %}"
                                title="Excluir">❌</a></th>
             {% endif %}
 

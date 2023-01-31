@@ -1,16 +1,27 @@
-from datetime import datetime, date, timedelta
-from django.contrib.auth.forms import UserCreationForm
+from datetime import datetime, date
+
+from Adm_de_Locacao import settings
+
 from django import forms
-from home.models import Usuario, MensagemDev
-from django.forms import ModelForm
+from django.contrib.auth.forms import UserCreationForm
 from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit
-from Adm_de_Locacao import settings
+from crispy_forms.layout import Layout
+
+from home.models import Usuario, MensagemDev
+from home.models import Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo
 
 
 class Textarea(forms.Textarea):
     input_type = 'text'
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
+class Numeros(forms.NumberInput):
+    input_type = 'numbers'
 
 
 class FormAdmin(forms.Form):
@@ -42,7 +53,7 @@ class FormAdmin(forms.Form):
         self.fields['multiplicar_por'].widget.attrs['class'] = 'mt-1 form-control form-control-sm'
 
 
-class FormUsuario(ModelForm):
+class FormUsuario(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF']
@@ -104,7 +115,7 @@ class FormHomePage(forms.Form):
     email = forms.EmailField(label=False)
 
 
-class FormMensagem(ModelForm):
+class FormMensagem(forms.ModelForm):
     class Meta:
         model = MensagemDev
         exclude = ('do_usuario', 'data_criacao')
@@ -112,3 +123,113 @@ class FormMensagem(ModelForm):
         widgets = {
             'mensagem': Textarea(),
         }
+
+
+class Mascara(forms.ModelForm):
+    class Media:
+        js = ('js/jquery.mask.min.js', 'js/custom.js')
+
+    def __init__(self, *args, **kwargs):
+        super(Mascara, self).__init__(*args, **kwargs)
+        self.fields['telefone1'].widget.attrs['class'] = 'mask-telefone1'
+        self.fields['telefone2'].widget.attrs['class'] = 'mask-telefone2'
+        self.fields['CPF'].widget.attrs['class'] = 'mask-cpf'
+
+
+class FormPagamento(forms.ModelForm):
+    class Meta:
+        model = Pagamento
+        fields = ('ao_contrato', 'valor_pago', 'data_pagamento', 'forma', 'recibo')
+        widgets = {
+            'data_pagamento': DateInput(),
+            'valor_pago': Numeros(),
+        }
+
+    def __init__(self, user, *args, **kwargs):
+        super(FormPagamento, self).__init__(*args, **kwargs)
+        self.fields['ao_contrato'].queryset = Contrato.objects.filter(do_locador=user)
+        self.fields['valor_pago'].widget.attrs.update({'class': 'mask-valor'})
+
+
+class FormGasto(forms.ModelForm):
+    class Meta:
+        model = Gasto
+        fields = ('do_imovel', 'valor', 'data', 'observacoes', 'comprovante')
+        widgets = {
+            'data': DateInput(),
+            'valor': Numeros(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(FormGasto, self).__init__(*args, **kwargs)
+        self.fields['valor'].widget.attrs['class'] = 'mask-valor'
+
+
+class FormLocatario(forms.ModelForm):
+    class Meta:
+        model = Locatario
+        fields = '__all__'
+        exclude = ['do_locador', 'dataentrada']
+
+    def __init__(self, *args, **kwargs):
+        super(FormLocatario, self).__init__(*args, **kwargs)
+        self.fields['CPF'].widget.attrs.update({'class': 'mask-cpf'})
+        self.fields['telefone1'].widget.attrs.update({'class': 'mask-telefone1'})
+        self.fields['telefone2'].widget.attrs.update({'class': 'mask-telefone2'})
+
+
+class FormContrato(forms.ModelForm):
+    class Meta:
+        model = Contrato
+        exclude = ['do_locador', 'em_posse', 'rescindido', 'data_criacao', 'pagamentos_feitos']
+        fields = ['do_locatario', 'do_imovel', 'data_entrada', 'duracao', 'valor_mensal', 'dia_vencimento']
+        widgets = {
+            'data_entrada': DateInput(),
+            'duracao': Numeros(),
+            'valor_mensal': Numeros(),
+            'dia_vencimento': Numeros(),
+        }
+
+    def __init__(self, user, *args, **kwargs):
+        super(FormContrato, self).__init__(*args, **kwargs)
+        self.fields['do_locatario'].queryset = Locatario.objects.filter(do_locador=user)
+        self.fields['do_imovel'].queryset = Imovei.objects.disponiveis().filter(do_locador=user)
+        self.fields['valor_mensal'].widget.attrs.update({'class': 'mask-valor'})
+
+
+class FormimovelGrupo(forms.ModelForm):
+    class Meta:
+        model = ImovGrupo
+        exclude = ['imoveis', 'do_usuario']
+        fields = ['nome']
+        labels = {
+            "nome": ""}
+
+
+class FormImovel(forms.ModelForm):
+    class Meta:
+        model = Imovei
+        exclude = ['do_locador', 'data_registro']
+        fileds = ['nome', 'grupo', 'cep', 'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'estado',
+                  'uc_energia', 'uc_agua']
+
+    def __init__(self, user, *args, **kwargs):
+        super(FormImovel, self).__init__(*args, **kwargs)
+        self.fields['grupo'].queryset = ImovGrupo.objects.filter(do_usuario=user)
+        self.fields['cep'].widget.attrs.update({'class': 'mask-cep'})
+        self.fields['cep'].widget.attrs.update({'id': 'id_CEP'})
+
+
+class FormAnotacoes(forms.ModelForm):
+    class Meta:
+        model = Anotacoe
+        exclude = ['do_locador']
+        fields = ['titulo', 'data_registro', 'texto']
+        widgets = {
+            'data_registro': DateInput(),
+            'texto': Textarea(),
+        }
+
+
+class FormRecibos(forms.Form):
+    ordem_eventos = forms.ModelChoiceField(label='', queryset=Contrato.objects.all(), initial='')

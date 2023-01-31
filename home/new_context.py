@@ -1,7 +1,9 @@
 from Adm_de_Locacao import settings
+
 from django.urls import resolve
+
 from home.forms import FormMensagem, FormAdmin
-from navbar.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, FormImovel, FormAnotacoes
+from home.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, FormImovel, FormAnotacoes
 
 
 def titulo_pag(request):

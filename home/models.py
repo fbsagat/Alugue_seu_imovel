@@ -1,12 +1,13 @@
-from random import randrange
 import random
 import string
-from django.db import models
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
+from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
+
 from home.funcoes_proprias import valor_br
 
 
@@ -23,7 +24,7 @@ class Usuario(AbstractUser):
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
     def get_absolute_url(self):
-        return reverse('navbar:DashBoard', args=[str(self.pk, )])
+        return reverse('home:DashBoard', args=[str(self.pk, )])
 
 
 estados_civis = (
@@ -61,7 +62,7 @@ class Locatario(models.Model):
     objects = LocatariosManager()
 
     def get_absolute_url(self):
-        return reverse('navbar:Locatários', args=[str(self.pk, )])
+        return reverse('home:Locatários', args=[str(self.pk, )])
 
     def __str__(self):
         return f'{self.nome}'
@@ -79,7 +80,7 @@ class ImovGrupo(models.Model):
     imoveis = models.ManyToManyField('Imovei', blank=True)
 
     def get_absolute_url(self):
-        return reverse('navbar:Criar Grupo Imóveis', args=[str(self.pk, )])
+        return reverse('home:Criar Grupo Imóveis', args=[str(self.pk, )])
 
     def __str__(self):
         return self.nome
@@ -116,7 +117,7 @@ class Imovei(models.Model):
     objects = ImoveiManager()
 
     def get_absolute_url(self):
-        return reverse('navbar:Imóveis', args=[str(self.pk), ])
+        return reverse('home:Imóveis', args=[str(self.pk), ])
 
     def __str__(self):
         return f'{self.nome} ({self.grupo})'
@@ -160,7 +161,7 @@ class Contrato(models.Model):
     data_registro = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
-        return reverse('navbar:Contratos', args=[str(self.pk), ])
+        return reverse('home:Contratos', args=[str(self.pk), ])
 
     def __str__(self):
         return f'({self.do_locatario.nome.split()[:2][0]} {self.do_locatario.nome.split()[:2][1]} ' \
@@ -213,7 +214,7 @@ class Pagamento(models.Model):
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
-        return reverse('navbar:Pagamentos', args=[(str(self.pk)), ])
+        return reverse('home:Pagamentos', args=[(str(self.pk)), ])
 
     def valor_br(self):
         return valor_br(self.valor_pago)
@@ -233,7 +234,7 @@ class Gasto(models.Model):
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def get_alsolute_url(self):
-        return reverse('navbar:Gastos', args=[(str(self.pk)), ])
+        return reverse('home:Gastos', args=[(str(self.pk)), ])
 
     def valor_br(self):
         return valor_br(self.valor)
@@ -250,7 +251,7 @@ class Anotacoe(models.Model):
     texto = models.TextField(blank=False)
 
     def get_absolute_url(self):
-        return reverse('navbar:Anotações', args=[(str(self.pk)), ])
+        return reverse('home:Anotações', args=[(str(self.pk)), ])
 
     def __str__(self):
         return f'{self.titulo} - {self.data_registro.strftime("%D")}'

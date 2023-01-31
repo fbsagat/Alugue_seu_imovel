@@ -1,8 +1,10 @@
+from math import ceil
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph
-from math import ceil
+
 from Adm_de_Locacao.settings import MEDIA_ROOT
 
 

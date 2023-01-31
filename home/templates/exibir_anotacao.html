@@ -35,9 +35,9 @@ Página de Anotações do Administrador de Locação
                 <th scope="col" style="cursor:default;">{{ anotacao.titulo }}</th>
                 <th scope="col" style="cursor:default;">{{ anotacao.data_registro|date:"d/m/Y" }}</th>
                 <th scope="col" style="cursor:default;">{{ anotacao.texto }}</th>
-                <th scope="col"><a class="link-primary" href="{% url 'navbar:Editar Anotação' anotacao.pk %}"
+                <th scope="col"><a class="link-primary" href="{% url 'home:Editar Anotação' anotacao.pk %}"
                                    title="Editar">✒️</a></th>
-                <th scope="col"><a class="link-danger" href="{% url 'navbar:Excluir Anotação' anotacao.pk %}"
+                <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Anotação' anotacao.pk %}"
                                    title="Excluir">❌</a></th>
                 {% endfor %}
             </tr>

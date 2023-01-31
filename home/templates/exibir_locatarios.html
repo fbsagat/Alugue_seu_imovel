@@ -60,9 +60,9 @@ Página dos Locatários do Administrador de Locação
             <th scope="col" style="cursor:default;" title="Sem registro">✖️</th>
             {% endif %}
 
-            <th scope="col"><a class="link-primary" href="{% url 'navbar:Editar Locatario' locatario.pk %}"
+            <th scope="col"><a class="link-primary" href="{% url 'home:Editar Locatario' locatario.pk %}"
                                title="Editar">✒️</a></th>
-            <th scope="col"><a class="link-danger" href="{% url 'navbar:Excluir Locatario' locatario.pk %}"
+            <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Locatario' locatario.pk %}"
                                title="Excluir">❌</a></th>
 
             {% endfor %}

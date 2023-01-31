@@ -2,15 +2,17 @@ import os
 import random
 import string
 import locale
-from Adm_de_Locacao.settings import MEDIA_ROOT
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
+from Adm_de_Locacao.settings import MEDIA_ROOT
 from django.db.models.signals import pre_delete, post_save, pre_save
 from django.dispatch import receiver
+from num2words import num2words
+
 from home.models import Contrato, Imovei, Locatario, Usuario, Recibo
 from home.funcoes_proprias import gerar_recibos
-from num2words import num2words
 from home.models import Recibo
-from dateutil.relativedelta import relativedelta
 
 
 @receiver(pre_delete, sender=Contrato)

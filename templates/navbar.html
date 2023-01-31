@@ -35,7 +35,7 @@
 
         <!-- BOTAO DASHBOARD -->
         <div class="ps-1">
-            <a href="{% url 'navbar:DashBoard' request.user.pk %}">
+            <a href="{% url 'home:DashBoard' request.user.pk %}">
                 <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
                     DashBoard
                 </button>
@@ -105,7 +105,7 @@
                     Gerar
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Recibo</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Recibos' request.user.pk %}">Recibos</a></li>
                     <li><a class="dropdown-item" href="#">Tabela</a></li>
                     <li><a class="dropdown-item" href="#">Contrato</a></li>
                 </ul>
@@ -120,15 +120,15 @@
                     Histórico
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'navbar:Pagamentos' request.user.pk %}">Pagamentos</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Pagamentos' request.user.pk %}">Pagamentos</a>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'navbar:Gastos' request.user.pk %}">Gastos</a></li>
-                    <li><a class="dropdown-item" href="{% url 'navbar:Imóveis' request.user.pk %}">Imóveis</a></li>
-                    <li><a class="dropdown-item" href="{% url 'navbar:Locatários' request.user.pk %}">Locatários</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Gastos' request.user.pk %}">Gastos</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Imóveis' request.user.pk %}">Imóveis</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Locatários' request.user.pk %}">Locatários</a>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'navbar:Contratos' request.user.pk %}">Contratos</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Contratos' request.user.pk %}">Contratos</a>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'navbar:Anotações' request.user.pk %}">Anotações</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Anotações' request.user.pk %}">Anotações</a>
                     </li>
                 </ul>
             </div>
@@ -167,7 +167,7 @@
             </div>
             <div class="">
                 <div class="modal-body">
-                    <form action="{% url 'navbar:Registrar Pagamento' %}" method="POST" class="mask-x_form ps-5 pe-5">
+                    <form action="{% url 'home:Registrar Pagamento' %}" method="POST" class="mask-x_form ps-5 pe-5">
                         {% csrf_token %}
                         {{ form_pagamento|crispy }}
                         <div class="modal-footer">
@@ -191,7 +191,7 @@
             </div>
             <div class="">
                 <div class="modal-body">
-                    <form action="{% url 'navbar:Registrar Gasto' %}" method="POST" enctype="multipart/form-data"
+                    <form action="{% url 'home:Registrar Gasto' %}" method="POST" enctype="multipart/form-data"
                           class="mask-x_form ps-5 pe-5">
                         {% csrf_token %}
                         {{ form_gasto|crispy }}
@@ -216,7 +216,7 @@
             </div>
             <div class="">
                 <div class="modal-body">
-                    <form class="mask-x_form ps-5 pe-5" action="{% url 'navbar:Registrar Locatario' %}" method="POST"
+                    <form class="mask-x_form ps-5 pe-5" action="{% url 'home:Registrar Locatario' %}" method="POST"
                           enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form_locatario.nome|as_crispy_field }}
@@ -274,7 +274,7 @@
             </div>
             <div class="">
                 <div class="modal-body">
-                    <form action="{% url 'navbar:Registrar Contrato' %}" method="POST" class="mask-x_form ps-5 pe-5">
+                    <form action="{% url 'home:Registrar Contrato' %}" method="POST" class="mask-x_form ps-5 pe-5">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col">
@@ -320,7 +320,7 @@
             </div>
             <div class="">
                 <div class="modal-body">
-                    <form action="{% url 'navbar:Registrar Imóvel' %}" method="POST" class="ps-5 pe-5">
+                    <form action="{% url 'home:Registrar Imóvel' %}" method="POST" class="ps-5 pe-5">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col">
@@ -331,7 +331,7 @@
                             </div>
                         </div>
                         <div class="flex d-flex justify-content-end">
-                            <a href="{% url 'navbar:Criar Grupo Imóveis' %}"><small class="float-end link-primary">
+                            <a href="{% url 'home:Criar Grupo Imóveis' %}"><small class="float-end link-primary">
                                 Criar/Editar grupos de imóveis</small>
                                 <ion-icon name="create-outline"></ion-icon>
                             </a></div>
@@ -392,7 +392,7 @@
             </div>
             <div class="">
                 <div class="modal-body">
-                    <form action="{% url 'navbar:Registrar Anotação' %}" method="POST"
+                    <form action="{% url 'home:Registrar Anotação' %}" method="POST"
                           class="ps-5 pe-5">
                         {% csrf_token %}
                         {{ form_notas.titulo|as_crispy_field }}

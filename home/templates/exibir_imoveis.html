@@ -48,10 +48,10 @@ Página dos Imóveis do Administrador de Locação
             {% else %}
             <th scope="col" style="cursor:default;" title="Imóvel desocupado">️✖️</th>
             {% endif %}
-            <th scope="col"><a href="{% url 'navbar:Editar Imóvel' imovel.pk %}" class="link-primary"
+            <th scope="col"><a href="{% url 'home:Editar Imóvel' imovel.pk %}" class="link-primary"
                                title="Editar">✒️</a>
             </th>
-            <th scope="col"><a href="{% url 'navbar:Excluir Imóvel' imovel.pk %}" class="link-danger"
+            <th scope="col"><a href="{% url 'home:Excluir Imóvel' imovel.pk %}" class="link-danger"
                                title="Excluir">❌</a>
             </th>
 

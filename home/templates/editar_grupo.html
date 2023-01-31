@@ -15,12 +15,10 @@
 
     <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
         <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
-            <form action="{% url 'navbar:Editar Anotação' anotacoe.pk %}" method="POST"
-                  class="ps-5 pe-5">
+            <form method="POST" action="{% url 'home:Editar Grupo Imóveis' object.pk %}" class="ps-5 pe-5">
                 {% csrf_token %}
-                {{ form.titulo|as_crispy_field }}
-                {{ form.data_registro|as_crispy_field }}
-                {{ form.texto|as_crispy_field }}
+                Editar grupo*
+                {{ form.nome|as_crispy_field }}
                 <div class="justify-center items-center">
                     <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" type="button"
                             onClick="history.go(-1)">Voltar
