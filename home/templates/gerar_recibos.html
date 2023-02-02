@@ -12,27 +12,31 @@ Gerador de Recibos do Administrador de Locação
 
 {% block content %}
 
-<container class="container-xxl pt-1 text-center text-justify">
+{% if tem_contratos %}
+
+<container class="container pt-1 text-center text-justify justify-center">
 
     <form action="" method="POST">
         {% csrf_token %}
-
         <container
                 class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
-
             <div class="p-1">
-                {{ form.ordem_eventos|as_crispy_field }}
+                Contrato: {{ form|crispy }}
             </div>
-
             <div class="p-1">
-                <button class="bg-blue-600 py-2 px-3 text-white rounded-md form-control-sm" type="submit">Ir
+                <button class="bg-blue-600 py-2 px-3 text-white rounded-md form-control-sm" type="submit">Gerar
                 </button>
             </div>
-
         </container>
-
     </form>
+
+    <iframe src="{{ contrato.recibos_pdf.url }}"
+            style="width:100%; height:820px;" frameborder="0"></iframe>
 
 </container>
 
+{% else %}
+{% include 'nenhum_registrado.html' %}
+{% endif %}
 {% endblock %}
+

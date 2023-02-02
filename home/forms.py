@@ -181,7 +181,6 @@ class FormLocatario(forms.ModelForm):
 class FormContrato(forms.ModelForm):
     class Meta:
         model = Contrato
-        exclude = ['do_locador', 'em_posse', 'rescindido', 'data_criacao', 'pagamentos_feitos']
         fields = ['do_locatario', 'do_imovel', 'data_entrada', 'duracao', 'valor_mensal', 'dia_vencimento']
         widgets = {
             'data_entrada': DateInput(),
@@ -195,6 +194,12 @@ class FormContrato(forms.ModelForm):
         self.fields['do_locatario'].queryset = Locatario.objects.filter(do_locador=user)
         self.fields['do_imovel'].queryset = Imovei.objects.disponiveis().filter(do_locador=user)
         self.fields['valor_mensal'].widget.attrs.update({'class': 'mask-valor'})
+
+
+class FormContratoRecibos(forms.ModelForm):
+    class Meta:
+        model = Contrato
+        fields = ['recibos_pdf']
 
 
 class FormimovelGrupo(forms.ModelForm):
@@ -232,4 +237,8 @@ class FormAnotacoes(forms.ModelForm):
 
 
 class FormRecibos(forms.Form):
-    ordem_eventos = forms.ModelChoiceField(label='', queryset=Contrato.objects.all(), initial='')
+    contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.all(), initial='')
+
+    def __init__(self, *args, **kwargs):
+        super(FormRecibos, self).__init__(*args, **kwargs)
+        self.fields['contrato'].widget.attrs['class'] = 'form-select form-select-sm'

@@ -1,11 +1,12 @@
 from math import ceil
+import io
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph
 
-from Adm_de_Locacao.settings import MEDIA_ROOT
+from django.http import FileResponse
 
 
 # 001: -----------------------------------------------
@@ -76,7 +77,7 @@ def gerar_uma_pagina(pdf, parcelas, pag_centro, pag_alt, pag_lar, pag_n, dados):
 
 
 # Principal:
-def gerar_recibos(dados, local):
+def gerar_recibos(dados):
     """ Ex:
     infos = {'cod_recibo': ['465736', '463416', '125736', '465676', '465756', '465346', '474936'],
          'cod_contrato': '4536-3382', 'nome_locador': 'FÁBIO AUGUSTO MACEDO DOS SANTOS', 'rg_locd': '5667789',
@@ -88,7 +89,8 @@ def gerar_recibos(dados, local):
          'data': '________________, ____ de _________ de ________'}
     """
 
-    pdf = canvas.Canvas(rf'{MEDIA_ROOT}/{local}', pagesize=A4)
+    buffer = io.BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=A4)
     pdf.setAuthor(f'{dados["nome_locador"]}')
     pdf.setTitle(f'Recibos do contrato {dados["cod_contrato"]} página 1')
     pdf.setCreator('www.administradordelocacao.com.br')
@@ -109,3 +111,5 @@ def gerar_recibos(dados, local):
         pdf.showPage()
 
     pdf.save()
+    buffer.seek(0)
+    return buffer

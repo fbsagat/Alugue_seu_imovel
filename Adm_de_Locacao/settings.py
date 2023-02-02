@@ -14,7 +14,10 @@ SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', ]
+# Resolve: 'A conexão com 127.0.0.1 foi recusada.' no iframe de exibição do pdf.
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -149,5 +152,5 @@ MESSAGE_TAGS = {
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-FICT_QTD = {'locatario': 10, 'imovel_g': 3, 'imovel': 10, 'contrato': 1, 'pagamento': 3, 'gasto': 3, 'nota': 2,
+FICT_QTD = {'locatario': 10, 'imovel_g': 3, 'imovel': 10, 'contrato': 1, 'pagamento': 3, 'gasto': 4, 'nota': 4,
             'user': 5}

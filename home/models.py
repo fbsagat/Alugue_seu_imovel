@@ -23,6 +23,8 @@ class Usuario(AbstractUser):
     qtd_eventos = models.IntegerField(blank=True, null=True, default=10)
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
+    tabela_pdf = models.FileField(upload_to='tabelas_docs/%Y/%m/', blank=True, verbose_name='Tabelas')
+
     def get_absolute_url(self):
         return reverse('home:DashBoard', args=[str(self.pk, )])
 
@@ -48,7 +50,7 @@ class Locatario(models.Model):
     com_imoveis = models.ManyToManyField('Imovei', blank=True, related_name='imoveis')
     com_contratos = models.ManyToManyField('Contrato', blank=True, related_name='contratos')
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
-    docs = models.ImageField(upload_to='locatarios_documentos/%Y/%m/', blank=True, verbose_name='Documentos')
+    docs = models.ImageField(upload_to='locatarios_docs/%Y/%m/', blank=True, verbose_name='Documentos')
     RG = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números')
     CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números')
     ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
@@ -139,6 +141,14 @@ def gerar_codigo_contrato():
             return f'{con_codigo[:5]}-{con_codigo[5:]}'
 
 
+class ContratoManager(models.Manager):
+    def ativos(self):
+        return self.filter(em_posse=True, rescindido=False, vencido=False)
+
+    def inativos(self):
+        return self.exclude(em_posse=True, rescindido=False, vencido=False)
+
+
 class Contrato(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE,
@@ -157,8 +167,9 @@ class Contrato(models.Model):
     vencido = models.BooleanField(default=False, null=False)
     codigo = models.CharField(null=True, editable=False, max_length=11, default=gerar_codigo_contrato)
     data_de_rescisao = models.DateField(blank=True, verbose_name='Data da rescisão', null=True)
-    recibos_pdf = models.CharField(max_length=230)
+    recibos_pdf = models.FileField(upload_to='recibos_docs/%Y/%m/', blank=True, verbose_name='Recibos')
     data_registro = models.DateTimeField(auto_now_add=True)
+    objects = ContratoManager()
 
     def get_absolute_url(self):
         return reverse('home:Contratos', args=[str(self.pk), ])
@@ -184,12 +195,15 @@ class Contrato(models.Model):
         return data
 
 
-class Recibo(models.Model):
+class Parcela(models.Model):
     do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=11)
     data_pagm_ref = models.DateField(null=False, blank=False)
     pago = models.BooleanField(default=False)
     entregue = models.BooleanField(default=False, null=False)
+
+    def __str__(self):
+        return f'{self.do_contrato} ({self.codigo})'
 
 
 lista_pagamentos = (

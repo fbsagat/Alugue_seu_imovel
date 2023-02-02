@@ -120,6 +120,8 @@ def usuarios_ficticios():
     last_name = fake.last_name()
     email = fake.ascii_email()
     telefone = fake.msisdn()[-11::]
+    rg = randrange(1000000, 9999999)
+    cpf = randrange(10000000000, 99999999999)
 
     return {'username': username, 'password': password, 'first_name': first_name, 'last_name': last_name,
-            'email': email, 'telefone': telefone}
+            'email': email, 'telefone': telefone, 'RG': rg, 'CPF': cpf}

@@ -1,7 +1,11 @@
+import locale
+from num2words import num2words
 from datetime import datetime
 
 from Adm_de_Locacao import settings
 
+from django.http import FileResponse
+from django.core.files import File
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect, render, reverse, get_object_or_404, Http404
@@ -13,13 +17,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
 
-from home.funcoes_proprias import valor_br
+from home.funcoes_proprias import valor_br, gerar_recibos
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
-    FormLocatario, FormImovel, FormAnotacoes, FormContrato, \
-    FormimovelGrupo, FormRecibos
-from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei
+    FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormContratoRecibos
+
+from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela
 
 
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
@@ -27,6 +31,147 @@ from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGru
 class Dashboard(LoginRequiredMixin, TemplateView):
     template_name = 'exibir_dashboard.html'
     model = Locatario
+
+
+# -=-=-=-=-=-=-=-= BOTÃO EVENTOS -=-=-=-=-=-=-=-=
+
+
+@login_required
+def eventos(request, pk):
+    user = Usuario.objects.get(pk=request.user.pk)
+    form = FormEventos()
+    pagamentos = gastos = locatarios = contratos = imoveis = anotacoes = pg_tt = gasto_tt = contr_tt = pag_m_gast = ''
+    agreg_1 = agreg_2 = int()
+    pesquisa_req = True if user.data_eventos_i and user.itens_eventos and user.qtd_eventos and user.ordem_eventos else \
+        False
+
+    data_eventos_i = user.data_eventos_i
+    data_eventos_f = datetime.now()
+    itens_eventos = user.itens_eventos
+    qtd_eventos = user.qtd_eventos
+    ordem_eventos = int(user.ordem_eventos)
+    if ordem_eventos == 2:
+        ordem = ''
+    elif ordem_eventos == 1:
+        ordem = '-'
+
+    if pesquisa_req:
+        form = FormEventos(initial={'qtd': user.qtd_eventos, 'data_eventos_i': user.data_eventos_i.strftime('%Y-%m-%d'),
+                                    'itens_eventos': list(user.itens_eventos), 'ordem_eventos': user.ordem_eventos})
+    if request.method == 'POST':
+        form = FormEventos(request.POST)
+        if form.is_valid():
+            user.data_eventos_i = form.cleaned_data['data_eventos_i']
+            user.itens_eventos = form.cleaned_data['itens_eventos']
+            user.qtd_eventos = form.cleaned_data['qtd']
+            user.ordem_eventos = form.cleaned_data['ordem_eventos']
+            user.save(update_fields=["data_eventos_i", "itens_eventos", "qtd_eventos", "ordem_eventos"])
+
+            data_eventos_i = form.cleaned_data['data_eventos_i']
+            data_eventos_f = datetime.combine(form.cleaned_data['data_eventos_f'], datetime.now().time())
+            itens_eventos = form.cleaned_data['itens_eventos']
+            qtd_eventos = form.cleaned_data['qtd']
+            ordem_eventos = int(form.cleaned_data['ordem_eventos'])
+            if ordem_eventos == 2:
+                ordem = ''
+            elif ordem_eventos == 1:
+                ordem = '-'
+
+    if '1' in itens_eventos and pesquisa_req:
+        pagamentos = Pagamento.objects.filter(ao_locador=request.user,
+                                              data_pagamento__range=[data_eventos_i, data_eventos_f]).order_by(
+            f'{ordem}data_pagamento')[:qtd_eventos]
+        agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
+        if agreg_1["total"]:
+            pg_tt = f'{valor_br(str(agreg_1["total"]))}'
+
+    if '2' in itens_eventos and pesquisa_req:
+        gastos = Gasto.objects.filter(do_locador=request.user, data__range=[data_eventos_i, data_eventos_f]).order_by(
+            f'{ordem}data')[:qtd_eventos]
+        agreg_2 = gastos.aggregate(total=Sum("valor"))
+        if agreg_1["total"]:
+            gasto_tt = f'{valor_br(str(agreg_2["total"]))}'
+
+    if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
+        pag_m_gast = valor_br(str(agreg_1["total"] - agreg_2["total"]))
+
+    if '3' in itens_eventos and pesquisa_req:
+        locatarios = Locatario.objects.filter(do_locador=request.user,
+                                              data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
+            f'{ordem}data_registro')[:qtd_eventos]
+    if '4' in itens_eventos and pesquisa_req:
+        contratos = Contrato.objects.filter(do_locador=request.user,
+                                            data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
+            f'{ordem}data_registro')[:qtd_eventos]
+        contratotal = contratos.aggregate(total=Sum("valor_mensal"))["total"]
+        if contratotal:
+            contr_tt = f'{valor_br(str(contratotal))}'
+
+    if '5' in itens_eventos and pesquisa_req:
+        imoveis = Imovei.objects.filter(do_locador=request.user,
+                                        data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
+            f'{ordem}data_registro')[:qtd_eventos]
+    if '6' in itens_eventos and pesquisa_req:
+        anotacoes = Anotacoe.objects.filter(do_usuario=request.user,
+                                            data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
+            f'{ordem}data_registro')[:qtd_eventos]
+
+    context = {'form': form, 'pagamentos': pagamentos, 'gastos': gastos, 'locatarios': locatarios,
+               'contratos': contratos, 'imoveis': imoveis, 'anotacoes': anotacoes, 'pg_tt': pg_tt, 'gasto_tt': gasto_tt,
+               'contr_tt': contr_tt, 'pag_m_gast': pag_m_gast}
+
+    return render(request, 'exibir_eventos.html', context)
+
+
+# -=-=-=-=-=-=-=-= BOTÃO ATIVOS -=-=-=-=-=-=-=-=
+
+class Perfil1(LoginRequiredMixin, ListView):
+    template_name = 'perfil_usuario.html'
+    model = Imovei
+    context_object_name = 'imoveis'
+    paginate_by = 9
+
+    def get_queryset(self):
+        self.object_list = Imovei.objects.ocupados().filter(do_locador=self.request.user).order_by('-data_registro')
+        return self.object_list
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(Perfil1, self).get_context_data(**kwargs)
+        context['imoveis_qtd'] = Imovei.objects.ocupados().filter(do_locador=self.request.user).count()
+        return context
+
+
+class Perfil2(LoginRequiredMixin, ListView):
+    template_name = 'perfil_usuario.html'
+    model = Locatario
+    context_object_name = 'locatarios'
+    paginate_by = 9
+
+    def get_queryset(self):
+        self.object_list = Locatario.objects.com_imoveis().filter(do_locador=self.request.user).order_by(
+            '-data_registro')
+        return self.object_list
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(Perfil2, self).get_context_data(**kwargs)
+        context['locatario_qtd'] = Locatario.objects.com_imoveis().filter(do_locador=self.request.user).count()
+        return context
+
+
+class Perfil3(LoginRequiredMixin, ListView):
+    template_name = 'perfil_usuario.html'
+    model = Contrato
+    context_object_name = 'contratos'
+    paginate_by = 9
+
+    def get_queryset(self):
+        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_registro')
+        return self.object_list
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(Perfil3, self).get_context_data(**kwargs)
+        context['contrato_qtd'] = Contrato.objects.filter(do_locador=self.request.user).count()
+        return context
 
 
 # -=-=-=-=-=-=-=-= BOTÃO REGISTRAR -=-=-=-=-=-=-=-=
@@ -221,10 +366,73 @@ def registrar_anotacao(request):
 # -=-=-=-=-=-=-=-= BOTÃO GERAR -=-=-=-=-=-=-=-=
 
 def recibos(request, pk):
-    user = Usuario.objects.get(pk=pk)
-    form = FormRecibos
+    print('GET e POST')
+    form = FormRecibos()
     context = {'form': form}
-    render(request, 'gerar_recibos.html', context)
+    if request.method == 'POST':
+        print('POST')
+        form = FormRecibos(request.POST)
+        if form.is_valid():
+            contrato = Contrato.objects.get(pk=form.cleaned_data['contrato'].pk)
+            locatario = contrato.do_locatario
+            imovel = contrato.do_imovel
+            usuario = Usuario.objects.get(pk=request.user.pk)
+            if contrato.recibos_pdf:
+
+                print('recibo_pdf existe, retornando')
+
+                context = {'form': form, 'contrato': contrato}
+            else:
+
+                print('recibo_pdf não existe, criando')
+
+                reais = int(contrato.valor_mensal[:-2])
+                centavos = int(contrato.valor_mensal[-2:])
+                num_ptbr_reais = num2words(reais, lang='pt-br')
+                completo = ''
+                if centavos > 0:
+                    num_ptbr_centavos = num2words(centavos, lang='pt-br')
+                    completo = f' E {num_ptbr_centavos} centavos'
+                codigos = list(
+                    Parcela.objects.filter(do_contrato=contrato.pk).values("codigo").values_list('codigo', flat=True))
+                datas = list(
+                    Parcela.objects.filter(do_contrato=contrato.pk).values("data_pagm_ref").values_list('data_pagm_ref',
+                                                                                                        flat=True))
+                datas_tratadas = list()
+                for data in datas:
+                    locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
+                    month = data.strftime('%B')
+                    year = data.strftime('%Y')
+                    datas_tratadas.append(f'{month.upper()}')
+                    datas_tratadas.append(f'{year}')
+
+                dados = {'cod_contrato': f'{contrato.codigo}',
+                         'nome_locador': f'{usuario.first_name.upper()} {usuario.last_name.upper()}',
+                         'rg_locd': f'{usuario.RG}',
+                         'cpf_locd': f'{usuario.CPF}',
+                         'nome_locatario': f'{locatario.nome.upper()}',
+                         'rg_loct': f'{locatario.RG}',
+                         'cpf_loct': f'{locatario.CPF}',
+                         'valor_e_extenso': f'{contrato.valor_br()} ({num_ptbr_reais.upper()} REAIS{completo.upper()})',
+                         'endereco': f"{imovel.endereco}",
+                         'cidade': f'{imovel.cidade}',
+                         'data': '________________, ____ de _________ de ________',
+                         'cod_recibo': codigos,
+                         'mes_e_ano': datas_tratadas,
+                         }
+
+                local_temp = gerar_recibos(dados=dados)
+                contrato.recibos_pdf = File(local_temp, name=f'recibos de {dados["cod_contrato"]}.pdf')
+                contrato.save()
+
+                context = {'form': form, 'contrato': contrato}
+
+    form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user)
+    contratos_tt = Contrato.objects.filter(do_locador=request.user.pk).count()
+    tem_contratos = False if contratos_tt == 0 else True
+    context['tem_contratos'] = tem_contratos
+
+    return render(request, 'gerar_recibos.html', context)
 
 
 # -=-=-=-=-=-=-=-= BOTÃO HISTORICO -=-=-=-=-=-=-=-=
@@ -486,142 +694,6 @@ class Homepage(FormView):
             return reverse('home:Criar Conta')
 
 
-@login_required
-def eventos(request, pk):
-    user = Usuario.objects.get(pk=request.user.pk)
-    form = FormEventos()
-    pagamentos = gastos = locatarios = contratos = imoveis = anotacoes = pg_tt = gasto_tt = contr_tt = pag_m_gast = ''
-    agreg_1 = agreg_2 = int()
-    pesquisa_req = True if user.data_eventos_i and user.itens_eventos and user.qtd_eventos and user.ordem_eventos else\
-        False
-
-    data_eventos_i = user.data_eventos_i
-    data_eventos_f = datetime.now()
-    itens_eventos = user.itens_eventos
-    qtd_eventos = user.qtd_eventos
-    ordem_eventos = int(user.ordem_eventos)
-    if ordem_eventos == 2:
-        ordem = ''
-    elif ordem_eventos == 1:
-        ordem = '-'
-
-    if pesquisa_req:
-        form = FormEventos(initial={'qtd': user.qtd_eventos, 'data_eventos_i': user.data_eventos_i.strftime('%Y-%m-%d'),
-                                    'itens_eventos': list(user.itens_eventos), 'ordem_eventos': user.ordem_eventos})
-    if request.method == 'POST':
-        form = FormEventos(request.POST)
-        if form.is_valid():
-            user.data_eventos_i = form.cleaned_data['data_eventos_i']
-            user.itens_eventos = form.cleaned_data['itens_eventos']
-            user.qtd_eventos = form.cleaned_data['qtd']
-            user.ordem_eventos = form.cleaned_data['ordem_eventos']
-            user.save(update_fields=["data_eventos_i", "itens_eventos", "qtd_eventos", "ordem_eventos"])
-
-            data_eventos_i = form.cleaned_data['data_eventos_i']
-            data_eventos_f = datetime.combine(form.cleaned_data['data_eventos_f'], datetime.now().time())
-            itens_eventos = form.cleaned_data['itens_eventos']
-            qtd_eventos = form.cleaned_data['qtd']
-            ordem_eventos = int(form.cleaned_data['ordem_eventos'])
-            if ordem_eventos == 2:
-                ordem = ''
-            elif ordem_eventos == 1:
-                ordem = '-'
-
-    if '1' in itens_eventos and pesquisa_req:
-        pagamentos = Pagamento.objects.filter(ao_locador=request.user,
-                                              data_pagamento__range=[data_eventos_i, data_eventos_f]).order_by(
-            f'{ordem}data_pagamento')[:qtd_eventos]
-        agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
-        if agreg_1["total"]:
-            pg_tt = f'{valor_br(str(agreg_1["total"]))}'
-
-    if '2' in itens_eventos and pesquisa_req:
-        gastos = Gasto.objects.filter(do_locador=request.user, data__range=[data_eventos_i, data_eventos_f]).order_by(
-            f'{ordem}data')[:qtd_eventos]
-        agreg_2 = gastos.aggregate(total=Sum("valor"))
-        if agreg_1["total"]:
-            gasto_tt = f'{valor_br(str(agreg_2["total"]))}'
-
-    if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
-        pag_m_gast = valor_br(str(agreg_1["total"] - agreg_2["total"]))
-
-    if '3' in itens_eventos and pesquisa_req:
-        locatarios = Locatario.objects.filter(do_locador=request.user,
-                                              data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
-            f'{ordem}data_registro')[:qtd_eventos]
-    if '4' in itens_eventos and pesquisa_req:
-        contratos = Contrato.objects.filter(do_locador=request.user,
-                                            data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
-            f'{ordem}data_registro')[:qtd_eventos]
-        contratotal = contratos.aggregate(total=Sum("valor_mensal"))["total"]
-        if contratotal:
-            contr_tt = f'{valor_br(str(contratotal))}'
-
-    if '5' in itens_eventos and pesquisa_req:
-        imoveis = Imovei.objects.filter(do_locador=request.user,
-                                        data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
-            f'{ordem}data_registro')[:qtd_eventos]
-    if '6' in itens_eventos and pesquisa_req:
-        anotacoes = Anotacoe.objects.filter(do_usuario=request.user,
-                                            data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
-            f'{ordem}data_registro')[:qtd_eventos]
-
-    context = {'form': form, 'pagamentos': pagamentos, 'gastos': gastos, 'locatarios': locatarios,
-               'contratos': contratos, 'imoveis': imoveis, 'anotacoes': anotacoes, 'pg_tt': pg_tt, 'gasto_tt': gasto_tt,
-               'contr_tt': contr_tt, 'pag_m_gast': pag_m_gast}
-
-    return render(request, 'exibir_eventos.html', context)
-
-
-class Perfil1(LoginRequiredMixin, ListView):
-    template_name = 'perfil_usuario.html'
-    model = Imovei
-    context_object_name = 'imoveis'
-    paginate_by = 9
-
-    def get_queryset(self):
-        self.object_list = Imovei.objects.ocupados().filter(do_locador=self.request.user).order_by('-data_registro')
-        return self.object_list
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Perfil1, self).get_context_data(**kwargs)
-        context['imoveis_qtd'] = Imovei.objects.ocupados().filter(do_locador=self.request.user).count()
-        return context
-
-
-class Perfil2(LoginRequiredMixin, ListView):
-    template_name = 'perfil_usuario.html'
-    model = Locatario
-    context_object_name = 'locatarios'
-    paginate_by = 9
-
-    def get_queryset(self):
-        self.object_list = Locatario.objects.com_imoveis().filter(do_locador=self.request.user).order_by(
-            '-data_registro')
-        return self.object_list
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Perfil2, self).get_context_data(**kwargs)
-        context['locatario_qtd'] = Locatario.objects.com_imoveis().filter(do_locador=self.request.user).count()
-        return context
-
-
-class Perfil3(LoginRequiredMixin, ListView):
-    template_name = 'perfil_usuario.html'
-    model = Contrato
-    context_object_name = 'contratos'
-    paginate_by = 9
-
-    def get_queryset(self):
-        self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_registro')
-        return self.object_list
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Perfil3, self).get_context_data(**kwargs)
-        context['contrato_qtd'] = Contrato.objects.filter(do_locador=self.request.user).count()
-        return context
-
-
 class CriarConta(CreateView):
     template_name = 'criar_conta.html'
     form_class = FormCriarConta
@@ -831,6 +903,8 @@ def botaoteste(request):
                 user.last_name = aleatorio.get('last_name')
                 user.email = aleatorio.get('email')
                 user.telefone = aleatorio.get('telefone')
+                user.RG = aleatorio.get('RG')
+                user.CPF = aleatorio.get('CPF')
                 user.save()
         messages.success(request, f"Criadas {count} usuários")
 

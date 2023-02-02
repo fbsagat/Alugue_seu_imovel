@@ -2,6 +2,11 @@ Aprender git na hashtag pra atualizar o projeto sempre
 
 não tão necessário, forms de registros devem retornar os dados quando forem inválidos
 
+Mostrar bemvindo.html quando o usuario for novato, ou seja, não possuir nenhum imovel e nenhum locatarios cadastrados,
+se não, mostrar nenhum_registrado.html
+
+-------------------------------------
+
 problemas encontrados, sem solução até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
 

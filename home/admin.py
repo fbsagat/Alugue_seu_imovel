@@ -1,6 +1,6 @@
 from django.contrib import admin
 from home.forms import Mascara
-from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, MensagemDev, ImovGrupo
+from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, MensagemDev, ImovGrupo, Parcela
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -45,6 +45,12 @@ class PagamentosAdmin(admin.ModelAdmin):
     list_display = ('ao_locador', 'ao_contrato', 'do_locatario', 'valor_pago', 'data_pagamento',
                     'data_de_recibo', 'data_criacao')
     list_filter = ('recibo', 'forma')
+
+
+@admin.register(Parcela)
+class ParcelasAdmin(admin.ModelAdmin):
+    list_display = ('do_contrato', 'codigo', 'data_pagm_ref')
+    list_filter = ('pago', 'entregue')
 
 
 @admin.register(Gasto)
