@@ -196,12 +196,6 @@ class FormContrato(forms.ModelForm):
         self.fields['valor_mensal'].widget.attrs.update({'class': 'mask-valor'})
 
 
-class FormContratoRecibos(forms.ModelForm):
-    class Meta:
-        model = Contrato
-        fields = ['recibos_pdf']
-
-
 class FormimovelGrupo(forms.ModelForm):
     class Meta:
         model = ImovGrupo

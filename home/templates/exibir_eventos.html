@@ -236,6 +236,7 @@ Página de Eventos do Administrador de Locação
         <thead>
         <tr>
             <th scope="col" style="cursor:default;"></th>
+            <th scope="col" style="cursor:default;">Cód.</th>
             <th scope="col" style="cursor:default;">Locatário</th>
             <th scope="col" style="cursor:default;">Imóvel</th>
             <th scope="col" style="cursor:default;">Data de Entrada</th>
@@ -253,6 +254,7 @@ Página de Eventos do Administrador de Locação
         {% for contrato in contratos %}
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
+            <th scope="col" style="cursor:default;">{{ contrato.codigo }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.do_locatario }}</th>
             <th scope="col" style="cursor:default;" title="{{ contrato.do_imovel.endereco }}">
                 {{ contrato.do_imovel|truncatechars:106 }}
@@ -296,7 +298,7 @@ Página de Eventos do Administrador de Locação
         </tr>
         </tbody>
         <tr>
-            <td colspan="5"></td>
+            <td colspan="6"></td>
             <td class="table-active"><p class="text-success fw-bold">{{ contr_tt }}</p></td>
             <td colspan="5"></td>
         </tr>

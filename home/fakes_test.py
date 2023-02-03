@@ -19,7 +19,7 @@ def contratos_ficticios(request, locador):
     data_entrada = fake.date_between(datetime.now().date() + timedelta(days=-215),
                                      datetime.now().date() + timedelta(days=-145))
 
-    duracao = choice([6, 12])
+    duracao = randrange(4, 18)
 
     valor_mensal = randrange(99999, 199999)
     dia_vencimento = randrange(1, 28)

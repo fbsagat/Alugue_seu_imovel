@@ -21,7 +21,7 @@ from home.funcoes_proprias import valor_br, gerar_recibos
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
-    FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormContratoRecibos
+    FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela
 
@@ -89,7 +89,7 @@ def eventos(request, pk):
         gastos = Gasto.objects.filter(do_locador=request.user, data__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data')[:qtd_eventos]
         agreg_2 = gastos.aggregate(total=Sum("valor"))
-        if agreg_1["total"]:
+        if agreg_2["total"]:
             gasto_tt = f'{valor_br(str(agreg_2["total"]))}'
 
     if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
@@ -366,26 +366,24 @@ def registrar_anotacao(request):
 # -=-=-=-=-=-=-=-= BOTÃO GERAR -=-=-=-=-=-=-=-=
 
 def recibos(request, pk):
-    print('GET e POST')
     form = FormRecibos()
-    context = {'form': form}
+    usuario = Usuario.objects.get(pk=request.user.pk)
+
+    if usuario.ultimo_recibo_gerado:
+        form = FormRecibos(initial={'contrato': usuario.ultimo_recibo_gerado})
+
+    context = {'form': form, 'contrato': usuario.ultimo_recibo_gerado}
     if request.method == 'POST':
-        print('POST')
         form = FormRecibos(request.POST)
         if form.is_valid():
             contrato = Contrato.objects.get(pk=form.cleaned_data['contrato'].pk)
             locatario = contrato.do_locatario
             imovel = contrato.do_imovel
-            usuario = Usuario.objects.get(pk=request.user.pk)
+            usuario.ultimo_recibo_gerado = contrato
+            usuario.save(update_fields=['ultimo_recibo_gerado'])
             if contrato.recibos_pdf:
-
-                print('recibo_pdf existe, retornando')
-
                 context = {'form': form, 'contrato': contrato}
             else:
-
-                print('recibo_pdf não existe, criando')
-
                 reais = int(contrato.valor_mensal[:-2])
                 centavos = int(contrato.valor_mensal[-2:])
                 num_ptbr_reais = num2words(reais, lang='pt-br')
@@ -609,6 +607,9 @@ class EditarContrato(LoginRequiredMixin, UpdateView):
         return form_kwargs
 
     def get_success_url(self):
+        contrato = Contrato.objects.get(pk=self.object.pk)
+        contrato.recibos_pdf = None
+        contrato.save()
         return reverse_lazy('home:Contratos', kwargs={'pk': self.object.pk})
 
     def get_object(self, queryset=None):

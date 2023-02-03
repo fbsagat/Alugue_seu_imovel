@@ -18,10 +18,13 @@ class Usuario(AbstractUser):
     telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números')
 
     locat_slots = models.IntegerField(default=2)
+
     data_eventos_i = models.DateField(blank=True, null=True)
     itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=[1, 2, 3, 4, 5, 6])
     qtd_eventos = models.IntegerField(blank=True, null=True, default=10)
     ordem_eventos = models.IntegerField(default=1, blank=False)
+
+    ultimo_recibo_gerado = models.ForeignKey('Contrato', null=True, blank=True, on_delete=models.SET_NULL)
 
     tabela_pdf = models.FileField(upload_to='tabelas_docs/%Y/%m/', blank=True, verbose_name='Tabelas')
 
