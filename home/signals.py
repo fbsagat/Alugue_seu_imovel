@@ -70,5 +70,3 @@ def contrato_update(sender, instance, created, **kwargs):
                     Parcela.objects.create(do_contrato=contrato, data_pagm_ref=data,
                                            codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
                     break
-    else:
-        print('contrato modificado')

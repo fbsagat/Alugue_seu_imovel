@@ -4,7 +4,7 @@ from datetime import datetime
 
 from Adm_de_Locacao import settings
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseRedirect
 from django.core.files import File
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -17,6 +17,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
 
+from home.new_context import forms_da_navbar
 from home.funcoes_proprias import valor_br, gerar_recibos
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
@@ -190,6 +191,7 @@ def registrar_pagamento(request):
         messages.success(request, f"Pagamento registrado com sucesso!")
         return redirect(request.META['HTTP_REFERER'])
     else:
+        request.session['form1'] = request.POST
         messages.error(request, f"Formulário inválido!")
         return redirect(request.META['HTTP_REFERER'])
 
@@ -238,6 +240,7 @@ def registrar_gasto(request):
         messages.success(request, "Gasto registrado com sucesso!")
         return redirect(request.META['HTTP_REFERER'])
     else:
+        request.session['form3'] = request.POST
         messages.error(request, "Formulário inválido!")
         return redirect(request.META['HTTP_REFERER'])
 
@@ -277,9 +280,10 @@ def registrar_locat(request):
         locatario.save()
         messages.success(request, "Locatário registrado com sucesso!")
         return redirect(request.META['HTTP_REFERER'])
-    messages.error(request, f"Formulário inválido!")
-    return redirect(request.META['HTTP_REFERER'])
-
+    else:
+        request.session['form4'] = request.POST
+        messages.error(request, f"Formulário inválido!")
+        return redirect(request.META['HTTP_REFERER'])
 
 # CONTRATO ---------------------------------------
 @login_required
@@ -292,6 +296,7 @@ def registrar_contrato(request):
         messages.success(request, "Contrato resgistrado com sucesso!")
         return redirect(request.META['HTTP_REFERER'])
     else:
+        request.session['form5'] = request.POST
         messages.error(request, "Formulário inválido!")
         return redirect(request.META['HTTP_REFERER'])
 
@@ -344,6 +349,7 @@ def registrar_imovel(request):
             messages.success(request, "Imóvel resgistrado com sucesso!")
             return redirect(request.META['HTTP_REFERER'])
         else:
+            request.session['form6'] = request.POST
             messages.error(request, "Formulário inválido!")
             return redirect(request.META['HTTP_REFERER'])
 
@@ -359,6 +365,7 @@ def registrar_anotacao(request):
         messages.success(request, "Anotação resgistrada com sucesso!")
         return redirect(request.META['HTTP_REFERER'])
     else:
+        request.session['form7'] = request.POST
         messages.error(request, "Formulário inválido!")
         return redirect(request.META['HTTP_REFERER'])
 
@@ -398,7 +405,7 @@ def recibos(request, pk):
                                                                                                         flat=True))
                 datas_tratadas = list()
                 for data in datas:
-                    locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
+                    locale.setlocale(locale.LC_TIME, '')
                     month = data.strftime('%B')
                     year = data.strftime('%Y')
                     datas_tratadas.append(f'{month.upper()}')
@@ -739,6 +746,7 @@ def mensagem_desenvolvedor(request):
         messages.success(request, "Mensagem enviada com sucesso!")
         return redirect(request.META['HTTP_REFERER'])
     else:
+        request.session['form2'] = request.POST
         messages.error(request, "Formulário inválido!")
         return redirect(request.META['HTTP_REFERER'])
 

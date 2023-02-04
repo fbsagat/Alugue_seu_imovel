@@ -3,6 +3,7 @@ import string
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
@@ -14,7 +15,8 @@ from home.funcoes_proprias import valor_br
 class Usuario(AbstractUser):
     anotacoes = models.ManyToManyField('Anotacoe', blank=True)
     RG = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números')
-    CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números')
+    CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números',
+                           validators=[MinLengthValidator(11)])
     telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números')
 
     locat_slots = models.IntegerField(default=2)
@@ -50,12 +52,11 @@ class LocatariosManager(models.Manager):
 
 class Locatario(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
-    com_imoveis = models.ManyToManyField('Imovei', blank=True, related_name='imoveis')
-    com_contratos = models.ManyToManyField('Contrato', blank=True, related_name='contratos')
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
     docs = models.ImageField(upload_to='locatarios_docs/%Y/%m/', blank=True, verbose_name='Documentos')
     RG = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números')
-    CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números')
+    CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números',
+                           validators=[MinLengthValidator(11)])
     ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
     telefone1 = models.CharField(max_length=11, verbose_name='Telefone 1', help_text='Digite apenas números')
     telefone2 = models.CharField(max_length=11, blank=True, verbose_name='Telefone 2',
