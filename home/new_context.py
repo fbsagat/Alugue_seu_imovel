@@ -52,7 +52,7 @@ def forms_da_navbar(request):
         else:
             form7 = FormAnotacoes()
 
-        form8 = FormAdmin()
+        form8 = FormAdmin(initial={'p_usuario': request.user})
 
         context = {'form_pagamento': form1, 'form_mensagem': form2, 'form_gasto': form3, 'form_locatario': form4,
                    'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8}

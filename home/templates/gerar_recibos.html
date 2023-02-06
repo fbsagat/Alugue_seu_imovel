@@ -12,8 +12,16 @@ Gerador de Recibos do Administrador de Locação
 
 {% block content %}
 
-{% if tem_contratos %}
+{% if pede_dados %}
+<container class="container pt-1 text-center text-justify justify-center">
 
+    <h1 class="mx-auto fs-3 mt-5">Precisamos de alguns dados para preenchimento dos recibos, <a
+            href="{% url 'home:Editar Perfil' request.user.pk %}" class="link-primary">clique aqui</a> para editar seu
+        perfil</h1>
+
+</container>
+{% else %}
+{% if tem_contratos %}
 <container class="container pt-1 text-center text-justify justify-center">
 
     <form action="" method="POST">
@@ -29,14 +37,15 @@ Gerador de Recibos do Administrador de Locação
             </div>
         </container>
     </form>
-
+    {% if contrato.recibos_pdf.url is not '' %}
     <iframe src="{{ contrato.recibos_pdf.url }}"
             style="width:100%; height:820px;" frameborder="0"></iframe>
+    {% endif %}
 
 </container>
-
 {% else %}
 {% include 'nenhum_registrado.html' %}
+{% endif %}
 {% endif %}
 {% endblock %}
 

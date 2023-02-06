@@ -42,7 +42,7 @@ Página dos Contratos do Administrador de Locação
                 {{ contrato.do_imovel|truncatechars:106 }}
             </th>
             <th scope="col" style="cursor:default;">{{ contrato.data_entrada|date:"d/m/Y" }}</th>
-            <th scope="col" style="cursor:default;">{{ contrato.data_saida|date:"d/m/Y" }}</th>
+            <th scope="col" style="cursor:default;" title="Duração: {{ contrato.duracao }} meses.">{{ contrato.data_saida|date:"d/m/Y" }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.valor_br }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.dia_vencimento }}</th>
 

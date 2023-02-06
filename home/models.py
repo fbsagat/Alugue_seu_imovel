@@ -30,6 +30,36 @@ class Usuario(AbstractUser):
 
     tabela_pdf = models.FileField(upload_to='tabelas_docs/%Y/%m/', blank=True, verbose_name='Tabelas')
 
+    def apagar_recibos_pdf(self):
+        # Apaga todos os recibos em pdf do usuario
+        usuario = Usuario.objects.get(pk=self.pk)
+        contratos = Contrato.objects.filter(do_locador=usuario)
+        for contrato in contratos:
+            contrato.recibos_pdf.delete()
+
+    __original_rg = None
+    __original_cpf = None
+    __original_nome = None
+    __original_sobrenome = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_rg = self.RG
+        self.__original_cpf = self.CPF
+        self.__original_nome = self.first_name
+        self.__original_sobrenome = self.last_name
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.RG != self.__original_rg or self.CPF != self.__original_cpf or self.first_name != self.__original_nome \
+                or self.last_name != self.__original_sobrenome:
+            self.apagar_recibos_pdf()
+
+        super().save(force_insert, force_update, *args, **kwargs)
+        __original_rg = self.RG
+        __original_cpf = self.CPF
+        __original_nome = self.first_name
+        __original_sobrenome = self.last_name
+
     def get_absolute_url(self):
         return reverse('home:DashBoard', args=[str(self.pk, )])
 
@@ -52,6 +82,9 @@ class LocatariosManager(models.Manager):
 
 class Locatario(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
+    com_imoveis = models.ManyToManyField('Imovei', blank=True)
+    com_contratos = models.ManyToManyField('Contrato', blank=True)
+
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
     docs = models.ImageField(upload_to='locatarios_docs/%Y/%m/', blank=True, verbose_name='Documentos')
     RG = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números')
@@ -66,6 +99,31 @@ class Locatario(models.Model):
     estadocivil = models.IntegerField(blank=False, verbose_name='Estado Civil', choices=estados_civis)
     data_registro = models.DateTimeField(auto_now_add=True)
     objects = LocatariosManager()
+
+    def apagar_recibos_pdf(self):
+        # Apaga todos os recibos em pdf do locatario
+        contratos = Contrato.objects.filter(do_locatario=self.pk)
+        for contrato in contratos:
+            contrato.recibos_pdf.delete()
+
+    __original_nome = None
+    __original_rg = None
+    __original_cpf = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_nome = self.nome
+        self.__original_rg = self.RG
+        self.__original_cpf = self.CPF
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.nome != self.__original_nome or self.RG != self.__original_rg or self.CPF != self.__original_cpf:
+            self.apagar_recibos_pdf()
+
+        super().save(force_insert, force_update, *args, **kwargs)
+        self.__original_nome = self.nome
+        self.__original_rg = self.RG
+        self.__original_cpf = self.CPF
 
     def get_absolute_url(self):
         return reverse('home:Locatários', args=[str(self.pk, )])
@@ -175,6 +233,41 @@ class Contrato(models.Model):
     data_registro = models.DateTimeField(auto_now_add=True)
     objects = ContratoManager()
 
+    def gerenciar_parcelas(self):
+        # Editar as parcelas quando o contrato é editado:
+        Parcela.objects.filter(do_contrato=self.pk).delete()
+
+        for x in range(0, self.duracao):
+            data_entrada = self.data_entrada
+            data = data_entrada.replace(day=self.dia_vencimento) + relativedelta(months=x)
+
+            codigos_existentes = list(
+                Parcela.objects.filter(do_contrato=self).values("codigo").values_list('codigo', flat=True))
+            while True:
+                recibo_codigo = ''.join(
+                    random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+                    range(6))
+                if recibo_codigo not in codigos_existentes:
+                    parcela = Parcela(do_contrato=self, data_pagm_ref=data,
+                                      codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
+                    parcela.save()
+                    break
+
+    __original_duracao = None
+    __data_entrada = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_duracao = self.duracao
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.pk:
+            if self.duracao != self.__original_duracao or self.data_entrada != self.__data_entrada:
+                self.gerenciar_parcelas()
+
+        super().save(force_insert, force_update, *args, **kwargs)
+        self.__original_duracao = self.duracao
+
     def get_absolute_url(self):
         return reverse('home:Contratos', args=[str(self.pk), ])
 
@@ -204,7 +297,7 @@ class Parcela(models.Model):
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=11)
     data_pagm_ref = models.DateField(null=False, blank=False)
     pago = models.BooleanField(default=False)
-    entregue = models.BooleanField(default=False, null=False)
+    entregue = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.do_contrato} ({self.codigo})'

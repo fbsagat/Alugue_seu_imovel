@@ -82,8 +82,7 @@ def pagamentos_ficticios():
     valor_pago = choice([valor_mensal, valor_mensal, chance_aleatoria])
 
     entrada = contrato_escolhido.data_entrada
-    saida = contrato_escolhido.data_saida
-    data_pagamento = fake.date_between(entrada, saida())
+    data_pagamento = fake.date_between(entrada, datetime.today())
 
     pix_vista = randrange(0, 1)
     todas = randrange(0, 4)

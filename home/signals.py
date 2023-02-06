@@ -25,9 +25,6 @@ def contrato_delete(sender, instance, **kwards):
         imovel.save()
         locatario.save()
 
-    # Remove o arquivo 'Recibos' corerspndente quando deleta um contrato
-    # (a fazer) ------------<
-
 
 @receiver(post_save, sender=Contrato)
 def contrato_update(sender, instance, created, **kwargs):

@@ -6,8 +6,6 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph
 
-from django.http import FileResponse
-
 
 # 001: -----------------------------------------------
 def valor_br(valor):
@@ -20,6 +18,11 @@ def valor_br(valor):
 
 
 # 002: -----------------------------------------------
+def cpf_format(cpf):
+    return f'{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:11]}'
+
+
+# 003: -----------------------------------------------
 
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
     rect_lar = pag_lar - (pag_lar * 10 / 100)
@@ -45,10 +48,11 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
 
     texto_estilo = ParagraphStyle('My Para style', fontName='Times-Roman', fontSize=11, borderPadding=(20, 20, 20),
                                   leading=14, alignment=1)
+
     texto = Paragraph(
-        f'Eu, <b>{dados["nome_locador"]}</b>, inscrito no RG sob o nº {dados["rg_locd"]}'
-        f' e CPF sob o nº {dados["cpf_locd"]}, recebi de <b>{dados["nome_locatario"]}</b>,'
-        f' inscrito(a) no RG sob o nº {dados["rg_loct"]} e CPF sob o n° {dados["cpf_loct"]},'
+        f'Eu, <b>{dados["nome_locador"]}</b>, inscrito(a) no {dados["rg_locd"]} CPF sob o nº '
+        f'{cpf_format(dados["cpf_locd"])}, recebi de <b>{dados["nome_locatario"]}</b>,'
+        f' inscrito(a) no RG sob o nº {dados["rg_loct"]} e CPF sob o n° {cpf_format(dados["cpf_loct"])},'
         f' a importância de <b>{dados["valor_e_extenso"]}</b>, referente ao pagamento do aluguel'
         f' do mês de <b>{dados["mes_e_ano"][2 * (recibo_n - 1)]} DE '
         f'{dados["mes_e_ano"][(2 * (recibo_n - 1)) + 1]}</b> (Parcela {recibo_n} de um total '
@@ -103,6 +107,9 @@ def gerar_recibos(dados):
     parcelas = int(len(dados['mes_e_ano']) / 2)
     paginas = int((len(dados['mes_e_ano']) / 2) / 3) if (len(dados['mes_e_ano']) / 2) / 3 % 2 == 1 else ceil(
         (len(dados['mes_e_ano']) / 2) / 3)
+
+    # Tratando itens opcionais \/
+    dados['rg_locd'] = '' if dados['rg_locd'] == 'None' else f' RG sob o nº {dados["rg_locd"]} e '
 
     for pagina in range(paginas):
         page_num = pdf.getPageNumber()

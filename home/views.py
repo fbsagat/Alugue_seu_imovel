@@ -437,6 +437,10 @@ def recibos(request, pk):
     tem_contratos = False if contratos_tt == 0 else True
     context['tem_contratos'] = tem_contratos
 
+    if usuario.first_name == '' or usuario.last_name == '' or usuario.CPF == '':
+        pede_dados = True
+        context['pede_dados'] = pede_dados
+
     return render(request, 'gerar_recibos.html', context)
 
 
@@ -608,6 +612,9 @@ class EditarContrato(LoginRequiredMixin, UpdateView):
     form_class = FormContrato
     success_url = reverse_lazy('/')
 
+    def get_initial(self):
+        return {'data_entrada': self.object.data_entrada.strftime('%Y-%m-%d')}
+
     def get_form_kwargs(self, **kwargs):
         form_kwargs = super(EditarContrato, self).get_form_kwargs(**kwargs)
         form_kwargs["user"] = self.request.user
@@ -615,7 +622,7 @@ class EditarContrato(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         contrato = Contrato.objects.get(pk=self.object.pk)
-        contrato.recibos_pdf = None
+        contrato.recibos_pdf.delete()
         contrato.save()
         return reverse_lazy('home:Contratos', kwargs={'pk': self.object.pk})
 
@@ -627,9 +634,6 @@ class EditarContrato(LoginRequiredMixin, UpdateView):
 class ExcluirContrato(LoginRequiredMixin, DeleteView):
     model = Contrato
     template_name = 'excluir_item.html'
-
-    def delete(self, request, *args, **kwargs):
-        return super().delete(self, request, *args, **kwargs)
 
     def get_success_url(self):
         imov_do_contrato = Contrato.objects.get(pk=self.kwargs['pk']).do_imovel.pk
@@ -707,11 +711,23 @@ class CriarConta(CreateView):
     form_class = FormCriarConta
     success_url = reverse_lazy('home:Login')
 
+    def get_form(self, form_class=None):
+        form = super(CriarConta, self).get_form(form_class)
+        form.fields['email'].required = True
+        return form
+
 
 class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     template_name = 'editar_perfil.html'
     model = Usuario
     fields = ['username', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF']
+
+    def get_form(self, form_class=None):
+        form = super(EditarPerfil, self).get_form(form_class)
+        form.fields['first_name'].required = True
+        form.fields['last_name'].required = True
+        form.fields['CPF'].required = True
+        return form
 
     def get_success_url(self):
         return reverse("home:DashBoard", kwargs={"pk": self.request.user.pk})
