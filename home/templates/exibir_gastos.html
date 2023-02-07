@@ -37,7 +37,7 @@ Página dos Gastos do Administrador de Locação
             <tr>
                 <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
                 <th scope="col" style="cursor:default;">{{ gasto.do_imovel }}</th>
-                <th scope="col" style="cursor:default;">{{ gasto.valor_br }}</th>
+                <th scope="col" style="cursor:default;">{{ gasto.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ gasto.data|date:"d/m/Y" }}</th>
                 <th scope="col" style="cursor:default;" title="{{ gasto.observacoes }}">
                     {{ gasto.observacoes|truncatechars:100 }}
@@ -82,7 +82,7 @@ Página dos Gastos do Administrador de Locação
             <tr>
                 <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
                 <th scope="col" style="cursor:default;">{{ gasto.do_imovel }}</th>
-                <th scope="col" style="cursor:default;">{{ gasto.valor_br }}</th>
+                <th scope="col" style="cursor:default;">{{ gasto.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ gasto.data|date:"d/m/Y" }}</th>
                 <th scope="col" style="cursor:default;" title="{{ gasto.observacoes }}">
                     {{ gasto.observacoes|truncatechars:100 }}

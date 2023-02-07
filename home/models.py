@@ -1,5 +1,7 @@
 import random
 import string
+import os
+from uuid import uuid4
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -9,7 +11,8 @@ from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from home.funcoes_proprias import valor_br
+from django_resized import ResizedImageField
+from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format
 
 
 class Usuario(AbstractUser):
@@ -87,7 +90,8 @@ class Locatario(models.Model):
     com_contratos = models.ManyToManyField('Contrato', blank=True)
 
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
-    docs = models.ImageField(upload_to='locatarios_docs/%Y/%m/', blank=True, verbose_name='Documentos')
+    docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', blank=True,
+                             verbose_name='Documentos', validators=[tratar_imagem])
     RG = models.CharField(max_length=9, null=False, blank=False, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9)])
     CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números',
@@ -139,6 +143,15 @@ class Locatario(models.Model):
     def imoveis_alugados(self):
         x = Imovei.objects.filter(com_locatario=self.pk)
         return x
+
+    def f_cpf(self):
+        return cpf_format(self.CPF)
+
+    def f_tel1(self):
+        return cel_format(self.telefone1)
+
+    def f_tel2(self):
+        return cel_format(self.telefone2)
 
 
 class ImovGrupo(models.Model):
@@ -283,8 +296,11 @@ class Contrato(models.Model):
         return f'({self.do_locatario.nome.split()[:2][0]} {self.do_locatario.nome.split()[:2][1]} ' \
                f'- {self.do_imovel.nome} - {self.data_entrada.strftime("%d/%m/%Y")})'
 
-    def valor_br(self):
-        return valor_br(self.valor_mensal)
+    def valor_format(self):
+        return valor_format(self.valor_mensal)
+
+    def valor_do_contrato(self):
+        return valor_format(str(int(self.valor_mensal) * int(self.duracao)))
 
     def total_quitado(self):
         pass
@@ -335,11 +351,11 @@ class Pagamento(models.Model):
     def get_absolute_url(self):
         return reverse('home:Pagamentos', args=[(str(self.pk)), ])
 
-    def valor_br(self):
-        return valor_br(self.valor_pago)
+    def valor_format(self):
+        return valor_format(self.valor_pago)
 
     def __str__(self):
-        return f'{self.do_locatario} - R${self.valor_br()} - {self.data_pagamento.strftime("%D")}'
+        return f'{self.do_locatario} - R${self.valor_format()} - {self.data_pagamento.strftime("%D")}'
 
 
 class Gasto(models.Model):
@@ -349,17 +365,18 @@ class Gasto(models.Model):
     valor = models.CharField(max_length=9, verbose_name='Valor Gasto (R$): ', blank=False)
     data = models.DateTimeField(blank=False)
     observacoes = models.TextField(max_length=500, blank=True, verbose_name='Observações')
-    comprovante = models.ImageField(upload_to='gastos_comprovantes/%Y/%m/', blank=True, verbose_name='Comporvante')
+    comprovante = ResizedImageField(size=[1280, None], upload_to='gastos_comprovantes/%Y/%m/', blank=True,
+                                    verbose_name='Comporvante', validators=[tratar_imagem])
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def get_alsolute_url(self):
         return reverse('home:Gastos', args=[(str(self.pk)), ])
 
-    def valor_br(self):
-        return valor_br(self.valor)
+    def valor_format(self):
+        return valor_format(self.valor)
 
     def __str__(self):
-        return f'{self.observacoes[:20]} - {self.valor_br()} - {self.data.strftime("%D")}'
+        return f'{self.observacoes[:20]} - {self.valor_format()} - {self.data.strftime("%D")}'
 
 
 class Anotacoe(models.Model):
@@ -392,7 +409,8 @@ class MensagemDev(models.Model):
     titulo = models.CharField(blank=False, max_length=100)
     mensagem = models.TextField(blank=False)
     tipo_msg = models.IntegerField(blank=False, choices=lista_mensagem)
-    imagem = models.ImageField(upload_to='mensagens_ao_dev/%Y/%m/', blank=True)
+    imagem = ResizedImageField(size=[1280, None], upload_to='mensagens_ao_dev/%Y/%m/', blank=True,
+                               validators=[tratar_imagem])
 
     def get_absolute_url(self):
         return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])

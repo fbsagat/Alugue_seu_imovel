@@ -18,7 +18,7 @@ from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
 
 from home.new_context import forms_da_navbar
-from home.funcoes_proprias import valor_br, gerar_recibos
+from home.funcoes_proprias import valor_format, gerar_recibos
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
@@ -84,17 +84,17 @@ def eventos(request, pk):
             f'{ordem}data_pagamento')[:qtd_eventos]
         agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
         if agreg_1["total"]:
-            pg_tt = f'{valor_br(str(agreg_1["total"]))}'
+            pg_tt = f'{valor_format(str(agreg_1["total"]))}'
 
     if '2' in itens_eventos and pesquisa_req:
         gastos = Gasto.objects.filter(do_locador=request.user, data__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data')[:qtd_eventos]
         agreg_2 = gastos.aggregate(total=Sum("valor"))
         if agreg_2["total"]:
-            gasto_tt = f'{valor_br(str(agreg_2["total"]))}'
+            gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
 
     if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
-        pag_m_gast = valor_br(str(agreg_1["total"] - agreg_2["total"]))
+        pag_m_gast = valor_format(str(agreg_1["total"] - agreg_2["total"]))
 
     if '3' in itens_eventos and pesquisa_req:
         locatarios = Locatario.objects.filter(do_locador=request.user,
@@ -106,7 +106,7 @@ def eventos(request, pk):
             f'{ordem}data_registro')[:qtd_eventos]
         contratotal = contratos.aggregate(total=Sum("valor_mensal"))["total"]
         if contratotal:
-            contr_tt = f'{valor_br(str(contratotal))}'
+            contr_tt = f'{valor_format(str(contratotal))}'
 
     if '5' in itens_eventos and pesquisa_req:
         imoveis = Imovei.objects.filter(do_locador=request.user,
@@ -127,7 +127,7 @@ def eventos(request, pk):
 # -=-=-=-=-=-=-=-= BOTÃO ATIVOS -=-=-=-=-=-=-=-=
 
 class Perfil1(LoginRequiredMixin, ListView):
-    template_name = 'perfil_usuario.html'
+    template_name = 'exibir_ativos.html'
     model = Imovei
     context_object_name = 'imoveis'
     paginate_by = 9
@@ -143,7 +143,7 @@ class Perfil1(LoginRequiredMixin, ListView):
 
 
 class Perfil2(LoginRequiredMixin, ListView):
-    template_name = 'perfil_usuario.html'
+    template_name = 'exibir_ativos.html'
     model = Locatario
     context_object_name = 'locatarios'
     paginate_by = 9
@@ -160,7 +160,7 @@ class Perfil2(LoginRequiredMixin, ListView):
 
 
 class Perfil3(LoginRequiredMixin, ListView):
-    template_name = 'perfil_usuario.html'
+    template_name = 'exibir_ativos.html'
     model = Contrato
     context_object_name = 'contratos'
     paginate_by = 9
@@ -430,7 +430,7 @@ def recibos(request, pk):
                          'nome_locatario': f'{locatario.nome.upper()}',
                          'rg_loct': f'{locatario.RG}',
                          'cpf_loct': f'{locatario.CPF}',
-                         'valor_e_extenso': f'{contrato.valor_br()} ({num_ptbr_reais.upper()} REAIS{completo.upper()})',
+                         'valor_e_extenso': f'{contrato.valor_format()} ({num_ptbr_reais.upper()} REAIS{completo.upper()})',
                          'endereco': f"{imovel.endereco}",
                          'cidade': f'{imovel.cidade}',
                          'data': '________________, ____ de _________ de ________',

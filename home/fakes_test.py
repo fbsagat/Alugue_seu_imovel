@@ -21,7 +21,10 @@ def contratos_ficticios(request, locador):
 
     duracao = randrange(4, 18)
 
-    valor_mensal = randrange(99999, 199999)
+    centavos = ['00', '00', randrange(10, 99)]
+    reais = [randrange(500, 1200, step=150), randrange(700, 3400, step=180), randrange(700, 3400, step=130),
+             randrange(3400, 180000, step=1500)]
+    valor_mensal = f'{choice(reais)}{choice(centavos)}'
     dia_vencimento = randrange(1, 28)
 
     return {'do_locatario': do_locatario, 'do_imovel': do_imovel, 'data_entrada': data_entrada,
@@ -33,7 +36,7 @@ def locatarios_ficticios():
     rg = randrange(1000000, 9999999)
     cpf = randrange(10000000000, 99999999999)
     ocupacao = fake.catch_phrase()
-    telefone1 = fake.msisdn()[-11::]
+    telefone1 = f'{91}98{randrange(1000000, 9999999)}'
     telefone2 = fake.msisdn()[-11::]
     email = fake.email()
     nacionalidade = 'Brasileiro'

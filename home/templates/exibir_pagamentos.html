@@ -37,7 +37,7 @@ Página dos Pagamentos do Administrador de Locação
                 <th scope="col " style="cursor:default;" title="{{ pagamento.ao_contrato }}">
                     {{ pagamento.ao_contrato }}
                 </th>
-                <th scope="col" style="cursor:default;">{{ pagamento.valor_br }}</th>
+                <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
                 <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
                 {% if pagamento.recibo %}
@@ -80,7 +80,7 @@ Página dos Pagamentos do Administrador de Locação
                 <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato }}">
                     {{ pagamento.ao_contrato }}
                 </th>
-                <th scope="col" style="cursor:default;">{{ pagamento.valor_br }}</th>
+                <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
                 <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
                 {% if pagamento.recibo %}

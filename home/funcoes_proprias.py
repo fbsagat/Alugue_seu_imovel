@@ -1,14 +1,16 @@
 from math import ceil
 import io
 
+from Adm_de_Locacao import settings
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph
+from django.core.exceptions import ValidationError
 
 
 # 001: -----------------------------------------------
-def valor_br(valor):
+def valor_format(valor):
     """ O valor deve ser inteiro e vir em format string e será convertido para valor financeiro em Reais(R$) onde as
     duas últimas casas sempre representarão centavos Ex: de 134567899 para 1.345.678,99"""
     virgola = str(',') if int(valor) > 99 else str('0,')
@@ -23,8 +25,19 @@ def cpf_format(cpf):
 
 
 # 003: -----------------------------------------------
-# 004: -----------------------------------------------
+def cel_format(cel):
+    return f'({cel[:2]}) {cel[2:7]}-{cel[7:11]}'
 
+
+# 004: -----------------------------------------------
+def tratar_imagem(arquivo_obj):
+    size = arquivo_obj.file.size
+    limite_mb = settings.TAMANHO_DAS_IMAGENS_Mb
+    if size > limite_mb*1024*1024:
+        raise ValidationError(f"O arquivo não deve ser maior que {str(limite_mb)}Mb")
+
+
+# 005: -----------------------------------------------
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
     rect_lar = pag_lar - (pag_lar * 10 / 100)
     rect_alt = pag_lar / 2.5

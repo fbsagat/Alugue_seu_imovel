@@ -75,7 +75,7 @@ Página de Eventos do Administrador de Locação
             <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato }}">
                 {{ pagamento.ao_contrato }}
             </th>
-            <th scope="col" style="cursor:default;">{{ pagamento.valor_br }}</th>
+            <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
             <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
             <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
             {% if pagamento.recibo %}
@@ -123,7 +123,7 @@ Página de Eventos do Administrador de Locação
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
             <th scope="col" style="cursor:default;">{{ gasto.do_imovel }}</th>
-            <th scope="col" style="cursor:default;">{{ gasto.valor_br }}</th>
+            <th scope="col" style="cursor:default;">{{ gasto.valor_format }}</th>
             <th scope="col" style="cursor:default;">{{ gasto.data|date:"d/m/Y" }}</th>
             <th scope="col" style="cursor:default;" title="{{ gasto.observacoes }}">
                 {{ gasto.observacoes|truncatechars:100 }}
@@ -171,7 +171,7 @@ Página de Eventos do Administrador de Locação
     {% if locatarios %}
     <p class="text-start">Locatários:</p>
 
-    <table class="table align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+    <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
         <thead>
         <tr>
             <th scope="col" style="cursor:default;"></th>
@@ -196,12 +196,12 @@ Página de Eventos do Administrador de Locação
             <th scope="col" style="cursor:default;" title="{{ locatario.nome }}">{{ locatario.nome|truncatechars:45 }}
             </th>
             <th scope="col" style="cursor:default;">{{ locatario.RG }}</th>
-            <th scope="col" style="cursor:default;">{{ locatario.CPF }}</th>
+            <th scope="col" style="cursor:default;">{{ locatario.f_cpf }}</th>
             <th scope="col" style="cursor:default;" title="{{ locatario.ocupacao }}">
                 {{ locatario.ocupacao|truncatechars:45 }}
             </th>
-            <th scope="col" style="cursor:default;">{{ locatario.telefone1 }}</th>
-            <th scope="col" style="cursor:default;">{{ locatario.telefone2 }}</th>
+            <th scope="col" style="cursor:default;">{{ locatario.f_tel1 }}</th>
+            <th scope="col" style="cursor:default;">{{ locatario.f_tel2 }}</th>
             <th scope="col" style="cursor:default;" title="{{ locatario.email }}">
                 {{ locatario.email|truncatechars:35 }}
             </th>
@@ -210,8 +210,7 @@ Página de Eventos do Administrador de Locação
 
             {% if locatario.docs %}
             <th scope="col">
-                <a href="{{ locatario.docs.url }}" class="link-primary" target="_blank"
-                   title="Clique para visualizar">🗂</a>
+                <a href="{{ locatario.docs.url }}" class="link-primary" target="_blank" title="Clique para visualizar">🗂</a>
             </th>
             {% else %}
             <th scope="col" style="cursor:default;" title="Sem registro">✖️</th>
@@ -261,7 +260,7 @@ Página de Eventos do Administrador de Locação
             </th>
             <th scope="col" style="cursor:default;">{{ contrato.data_entrada|date:"d/m/Y" }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.data_saida|date:"d/m/Y" }}</th>
-            <th scope="col" style="cursor:default;">{{ contrato.valor_br }}</th>
+            <th scope="col" style="cursor:default;">{{ contrato.valor_format }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.dia_vencimento }}</th>
 
             {% if contrato.em_posse %}

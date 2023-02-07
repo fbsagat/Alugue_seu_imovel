@@ -129,8 +129,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/').replace('\\', '/')
 MEDIA_URL = '/media/'
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 1621440
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -150,7 +148,20 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
+DJANGORESIZED_DEFAULT_SIZE = [1080, None]
+DJANGORESIZED_DEFAULT_SCALE = 0.5
+DJANGORESIZED_DEFAULT_QUALITY = 75
+DJANGORESIZED_DEFAULT_KEEP_META = True
+DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG'
+DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': ".jpg"}
+DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
+
+# CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/
+
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-FICT_QTD = {'locatario': 10, 'imovel_g': 3, 'imovel': 10, 'contrato': 4, 'pagamento': 3, 'gasto': 2, 'nota': 4,
+FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': 5, 'pagamento': 5, 'gasto': 3, 'nota': 4,
             'user': 1}
+
+# Tamanho em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
+TAMANHO_DAS_IMAGENS_Mb = 4
