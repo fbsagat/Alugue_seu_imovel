@@ -23,6 +23,7 @@ def cpf_format(cpf):
 
 
 # 003: -----------------------------------------------
+# 004: -----------------------------------------------
 
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
     rect_lar = pag_lar - (pag_lar * 10 / 100)
