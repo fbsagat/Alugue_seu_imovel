@@ -189,6 +189,8 @@ def registrar_pagamento(request):
         pagamento.do_locatario = locatario
         pagamento.save()
         messages.success(request, f"Pagamento registrado com sucesso!")
+        if request.session['form1']:
+            del request.session['form1']
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form1'] = request.POST
@@ -238,6 +240,8 @@ def registrar_gasto(request):
         gasto.do_locador = request.user
         gasto.save()
         messages.success(request, "Gasto registrado com sucesso!")
+        if request.session['form3']:
+            del request.session['form3']
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form3'] = request.POST
@@ -279,6 +283,8 @@ def registrar_locat(request):
         locatario.do_locador = request.user
         locatario.save()
         messages.success(request, "Locatário registrado com sucesso!")
+        if request.session['form4']:
+            del request.session['form4']
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form4'] = request.POST
@@ -294,6 +300,8 @@ def registrar_contrato(request):
         contrato.do_locador = request.user
         contrato.save()
         messages.success(request, "Contrato resgistrado com sucesso!")
+        if request.session['form5']:
+            del request.session['form5']
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form5'] = request.POST
@@ -347,6 +355,8 @@ def registrar_imovel(request):
             imovel.do_locador = request.user
             imovel.save()
             messages.success(request, "Imóvel resgistrado com sucesso!")
+            if request.session['form6']:
+                del request.session['form6']
             return redirect(request.META['HTTP_REFERER'])
         else:
             request.session['form6'] = request.POST
@@ -363,6 +373,8 @@ def registrar_anotacao(request):
         notas.do_usuario = request.user
         notas.save()
         messages.success(request, "Anotação resgistrada com sucesso!")
+        if request.session['form7']:
+            del request.session['form7']
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form7'] = request.POST

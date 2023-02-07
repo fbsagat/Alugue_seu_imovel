@@ -14,9 +14,10 @@ from home.funcoes_proprias import valor_br
 
 class Usuario(AbstractUser):
     anotacoes = models.ManyToManyField('Anotacoe', blank=True)
-    RG = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números')
+    RG = models.CharField(max_length=9, null=True, blank=True, help_text='Digite apenas números',
+                          validators=[MinLengthValidator(7), MaxLengthValidator(9)])
     CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números',
-                           validators=[MinLengthValidator(11)])
+                           validators=[MinLengthValidator(11), MaxLengthValidator(11)])
     telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números')
 
     locat_slots = models.IntegerField(default=2)
@@ -87,13 +88,17 @@ class Locatario(models.Model):
 
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
     docs = models.ImageField(upload_to='locatarios_docs/%Y/%m/', blank=True, verbose_name='Documentos')
-    RG = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números')
+    RG = models.CharField(max_length=9, null=False, blank=False, help_text='Digite apenas números',
+                          validators=[MinLengthValidator(7), MaxLengthValidator(9)])
     CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números',
-                           validators=[MinLengthValidator(11)])
+                           validators=[MinLengthValidator(11), MaxLengthValidator(11)])
     ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
-    telefone1 = models.CharField(max_length=11, verbose_name='Telefone 1', help_text='Digite apenas números')
+    telefone1 = models.CharField(max_length=11, blank=False, verbose_name='Telefone 1',
+                                 help_text='Digite apenas números',
+                                 validators=[MinLengthValidator(11), MaxLengthValidator(11)])
     telefone2 = models.CharField(max_length=11, blank=True, verbose_name='Telefone 2',
-                                 help_text='Digite apenas números')
+                                 help_text='Digite apenas números',
+                                 validators=[MinLengthValidator(11), MaxLengthValidator(11)])
     email = models.EmailField(max_length=45, blank=True)
     nacionalidade = models.CharField(max_length=40, blank=False, default='Brasileiro(a)')
     estadocivil = models.IntegerField(blank=False, verbose_name='Estado Civil', choices=estados_civis)
@@ -168,15 +173,18 @@ class Imovei(models.Model):
     grupo = models.ForeignKey('ImovGrupo', blank=True, null=True, on_delete=models.SET_NULL)
 
     nome = models.CharField(max_length=25, blank=False, verbose_name='Rótulo')
-    cep = models.CharField(max_length=9, blank=False, verbose_name='CEP')
+    cep = models.CharField(max_length=8, blank=False, verbose_name='CEP',
+                           validators=[MinLengthValidator(8), MaxLengthValidator(8)])
     endereco = models.CharField(max_length=150, blank=False, verbose_name='Endereço')
-    numero = models.IntegerField(blank=False, validators=[MaxValueValidator(99999), MinValueValidator(1)])
+    numero = models.IntegerField(blank=False, validators=[MinLengthValidator(1), MaxLengthValidator(8)])
     complemento = models.CharField(max_length=80, blank=True)
     bairro = models.CharField(max_length=30, blank=False)
     cidade = models.CharField(max_length=30, blank=False)
     estado = models.CharField(max_length=22, blank=False)
-    uc_energia = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Energia')
-    uc_agua = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Saneamento')
+    uc_energia = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Energia',
+                                  validators=[MinLengthValidator(4), MaxLengthValidator(15)])
+    uc_agua = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Saneamento',
+                               validators=[MinLengthValidator(4), MaxLengthValidator(15)])
     data_registro = models.DateTimeField(default=datetime.now)
     objects = ImoveiManager()
 
@@ -215,7 +223,7 @@ class Contrato(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE,
                                      verbose_name='Locatário')
-    do_imovel = models.ForeignKey(Imovei, on_delete=models.CASCADE, verbose_name='do imóvel')
+    do_imovel = models.ForeignKey(Imovei, on_delete=models.CASCADE, verbose_name='No imóvel')
 
     data_entrada = models.DateField(blank=False, verbose_name='Data de Entrada')
     duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)')
