@@ -390,7 +390,7 @@ class Anotacoe(models.Model):
         return reverse('home:Anotações', args=[(str(self.pk)), ])
 
     def __str__(self):
-        return f'{self.titulo} - {self.data_registro.strftime("%D")}'
+        return f'{self.titulo} - {self.data_registro.strftime("%d/%m/%Y")}'
 
 
 lista_mensagem = (

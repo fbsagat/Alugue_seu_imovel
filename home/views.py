@@ -130,7 +130,7 @@ class Perfil1(LoginRequiredMixin, ListView):
     template_name = 'exibir_ativos.html'
     model = Imovei
     context_object_name = 'imoveis'
-    paginate_by = 9
+    paginate_by = 12
 
     def get_queryset(self):
         self.object_list = Imovei.objects.ocupados().filter(do_locador=self.request.user).order_by('-data_registro')
@@ -163,7 +163,7 @@ class Perfil3(LoginRequiredMixin, ListView):
     template_name = 'exibir_ativos.html'
     model = Contrato
     context_object_name = 'contratos'
-    paginate_by = 9
+    paginate_by = 12
 
     def get_queryset(self):
         self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_registro')
@@ -189,7 +189,7 @@ def registrar_pagamento(request):
         pagamento.do_locatario = locatario
         pagamento.save()
         messages.success(request, f"Pagamento registrado com sucesso!")
-        if request.session['form1']:
+        if 'form1' in request.session:
             del request.session['form1']
         return redirect(request.META['HTTP_REFERER'])
     else:
@@ -240,7 +240,7 @@ def registrar_gasto(request):
         gasto.do_locador = request.user
         gasto.save()
         messages.success(request, "Gasto registrado com sucesso!")
-        if request.session['form3']:
+        if 'form3' in request.session:
             del request.session['form3']
         return redirect(request.META['HTTP_REFERER'])
     else:
@@ -283,7 +283,7 @@ def registrar_locat(request):
         locatario.do_locador = request.user
         locatario.save()
         messages.success(request, "Locatário registrado com sucesso!")
-        if request.session['form4']:
+        if 'form4' in request.session:
             del request.session['form4']
         return redirect(request.META['HTTP_REFERER'])
     else:
@@ -300,7 +300,7 @@ def registrar_contrato(request):
         contrato.do_locador = request.user
         contrato.save()
         messages.success(request, "Contrato resgistrado com sucesso!")
-        if request.session['form5']:
+        if 'form5' in request.session:
             del request.session['form5']
         return redirect(request.META['HTTP_REFERER'])
     else:
@@ -355,7 +355,7 @@ def registrar_imovel(request):
             imovel.do_locador = request.user
             imovel.save()
             messages.success(request, "Imóvel resgistrado com sucesso!")
-            if request.session['form6']:
+            if 'form6' in request.session:
                 del request.session['form6']
             return redirect(request.META['HTTP_REFERER'])
         else:
@@ -373,7 +373,7 @@ def registrar_anotacao(request):
         notas.do_usuario = request.user
         notas.save()
         messages.success(request, "Anotação resgistrada com sucesso!")
-        if request.session['form7']:
+        if 'form7' in request.session:
             del request.session['form7']
         return redirect(request.META['HTTP_REFERER'])
     else:
@@ -665,6 +665,7 @@ class Notas(LoginRequiredMixin, ListView):
     model = Anotacoe
     context_object_name = 'anotacoes'
     paginate_by = 26
+    form_class = FormAnotacoes
 
     def get_queryset(self):
         self.object_list = Anotacoe.objects.filter(do_usuario=self.request.user).order_by('-data_registro')
@@ -676,6 +677,9 @@ class EditarAnotacao(LoginRequiredMixin, UpdateView):
     template_name = 'editar_anotacao.html'
     form_class = FormAnotacoes
     success_url = reverse_lazy('/')
+
+    def get_initial(self):
+        return {'data_registro': self.object.data_registro.strftime('%Y-%m-%d')}
 
     def get_success_url(self):
         return reverse_lazy('home:Anotações', kwargs={'pk': self.object.pk})

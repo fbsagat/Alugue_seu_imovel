@@ -23,7 +23,7 @@ def contratos_ficticios(request, locador):
 
     centavos = ['00', '00', randrange(10, 99)]
     reais = [randrange(500, 1200, step=150), randrange(700, 3400, step=180), randrange(700, 3400, step=130),
-             randrange(3400, 180000, step=1500)]
+             randrange(3400, 32000, step=1500)]
     valor_mensal = f'{choice(reais)}{choice(centavos)}'
     dia_vencimento = randrange(1, 28)
 

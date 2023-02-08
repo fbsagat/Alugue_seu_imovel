@@ -15,42 +15,57 @@
 
     <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
         <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <p class="fs-3">Editar Imóvel:</p>{{ imovei }}
+            <hr width="75%"/>
+            <br><br>
             <form action="{% url 'home:Editar Imóvel' imovei.pk %}" method="POST" class="ps-5 pe-5">
                 {% csrf_token %}
-
                 <div class="row">
                     <div class="col">
-                        {{ form_imovel.cep|as_crispy_field }}
+                        {{ form.nome|as_crispy_field }}
                     </div>
                     <div class="col">
-                        {{ form_imovel.bairro|as_crispy_field }}
+                        {{ form.grupo|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="flex d-flex justify-content-end">
+                    <a href="{% url 'home:Criar Grupo Imóveis' %}"><small class="float-end link-primary">
+                        Criar/Editar grupos de imóveis</small>
+                        <ion-icon name="create-outline"></ion-icon>
+                    </a></div>
+                <div class="row">
+                    <div class="col">
+                        {{ form.cep|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                        {{ form.bairro|as_crispy_field }}
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        {{ form_imovel.endereco|as_crispy_field }}
+                        {{ form.endereco|as_crispy_field }}
                     </div>
                     <div class="col">
-                        {{ form_imovel.complemento|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ form_imovel.numero|as_crispy_field }}
-                    </div>
-                    <div class="col">
-                        {{ form_imovel.cidade|as_crispy_field }}
-                    </div>
-                    <div class="col">
-                        {{ form_imovel.estado|as_crispy_field }}
+                        {{ form.complemento|as_crispy_field }}
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        {{ form_imovel.uc_energia|as_crispy_field }}
+                        {{ form.numero|as_crispy_field }}
                     </div>
                     <div class="col">
-                        {{ form_imovel.uc_agua|as_crispy_field }}
+                        {{ form.cidade|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                        {{ form.estado|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ form.uc_energia|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                        {{ form.uc_agua|as_crispy_field }}
                     </div>
                 </div>
 

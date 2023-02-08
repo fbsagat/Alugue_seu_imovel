@@ -15,6 +15,9 @@
 
     <container class="flex justify-center items-center p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
         <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <p class="fs-3">Editar Gasto:</p>{{ gasto }}
+            <hr width="75%" />
+            <br><br>
             <form action="{% url 'home:Editar Gasto' gasto.pk %}" method="POST" enctype="multipart/form-data"
                   class="mask-x_form ps-5 pe-5">
                 {% csrf_token %}

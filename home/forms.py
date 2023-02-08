@@ -156,6 +156,7 @@ class FormGasto(forms.ModelForm):
         model = Gasto
         fields = ('do_imovel', 'valor', 'data', 'observacoes', 'comprovante')
         widgets = {
+            'observacoes': Textarea(attrs={'cols': 100, 'rows': 15}),
             'data': DateInput(),
             'valor': Numeros(),
         }
@@ -226,7 +227,7 @@ class FormAnotacoes(forms.ModelForm):
         fields = ['titulo', 'data_registro', 'texto']
         widgets = {
             'data_registro': DateInput(),
-            'texto': Textarea(),
+            'texto': Textarea(attrs={'cols': 120, 'rows': 15}),
         }
 
 
