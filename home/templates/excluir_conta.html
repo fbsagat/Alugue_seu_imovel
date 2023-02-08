@@ -19,10 +19,11 @@
             <form method="post">
                 {% csrf_token %}
                 <fieldset class="form-group">
-                    <legend class="border-bottom mb-4">Confirme para excluir a sua conta. Todos os seus dados serão
-                        apagados
-                        definitivamente
+                    <legend class="border-bottom mb-4">Confirme para excluir a sua conta.
                     </legend>
+                    <legend>😱⚠️Todos os seus dados serão excluidos definitivamente⚠️😱
+                    </legend>
+                    <br><br>
                     {{ form|crispy }}
                 </fieldset>
                 <div class="justify-center items-center">

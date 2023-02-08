@@ -254,6 +254,9 @@ class EditarGasto(LoginRequiredMixin, UpdateView):
     template_name = 'editar_gasto.html'
     form_class = FormGasto
 
+    def get_initial(self):
+        return {'data': self.object.data.strftime('%Y-%m-%d')}
+
     def get_success_url(self):
         return reverse_lazy('home:Gastos', kwargs={'pk': self.object.pk})
 
@@ -290,6 +293,7 @@ def registrar_locat(request):
         request.session['form4'] = request.POST
         messages.error(request, f"Formulário inválido!")
         return redirect(request.META['HTTP_REFERER'])
+
 
 # CONTRATO ---------------------------------------
 @login_required

@@ -189,7 +189,7 @@ class Imovei(models.Model):
     cep = models.CharField(max_length=8, blank=False, verbose_name='CEP',
                            validators=[MinLengthValidator(8), MaxLengthValidator(8)])
     endereco = models.CharField(max_length=150, blank=False, verbose_name='Endereço')
-    numero = models.IntegerField(blank=False, validators=[MinLengthValidator(1), MaxLengthValidator(8)])
+    numero = models.IntegerField(blank=False, validators=[MinValueValidator(1), MaxValueValidator(999999)])
     complemento = models.CharField(max_length=80, blank=True)
     bairro = models.CharField(max_length=30, blank=False)
     cidade = models.CharField(max_length=30, blank=False)
