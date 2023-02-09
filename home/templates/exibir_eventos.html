@@ -55,14 +55,14 @@ Página de Eventos do Administrador de Locação
     {% if pagamentos %}
     <p class="text-start fw-bold">Pagamentos:</p>
 
-    <table class="table align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+    <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
         <thead>
         <tr>
             <th scope="col" style="cursor:default;"></th>
             <th scope="col" style="cursor:default;">Contrato de Origem</th>
             <th scope="col" style="cursor:default;">Valor</th>
             <th scope="col" style="cursor:default;">Data do pagam.</th>
-            <th scope="col" style="cursor:default;">Forma de Pag.</th>
+            <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
             <th scope="col" style="cursor:default;">Recibo</th>
             <th scope="col" style="cursor:default;">Excluir</th>
         </tr>
@@ -72,7 +72,7 @@ Página de Eventos do Administrador de Locação
         {% for pagamento in pagamentos %}
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
-            <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato }}">
+            <th scope="col " style="cursor:default;" title="{{ pagamento.ao_contrato }}">
                 {{ pagamento.ao_contrato }}
             </th>
             <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
@@ -139,7 +139,6 @@ Página de Eventos do Administrador de Locação
                                title="Editar">✒️</a></th>
             <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Gasto' gasto.pk %}"
                                title="Excluir">❌</a></th>
-
         </tr>
         {% endfor %}
         <tr>
@@ -184,17 +183,17 @@ Página de Eventos do Administrador de Locação
             <th scope="col" style="cursor:default;">Email</th>
             <th scope="col" style="cursor:default;">Nacionalidade</th>
             <th scope="col" style="cursor:default;">Estado Civil</th>
-            <th scope="col" style="cursor:default;">Docs</th>
+            <th scope="col" style="cursor:default;" title="Documentos">Docs</th>
             <th scope="col" style="cursor:default;">Editar</th>
             <th scope="col" style="cursor:default;">Excluir</th>
+        </tr>
         </thead>
         <tbody>
 
         {% for locatario in locatarios %}
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
-            <th scope="col" style="cursor:default;" title="{{ locatario.nome }}">{{ locatario.nome|truncatechars:45 }}
-            </th>
+            <th scope="col" style="cursor:default;">{{ locatario.nome }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.RG }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_cpf }}</th>
             <th scope="col" style="cursor:default;" title="{{ locatario.ocupacao }}">
@@ -202,9 +201,7 @@ Página de Eventos do Administrador de Locação
             </th>
             <th scope="col" style="cursor:default;">{{ locatario.f_tel1 }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_tel2 }}</th>
-            <th scope="col" style="cursor:default;" title="{{ locatario.email }}">
-                {{ locatario.email|truncatechars:35 }}
-            </th>
+            <th scope="col" style="cursor:default;">{{ locatario.email }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.nacionalidade }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.get_estadocivil_display }}</th>
 
@@ -241,11 +238,11 @@ Página de Eventos do Administrador de Locação
             <th scope="col" style="cursor:default;">Data de Entrada</th>
             <th scope="col" style="cursor:default;">Data de Saída</th>
             <th scope="col" style="cursor:default;">Valor do Aluguel</th>
-            <th scope="col" style="cursor:default;">Vencimento Dia</th>
-            <th scope="col" style="cursor:default;">Minha Via</th>
-            <th scope="col" style="cursor:default;">Ativado</th>
-            <th scope="col" style="cursor:default;">Editar</th>
-            <th scope="col" style="cursor:default;">Excluir</th>
+            <th scope="col" style="cursor:default;" title="Dia de vencimento">Venc. d</th>
+            <th scope="col" style="cursor:default;" title="Minha Via em mãos Ativado/Desativado">M. via</th>
+            <th scope="col" style="cursor:default;" title="Contrato Ativado/Rescindido">Ativado</th>
+            <th scope="col" style="cursor:default;" title="Editar Contrato">Editar</th>
+            <th scope="col" style="cursor:default;" title="Excluir Contrato">Excluir</th>
         </tr>
         </thead>
         <tbody>
@@ -265,10 +262,10 @@ Página de Eventos do Administrador de Locação
 
             {% if contrato.em_posse %}
             <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
-                               title="Em mãos">✅️</a></th>
+                               title="Em mãos, clique para designar não recebido">✅️</a></th>
             {% else %}
             <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
-                               title="Não recebido">✖️</a></th>
+                               title="Não recebido, clique para designar recebido">✖️</a></th>
             {% endif %}
 
             {% if contrato.vencido %}
@@ -276,10 +273,10 @@ Página de Eventos do Administrador de Locação
             {% else %}
             {% if contrato.rescindido %}
             <th scope="col"><a class="link-primary" href="{% url 'home:Rescindir Contrato' contrato.pk %}"
-                               title="Reativar">️✖️</a></th>
+                               title="Rescindido, clique para ativar">️✖️</a></th>
             {% else %}
             <th scope="col"><a class="link-primary" href="{% url 'home:Rescindir Contrato' contrato.pk %}"
-                               title="Rescindir">✅</a></th>
+                               title="Ativado, clique para rescindir">✅</a></th>
             {% endif %}
             {% endif %}
 
@@ -312,12 +309,11 @@ Página de Eventos do Administrador de Locação
         <thead>
         <tr>
             <th scope="col" style="cursor:default;"></th>
-            <th scope="col" style="cursor:default;">Nome</th>
+            <th scope="col" style="cursor:default;">Rótulo</th>
             <th scope="col" style="cursor:default;">Grupo</th>
             <th scope="col" style="cursor:default;">Endereço</th>
             <th scope="col" style="cursor:default;">UC Energia</th>
             <th scope="col" style="cursor:default;">UC Saneamento</th>
-            <th scope="col" style="cursor:default;">Ocup.</th>
             <th scope="col" style="cursor:default;">Editar</th>
             <th scope="col" style="cursor:default;">Excluir</th>
         </tr>
@@ -333,24 +329,19 @@ Página de Eventos do Administrador de Locação
             {% else %}
             <th scope="col" style="cursor:default;">---</th>
             {% endif %}
-            <th scope="col" style="cursor:default;" title="{{ imovel.endereco }}">
-                {{ imovel.endereco|truncatechars:125 }}
+            <th scope="col" style="cursor:default;" title="{{ imovel.endereco_completo }}">
+                {{ imovel.endereco_base|truncatechars:125 }}
             </th>
             <th scope="col" style="cursor:default;">{{ imovel.uc_energia }}</th>
             <th scope="col" style="cursor:default;">{{ imovel.uc_agua }}</th>
-            {% if imovel.esta_ocupado %}
-            <th scope="col" style="cursor:default;" title="Imóvel ocupado">💡</th>
-            {% else %}
-            <th scope="col" style="cursor:default;" title="Imóvel desocupado">️✖️</th>
-            {% endif %}
             <th scope="col"><a href="{% url 'home:Editar Imóvel' imovel.pk %}" class="link-primary"
                                title="Editar">✒️</a>
             </th>
             <th scope="col"><a href="{% url 'home:Excluir Imóvel' imovel.pk %}" class="link-danger"
                                title="Excluir">❌</a>
             </th>
-
-            {% endfor %}
+        </tr>
+        {% endfor %}
 
         </tr>
         </tbody>
