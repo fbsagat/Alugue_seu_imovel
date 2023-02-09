@@ -18,7 +18,7 @@
             <p class="fs-3">Editar Imóvel:</p>{{ imovei }}
             <hr width="75%"/>
             <br><br>
-            <form action="{% url 'home:Editar Imóvel' imovei.pk %}" method="POST" class="ps-5 pe-5">
+            <form action="{% url 'home:Editar Imóvel' imovei.pk %}" method="POST" class="ps-5 pe-5 mask-x_form">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col">

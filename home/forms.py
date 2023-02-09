@@ -3,6 +3,7 @@ from datetime import datetime, date
 from Adm_de_Locacao import settings
 
 from django import forms
+
 from django.contrib.auth.forms import UserCreationForm
 from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
@@ -193,6 +194,7 @@ class FormImovel(forms.ModelForm):
 
 
 class FormAnotacoes(forms.ModelForm):
+
     class Meta:
         model = Anotacoe
         fields = '__all__'

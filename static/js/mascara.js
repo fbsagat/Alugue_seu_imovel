@@ -14,10 +14,10 @@ $(function(){
     $('.mask-telefone1, .mask-telefone2, #id_telefone').mask(SPMaskBehavior, spOptions);
 
     $('.mask-x_form').submit(function(){
-    $('.mask-x_form').find(":input[class*='mask']").unmask();
-    $('.mask-x_form').find(":input[id*='mask-x_form']").unmask();
+    $('.mask-x_form').find(":input[id*='id_CEP']").unmask();
+    $('.mask-x_form').find(":input[id*='id_valor_pago']").unmask();
+    $('.mask-x_form').find(":input[id*='id_valor']").unmask();
     $('.mask-x_form').find(":input[id*='id_telefone']").unmask();
     $('.mask-x_form').find(":input[id*='id_CPF']").unmask();
-    $('.mask-x_form').find(":input[id*='id_CEP']").unmask();
 });
 });

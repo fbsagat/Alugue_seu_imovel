@@ -435,7 +435,7 @@ def recibos(request, pk):
                          'rg_loct': f'{locatario.RG}',
                          'cpf_loct': f'{locatario.CPF}',
                          'valor_e_extenso': f'{contrato.valor_format()} ({num_ptbr_reais.upper()} REAIS{completo.upper()})',
-                         'endereco': f"{imovel.endereco}",
+                         'endereco': f"{imovel.endereco_completo()}",
                          'cidade': f'{imovel.cidade}',
                          'data': '________________, ____ de _________ de ________',
                          'cod_recibo': codigos,

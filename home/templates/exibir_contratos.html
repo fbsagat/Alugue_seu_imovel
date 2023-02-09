@@ -42,16 +42,16 @@ Página dos Contratos do Administrador de Locação
                 {{ contrato.do_imovel|truncatechars:106 }}
             </th>
             <th scope="col" style="cursor:default;">{{ contrato.data_entrada|date:"d/m/Y" }}</th>
-            <th scope="col" style="cursor:default;" title="Duração: {{ contrato.duracao }} meses.">{{ contrato.data_saida|date:"d/m/Y" }}</th>
+            <th scope="col" style="cursor:default;">{{ contrato.data_saida|date:"d/m/Y" }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.valor_format }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.dia_vencimento }}</th>
 
             {% if contrato.em_posse %}
             <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
-                               title="Em mãos">✅️</a></th>
+                               title="Em mãos, clique para designar não recebido">✅️</a></th>
             {% else %}
             <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
-                               title="Não recebido">✖️</a></th>
+                               title="Não recebido, clique para designar recebido">✖️</a></th>
             {% endif %}
 
             {% if contrato.vencido %}
@@ -59,10 +59,10 @@ Página dos Contratos do Administrador de Locação
             {% else %}
             {% if contrato.rescindido %}
             <th scope="col"><a class="link-primary" href="{% url 'home:Rescindir Contrato' contrato.pk %}"
-                               title="Rescindido">️✖️</a></th>
+                               title="Rescindido, clique para ativar">️✖️</a></th>
             {% else %}
             <th scope="col"><a class="link-primary" href="{% url 'home:Rescindir Contrato' contrato.pk %}"
-                               title="Ativado">✅</a></th>
+                               title="Ativado, clique para rescindir">✅</a></th>
             {% endif %}
             {% endif %}
 

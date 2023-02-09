@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from faker import Faker
 from random import randrange, choice
 
-from home.models import ImovGrupo, Locatario, Imovei, Contrato
+from home.models import ImovGrupo, Locatario, Imovei, Contrato, estados
 
 locales = 'pt_BR'
 fake = Faker(locales)
@@ -56,13 +56,13 @@ def imov_grupo_fict():
 
 def imoveis_ficticios():
     nome = fake.neighborhood()
-    cep = fake.postcode()
-    endereco = fake.street_address()
+    cep = randrange(10000000, 99999999)
+    endereco = fake.street_name()
     numero = fake.building_number()
-    complemento = fake.street_name()
+    complemento = fake.neighborhood()
     bairro = fake.bairro()
     cidade = fake.city()
-    estado = fake.administrative_unit()
+    estado = estados[randrange(0, 27)][0]
     uc_energia = randrange(100000000, 999999999)
     uc_agua = randrange(100000000, 999999999)
     grupos_disponiveis = ImovGrupo.objects.all()

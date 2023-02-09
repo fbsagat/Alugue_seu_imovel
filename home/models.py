@@ -5,23 +5,26 @@ from uuid import uuid4
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from django_resized import ResizedImageField
-from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format
+from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
+
+apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 
 
 class Usuario(AbstractUser):
     anotacoes = models.ManyToManyField('Anotacoe', blank=True)
     RG = models.CharField(max_length=9, null=True, blank=True, help_text='Digite apenas números',
-                          validators=[MinLengthValidator(7), MaxLengthValidator(9)])
+                          validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
     CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números',
-                           validators=[MinLengthValidator(11), MaxLengthValidator(11)])
-    telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números')
+                           validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
+    telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números',
+                                validators=[apenas_numeros])
 
     locat_slots = models.IntegerField(default=2)
 
@@ -93,16 +96,16 @@ class Locatario(models.Model):
     docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', blank=True,
                              verbose_name='Documentos', validators=[tratar_imagem])
     RG = models.CharField(max_length=9, null=False, blank=False, help_text='Digite apenas números',
-                          validators=[MinLengthValidator(7), MaxLengthValidator(9)])
+                          validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
     CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números',
-                           validators=[MinLengthValidator(11), MaxLengthValidator(11)])
+                           validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
     telefone1 = models.CharField(max_length=11, blank=False, verbose_name='Telefone 1',
                                  help_text='Digite apenas números',
-                                 validators=[MinLengthValidator(11), MaxLengthValidator(11)])
+                                 validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     telefone2 = models.CharField(max_length=11, blank=True, verbose_name='Telefone 2',
                                  help_text='Digite apenas números',
-                                 validators=[MinLengthValidator(11), MaxLengthValidator(11)])
+                                 validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     email = models.EmailField(max_length=45, blank=True)
     nacionalidade = models.CharField(max_length=40, blank=False, default='Brasileiro(a)')
     estadocivil = models.IntegerField(blank=False, verbose_name='Estado Civil', choices=estados_civis)
@@ -179,6 +182,16 @@ class ImoveiManager(models.Manager):
         return self.exclude(com_locatario__isnull=True)
 
 
+estados = (
+    ('AC', 'Acre'), ('AL', 'Alagoas'), ('AP', 'Amapá'), ('AM', 'Amazonas'), ('BA', 'Bahia'), ('CE', 'Ceará'),
+    ('DF', 'Distrito Federal'), ('ES', 'Espírito Santo'), ('GO', 'Goiás'), ('MA', 'Maranhão'), ('MT', 'Mato Grosso'),
+    ('MS', 'Mato Grosso do Sul'), ('MG', 'Minas Gerais'), ('PA', 'Pará'), ('PB', 'Paraíba'), ('PR', 'Paraná'),
+    ('PE', 'Pernambuco'), ('PI', 'Piauí'), ('RJ', 'Rio de Janeiro'), ('RN', 'Rio Grande do Norte'),
+    ('RS', 'Rio Grande do Sul'), ('RO', 'Rondônia'), ('RR', 'Roraima'), ('SC', 'Santa Catarina'), ('SP', 'São Paulo'),
+    ('SE', 'Sergipe'), ('TO', 'Tocantins')
+)
+
+
 class Imovei(models.Model):
     do_locador = models.ForeignKey('Usuario', blank=False, on_delete=models.CASCADE)
     com_locatario = models.ForeignKey('Locatario', blank=True, null=True, on_delete=models.SET_NULL)
@@ -187,13 +200,14 @@ class Imovei(models.Model):
 
     nome = models.CharField(max_length=25, blank=False, verbose_name='Rótulo')
     cep = models.CharField(max_length=8, blank=False, verbose_name='CEP',
-                           validators=[MinLengthValidator(8), MaxLengthValidator(8)])
+                           validators=[MinLengthValidator(8), MaxLengthValidator(8), apenas_numeros])
     endereco = models.CharField(max_length=150, blank=False, verbose_name='Endereço')
-    numero = models.IntegerField(blank=False, validators=[MinValueValidator(1), MaxValueValidator(999999)])
+    numero = models.IntegerField(blank=False,
+                                 validators=[MinValueValidator(1), MaxValueValidator(999999), apenas_numeros])
     complemento = models.CharField(max_length=80, blank=True)
     bairro = models.CharField(max_length=30, blank=False)
     cidade = models.CharField(max_length=30, blank=False)
-    estado = models.CharField(max_length=22, blank=False)
+    estado = models.CharField(max_length=2, blank=False, choices=estados)
     uc_energia = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Energia',
                                   validators=[MinLengthValidator(4), MaxLengthValidator(15)])
     uc_agua = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Saneamento',
@@ -201,17 +215,26 @@ class Imovei(models.Model):
     data_registro = models.DateTimeField(default=datetime.now)
     objects = ImoveiManager()
 
-    def get_absolute_url(self):
-        return reverse('home:Imóveis', args=[str(self.pk), ])
-
     def __str__(self):
         return f'{self.nome} ({self.grupo})'
+
+    def get_absolute_url(self):
+        return reverse('home:Imóveis', args=[str(self.pk), ])
 
     def nogrupo(self):
         return '' if self.grupo is None else self.grupo
 
     def esta_ocupado(self):
         return False if self.com_locatario is None else True
+
+    def f_cep(self):
+        return cep_format(self.cep)
+
+    def endereco_base(self):
+        return f'{self.endereco}, Nº{self.numero} ({self.complemento}) - {self.bairro}'
+
+    def endereco_completo(self):
+        return f'{self.endereco_base()} - {self.cidade}/{self.estado}, {self.f_cep()}'
 
 
 # Gerar o codigo para o contrato:
@@ -241,7 +264,7 @@ class Contrato(models.Model):
     data_entrada = models.DateField(blank=False, verbose_name='Data de Entrada')
     duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)')
     valor_mensal = models.CharField(max_length=9, verbose_name='Valor Mensal (R$): ', blank=False,
-                                    help_text='Digite apenas números')
+                                    help_text='Digite apenas números', validators=[apenas_numeros])
     dia_vencimento = models.IntegerField(blank=False, validators=[MaxValueValidator(28), MinValueValidator(1)],
                                          verbose_name='Dia do vencimento', help_text='(1-28)')
     em_posse = models.BooleanField(default=False, null=False,
@@ -340,7 +363,8 @@ class Pagamento(models.Model):
                                     verbose_name='Do Contrato')
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE)
 
-    valor_pago = models.CharField(max_length=9, verbose_name='Valor Pago (R$): ', blank=False)
+    valor_pago = models.CharField(max_length=9, verbose_name='Valor Pago (R$): ', blank=False,
+                                  validators=[apenas_numeros])
     data_pagamento = models.DateTimeField(blank=False, verbose_name='Data do Pagamento')
     recibo = models.BooleanField(default=True, verbose_name='Recibo Entregue',
                                  help_text='Marque quando o recido estiver esntregue')
@@ -362,7 +386,7 @@ class Gasto(models.Model):
     do_locador = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
     do_imovel = models.ForeignKey('Imovei', blank=False, on_delete=models.CASCADE)
 
-    valor = models.CharField(max_length=9, verbose_name='Valor Gasto (R$): ', blank=False)
+    valor = models.CharField(max_length=9, verbose_name='Valor Gasto (R$): ', blank=False, validators=[apenas_numeros])
     data = models.DateTimeField(blank=False)
     observacoes = models.TextField(max_length=500, blank=True, verbose_name='Observações')
     comprovante = ResizedImageField(size=[1280, None], upload_to='gastos_comprovantes/%Y/%m/', blank=True,

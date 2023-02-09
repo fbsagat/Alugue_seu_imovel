@@ -28,7 +28,7 @@ Página dos Locatários do Administrador de Locação
             <th scope="col" style="cursor:default;">Email</th>
             <th scope="col" style="cursor:default;">Nacionalidade</th>
             <th scope="col" style="cursor:default;">Estado Civil</th>
-            <th scope="col" style="cursor:default;">Docs</th>
+            <th scope="col" style="cursor:default;" title="Documentos">Docs</th>
             <th scope="col" style="cursor:default;">Editar</th>
             <th scope="col" style="cursor:default;">Excluir</th>
         </thead>
@@ -37,8 +37,7 @@ Página dos Locatários do Administrador de Locação
         {% for locatario in locatarios %}
         <tr>
             <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
-            <th scope="col" style="cursor:default;" title="{{ locatario.nome }}">{{ locatario.nome|truncatechars:45 }}
-            </th>
+            <th scope="col" style="cursor:default;">{{ locatario.nome }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.RG }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_cpf }}</th>
             <th scope="col" style="cursor:default;" title="{{ locatario.ocupacao }}">
@@ -46,9 +45,7 @@ Página dos Locatários do Administrador de Locação
             </th>
             <th scope="col" style="cursor:default;">{{ locatario.f_tel1 }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_tel2 }}</th>
-            <th scope="col" style="cursor:default;" title="{{ locatario.email }}">
-                {{ locatario.email|truncatechars:35 }}
-            </th>
+            <th scope="col" style="cursor:default;">{{ locatario.email }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.nacionalidade }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.get_estadocivil_display }}</th>
 

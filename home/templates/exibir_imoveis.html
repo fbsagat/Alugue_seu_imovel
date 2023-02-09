@@ -17,12 +17,11 @@ Página dos Imóveis do Administrador de Locação
         <thead>
         <tr>
             <th scope="col" style="cursor:default;"></th>
-            <th scope="col" style="cursor:default;">Nome</th>
+            <th scope="col" style="cursor:default;">Rótulo</th>
             <th scope="col" style="cursor:default;">Grupo</th>
             <th scope="col" style="cursor:default;">Endereço</th>
             <th scope="col" style="cursor:default;">UC Energia</th>
             <th scope="col" style="cursor:default;">UC Saneamento</th>
-            <th scope="col" style="cursor:default;">Ocup.</th>
             <th scope="col" style="cursor:default;">Editar</th>
             <th scope="col" style="cursor:default;">Excluir</th>
         </tr>
@@ -38,16 +37,11 @@ Página dos Imóveis do Administrador de Locação
             {% else %}
             <th scope="col" style="cursor:default;">---</th>
             {% endif %}
-            <th scope="col" style="cursor:default;" title="{{ imovel.endereco }}">
-                {{ imovel.endereco|truncatechars:125 }}
+            <th scope="col" style="cursor:default;" title="{{ imovel.endereco_completo }}">
+                {{ imovel.endereco_base|truncatechars:125 }}
             </th>
             <th scope="col" style="cursor:default;">{{ imovel.uc_energia }}</th>
             <th scope="col" style="cursor:default;">{{ imovel.uc_agua }}</th>
-            {% if imovel.esta_ocupado %}
-            <th scope="col" style="cursor:default;" title="Imóvel ocupado">💡</th>
-            {% else %}
-            <th scope="col" style="cursor:default;" title="Imóvel desocupado">️✖️</th>
-            {% endif %}
             <th scope="col"><a href="{% url 'home:Editar Imóvel' imovel.pk %}" class="link-primary"
                                title="Editar">✒️</a>
             </th>

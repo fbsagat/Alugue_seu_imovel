@@ -24,12 +24,12 @@ Página de Perfil do Administrador de Locação
                         {{ imovel.nome }} - {{ imovel.grupo }}
                     </div>
                     <div class="card-body">
-                        <p class="card-text">End.: {{ imovel.endereco }}</p>
-                        <p class="card-text">Matrícula de Energia: {{ imovel.uc_energia }}</p>
-                        <p class="card-text">Matrícula de Saneamento: {{ imovel.uc_agua }}</p>
-                        <p class="card-text">Registrado em: {{ imovel.data_registro }}</p>
-                        <p class="card-text">Com: {{ imovel.com_locatario }}</p>
-                        <p class="card-text">Valor do aluguel: {{ imovel.contrato_atual.valor_format }} </p>
+                        <p class="card-text">END.: {{ imovel.endereco_completo }}</p>
+                        <p class="card-text">MATRICULA DE ENERGIA: {{ imovel.uc_energia }}</p>
+                        <p class="card-text">MATRICULA DE SANEAMENTO: {{ imovel.uc_agua }}</p>
+                        <p class="card-text">REGISTRADO EM: {{ imovel.data_registro }}</p>
+                        <p class="card-text">COM: {{ imovel.com_locatario }}</p>
+                        <p class="card-text">VALOR DO ALUGUEL: {{ imovel.contrato_atual.valor_format }} </p>
                     </div>
                 </div>
             </div>
@@ -54,15 +54,15 @@ Página de Perfil do Administrador de Locação
                         {{ locatario.nome }}
                     </div>
                     <div class="card-body">
-                        <p class="card-text">Ocupação: {{ locatario.ocupacao }}</p>
+                        <p class="card-text">OCUPAÇÃO: {{ locatario.ocupacao }}</p>
                         <p class="card-text">RG: {{ locatario.RG }} / CPF: {{ locatario.f_cpf }}</p>
-                        <p class="card-text">Telefone 1: {{ locatario.f_tel1 }}</p>
-                        <p class="card-text">Telefone 2: {{ locatario.f_tel2 }}</p>
-                        <p class="card-text">Email: {{ locatario.email }}</p>
-                        <p class="card-text">Nacionalidade: {{ locatario.nacionalidade }} / Estado Civil:
+                        <p class="card-text">TELEFONE 1: {{ locatario.f_tel1 }}</p>
+                        <p class="card-text">TELEFONE 2: {{ locatario.f_tel2 }}</p>
+                        <p class="card-text">EMAIL: {{ locatario.email }}</p>
+                        <p class="card-text">NACIONALID.: {{ locatario.nacionalidade }} / EST. CIVIL:
                             {{locatario.get_estadocivil_display }}
                             {% for imovel in locatario.com_imoveis.all %}
-                        <p class="card-text">Em: {{ imovel.nome }}/{{ imovel.grupo }} </p>
+                        <p class="card-text">COM: {{ imovel.nome }}/{{ imovel.grupo }} </p>
                         {% endfor %}
 
                     </div>
@@ -87,14 +87,14 @@ Página de Perfil do Administrador de Locação
                 <div class="card bg-black bg-opacity-75 border-dark h-100">
 
                     <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
-                        COM: {{ contrato.do_locatario }}
+                        {{ contrato }}
                     </div>
                     <div class="card-body">
-                        <p class="card-text">EM: {{contrato.do_imovel.nome }} - {{contrato.do_imovel.grupo }}</p>
-                        <p class="card-text">END.: {{contrato.do_imovel.endereco }}</p>
+                        <p class="card-text">DO IMOVEL: {{contrato.do_imovel.nome }} - ({{contrato.do_imovel.grupo }}) -
+                            End.: {{contrato.do_imovel.endereco_base }}</p>
                         <p class="card-text">DE: {{ contrato.data_entrada|date:"d/m/Y" }} ATÉ:
-                            {{ contrato.data_saida|date:"d/m/Y" }}</p>
-                        <p class="card-text">MENSALIDAE: {{ contrato.valor_format }} / DIA DE VENCIMENTO:
+                            {{ contrato.data_saida|date:"d/m/Y" }} ({{ contrato.duracao }} meses)</p>
+                        <p class="card-text">MENSALIDAE: {{ contrato.valor_format }} / VENCIMENTO DIA:
                             {{contrato.dia_vencimento }}</p>
                         <p class="card-text">VALOR DO CONTRATO: {{ contrato.valor_do_contrato }}</p>
                         <p class="card-text">CÓDIGO: {{ contrato.codigo }}</p>

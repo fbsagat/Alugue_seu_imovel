@@ -46,7 +46,7 @@
         <div class="ps-1">
             <a href="{% url 'home:Eventos' request.user.pk %}">
                 <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
-                    Eventos
+                    Eventos 🔍
                 </button>
             </a>
         </div>
@@ -59,13 +59,13 @@
                 Ativos
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'home:Check Imóveis' request.user.pk %}">Imóveis Ativos</a>
+                <li><a class="dropdown-item" href="{% url 'home:Check Imóveis' request.user.pk %}">Imóveis Ativos 💡</a>
                 </li>
                 <li><a class="dropdown-item" href="{% url 'home:Check Locatários' request.user.pk %}">Locatários
-                    Ativos</a>
+                    Ativos 🏠</a>
                 </li>
                 <li><a class="dropdown-item" href="{% url 'home:Check Contratos' request.user.pk %}">Contratos
-                    Ativos</a></li>
+                    Ativos 📃</a></li>
             </ul>
         </div>
 
@@ -83,16 +83,16 @@
                     Registrar
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a data-bs-toggle="modal" data-bs-target="#modal3" class="dropdown-item" href="#">Pagamento</a>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal3" class="dropdown-item" href="#">Pagamento 💵</a>
                     </li>
-                    <li><a data-bs-toggle="modal" data-bs-target="#modal4" class="dropdown-item" href="#">Gasto</a></li>
-                    <li><a data-bs-toggle="modal" data-bs-target="#modal5" class="dropdown-item" href="#">Locatário</a>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal4" class="dropdown-item" href="#">Gasto 💸</a></li>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal5" class="dropdown-item" href="#">Locatário 👨‍💼</a>
                     </li>
-                    <li><a data-bs-toggle="modal" data-bs-target="#modal6" class="dropdown-item" href="#">Contrato</a>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal6" class="dropdown-item" href="#">Contrato 📃</a>
                     </li>
-                    <li><a data-bs-toggle="modal" data-bs-target="#modal8" class="dropdown-item" href="#">Imóvel</a>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal8" class="dropdown-item" href="#">Imóvel 🏠</a>
                     </li>
-                    <li><a data-bs-toggle="modal" data-bs-target="#modal7" class="dropdown-item" href="#">Anotação</a>
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal7" class="dropdown-item" href="#">Anotação 🗒️</a>
                     </li>
                 </ul>
             </div>
@@ -105,9 +105,9 @@
                     Gerar
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'home:Recibos' request.user.pk %}">Recibos</a></li>
-                    <li><a class="dropdown-item" href="#">Tabela</a></li>
-                    <li><a class="dropdown-item" href="#">Contrato</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Recibos' request.user.pk %}">Recibos 🧾</a></li>
+                    <li><a class="dropdown-item" href="#">Tabela  📑</a></li>
+                    <li><a class="dropdown-item" href="#">Contrato 📃</a></li>
                 </ul>
             </div>
         </div>
@@ -121,15 +121,15 @@
                     Histórico
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'home:Pagamentos' request.user.pk %}">Pagamentos</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Pagamentos' request.user.pk %}">Pagamentos 💵</a>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'home:Gastos' request.user.pk %}">Gastos</a></li>
-                    <li><a class="dropdown-item" href="{% url 'home:Imóveis' request.user.pk %}">Imóveis</a></li>
-                    <li><a class="dropdown-item" href="{% url 'home:Locatários' request.user.pk %}">Locatários</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Gastos' request.user.pk %}">Gastos 💸</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Imóveis' request.user.pk %}">Imóveis 🏠</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Locatários' request.user.pk %}">Locatários 👨‍💼</a>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'home:Contratos' request.user.pk %}">Contratos</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Contratos' request.user.pk %}">Contratos 📃</a>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'home:Anotações' request.user.pk %}">Anotações</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Anotações' request.user.pk %}">Anotações 🗒️</a>
                     </li>
                 </ul>
             </div>
@@ -328,7 +328,7 @@
             </div>
             <div class="">
                 <div class="modal-body">
-                    <form action="{% url 'home:Registrar Imóvel' %}" method="POST" class="ps-5 pe-5">
+                    <form action="{% url 'home:Registrar Imóvel' %}" method="POST" class="ps-5 pe-5 mask-x_form">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col">

@@ -1,3 +1,5 @@
+import datetime
+
 from Adm_de_Locacao import settings
 
 from django.urls import resolve
@@ -30,7 +32,7 @@ def forms_da_navbar(request):
         if request.session.get('form3'):
             form3 = FormGasto(request.session.get('form3'))
         else:
-            form3 = FormGasto()
+            form3 = FormGasto(initial={'data': datetime.date.today().strftime('%Y-%m-%d')})
 
         if request.session.get('form4'):
             form4 = FormLocatario(request.session.get('form4'))
@@ -50,7 +52,7 @@ def forms_da_navbar(request):
         if request.session.get('form7'):
             form7 = FormAnotacoes(request.session.get('form7'))
         else:
-            form7 = FormAnotacoes()
+            form7 = FormAnotacoes(initial={'data_registro': datetime.date.today().strftime('%Y-%m-%d')})
 
         form8 = FormAdmin(initial={'p_usuario': request.user})
 

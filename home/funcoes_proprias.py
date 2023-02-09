@@ -30,14 +30,23 @@ def cel_format(cel):
 
 
 # 004: -----------------------------------------------
-def tratar_imagem(arquivo_obj):
-    size = arquivo_obj.file.size
-    limite_mb = settings.TAMANHO_DAS_IMAGENS_Mb
-    if size > limite_mb*1024*1024:
-        raise ValidationError(f"O arquivo não deve ser maior que {str(limite_mb)}Mb")
+def cep_format(cep):
+    return f'{cep[:5]}-{cep[5:8]}'
 
 
 # 005: -----------------------------------------------
+def tratar_imagem(arquivo_obj):
+    size = arquivo_obj.file.size
+    limite_mb = settings.TAMANHO_DAS_IMAGENS_Mb
+    if size > limite_mb * 1024 * 1024:
+        raise ValidationError(f"O arquivo não deve ser maior que {str(limite_mb)}Mb")
+
+
+# 006: -----------------------------------------------
+
+# eu ia fazer uma funçao aqui, nçao precisei mais
+
+# 100: -----------------------------------------------
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
     rect_lar = pag_lar - (pag_lar * 10 / 100)
     rect_alt = pag_lar / 2.5
