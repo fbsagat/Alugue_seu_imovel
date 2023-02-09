@@ -75,7 +75,7 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
     texto = Paragraph(
         f'Eu, <b>{dados["nome_locador"]}</b>, inscrito(a) no {dados["rg_locd"]} CPF sob o nº '
         f'{cpf_format(dados["cpf_locd"])}, recebi de <b>{dados["nome_locatario"]}</b>,'
-        f' inscrito(a) no RG sob o nº {dados["rg_loct"]} e CPF sob o n° {cpf_format(dados["cpf_loct"])},'
+        f' inscrito(a) no {dados["rg_loct"]} CPF sob o n° {cpf_format(dados["cpf_loct"])},'
         f' a importância de <b>{dados["valor_e_extenso"]}</b>, referente ao pagamento do aluguel'
         f' do mês de <b>{dados["mes_e_ano"][2 * (recibo_n - 1)]} DE '
         f'{dados["mes_e_ano"][(2 * (recibo_n - 1)) + 1]}</b> (Parcela {recibo_n} de um total '
@@ -133,6 +133,7 @@ def gerar_recibos(dados):
 
     # Tratando itens opcionais \/
     dados['rg_locd'] = '' if dados['rg_locd'] == 'None' else f' RG sob o nº {dados["rg_locd"]} e '
+    dados['rg_loct'] = f' RG sob o nº {dados["rg_loct"]} e ' if dados['rg_loct'] != '' else ''
 
     for pagina in range(paginas):
         page_num = pdf.getPageNumber()

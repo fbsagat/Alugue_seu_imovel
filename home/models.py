@@ -29,7 +29,7 @@ class Usuario(AbstractUser):
     locat_slots = models.IntegerField(default=2)
 
     data_eventos_i = models.DateField(blank=True, null=True)
-    itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=[1, 2, 3, 4, 5, 6])
+    itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=['1', '2', '3', '4', '5', '6'])
     qtd_eventos = models.IntegerField(blank=True, null=True, default=10)
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
@@ -95,7 +95,7 @@ class Locatario(models.Model):
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
     docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', blank=True,
                              verbose_name='Documentos', validators=[tratar_imagem])
-    RG = models.CharField(max_length=9, null=False, blank=False, help_text='Digite apenas números',
+    RG = models.CharField(max_length=9, null=False, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
     CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números',
                            validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
