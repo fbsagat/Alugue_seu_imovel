@@ -1,0 +1,8 @@
+problemas encontrados, sem solução até agora:
+signal post_delete não é chamado quando é deletado pela area admin do site
+
+melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
+
+A fazer com o celery:
+Rotinas diarias/ ou schedule task nas datas finais dos contratos:
+Converter a propriedade vencido para True de todos os contratos cujas datas de vencimento estão posterio ao dia atual.

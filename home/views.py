@@ -2,7 +2,7 @@ import locale
 from num2words import num2words
 from datetime import datetime
 
-from Adm_de_Locacao import settings
+from Alugue_seu_imovel import settings
 
 from django.http import FileResponse, HttpResponseRedirect
 from django.core.files import File
@@ -421,7 +421,7 @@ def recibos(request, pk):
                                                                                                         flat=True))
                 datas_tratadas = list()
                 for data in datas:
-                    locale.setlocale(locale.LC_TIME, '')
+                    locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')
                     month = data.strftime('%B')
                     year = data.strftime('%Y')
                     datas_tratadas.append(f'{month.upper()}')
@@ -821,9 +821,9 @@ def botaoteste(request):
         messages.success(request, f"Criados {count} locatário")
 
     if executar == 160 or executar == 100:
-        if ImovGrupo.objects.filter(do_usuario=usuario).count() < 4 or executar == 160:
+        if ImovGrupo.objects.filter(do_usuario=usuario).count() < fict_qtd['imovel_g'] or executar == 160:
             count = 0
-            for x in range(fict_multi * fict_qtd['imovel_g']):
+            for x in range(fict_multi if executar == 160 else 1 * fict_qtd['imovel_g']):
                 count += 1
                 aleatorio = imov_grupo_fict()
                 form = FormimovelGrupo()

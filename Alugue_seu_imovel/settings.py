@@ -54,7 +54,7 @@ MIDDLEWARE = [
 
 ]
 
-ROOT_URLCONF = 'Adm_de_Locacao.urls'
+ROOT_URLCONF = 'Alugue_seu_imovel.urls'
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Adm_de_Locacao.wsgi.application'
+WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

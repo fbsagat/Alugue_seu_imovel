@@ -143,6 +143,9 @@ class Locatario(models.Model):
     def __str__(self):
         return f'{self.nome}'
 
+    def primeiro_ultimo_nome(self):
+        return f'{self.nome.split()[:1][0]} {self.nome.split()[len(self.nome.split()) - 1:][0]}'
+
     def imoveis_alugados(self):
         x = Imovei.objects.filter(com_locatario=self.pk)
         return x
@@ -315,9 +318,17 @@ class Contrato(models.Model):
     def get_absolute_url(self):
         return reverse('home:Contratos', args=[str(self.pk), ])
 
+    def nome_curto(self):
+        return f'{self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
+               f'({self.codigo})'
+
     def __str__(self):
-        return f'({self.do_locatario.nome.split()[:2][0]} {self.do_locatario.nome.split()[:2][1]} ' \
-               f'- {self.do_imovel.nome} - {self.data_entrada.strftime("%d/%m/%Y")})'
+        return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.do_imovel.nome} - ' \
+               f'{self.data_entrada.strftime("%d/%m/%Y")})'
+
+    def nome_completo(self):
+        return f'{self.do_locatario.nome} - {self.do_imovel} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
+               f'({self.codigo})'
 
     def valor_format(self):
         return valor_format(self.valor_mensal)

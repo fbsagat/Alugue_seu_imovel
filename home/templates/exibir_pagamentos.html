@@ -21,7 +21,7 @@ Página dos Pagamentos do Administrador de Locação
                 <th scope="col" style="cursor:default;"></th>
                 <th scope="col" style="cursor:default;">Contrato de Origem</th>
                 <th scope="col" style="cursor:default;">Valor</th>
-                <th scope="col" style="cursor:default;">Data do pagam.</th>
+                <th scope="col" style="cursor:default;" title="Data de pagamento">Data do Pag.</th>
                 <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
                 <th scope="col" style="cursor:default;">Recibo</th>
                 <th scope="col" style="cursor:default;">Excluir</th>
@@ -34,8 +34,8 @@ Página dos Pagamentos do Administrador de Locação
             <tbody>
             <tr>
                 <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
-                <th scope="col " style="cursor:default;" title="{{ pagamento.ao_contrato }}">
-                    {{ pagamento.ao_contrato }}
+                <th scope="col " style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
+                    {{ pagamento.ao_contrato.nome_curto }}
                 </th>
                 <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
@@ -77,8 +77,8 @@ Página dos Pagamentos do Administrador de Locação
             <tbody>
             <tr>
                 <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
-                <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato }}">
-                    {{ pagamento.ao_contrato }}
+                <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
+                    {{ pagamento.ao_contrato.nome_curto }}
                 </th>
                 <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>

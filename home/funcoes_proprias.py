@@ -1,7 +1,7 @@
 from math import ceil
 import io
 
-from Adm_de_Locacao import settings
+from Alugue_seu_imovel import settings
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle

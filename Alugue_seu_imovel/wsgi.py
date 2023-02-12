@@ -1,5 +1,5 @@
 """
-WSGI config for Adm_de_Locacao project.
+WSGI config for Alugue_seu_imovel project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Adm_de_Locacao.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Alugue_seu_imovel.settings')
 
 application = get_wsgi_application()

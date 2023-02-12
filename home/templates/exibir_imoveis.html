@@ -37,8 +37,8 @@ Página dos Imóveis do Administrador de Locação
             {% else %}
             <th scope="col" style="cursor:default;">---</th>
             {% endif %}
-            <th scope="col" style="cursor:default;" title="{{ imovel.endereco_completo }}">
-                {{ imovel.endereco_base|truncatechars:125 }}
+            <th scope="col" style="cursor:default;">
+                {{ imovel.endereco_completo }}
             </th>
             <th scope="col" style="cursor:default;">{{ imovel.uc_energia }}</th>
             <th scope="col" style="cursor:default;">{{ imovel.uc_agua }}</th>

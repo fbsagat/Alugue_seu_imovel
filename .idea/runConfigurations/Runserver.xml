@@ -6,8 +6,8 @@
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
-    <option name="SDK_HOME" value="D:\Documentos\GitHub\administrador_de_locacao\venv\Scripts\python.exe" />
-    <option name="SDK_NAME" value="Python 3.10 (administrador_de_locacao) (2)" />
+    <option name="SDK_HOME" value="D:\Documentos\Dev Projects\Alugue_seu_imovel\venv\Scripts\python.exe" />
+    <option name="SDK_NAME" value="Python 3.10 (Alugue_seu_imovel)" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />

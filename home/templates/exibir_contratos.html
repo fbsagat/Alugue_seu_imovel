@@ -38,7 +38,7 @@ Página dos Contratos do Administrador de Locação
             <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.codigo }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.do_locatario }}</th>
-            <th scope="col" style="cursor:default;" title="{{ contrato.do_imovel.endereco }}">
+            <th scope="col" style="cursor:default;" title="{{ contrato.do_imovel.endereco_completo }}">
                 {{ contrato.do_imovel|truncatechars:106 }}
             </th>
             <th scope="col" style="cursor:default;">{{ contrato.data_entrada|date:"d/m/Y" }}</th>

@@ -1,6 +1,6 @@
 import datetime
 
-from Adm_de_Locacao import settings
+from Alugue_seu_imovel import settings
 
 from django.urls import resolve
 
