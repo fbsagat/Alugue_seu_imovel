@@ -110,7 +110,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{% url 'home:Recibos' request.user.pk %}">Recibos 🧾</a></li>
-                    <li><a class="dropdown-item" href="#">Tabela 📑</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Tabela' request.user.pk %}">Tabela 📑</a></li>
                     <li><a class="dropdown-item" href="#">Contrato 📃</a></li>
                 </ul>
             </div>

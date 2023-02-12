@@ -15,9 +15,14 @@ Gerador de Recibos do Administrador de Locação
 {% if pede_dados %}
 <container class="container pt-1 text-center text-justify justify-center">
 
-    <h1 class="mx-auto fs-3 mt-5">Precisamos de alguns dados para preenchimento dos recibos, <a
-            href="{% url 'home:Editar Perfil' request.user.pk %}" class="link-primary ext-decoration-none">clique
-        aqui</a> para editar seu perfil</h1>
+    <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center justify-center flex-col">
+
+        <h1 class="font-semibold text-4xl md:text-2xl w-10/12 md:w-3/4 text-center">
+            Precisamos de alguns dados para preenchimento dos recibos, <a
+                href="{% url 'home:Editar Perfil' request.user.pk %}" class="link-primary ext-decoration-none">clique
+            aqui</a> para editar seu perfil
+        </h1>
+    </div>
 
 </container>
 {% else %}

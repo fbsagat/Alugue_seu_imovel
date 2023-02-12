@@ -206,7 +206,7 @@ class FormAnotacoes(forms.ModelForm):
 
 
 class FormRecibos(forms.Form):
-    contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.all(), initial='')
+    contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.all().order_by('-data_registro'), initial='')
 
     def __init__(self, *args, **kwargs):
         super(FormRecibos, self).__init__(*args, **kwargs)

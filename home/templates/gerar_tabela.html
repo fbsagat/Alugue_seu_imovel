@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Gerador de Tabela do Administrador de Locação
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+{% if tem_contratos %}
+<container class="container pt-1 text-center text-justify justify-center">
+
+    <iframe src=""
+            style="width:100%; height:820px;" frameborder="0"></iframe>
+
+</container>
+{% else %}
+{% include 'nenhum_registrado.html' %}
+{% endif %}
+{% endblock %}
+

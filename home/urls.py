@@ -8,7 +8,7 @@ from home.views import Dashboard, Locatarios, Imoveis, Contratos, \
     ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, entregar_recibo, ExcluirPagm, EditarContrato, \
     ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, ApagarConta, Homepage, \
     CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, Perfil1, \
-    Perfil2, Perfil3, eventos
+    Perfil2, Perfil3, eventos, tabela
 
 app_name = 'home'
 
@@ -56,6 +56,7 @@ urlpatterns = [
 
     # ABA GERAR -------------------
     path('recibos/<int:pk>', recibos, name='Recibos'),
+    path('tabela/<int:pk>', tabela, name='Tabela'),
 
     # ABA HISTORICO -------------------
     path('pagamentos/<int:pk>', Pagamentos.as_view(), name='Pagamentos'),

@@ -1,6 +1,7 @@
 import locale
 from num2words import num2words
 from datetime import datetime
+from os import path
 
 from Alugue_seu_imovel import settings
 
@@ -390,74 +391,94 @@ def registrar_anotacao(request):
 
 def recibos(request, pk):
     form = FormRecibos()
+    context = {}
+
+    # Indica se o usuario tem contrato para o template e ja pega o primeiro pra carregar\/
     usuario = Usuario.objects.get(pk=request.user.pk)
+    tem_contratos = Contrato.objects.filter(do_locador=request.user.pk).order_by('-data_registro').first()
+    if tem_contratos:
+        contrato = tem_contratos
+        if request.user.ultimo_recibo_gerado:
+            contrato = Contrato.objects.get(pk=request.user.ultimo_recibo_gerado.pk)
 
-    if usuario.ultimo_recibo_gerado:
-        form = FormRecibos(initial={'contrato': usuario.ultimo_recibo_gerado})
+        # Carrega do model do usuario o ultimo recibo salvo no form, se existe\/
+        if usuario.ultimo_recibo_gerado:
+            form = FormRecibos(initial={'contrato': usuario.ultimo_recibo_gerado})
 
-    context = {'form': form, 'contrato': usuario.ultimo_recibo_gerado}
-    if request.method == 'POST':
-        form = FormRecibos(request.POST)
-        if form.is_valid():
-            contrato = Contrato.objects.get(pk=form.cleaned_data['contrato'].pk)
+        # Se for um post, salvar o novo contrato no campo 'ultimo recibo salvo' do usuario\/
+        if request.method == 'POST':
+            form = FormRecibos(request.POST)
+            if form.is_valid():
+                contrato = Contrato.objects.get(pk=form.cleaned_data['contrato'].pk)
+                usuario.ultimo_recibo_gerado = contrato
+                usuario.save(update_fields=['ultimo_recibo_gerado'])
+
+        # Criar o arquivo se não existe ou carregar se existe:
+        if contrato.recibos_pdf and path.exists(f'{settings.MEDIA_ROOT}{contrato.recibos_pdf}'):
+            pass
+        else:
             locatario = contrato.do_locatario
             imovel = contrato.do_imovel
-            usuario.ultimo_recibo_gerado = contrato
-            usuario.save(update_fields=['ultimo_recibo_gerado'])
-            if contrato.recibos_pdf:
-                context = {'form': form, 'contrato': contrato}
-            else:
-                reais = int(contrato.valor_mensal[:-2])
-                centavos = int(contrato.valor_mensal[-2:])
-                num_ptbr_reais = num2words(reais, lang='pt-br')
-                completo = ''
-                if centavos > 0:
-                    num_ptbr_centavos = num2words(centavos, lang='pt-br')
-                    completo = f' E {num_ptbr_centavos} centavos'
-                codigos = list(
-                    Parcela.objects.filter(do_contrato=contrato.pk).values("codigo").values_list('codigo', flat=True))
-                datas = list(
-                    Parcela.objects.filter(do_contrato=contrato.pk).values("data_pagm_ref").values_list('data_pagm_ref',
-                                                                                                        flat=True))
-                datas_tratadas = list()
-                for data in datas:
-                    locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')
-                    month = data.strftime('%B')
-                    year = data.strftime('%Y')
-                    datas_tratadas.append(f'{month.upper()}')
-                    datas_tratadas.append(f'{year}')
 
-                dados = {'cod_contrato': f'{contrato.codigo}',
-                         'nome_locador': f'{usuario.first_name.upper()} {usuario.last_name.upper()}',
-                         'rg_locd': f'{usuario.RG}',
-                         'cpf_locd': f'{usuario.CPF}',
-                         'nome_locatario': f'{locatario.nome.upper()}',
-                         'rg_loct': f'{locatario.RG}',
-                         'cpf_loct': f'{locatario.CPF}',
-                         'valor_e_extenso': f'{contrato.valor_format()} ({num_ptbr_reais.upper()} REAIS{completo.upper()})',
-                         'endereco': f"{imovel.endereco_completo()}",
-                         'cidade': f'{imovel.cidade}',
-                         'data': '________________, ____ de _________ de ________',
-                         'cod_recibo': codigos,
-                         'mes_e_ano': datas_tratadas,
-                         }
+            reais = int(contrato.valor_mensal[:-2])
+            centavos = int(contrato.valor_mensal[-2:])
+            num_ptbr_reais = num2words(reais, lang='pt-br')
+            completo = ''
+            if centavos > 0:
+                num_ptbr_centavos = num2words(centavos, lang='pt-br')
+                completo = f' E {num_ptbr_centavos} centavos'
+            codigos = list(
+                Parcela.objects.filter(do_contrato=contrato.pk).values("codigo").values_list('codigo', flat=True))
+            datas = list(
+                Parcela.objects.filter(do_contrato=contrato.pk).values("data_pagm_ref").values_list('data_pagm_ref',
+                                                                                                    flat=True))
+            datas_tratadas = list()
+            for data in datas:
+                locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')
+                month = data.strftime('%B')
+                year = data.strftime('%Y')
+                datas_tratadas.append(f'{month.upper()}')
+                datas_tratadas.append(f'{year}')
 
-                local_temp = gerar_recibos(dados=dados)
-                contrato.recibos_pdf = File(local_temp, name=f'recibos de {dados["cod_contrato"]}.pdf')
-                contrato.save()
+            dados = {'cod_contrato': f'{contrato.codigo}',
+                     'nome_locador': f'{usuario.first_name.upper()} {usuario.last_name.upper()}',
+                     'rg_locd': f'{usuario.RG}',
+                     'cpf_locd': f'{usuario.CPF}',
+                     'nome_locatario': f'{locatario.nome.upper()}',
+                     'rg_loct': f'{locatario.RG}',
+                     'cpf_loct': f'{locatario.CPF}',
+                     'valor_e_extenso': f'{contrato.valor_format()} ({num_ptbr_reais.upper()} REAIS{completo.upper()})',
+                     'endereco': f"{imovel.endereco_completo()}",
+                     'cidade': f'{imovel.cidade}',
+                     'data': '________________, ____ de _________ de ________',
+                     'cod_recibo': codigos,
+                     'mes_e_ano': datas_tratadas,
+                     }
 
-                context = {'form': form, 'contrato': contrato}
+            local_temp = gerar_recibos(dados=dados)
+            contrato.recibos_pdf = File(local_temp, name=f'recibos de {dados["cod_contrato"]}.pdf')
+            contrato.save()
 
-    form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user)
-    contratos_tt = Contrato.objects.filter(do_locador=request.user.pk).count()
-    tem_contratos = False if contratos_tt == 0 else True
-    context['tem_contratos'] = tem_contratos
-
-    if usuario.first_name == '' or usuario.last_name == '' or usuario.CPF == '':
-        pede_dados = True
-        context['pede_dados'] = pede_dados
-
+        # Indica para o template se o usuário prenencheu os dados necessários para gerar os recibos\/
+        pede_dados = False
+        if usuario.first_name == '' or usuario.last_name == '' or usuario.CPF == '':
+            pede_dados = True
+        context = {'form': form, 'contrato': contrato, 'tem_contratos': tem_contratos, 'pede_dados': pede_dados}
     return render(request, 'gerar_recibos.html', context)
+
+
+def tabela(request, pk):
+    # local_temp = gerar_recibos(dados=dados)
+    # contrato.recibos_pdf = File(local_temp, name=f'recibos de {dados["cod_contrato"]}.pdf')
+    # contrato.save()
+    #
+    # context = {'form': form, 'contrato': contrato}
+    #
+    # contratos_tt = Contrato.objects.filter(do_locador=request.user.pk).count()
+    # tem_contratos = False if contratos_tt == 0 else True
+    # context['tem_contratos'] = tem_contratos
+
+    return render(request, 'gerar_tabela.html')
 
 
 # -=-=-=-=-=-=-=-= BOTÃO HISTORICO -=-=-=-=-=-=-=-=
