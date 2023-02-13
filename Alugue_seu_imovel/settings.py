@@ -137,9 +137,11 @@ LOGIN_URL = 'home:Login'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
+# Configurações do cryspy-forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
+# Substituição do nome das tags do django para as compatíveis com o bootstrap
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-secondary',
     messages.INFO: 'alert-info',
@@ -148,6 +150,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
+# Configurações do aplicativo de redimendionamento das imagens enviadas pelos usuários:
 DJANGORESIZED_DEFAULT_SIZE = [1080, None]
 DJANGORESIZED_DEFAULT_SCALE = 0.5
 DJANGORESIZED_DEFAULT_QUALITY = 75
@@ -156,7 +159,8 @@ DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG'
 DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': ".jpg"}
 DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 
-# CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/
 
 SITE_LINK = 'www.alugueseuimovel.com.br'
 SITE_NAME = 'Alugue Seu imóvel'
