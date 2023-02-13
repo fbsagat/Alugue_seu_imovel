@@ -158,6 +158,9 @@ DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/
 
+SITE_LINK = 'www.alugueseuimovel.com.br'
+SITE_NAME = 'Alugue Seu imóvel'
+
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
 FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': 1, 'pagamento': 5, 'gasto': 3, 'nota': 4,

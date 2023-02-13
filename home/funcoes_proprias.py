@@ -119,9 +119,9 @@ def gerar_recibos(dados):
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
     pdf.setAuthor(f'{dados["nome_locador"]}')
-    pdf.setTitle(f'Recibos do contrato {dados["cod_contrato"]} página 1')
-    pdf.setCreator('www.administradordelocacao.com.br')
-    pdf.setSubject(f'Recibos do contrato {dados["cod_contrato"]}')
+    pdf.setTitle(f'Recibos do contrato {dados["cod_contrato"]}')
+    pdf.setCreator(settings.SITE_LINK)
+    pdf.setSubject(f'Locatário: {dados["nome_locatario"]}')
 
     pag_lar = A4[0]
     pag_alt = A4[1]
