@@ -21,3 +21,10 @@ $(function(){
     $('.mask-x_form').find(":input[id*='id_CPF']").unmask();
 });
 });
+
+$(document).ready(function() {
+    // show the alert
+    setTimeout(function() {
+        $(".alert").alert('close');
+    }, 4000);
+});
