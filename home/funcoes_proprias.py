@@ -1,12 +1,16 @@
-from math import ceil
 import io
+from math import ceil
+
+from django.core.exceptions import ValidationError
+
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.units import mm
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Paragraph
 
 from Alugue_seu_imovel import settings
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import Paragraph
-from django.core.exceptions import ValidationError
 
 
 # 001: -----------------------------------------------
@@ -144,3 +148,52 @@ def gerar_recibos(dados):
     pdf.save()
     buffer.seek(0)
     return buffer
+
+
+# 101: -----------------------------------------------
+def gerar_tabela(dados):
+    local = f'{settings.MEDIA_ROOT}tabela_docs/tabela_{dados["usuario"]}.pdf'
+    a4h = (297 * mm, 210 * mm)
+    pdf = canvas.Canvas(local, pagesize=a4h)
+    pdf.setFont('Helvetica-Bold', 12)
+
+    pag_lar = a4h[0]
+    pag_alt = a4h[1]
+    pag_centro = (pag_lar / 2, pag_alt / 2)
+
+    # im = imóveis / larg = largura / alt = altura /
+    # iqtd = itens quatidade / espac = espaçamento / v = vertical / h = horizontal
+
+    # Desenhando a tabela dos meses \/
+    me_pos_v = 40
+    me_pos_h = 110
+    me_larg = 121
+    me_alt = 52
+    me_iqtd_v = 10
+    me_iqtd_h = 6
+    me_espac_h = 1
+
+    # Desenhando a tabela dos imóveis \/
+    im_pos_h = 5
+    im_larg = 102
+    im_alt = 40
+
+    for y in range(0, me_larg * me_iqtd_h, me_larg):
+        # Aqui criamos os itens horizontalmente
+        pdf.setFillColorRGB(0, 0, 0, 1)
+        pdf.drawString(y - im_larg + me_pos_h, pag_alt - im_alt - 5, 'Imóveis Ativos') if y == 0 else ''
+        pdf.drawString(y + 20 + me_pos_h, pag_alt - im_alt - 5, 'Setembro 2023')
+        pdf.setFillColorRGB(0, 0, 0, 0.08)
+        for x in range(0, me_alt * me_iqtd_v, me_alt + me_espac_h):
+            # Aqui criamos os itens verticalmente
+            pdf.rect(im_pos_h, pag_alt - me_alt - me_pos_v - x - (im_alt - me_alt), im_larg, im_alt,
+                     fill=1 if x % 2 == 0 else 0) if y == 0 else ''
+            pdf.rect(me_pos_h + y, pag_alt - me_alt - me_pos_v - x, me_larg, me_alt, fill=1 if x % 2 == 0 else 0)
+
+    pdf.setCreator(settings.SITE_LINK)
+    pdf.setAuthor(f'{dados["usuario_nome_compl"]}')
+    pdf.setTitle(f'Tabela de agenda dos imóveis de {dados["usuario_username"]}')
+    pdf.setSubject(f'Tabela completa com a agenda dos imóveis ativos.')
+
+    pdf.showPage()
+    pdf.save()

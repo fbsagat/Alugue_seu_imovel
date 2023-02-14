@@ -1,11 +1,11 @@
 {% if messages %}
 {% for message in messages %}
 
-<div style="z-index: 10;" class="position-absolute bottom-0 start-50 translate-middle-x w-50 opacity-75 alert {{ message.tags }}">
-   <strong>{{ message }}</strong>
-      <div class=" position-absolute top-50 end-0 translate-middle">
-         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar">❌</button>
-      </div>
+<div style="z-index: 10; alert-color-scale: 10%"
+     class="position-absolute bottom-0 start-50 translate-middle-x w-50 alert {{ message.tags }} alert-dismissible fade show"
+     role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">❌</button>
 </div>
 
 {% endfor %}

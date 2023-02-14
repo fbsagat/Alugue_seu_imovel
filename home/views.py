@@ -5,7 +5,6 @@ from os import path
 
 from Alugue_seu_imovel import settings
 
-from django.http import FileResponse, HttpResponseRedirect
 from django.core.files import File
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -19,7 +18,7 @@ from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
 
 from home.new_context import forms_da_navbar
-from home.funcoes_proprias import valor_format, gerar_recibos
+from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
@@ -480,17 +479,20 @@ def recibos(request, pk):
 
 
 def tabela(request, pk):
-    # local_temp = gerar_recibos(dados=dados)
-    # contrato.recibos_pdf = File(local_temp, name=f'recibos de {dados["cod_contrato"]}.pdf')
-    # contrato.save()
-    #
-    # context = {'form': form, 'contrato': contrato, 'SITE_NAME': settings.SITE_NAME}
-    #
-    # contratos_tt = Contrato.objects.filter(do_locador=request.user.pk).count()
-    # tem_contratos = False if contratos_tt == 0 else True
-    # context['tem_contratos'] = tem_contratos
+    context = {'SITE_NAME': settings.SITE_NAME}
+    usuario = Usuario.objects.get(pk=request.user.pk)
+    tem_contratos = True if Contrato.objects.filter(do_locador=request.user.pk).first() else False
+    context['tem_contratos'] = tem_contratos
 
-    return render(request, 'gerar_tabela.html')
+    dados = {'usuario': usuario, "usuario_username": usuario.username,
+             "usuario_nome_compl": f'{str(usuario.first_name).upper()} {str(usuario.last_name).upper()}'}
+
+    if tem_contratos:
+        gerar_tabela(dados)
+        link = rf'/media/tabela_docs/tabela_{usuario}.pdf'
+        context['tabela'] = link
+
+    return render(request, 'gerar_tabela.html', context)
 
 
 # -=-=-=-=-=-=-=-= BOTÃO HISTORICO -=-=-=-=-=-=-=-=
