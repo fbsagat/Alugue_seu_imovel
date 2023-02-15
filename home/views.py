@@ -2,6 +2,7 @@ import locale
 from num2words import num2words
 from datetime import datetime
 from os import path
+from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
 
@@ -26,6 +27,7 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela
 
+locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')
 
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
 
@@ -434,6 +436,7 @@ def recibos(request, pk):
                 locatario = contrato.do_locatario
                 imovel = contrato.do_imovel
 
+                # Tratamentos
                 reais = int(contrato.valor_mensal[:-2])
                 centavos = int(contrato.valor_mensal[-2:])
                 num_ptbr_reais = num2words(reais, lang='pt-br')
@@ -448,12 +451,12 @@ def recibos(request, pk):
                                                                                                         flat=True))
                 datas_tratadas = list()
                 for data in datas:
-                    locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')
                     month = data.strftime('%B')
                     year = data.strftime('%Y')
                     datas_tratadas.append(f'{month.upper()}')
                     datas_tratadas.append(f'{year}')
 
+                # Preparar dados para envio
                 dados = {'cod_contrato': f'{contrato.codigo}',
                          'nome_locador': f'{usuario.first_name.upper()} {usuario.last_name.upper()}',
                          'rg_locd': f'{usuario.RG}',
@@ -484,8 +487,21 @@ def tabela(request, pk):
     tem_contratos = True if Contrato.objects.filter(do_locador=request.user.pk).first() else False
     context['tem_contratos'] = tem_contratos
 
+    meses_qtd = 4
+    imov_qtd = 8
+    comeca_em = datetime.now()
+
+    # Tratamentos
+    # Lista de mes/ano cujo início é conforme a escolha do usuario: (iniciar em: 'mes/ano')
+    datas = []
+    for x in range(0, meses_qtd):
+        datas.append((comeca_em + relativedelta(months=x)).strftime("%B/%Y").title())
+
+    # Preparar dados para envio
     dados = {'usuario': usuario, "usuario_username": usuario.username,
-             "usuario_nome_compl": f'{str(usuario.first_name).upper()} {str(usuario.last_name).upper()}'}
+             "usuario_nome_compl": f'{str(usuario.first_name).upper()} {str(usuario.last_name).upper()}',
+             'imoveis_ativos': Imovei.objects.ocupados().filter(do_locador=request.user).order_by(
+                 '-data_registro'), 'datas': datas, 'imov_qtd': imov_qtd}
 
     if tem_contratos:
         gerar_tabela(dados)

@@ -1,8 +1,11 @@
-import io
+import io, datetime
 from math import ceil
+from textwrap import wrap
 
 from django.core.exceptions import ValidationError
 
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import mm
@@ -94,7 +97,7 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
     texto.drawOn(pdf, rect_pos_x + 5, rect_pos_y + 15)
 
 
-def gerar_uma_pagina(pdf, parcelas, pag_centro, pag_alt, pag_lar, pag_n, dados):
+def gerar_uma_pagina_recibo(pdf, parcelas, pag_centro, pag_alt, pag_lar, pag_n, dados):
     recibos_qtd = pag_n * 3
     if recibos_qtd < parcelas + 1:
         gerar_um_recibo(pdf=pdf, pag_centro=pag_centro, pag_lar=pag_lar, recibo_n=recibos_qtd,
@@ -141,8 +144,8 @@ def gerar_recibos(dados):
 
     for pagina in range(paginas):
         page_num = pdf.getPageNumber()
-        gerar_uma_pagina(pag_n=page_num, pag_alt=pag_alt, pag_centro=pag_centro, pag_lar=pag_lar,
-                         parcelas=parcelas, dados=dados, pdf=pdf)
+        gerar_uma_pagina_recibo(pag_n=page_num, pag_alt=pag_alt, pag_centro=pag_centro, pag_lar=pag_lar,
+                                parcelas=parcelas, dados=dados, pdf=pdf)
         pdf.showPage()
 
     pdf.save()
@@ -151,49 +154,117 @@ def gerar_recibos(dados):
 
 
 # 101: -----------------------------------------------
+
+def criar_uma_pagina_tabela(pag_n, a4h, dados, pdf):
+    # Atributos da página
+    pag_lar = a4h[0]
+    pag_alt = a4h[1]
+    pag_centro_h = pag_lar / 2
+    pag_centro_v = pag_alt / 2
+
+    # Customize a tabela
+    celula_largura = 155
+    celula_altura = 65
+    celula_quantidade_h = len(dados['datas']) + 1
+    celula_quantidade_v = dados['imov_qtd']
+    separador_v = 2
+    separador_h = 2
+    margem_vertical = 8
+    text_wrap = 26
+
+    # Calculos para organização
+    tam_tt_h = (celula_largura + separador_v) * celula_quantidade_h
+    tam_tt_v = (celula_altura + separador_h) * celula_quantidade_v
+    centro_h = tam_tt_h / 2
+    centro_v = tam_tt_v / 2
+    inicia_em_h = (tam_tt_h / pag_lar) + (pag_centro_h - centro_h)
+    inicia_em_v = margem_vertical + (tam_tt_v / pag_alt) + (pag_centro_v - centro_v)
+
+    # Cria na horizontal
+    count = count1 = 0
+    for y in range(0, tam_tt_h, celula_largura + separador_v):
+        # Cria na vertical
+        count += 1
+        for x in range(0, tam_tt_v, celula_altura + separador_h):
+
+            # Criar formas
+            if x % 2 == 0:
+                pdf.setFillColorRGB(0, 0, 0, 0.04)
+                pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura,
+                         fill=1)
+                pdf.setFillColorRGB(0, 0, 0, 1)
+            else:
+                pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura)
+                pdf.setFillColorRGB(0, 0, 0, 1)
+
+            if y == 0:
+                pdf.setFillColorRGB(0, 0, 0, 0.12)
+                pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura,
+                         fill=1)
+                pdf.setFillColorRGB(0, 0, 0, 1)
+
+            # Criar textos
+            if y == 0 and x == 0:
+                textobject = pdf.beginText(inicia_em_h + y,
+                                           pag_alt - inicia_em_v - celula_altura - x + celula_altura + 2)
+                textobject.setFont('Impact', 12)
+                textobject.textLine('Imóveis Ativos')
+                pdf.drawText(textobject)
+
+            if y > 1 and x == 0:
+                textobject = pdf.beginText(inicia_em_h + y,
+                                           pag_alt - inicia_em_v - celula_altura - x + celula_altura + 2)
+                textobject.setFont('Impact', 12)
+                textobject.textLine(f'{dados["datas"][count - 2]}')
+                pdf.drawText(textobject)
+
+            if y == 0:
+                mytext = f'{dados["imoveis_ativos"][count1]}'
+                wraped_text = "\n".join(wrap(mytext, text_wrap))
+                textobject = pdf.beginText(inicia_em_h + y + 2,
+                                           pag_alt - inicia_em_v - celula_altura - x + celula_altura - 15)
+                textobject.setFont('Arial', 12)
+                for line in wraped_text.splitlines(False):
+                    textobject.textLine(line.rstrip())
+                pdf.drawText(textobject)
+                count2 += 1
+
+            if y > 0:
+                mytext = """COM: Luiz de Souza
+                                CONTR.: vHjm7-5MpWh
+                                VENC: 10
+                                ALUGUEL: R$1.000,00
+                                PG: 450,00"""
+                wraped_text = "\n".join(wrap(mytext, text_wrap))
+                textobject = pdf.beginText(inicia_em_h + y + 2,
+                                           pag_alt - inicia_em_v - celula_altura - x + celula_altura - 9)
+                textobject.setFont('Arial', 9)
+                textobject.setFillColor(colors.darkslategray)
+                for line in wraped_text.splitlines(False):
+                    textobject.textLine(line.rstrip())
+                pdf.drawText(textobject)
+            count1 += 1
+
+
 def gerar_tabela(dados):
+    # Preparando o PDF:
     local = f'{settings.MEDIA_ROOT}tabela_docs/tabela_{dados["usuario"]}.pdf'
     a4h = (297 * mm, 210 * mm)
     pdf = canvas.Canvas(local, pagesize=a4h)
-    pdf.setFont('Helvetica-Bold', 12)
+    pdfmetrics.registerFont(TTFont('Impact', 'Impact.ttf'))
+    pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
 
-    pag_lar = a4h[0]
-    pag_alt = a4h[1]
-    pag_centro = (pag_lar / 2, pag_alt / 2)
+    paginas = int((len(dados['imoveis_ativos'])) / dados['imov_qtd']) if (len(dados['imoveis_ativos'])) / dados[
+        'imov_qtd'] % 2 == 1 else ceil((len(dados['imoveis_ativos'])) / dados['imov_qtd'])
 
-    # im = imóveis / larg = largura / alt = altura /
-    # iqtd = itens quatidade / espac = espaçamento / v = vertical / h = horizontal
-
-    # Desenhando a tabela dos meses \/
-    me_pos_v = 40
-    me_pos_h = 110
-    me_larg = 121
-    me_alt = 52
-    me_iqtd_v = 10
-    me_iqtd_h = 6
-    me_espac_h = 1
-
-    # Desenhando a tabela dos imóveis \/
-    im_pos_h = 5
-    im_larg = 102
-    im_alt = 40
-
-    for y in range(0, me_larg * me_iqtd_h, me_larg):
-        # Aqui criamos os itens horizontalmente
-        pdf.setFillColorRGB(0, 0, 0, 1)
-        pdf.drawString(y - im_larg + me_pos_h, pag_alt - im_alt - 5, 'Imóveis Ativos') if y == 0 else ''
-        pdf.drawString(y + 20 + me_pos_h, pag_alt - im_alt - 5, 'Setembro 2023')
-        pdf.setFillColorRGB(0, 0, 0, 0.08)
-        for x in range(0, me_alt * me_iqtd_v, me_alt + me_espac_h):
-            # Aqui criamos os itens verticalmente
-            pdf.rect(im_pos_h, pag_alt - me_alt - me_pos_v - x - (im_alt - me_alt), im_larg, im_alt,
-                     fill=1 if x % 2 == 0 else 0) if y == 0 else ''
-            pdf.rect(me_pos_h + y, pag_alt - me_alt - me_pos_v - x, me_larg, me_alt, fill=1 if x % 2 == 0 else 0)
+    for pagina in range(0, paginas):
+        page_num = pdf.getPageNumber()
+        criar_uma_pagina_tabela(pag_n=page_num, a4h=a4h, dados=dados, pdf=pdf)
+        pdf.showPage()
 
     pdf.setCreator(settings.SITE_LINK)
     pdf.setAuthor(f'{dados["usuario_nome_compl"]}')
     pdf.setTitle(f'Tabela de agenda dos imóveis de {dados["usuario_username"]}')
     pdf.setSubject(f'Tabela completa com a agenda dos imóveis ativos.')
 
-    pdf.showPage()
     pdf.save()

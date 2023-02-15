@@ -213,6 +213,14 @@ class FormRecibos(forms.Form):
         self.fields['contrato'].widget.attrs['class'] = 'form-select form-select-sm'
 
 
+class FormRTabela(forms.Form):
+    pass
+
+    def __init__(self, *args, **kwargs):
+        super(FormRTabela, self).__init__(*args, **kwargs)
+        self.fields['contrato'].widget.attrs['class'] = 'form-select form-select-sm'
+
+
 class FormAdmin(forms.Form):
     escolhas = (
         ('1', f'Criar {settings.FICT_QTD["locatario"]} Locatários'),

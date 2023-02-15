@@ -1,5 +1,7 @@
 depois de editar o perfil, voltar para a pagina de origem, não dashboard
 
+contrato nãp desativa, arrumar
+
 problemas encontrados, sem solução até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
 
