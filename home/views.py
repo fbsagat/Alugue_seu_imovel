@@ -1011,8 +1011,10 @@ def botaoteste(request):
             messages.error(request, "Primeiro crie grupos")
 
     if executar == 3 or executar == 100:
-        if Imovei.objects.filter(do_locador=usuario).count() > 0 and \
-                Locatario.objects.filter(do_locador=usuario).count() > 0:
+        imo = Imovei.objects.filter(do_locador=usuario).count()
+        loc = Locatario.objects.filter(do_locador=usuario).count()
+        contr = Contrato.objects.filter(do_locador=usuario).count()
+        if imo > contr and loc > contr:
             count = 0
             for x in range(fict_multi * fict_qtd['contrato']):
                 count += 1
