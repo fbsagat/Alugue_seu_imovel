@@ -352,6 +352,7 @@ class Contrato(models.Model):
 
 class Parcela(models.Model):
     do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
+
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=11)
     data_pagm_ref = models.DateField(null=False, blank=False)
     pago = models.BooleanField(default=False)

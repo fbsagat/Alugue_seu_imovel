@@ -397,7 +397,7 @@ def registrar_anotacao(request):
 
 
 # -=-=-=-=-=-=-=-= BOTÃO GERAR -=-=-=-=-=-=-=-=
-
+@login_required
 def recibos(request, pk):
     form = FormRecibos()
     context = {}
@@ -481,6 +481,7 @@ def recibos(request, pk):
     return render(request, 'gerar_recibos.html', context)
 
 
+@login_required
 def tabela(request, pk):
     context = {'SITE_NAME': settings.SITE_NAME}
     usuario = Usuario.objects.get(pk=request.user.pk)
@@ -498,10 +499,13 @@ def tabela(request, pk):
         datas.append((comeca_em + relativedelta(months=x)).strftime("%B/%Y").title())
 
     # Preparar dados para envio
+
     dados = {'usuario': usuario, "usuario_username": usuario.username,
              "usuario_nome_compl": f'{str(usuario.first_name).upper()} {str(usuario.last_name).upper()}',
-             'imoveis_ativos': Imovei.objects.ocupados().filter(do_locador=request.user).order_by(
-                 '-data_registro'), 'datas': datas, 'imov_qtd': imov_qtd}
+             'imoveis_ativos': Imovei.objects.ocupados().filter(do_locador=request.user).order_by('-data_registro'),
+             'datas': datas,
+             'imov_qtd': imov_qtd,
+             }
 
     if tem_contratos:
         gerar_tabela(dados)

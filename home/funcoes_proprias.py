@@ -155,7 +155,7 @@ def gerar_recibos(dados):
 
 # 101: -----------------------------------------------
 
-def criar_uma_pagina_tabela(fazer, a4h, dados, pdf):
+def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
     # Atributos da página
     pag_lar = a4h[0]
     pag_alt = a4h[1]
@@ -163,14 +163,14 @@ def criar_uma_pagina_tabela(fazer, a4h, dados, pdf):
     pag_centro_v = pag_alt / 2
 
     # Customize a tabela
-    celula_largura = 155
-    celula_altura = 65
+    celula_largura = 164
+    celula_altura = 68
     celula_quantidade_h = len(dados['datas']) + 1
     celula_quantidade_v = fazer
-    separador_v = 2
-    separador_h = 3
-    margem_vertical = 8
-    text_wrap = 26
+    separador_v = 0
+    separador_h = 0
+    margem_vertical = 45
+    text_wrap = round(celula_largura / 6.3)
 
     # Calculos para organização
     tam_tt_h = (celula_largura + separador_v) * celula_quantidade_h
@@ -178,74 +178,84 @@ def criar_uma_pagina_tabela(fazer, a4h, dados, pdf):
     centro_h = tam_tt_h / 2
     centro_v = tam_tt_v / 2
     inicia_em_h = (tam_tt_h / pag_lar) + (pag_centro_h - centro_h)
-    inicia_em_v = margem_vertical + (tam_tt_v / pag_alt) + (pag_centro_v - centro_v)
+    # \/ Para centralizar verticalmente: (tam_tt_v / pag_alt) + (pag_centro_v - centro_v)
+    inicia_em_v = margem_vertical
 
     # Cria na horizontal
-    count = count1 = count2 = 0
-    for y in range(0, tam_tt_h, celula_largura + separador_v):
+    for horizontal, y in enumerate(range(0, tam_tt_h, celula_largura + separador_v)):
         # Cria na vertical
-        count += 1
-        for x in range(0, tam_tt_v, celula_altura + separador_h):
+        for vertical, x in enumerate(range(0, tam_tt_v, celula_altura + separador_h)):
+            if vertical % 2 == 0:
+                pdf.setFillColorRGB(0, 0, 0, 0.03)
+            else:
+                pdf.setFillColorRGB(0, 0, 0, 0)
 
             # Criar formas
-            if x % 2 == 0:
-                pdf.setFillColorRGB(0, 0, 0, 0.04)
-                pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura,
-                         fill=1)
-                pdf.setFillColorRGB(0, 0, 0, 1)
-            else:
-                pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura)
-                pdf.setFillColorRGB(0, 0, 0, 1)
-
-            if y == 0:
-                pdf.setFillColorRGB(0, 0, 0, 0.12)
-                pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura,
-                         fill=1)
-                pdf.setFillColorRGB(0, 0, 0, 1)
+            pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura, fill=1)
+            pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura, fill=1)
+            pdf.setFillColorRGB(0, 0, 0, 1)
 
             # Criar textos
-            if y == 0 and x == 0:
+            if vertical == 0 and horizontal == 0:
+                pdf.saveState()
+                pdf.setLineWidth(0.01)
+                pdf.setStrokeColor(colors.gray)
+                pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x + celula_altura + 20,
+                         tam_tt_h, 15, stroke=1)
+                pdf.restoreState()
+
+                textobject = pdf.beginText(inicia_em_h + y + 2,
+                                           pag_alt - inicia_em_v - celula_altura - x + celula_altura + 24)
+                textobject.setFillColor(colors.dimgray)
+                textobject.setFont('Times-Roman', 12)
+                textobject.textLine(
+                    "LOC: Locatário | CON: Cod. do Contrato | VEN: Vencimento | ALU: Valor do aluguel | PG: Pago |"
+                    " F: Falta")
+                pdf.drawText(textobject)
+
                 textobject = pdf.beginText(inicia_em_h + y,
                                            pag_alt - inicia_em_v - celula_altura - x + celula_altura + 2)
+                textobject.setFillColor(colors.black)
                 textobject.setFont('Impact', 12)
                 textobject.textLine('Imóveis Ativos')
                 pdf.drawText(textobject)
 
-            if y > 1 and x == 0:
+            if vertical == 0 and horizontal > 0:
                 textobject = pdf.beginText(inicia_em_h + y,
                                            pag_alt - inicia_em_v - celula_altura - x + celula_altura + 2)
+                textobject.setFillColor(colors.black)
                 textobject.setFont('Impact', 12)
-                textobject.textLine(f'{dados["datas"][count - 2]}')
+                textobject.textLine(f'{dados["datas"][horizontal-1]}')
                 pdf.drawText(textobject)
 
-            if y == 0:
-                mytext = f'{dados["imoveis_ativos"][count1]}'
+            if vertical >= 0 and horizontal == 0:
+                mytext = f'{dados["imoveis_ativos"][((pag_n-1)*8)+vertical]}'
                 wraped_text = "\n".join(wrap(mytext, text_wrap))
                 textobject = pdf.beginText(inicia_em_h + y + 2,
-                                           pag_alt - inicia_em_v - celula_altura - x + celula_altura - 15)
+                                           pag_alt - inicia_em_v - x - 15)
+                textobject.setFillColor(colors.black)
                 textobject.setFont('Arial', 12)
                 for line in wraped_text.splitlines(False):
                     textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
-                count2 += 1
 
-            if y > 0:
-                mytext = """COM: Luiz de Souza
-                                CONTR.: vHjm7-5MpWh
-                                VENC: 10
-                                ALUGUEL: R$1.000,00
-                                PG: 450,00"""
+            if vertical >= 0 and horizontal > 0:
+                mytext = """LOC: Luiz de Souza
+                                CON.: vHjm7-5MpWh
+                                VEN: 10
+                                ALU: R$1.000,00
+                                PG: 450,00
+                                F: 650,00"""
+
                 wraped_text = "\n".join(wrap(mytext, text_wrap))
                 textobject = pdf.beginText(inicia_em_h + y + 2,
-                                           pag_alt - inicia_em_v - celula_altura - x + celula_altura - 9)
-                textobject.setFont('Arial', 9)
+                                           pag_alt - inicia_em_v - x - 10)
                 textobject.setFillColor(colors.darkslategray)
+                textobject.setFont('Arial', 9)
                 for line in wraped_text.splitlines(False):
                     textobject.textLine(line.rstrip())
-                pdf.drawText(textobject)
-            count1 += 1
 
-    return len(dados['imoveis_ativos']) - count2
+                pdf.drawText(textobject)
 
 
 def gerar_tabela(dados):
@@ -258,10 +268,14 @@ def gerar_tabela(dados):
 
     paginas = int((len(dados['imoveis_ativos'])) / dados['imov_qtd']) if (len(dados['imoveis_ativos'])) / dados[
         'imov_qtd'] % 2 == 1 else ceil((len(dados['imoveis_ativos'])) / dados['imov_qtd'])
+    ultima = len(dados['imoveis_ativos']) - ((paginas - 1) * dados['imov_qtd'])
+    fazer = dados['imov_qtd']
 
-    faca_qtd = dados['imov_qtd']
     for pagina in range(0, paginas):
-        faca_qtd = criar_uma_pagina_tabela(fazer=faca_qtd, a4h=a4h, dados=dados, pdf=pdf)
+        if pagina == paginas - 1:
+            fazer = ultima
+        pag_n = pdf.getPageNumber()
+        criar_uma_pagina_tabela(fazer=fazer, pag_n=pag_n, a4h=a4h, dados=dados, pdf=pdf)
         pdf.showPage()
 
     pdf.setCreator(settings.SITE_LINK)
