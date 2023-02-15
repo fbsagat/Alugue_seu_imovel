@@ -491,15 +491,23 @@ def tabela(request, pk):
 
     # Cria os meses a partir da data atual do usuario para escolher no form
     meses = []
-    a_partir_de = datetime.now().date()
     mes_inicial = datetime.now().date() - relativedelta(months=3)
     for x in range(7):
         meses.append(
             (x, str((mes_inicial + relativedelta(months=x)).strftime('%B/%Y'))))
-    form = FormTabela(initial={'mes': 3})
+
+    if usuario.ultima_data_tabela_ger != '':
+        form = FormTabela(initial={'mes': usuario.ultima_data_tabela_ger})
+        a_partir_de = datetime.now().date() - relativedelta(months=3-usuario.ultima_data_tabela_ger)
+    else:
+        form = FormTabela(initial={'mes': 3})
+        a_partir_de = datetime.now().date()
+
     if request.method == 'POST':
         form = FormTabela(request.POST)
         if form.is_valid():
+            usuario.ultima_data_tabela_ger = int(form.cleaned_data['mes'])
+            usuario.save(update_fields=["ultima_data_tabela_ger"])
             a_partir_de = datetime.now().date() - relativedelta(months=3-int(form.cleaned_data['mes']))
     form.fields['mes'].choices = meses
 

@@ -34,6 +34,7 @@ class Usuario(AbstractUser):
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
     ultimo_recibo_gerado = models.ForeignKey('Contrato', null=True, blank=True, on_delete=models.SET_NULL)
+    ultima_data_tabela_ger = models.IntegerField(null=True, blank=True)
 
     tabela_pdf = models.FileField(upload_to='tabelas_docs/%Y/%m/', blank=True, verbose_name='Tabelas')
 
