@@ -155,7 +155,7 @@ def gerar_recibos(dados):
 
 # 101: -----------------------------------------------
 
-def criar_uma_pagina_tabela(pag_n, a4h, dados, pdf):
+def criar_uma_pagina_tabela(fazer, a4h, dados, pdf):
     # Atributos da página
     pag_lar = a4h[0]
     pag_alt = a4h[1]
@@ -166,9 +166,9 @@ def criar_uma_pagina_tabela(pag_n, a4h, dados, pdf):
     celula_largura = 155
     celula_altura = 65
     celula_quantidade_h = len(dados['datas']) + 1
-    celula_quantidade_v = dados['imov_qtd']
+    celula_quantidade_v = fazer
     separador_v = 2
-    separador_h = 2
+    separador_h = 3
     margem_vertical = 8
     text_wrap = 26
 
@@ -181,7 +181,7 @@ def criar_uma_pagina_tabela(pag_n, a4h, dados, pdf):
     inicia_em_v = margem_vertical + (tam_tt_v / pag_alt) + (pag_centro_v - centro_v)
 
     # Cria na horizontal
-    count = count1 = 0
+    count = count1 = count2 = 0
     for y in range(0, tam_tt_h, celula_largura + separador_v):
         # Cria na vertical
         count += 1
@@ -245,6 +245,8 @@ def criar_uma_pagina_tabela(pag_n, a4h, dados, pdf):
                 pdf.drawText(textobject)
             count1 += 1
 
+    return len(dados['imoveis_ativos']) - count2
+
 
 def gerar_tabela(dados):
     # Preparando o PDF:
@@ -257,9 +259,9 @@ def gerar_tabela(dados):
     paginas = int((len(dados['imoveis_ativos'])) / dados['imov_qtd']) if (len(dados['imoveis_ativos'])) / dados[
         'imov_qtd'] % 2 == 1 else ceil((len(dados['imoveis_ativos'])) / dados['imov_qtd'])
 
+    faca_qtd = dados['imov_qtd']
     for pagina in range(0, paginas):
-        page_num = pdf.getPageNumber()
-        criar_uma_pagina_tabela(pag_n=page_num, a4h=a4h, dados=dados, pdf=pdf)
+        faca_qtd = criar_uma_pagina_tabela(fazer=faca_qtd, a4h=a4h, dados=dados, pdf=pdf)
         pdf.showPage()
 
     pdf.setCreator(settings.SITE_LINK)
