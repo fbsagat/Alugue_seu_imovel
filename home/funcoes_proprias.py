@@ -164,12 +164,12 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
 
     # Customize a tabela
     celula_largura = 164
-    celula_altura = 68
+    celula_altura = 66
     celula_quantidade_h = len(dados['datas']) + 1
     celula_quantidade_v = fazer
-    separador_v = 0
-    separador_h = 0
-    margem_vertical = 45
+    separador_v = 3
+    separador_h = 1
+    margem_vertical = 40
     text_wrap = round(celula_largura / 6.3)
 
     # Calculos para organização
@@ -244,8 +244,8 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
                                 CON.: vHjm7-5MpWh
                                 VEN: 10
                                 ALU: R$1.000,00
-                                PG: 450,00
-                                F: 650,00"""
+                                PG: R$450,00
+                                F: R$650,00"""
 
                 wraped_text = "\n".join(wrap(mytext, text_wrap))
                 textobject = pdf.beginText(inicia_em_h + y + 2,

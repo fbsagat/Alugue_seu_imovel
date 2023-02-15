@@ -42,19 +42,20 @@ class FormUsuario(forms.ModelForm):
 
 
 class FormEventos(forms.Form):
-    mostrar_em_eventos = (
+    mostrar_em_eventos = [
         (1, 'Pagamentos'),
         (2, 'Gastos'),
         (3, 'Locatarios'),
         (4, 'Contratos'),
         (5, 'Imóveis'),
         (6, 'Anotações'),
-    )
+    ]
 
-    ordem_em_eventos = (
+    ordem_em_eventos = [
         (1, 'Recentes primeiro'),
         (2, 'Antigos primeiro'),
-    )
+    ]
+
     data_eventos_i = forms.DateField(label='A partir de',
                                      widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control-sm'}))
 
@@ -213,12 +214,11 @@ class FormRecibos(forms.Form):
         self.fields['contrato'].widget.attrs['class'] = 'form-select form-select-sm'
 
 
-class FormRTabela(forms.Form):
-    pass
+meses = [(0, '...'), (1, '...'), (2, '...'), (3, '...'), (4, '...'), (5, '...'), (6, '...')]
 
-    def __init__(self, *args, **kwargs):
-        super(FormRTabela, self).__init__(*args, **kwargs)
-        self.fields['contrato'].widget.attrs['class'] = 'form-select form-select-sm'
+
+class FormTabela(forms.Form):
+    mes = forms.ChoiceField(label='', initial='', choices=meses)
 
 
 class FormAdmin(forms.Form):

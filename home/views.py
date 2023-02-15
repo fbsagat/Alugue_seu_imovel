@@ -23,11 +23,12 @@ from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
-    FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos
+    FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela
 
 locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')
+
 
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
 
@@ -402,7 +403,7 @@ def recibos(request, pk):
     form = FormRecibos()
     context = {}
 
-    # Indica se o usuario tem contrato para o template e ja pega o primeiro pra carregar\/
+    # Indica se o usuario tem contrato para o template e ja pega o primeiro para carregar\/
     usuario = Usuario.objects.get(pk=request.user.pk)
     tem_contratos = Contrato.objects.filter(do_locador=request.user.pk).order_by('-data_registro').first()
 
@@ -483,23 +484,35 @@ def recibos(request, pk):
 
 @login_required
 def tabela(request, pk):
-    context = {'SITE_NAME': settings.SITE_NAME}
-    usuario = Usuario.objects.get(pk=request.user.pk)
-    tem_contratos = True if Contrato.objects.filter(do_locador=request.user.pk).first() else False
-    context['tem_contratos'] = tem_contratos
+    # Tratamentos
 
+    # Cria o objeto usuario
+    usuario = Usuario.objects.get(pk=request.user.pk)
+
+    # Cria os meses a partir da data atual do usuario para escolher no form
+    meses = []
+    a_partir_de = datetime.now().date()
+    mes_inicial = datetime.now().date() - relativedelta(months=3)
+    for x in range(7):
+        meses.append(
+            (x, str((mes_inicial + relativedelta(months=x)).strftime('%B/%Y'))))
+    form = FormTabela(initial={'mes': 3})
+    if request.method == 'POST':
+        form = FormTabela(request.POST)
+        if form.is_valid():
+            a_partir_de = datetime.now().date() - relativedelta(months=3-int(form.cleaned_data['mes']))
+    form.fields['mes'].choices = meses
+
+    # Configurações do gerador
     meses_qtd = 4
     imov_qtd = 8
-    comeca_em = datetime.now()
 
-    # Tratamentos
     # Lista de mes/ano cujo início é conforme a escolha do usuario: (iniciar em: 'mes/ano')
     datas = []
     for x in range(0, meses_qtd):
-        datas.append((comeca_em + relativedelta(months=x)).strftime("%B/%Y").title())
+        datas.append((a_partir_de + relativedelta(months=x)).strftime("%B/%Y").title())
 
     # Preparar dados para envio
-
     dados = {'usuario': usuario, "usuario_username": usuario.username,
              "usuario_nome_compl": f'{str(usuario.first_name).upper()} {str(usuario.last_name).upper()}',
              'imoveis_ativos': Imovei.objects.ocupados().filter(do_locador=request.user).order_by('-data_registro'),
@@ -507,10 +520,24 @@ def tabela(request, pk):
              'imov_qtd': imov_qtd,
              }
 
+    # Finalizando para envio ao template
+
+    # Cria o context e já adiciona o campo SITE_NAME
+    context = {'SITE_NAME': settings.SITE_NAME}
+
+    # verifica se o usuario tem contrato para o template assumir outro comportamento
+    tem_contratos = True if Contrato.objects.filter(do_locador=request.user.pk).first() else False
+    context['tem_contratos'] = tem_contratos
+
     if tem_contratos:
+        # Gerar a tabela com os dados
         gerar_tabela(dados)
+        # Link da tabela
         link = rf'/media/tabela_docs/tabela_{usuario}.pdf'
+
+        # Preparar o context
         context['tabela'] = link
+        context['form'] = form
 
     return render(request, 'gerar_tabela.html', context)
 
