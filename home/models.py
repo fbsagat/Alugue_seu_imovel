@@ -2,7 +2,7 @@ import random
 import string
 import os
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
@@ -70,6 +70,9 @@ class Usuario(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('home:DashBoard', args=[str(self.pk, )])
+
+    def nome_completo(self):
+        return f'{str(self.first_name)} {str(self.last_name)}'
 
 
 estados_civis = (
@@ -263,10 +266,11 @@ class Contrato(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE,
                                      verbose_name='Locatário')
-    do_imovel = models.ForeignKey(Imovei, on_delete=models.CASCADE, verbose_name='No imóvel')
+    do_imovel = models.ForeignKey('Imovei', on_delete=models.CASCADE, verbose_name='No imóvel')
 
     data_entrada = models.DateField(blank=False, verbose_name='Data de Entrada')
-    duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)')
+    duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)',
+                                  validators=[MaxValueValidator(18), MinValueValidator(1)])
     valor_mensal = models.CharField(max_length=9, verbose_name='Valor Mensal (R$): ', blank=False,
                                     help_text='Digite apenas números', validators=[apenas_numeros])
     dia_vencimento = models.IntegerField(blank=False, validators=[MaxValueValidator(28), MinValueValidator(1)],
@@ -349,6 +353,9 @@ class Contrato(models.Model):
     def data_saida(self):
         data = self.data_entrada + relativedelta(months=self.duracao)
         return data
+
+    def ativo_hoje(self):
+        return True if self.data_entrada <= datetime.today().date() <= self.data_saida() else False
 
 
 class Parcela(models.Model):

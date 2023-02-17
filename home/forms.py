@@ -1,9 +1,10 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
 
 from django import forms
-
+from django.core.validators import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
@@ -165,10 +166,39 @@ class FormContrato(forms.ModelForm):
             'dia_vencimento': Numeros(),
         }
 
+    def __init__(self, property_id, *args, **kwargs):
+        self.property_id = property_id
+        print(property_id)
+        super(FormContrato, self).__init__(*args, **kwargs)
+
+    def clean_data_entrada(self):
+        entrada = self.cleaned_data['data_entrada']
+        duracao = int(self.data['duracao'])
+        saida = entrada + relativedelta(months=duracao)
+        imovel = self.cleaned_data['do_imovel']
+
+        contratos_deste_imovel = Contrato.objects.filter(do_imovel=imovel.pk).exclude(pk=self.instance.pk)
+        permitido = True
+
+        # Se a data de entrada(data_entrada) estiver entre as datas de
+        # entrada e de saida de cada contrato existente para este imovel, raise error
+        for contrato in contratos_deste_imovel:
+            data_in_out = {'entrada': contrato.data_entrada,
+                           'saida': contrato.data_entrada + relativedelta(months=contrato.duracao)}
+
+            if data_in_out['entrada'] <= entrada <= data_in_out['saida']:
+                permitido = False
+            if data_in_out['entrada'] <= saida <= data_in_out['saida']:
+                permitido = False
+        if permitido is False:
+            raise forms.ValidationError("Já existe um contrato registrado para este imóvel neste período.")
+        else:
+            return entrada
+
     def __init__(self, user, *args, **kwargs):
         super(FormContrato, self).__init__(*args, **kwargs)
         self.fields['do_locatario'].queryset = Locatario.objects.filter(do_locador=user)
-        self.fields['do_imovel'].queryset = Imovei.objects.disponiveis().filter(do_locador=user)
+        self.fields['do_imovel'].queryset = Imovei.objects.filter(do_locador=user)
         self.fields['valor_mensal'].widget.attrs.update({'class': 'mask-valor'})
 
 
@@ -195,7 +225,6 @@ class FormImovel(forms.ModelForm):
 
 
 class FormAnotacoes(forms.ModelForm):
-
     class Meta:
         model = Anotacoe
         fields = '__all__'

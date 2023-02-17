@@ -209,8 +209,8 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
                 textobject.setFillColor(colors.dimgray)
                 textobject.setFont('Times-Roman', 12)
                 textobject.textLine(
-                    "LOC: Locatário | CON: Cod. do Contrato | VEN: Vencimento | ALU: Valor do aluguel | PG: Pago |"
-                    " F: Falta")
+                    "LOC: Locatário | CON: Cód. do Contrato | VEN: Vencimento | VAL: Valor do aluguel | PG: Pago |"
+                    " FA: Falta")
                 pdf.drawText(textobject)
 
                 textobject = pdf.beginText(inicia_em_h + y,
@@ -243,9 +243,9 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
                 mytext = """LOC: Luiz de Souza
                                 CON.: vHjm7-5MpWh
                                 VEN: 10
-                                ALU: R$1.000,00
+                                VAL: R$1.000,00
                                 PG: R$450,00
-                                F: R$650,00"""
+                                FA: R$650,00"""
 
                 wraped_text = "\n".join(wrap(mytext, text_wrap))
                 textobject = pdf.beginText(inicia_em_h + y + 2,

@@ -133,55 +133,65 @@ def eventos(request, pk):
 
 
 # -=-=-=-=-=-=-=-= BOTÃO ATIVOS -=-=-=-=-=-=-=-=
-
-class Perfil1(LoginRequiredMixin, ListView):
+class ImoveisAtivos(LoginRequiredMixin, ListView):
     template_name = 'exibir_ativos.html'
     model = Imovei
     context_object_name = 'imoveis'
     paginate_by = 12
 
     def get_queryset(self):
-        self.object_list = Imovei.objects.ocupados().filter(do_locador=self.request.user).order_by('-data_registro')
-        return self.object_list
+        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
+        ativo_tempo = []
+        for obj in self.object_list:
+            if obj.ativo_hoje() is True:
+                ativo_tempo.append(obj.do_imovel)
+        return ativo_tempo
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Perfil1, self).get_context_data(**kwargs)
-        context['imoveis_qtd'] = Imovei.objects.ocupados().filter(do_locador=self.request.user).count()
+        context = super(ImoveisAtivos, self).get_context_data(**kwargs)
+        context['imoveis_qtd'] = len(self.object_list)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
 
 
-class Perfil2(LoginRequiredMixin, ListView):
+class LocatariosAtivos(LoginRequiredMixin, ListView):
     template_name = 'exibir_ativos.html'
     model = Locatario
     context_object_name = 'locatarios'
     paginate_by = 9
 
     def get_queryset(self):
-        self.object_list = Locatario.objects.com_imoveis().filter(do_locador=self.request.user).order_by(
-            '-data_registro')
-        return self.object_list
+        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
+        ativo_tempo = []
+        for obj in self.object_list:
+            if obj.ativo_hoje() is True:
+                ativo_tempo.append(obj.do_locatario)
+        return ativo_tempo
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Perfil2, self).get_context_data(**kwargs)
-        context['locatario_qtd'] = Locatario.objects.com_imoveis().filter(do_locador=self.request.user).count()
+        context = super(LocatariosAtivos, self).get_context_data(**kwargs)
+        context['locatario_qtd'] = len(self.object_list)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
 
 
-class Perfil3(LoginRequiredMixin, ListView):
+class ContratosAtivos(LoginRequiredMixin, ListView):
     template_name = 'exibir_ativos.html'
     model = Contrato
     context_object_name = 'contratos'
     paginate_by = 12
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_registro')
-        return self.object_list
+        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
+        ativo_tempo = []
+        for obj in self.object_list:
+            if obj.ativo_hoje() is True:
+                ativo_tempo.append(obj)
+        return ativo_tempo
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Perfil3, self).get_context_data(**kwargs)
-        context['contrato_qtd'] = Contrato.objects.filter(do_locador=self.request.user).count()
+        context = super(ContratosAtivos, self).get_context_data(**kwargs)
+        context['contrato_qtd'] = len(self.object_list)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
 
@@ -205,7 +215,7 @@ def registrar_pagamento(request):
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form1'] = request.POST
-        messages.error(request, f"Formulário inválido!")
+        messages.error(request, f"Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
 
@@ -256,7 +266,7 @@ def registrar_gasto(request):
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form3'] = request.POST
-        messages.error(request, "Formulário inválido!")
+        messages.error(request, "Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
 
@@ -302,7 +312,7 @@ def registrar_locat(request):
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form4'] = request.POST
-        messages.error(request, f"Formulário inválido!")
+        messages.error(request, f"Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
 
@@ -310,6 +320,7 @@ def registrar_locat(request):
 @login_required
 def registrar_contrato(request):
     form = FormContrato(request.user, request.POST)
+
     if form.is_valid():
         contrato = form.save(commit=False)
         contrato.do_locador = request.user
@@ -320,7 +331,7 @@ def registrar_contrato(request):
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form5'] = request.POST
-        messages.error(request, "Formulário inválido!")
+        messages.error(request, "Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
 
@@ -375,7 +386,7 @@ def registrar_imovel(request):
             return redirect(request.META['HTTP_REFERER'])
         else:
             request.session['form6'] = request.POST
-            messages.error(request, "Formulário inválido!")
+            messages.error(request, "Formulário inválido.")
             return redirect(request.META['HTTP_REFERER'])
 
 
@@ -393,7 +404,7 @@ def registrar_anotacao(request):
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form7'] = request.POST
-        messages.error(request, "Formulário inválido!")
+        messages.error(request, "Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
 
@@ -484,8 +495,6 @@ def recibos(request, pk):
 
 @login_required
 def tabela(request, pk):
-    # Tratamentos
-
     # Cria o objeto usuario
     usuario = Usuario.objects.get(pk=request.user.pk)
 
@@ -496,34 +505,51 @@ def tabela(request, pk):
         meses.append(
             (x, str((mes_inicial + relativedelta(months=x)).strftime('%B/%Y'))))
 
-    if usuario.ultima_data_tabela_ger != '':
+    # Carregar os dados de data para o form e tabela da informação salva no perfil
+    # ou datetime.now() quando não há info salva
+    if usuario.ultima_data_tabela_ger != '' and request.method == 'GET':
         form = FormTabela(initial={'mes': usuario.ultima_data_tabela_ger})
-        a_partir_de = datetime.now().date() - relativedelta(months=3-usuario.ultima_data_tabela_ger)
+        a_partir_de = datetime.now().date() - relativedelta(months=3 - usuario.ultima_data_tabela_ger)
     else:
         form = FormTabela(initial={'mes': 3})
         a_partir_de = datetime.now().date()
 
+    # Salva o último post do form no perfil do usuario, se form valido
     if request.method == 'POST':
         form = FormTabela(request.POST)
         if form.is_valid():
             usuario.ultima_data_tabela_ger = int(form.cleaned_data['mes'])
             usuario.save(update_fields=["ultima_data_tabela_ger"])
-            a_partir_de = datetime.now().date() - relativedelta(months=3-int(form.cleaned_data['mes']))
+            a_partir_de = datetime.now().date() - relativedelta(months=3 - int(form.cleaned_data['mes']))
+    # coloca as choices no form(todos acima)
     form.fields['mes'].choices = meses
 
     # Configurações do gerador
     meses_qtd = 4
     imov_qtd = 8
 
-    # Lista de mes/ano cujo início é conforme a escolha do usuario: (iniciar em: 'mes/ano')
+    # Tratamento de dados para a tabela \/
+    # Cria a lisa de mes/ano para a tabela a partir da data definida pelo usuario na variavel ('a_partir_de')
     datas = []
     for x in range(0, meses_qtd):
         datas.append((a_partir_de + relativedelta(months=x)).strftime("%B/%Y").title())
 
+    # Pegando informações dos imoveis ativos para preenchimento da tabela
+    contratos_ativos_pk = Contrato.objects.ativos().filter(do_locador=request.user).order_by('-data_entrada').values('pk')
+
+    nomes_imoveis_ativos = []
+    for i in range(0, len(contratos_ativos_pk)):
+        contrato = Contrato.objects.get(pk=contratos_ativos_pk[i]["pk"])
+        nomes_imoveis_ativos.append(Imovei.objects.get(contrato_atual=contrato.pk))
+
+    print(contratos_ativos_pk)
+    print(ImoveisAtivos)
+
     # Preparar dados para envio
-    dados = {'usuario': usuario, "usuario_username": usuario.username,
-             "usuario_nome_compl": f'{str(usuario.first_name).upper()} {str(usuario.last_name).upper()}',
-             'imoveis_ativos': Imovei.objects.ocupados().filter(do_locador=request.user).order_by('-data_registro'),
+    dados = {'usuario': usuario,
+             "usuario_username": usuario.username,
+             "usuario_nome_compl": usuario.nome_completo().upper(),
+             'imoveis_ativos': nomes_imoveis_ativos,
              'datas': datas,
              'imov_qtd': imov_qtd,
              }
@@ -658,7 +684,6 @@ class Imoveis(LoginRequiredMixin, ListView):
 class EditarImov(LoginRequiredMixin, UpdateView):
     model = Imovei
     template_name = 'editar_imovel.html'
-    success_url = reverse_lazy('/')
     form_class = FormImovel
 
     def get_form_kwargs(self, **kwargs):
@@ -718,7 +743,6 @@ class EditarLocat(LoginRequiredMixin, UpdateView):
     model = Locatario
     template_name = 'editar_locatario.html'
     form_class = FormLocatario
-    success_url = reverse_lazy('/')
 
     def get_success_url(self):
         return reverse_lazy('home:Locatários', kwargs={'pk': self.object.pk})
@@ -929,9 +953,6 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         form.fields['CPF'].required = True
         return form
 
-    def get_success_url(self):
-        return reverse("home:DashBoard", kwargs={"pk": self.request.user.pk})
-
     def get_success_message(self, cleaned_data):
         success_message = 'Perfil editado com sucesso!'
         return success_message
@@ -943,6 +964,9 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         context = super(EditarPerfil, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
+
+    def get_success_url(self):
+        return reverse("home:DashBoard", kwargs={"pk": self.request.user.pk})
 
 
 class ApagarConta(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
@@ -973,7 +997,7 @@ def mensagem_desenvolvedor(request):
         return redirect(request.META['HTTP_REFERER'])
     else:
         request.session['form2'] = request.POST
-        messages.error(request, "Formulário inválido!")
+        messages.error(request, "Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
 

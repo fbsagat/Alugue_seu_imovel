@@ -7,8 +7,8 @@ from home.views import Dashboard, Locatarios, Imoveis, Contratos, \
     ExcluirLocat, registrar_gasto, Pagamentos, Gastos, Notas, EditarGrup, ExcluirGrupo, EditarImov, \
     ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, entregar_recibo, ExcluirPagm, EditarContrato, \
     ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, ApagarConta, Homepage, \
-    CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, Perfil1, \
-    Perfil2, Perfil3, eventos, tabela
+    CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
+    LocatariosAtivos, ContratosAtivos, eventos, tabela
 
 from Alugue_seu_imovel import settings
 
@@ -75,9 +75,9 @@ urlpatterns = [
         template_name='editar_perfil.html', success_url=reverse_lazy('home:home'),
         extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
     path('eventos/<int:pk>', eventos, name='Eventos'),
-    path('Checkimoveis/<int:pk>', Perfil1.as_view(), name='Check Imóveis'),
-    path('Checklocatarios/<int:pk>', Perfil2.as_view(), name='Check Locatários'),
-    path('Checkcontratos/<int:pk>', Perfil3.as_view(), name='Check Contratos'),
+    path('Checkimoveis/<int:pk>', ImoveisAtivos.as_view(), name='Check Imóveis'),
+    path('Checklocatarios/<int:pk>', LocatariosAtivos.as_view(), name='Check Locatários'),
+    path('Checkcontratos/<int:pk>', ContratosAtivos.as_view(), name='Check Contratos'),
     path('editarperfil/<int:pk>', EditarPerfil.as_view(), name='Editar Perfil'),
     path('login/',
          auth_view.LoginView.as_view(template_name='Login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),
