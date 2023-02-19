@@ -209,7 +209,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
                 textobject.setFillColor(colors.dimgray)
                 textobject.setFont('Times-Roman', 12)
                 textobject.textLine(
-                    "LOC: Locatário | CON: Cód. do Contrato | VEN: Vencimento | VAL: Valor do aluguel | PG: Pago |"
+                    "LOC: Locatário | CON: Cód. do Contrato | VAL: Valor do aluguel | VEN: Vencimento | PG: Pago |"
                     " FA: Falta")
                 pdf.drawText(textobject)
 
@@ -229,7 +229,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
                 pdf.drawText(textobject)
 
             if vertical >= 0 and horizontal == 0:
-                mytext = f'{dados["imoveis_ativos"][((pag_n-1)*8)+vertical]}'
+                mytext = f'{dados["imoveis_nomes"][((pag_n-1)*8)+vertical]}'
                 wraped_text = "\n".join(wrap(mytext, text_wrap))
                 textobject = pdf.beginText(inicia_em_h + y + 2,
                                            pag_alt - inicia_em_v - x - 15)
@@ -240,21 +240,14 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
                 pdf.drawText(textobject)
 
             if vertical >= 0 and horizontal > 0:
-                mytext = """LOC: Luiz de Souza
-                                CON.: vHjm7-5MpWh
-                                VEN: 10
-                                VAL: R$1.000,00
-                                PG: R$450,00
-                                FA: R$650,00"""
-
-                wraped_text = "\n".join(wrap(mytext, text_wrap))
+                parc = str(dados['parcelas'][((pag_n-1)*8)+vertical][horizontal-1])
+                wraped_text = "\n".join(wrap(parc, text_wrap))
                 textobject = pdf.beginText(inicia_em_h + y + 2,
                                            pag_alt - inicia_em_v - x - 10)
                 textobject.setFillColor(colors.darkslategray)
                 textobject.setFont('Arial', 9)
                 for line in wraped_text.splitlines(False):
                     textobject.textLine(line.rstrip())
-
                 pdf.drawText(textobject)
 
 
@@ -266,9 +259,9 @@ def gerar_tabela(dados):
     pdfmetrics.registerFont(TTFont('Impact', 'Impact.ttf'))
     pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
 
-    paginas = int((len(dados['imoveis_ativos'])) / dados['imov_qtd']) if (len(dados['imoveis_ativos'])) / dados[
-        'imov_qtd'] % 2 == 1 else ceil((len(dados['imoveis_ativos'])) / dados['imov_qtd'])
-    ultima = len(dados['imoveis_ativos']) - ((paginas - 1) * dados['imov_qtd'])
+    paginas = int((len(dados['imoveis_nomes'])) / dados['imov_qtd']) if (len(dados['imoveis_nomes'])) / dados[
+        'imov_qtd'] % 2 == 1 else ceil((len(dados['imoveis_nomes'])) / dados['imov_qtd'])
+    ultima = len(dados['imoveis_nomes']) - ((paginas - 1) * dados['imov_qtd'])
     fazer = dados['imov_qtd']
 
     for pagina in range(0, paginas):

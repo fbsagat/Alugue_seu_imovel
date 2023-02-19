@@ -50,7 +50,6 @@ class PagamentosAdmin(admin.ModelAdmin):
 @admin.register(Parcela)
 class ParcelasAdmin(admin.ModelAdmin):
     list_display = ('do_contrato', 'codigo', 'data_pagm_ref')
-    list_filter = ('pago', 'entregue')
 
 
 @admin.register(Gasto)

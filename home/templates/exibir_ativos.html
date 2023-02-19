@@ -62,7 +62,7 @@ Itens Ativos / {{ SITE_NAME }}
                         <p class="card-text">NACIONALID.: {{ locatario.nacionalidade }} / EST. CIVIL:
                             {{locatario.get_estadocivil_display }}
                             {% for imovel in locatario.com_imoveis.all %}
-                        <p class="card-text">COM: {{ imovel.nome }}/{{ imovel.grupo }} </p>
+                        <p class="card-text">COM: {{ imovel }} </p>
                         {% endfor %}
 
                     </div>

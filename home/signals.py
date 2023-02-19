@@ -64,6 +64,7 @@ def contrato_update(sender, instance, created, **kwargs):
                     random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
                     range(6))
                 if recibo_codigo not in codigos_existentes:
-                    Parcela.objects.create(do_contrato=contrato, data_pagm_ref=data,
+                    Parcela.objects.create(do_usuario=contrato.do_locador, do_contrato=contrato, do_imovel=imovel,
+                                           do_locatario=locatario, data_pagm_ref=data,
                                            codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
                     break

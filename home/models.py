@@ -300,7 +300,8 @@ class Contrato(models.Model):
                     random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
                     range(6))
                 if recibo_codigo not in codigos_existentes:
-                    parcela = Parcela(do_contrato=self, data_pagm_ref=data,
+                    parcela = Parcela(do_usuario=self.do_locador, do_contrato=self, do_imovel=self.do_imovel,
+                                      do_locatario=self.do_locatario, data_pagm_ref=data,
                                       codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
                     parcela.save()
                     break
@@ -323,6 +324,9 @@ class Contrato(models.Model):
     def get_absolute_url(self):
         return reverse('home:Contratos', args=[str(self.pk), ])
 
+    class Meta:
+        ordering = ['data_entrada']
+
     def nome_curto(self):
         return f'{self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
                f'({self.codigo})'
@@ -344,7 +348,7 @@ class Contrato(models.Model):
     def total_quitado(self):
         pass
 
-    def total_pg(self):
+    def faltando_p_quitar(self):
         pass
 
     def em_maos(self):
@@ -359,15 +363,18 @@ class Contrato(models.Model):
 
 
 class Parcela(models.Model):
+    do_usuario = models.ForeignKey('Usuario', blank=False, on_delete=models.CASCADE)
     do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
+    do_imovel = models.ForeignKey('Imovei', null=False, blank=False, on_delete=models.CASCADE)
+    do_locatario = models.ForeignKey('Locatario', null=False, blank=False, on_delete=models.CASCADE)
 
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=11)
     data_pagm_ref = models.DateField(null=False, blank=False)
-    pago = models.BooleanField(default=False)
-    entregue = models.BooleanField(default=False)
+    tt_pago = models.CharField(max_length=9, blank=False)
+    recibo_entregue = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.do_contrato} ({self.codigo})'
+        return f'{str(self.do_imovel)[:5]} ({self.data_pagm_ref.strftime("%B/%Y")})'
 
 
 lista_pagamentos = (

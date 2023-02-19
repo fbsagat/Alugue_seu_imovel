@@ -1,6 +1,6 @@
-import locale
+import locale, calendar
 from num2words import num2words
-from datetime import datetime
+from datetime import datetime, timedelta
 from os import path
 from dateutil.relativedelta import relativedelta
 
@@ -111,7 +111,7 @@ def eventos(request, pk):
     if '4' in itens_eventos and pesquisa_req:
         contratos = Contrato.objects.filter(do_locador=request.user,
                                             data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
-            f'{ordem}data_registro')[:qtd_eventos]
+            f'{ordem}data_entrada')[:qtd_eventos]
         contratotal = contratos.aggregate(total=Sum("valor_mensal"))["total"]
         if contratotal:
             contr_tt = f'{valor_format(str(contratotal))}'
@@ -416,7 +416,7 @@ def recibos(request, pk):
 
     # Indica se o usuario tem contrato para o template e ja pega o primeiro para carregar\/
     usuario = Usuario.objects.get(pk=request.user.pk)
-    tem_contratos = Contrato.objects.filter(do_locador=request.user.pk).order_by('-data_registro').first()
+    tem_contratos = Contrato.objects.filter(do_locador=request.user.pk).order_by('-data_entrada').first()
 
     if tem_contratos:
         contrato = tem_contratos
@@ -498,21 +498,21 @@ def tabela(request, pk):
     # Cria o objeto usuario
     usuario = Usuario.objects.get(pk=request.user.pk)
 
-    # Cria os meses a partir da data atual do usuario para escolher no form
+    # Cria os meses a partir da mes atual do usuario para escolher no form
     meses = []
-    mes_inicial = datetime.now().date() - relativedelta(months=3)
-    for x in range(7):
+    mes_inicial = datetime.now().date().replace(day=1) - relativedelta(months=3)
+    for imovel in range(7):
         meses.append(
-            (x, str((mes_inicial + relativedelta(months=x)).strftime('%B/%Y'))))
+            (imovel, str((mes_inicial + relativedelta(months=imovel)).strftime('%B/%Y'))))
 
-    # Carregar os dados de data para o form e tabela da informação salva no perfil
+    # Carregar os dados de mes para o form e tabela da informação salva no perfil
     # ou datetime.now() quando não há info salva
-    if usuario.ultima_data_tabela_ger != '' and request.method == 'GET':
+    if usuario.ultima_data_tabela_ger is not None and request.method == 'GET':
         form = FormTabela(initial={'mes': usuario.ultima_data_tabela_ger})
-        a_partir_de = datetime.now().date() - relativedelta(months=3 - usuario.ultima_data_tabela_ger)
+        a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=3 - usuario.ultima_data_tabela_ger)
     else:
         form = FormTabela(initial={'mes': 3})
-        a_partir_de = datetime.now().date()
+        a_partir_de = datetime.now().date().replace(day=1)
 
     # Salva o último post do form no perfil do usuario, se form valido
     if request.method == 'POST':
@@ -520,38 +520,73 @@ def tabela(request, pk):
         if form.is_valid():
             usuario.ultima_data_tabela_ger = int(form.cleaned_data['mes'])
             usuario.save(update_fields=["ultima_data_tabela_ger"])
-            a_partir_de = datetime.now().date() - relativedelta(months=3 - int(form.cleaned_data['mes']))
+            a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=3 - int(form.cleaned_data['mes']))
     # coloca as choices no form(todos acima)
     form.fields['mes'].choices = meses
 
     # Configurações do gerador
+    # Mostrar por página
     meses_qtd = 4
     imov_qtd = 8
 
     # Tratamento de dados para a tabela \/
-    # Cria a lisa de mes/ano para a tabela a partir da data definida pelo usuario na variavel ('a_partir_de')
+    # Definir o último dia do último mês
+    ate = (a_partir_de + relativedelta(months=meses_qtd)) + timedelta(days=-1)
+
+    # Cria a lista de mes/ano para a tabela a partir da mes definida pelo usuario na variavel ('a_partir_de')
     datas = []
-    for x in range(0, meses_qtd):
-        datas.append((a_partir_de + relativedelta(months=x)).strftime("%B/%Y").title())
+    for imovel in range(0, meses_qtd):
+        datas.append(str((a_partir_de + relativedelta(months=imovel)).strftime("%B/%Y").title()))
 
-    # Pegando informações dos imoveis ativos para preenchimento da tabela
-    contratos_ativos_pk = Contrato.objects.ativos().filter(do_locador=request.user).order_by('-data_entrada').values('pk')
+    # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
+    parcelas = Parcela.objects.filter(do_usuario=usuario).filter(data_pagm_ref__range=[a_partir_de, ate]).order_by(
+        '-do_contrato')
+    from pprint import pprint
+    # nomes
+    imoveis_nomes = []
+    for parcela in parcelas:
+        if parcela.do_imovel.__str__() not in imoveis_nomes:
+            imoveis_nomes.append(parcela.do_imovel.__str__())
 
-    nomes_imoveis_ativos = []
-    for i in range(0, len(contratos_ativos_pk)):
-        contrato = Contrato.objects.get(pk=contratos_ativos_pk[i]["pk"])
-        nomes_imoveis_ativos.append(Imovei.objects.get(contrato_atual=contrato.pk))
+    # tratar parcelas por imovel
+    # Organizar parcelas por imovel
+    lista_parcelas = []
 
-    print(contratos_ativos_pk)
-    print(ImoveisAtivos)
+    for imovel in imoveis_nomes:
+        parcelas_tratadas = []
+        lista_parcelas.append(parcelas_tratadas)
+        for parcela in parcelas:
+            if parcela.do_imovel.__str__() == imovel:
+                parcelas_tratadas.append(parcela)
 
-    # Preparar dados para envio
+    lista_parcelas_compl = []
+    for imovel in lista_parcelas:
+        parcelas = []
+        lista_parcelas_compl.append(parcelas)
+        for mes in range(0, meses_qtd):
+            if str(imovel[0].data_pagm_ref.strftime("%B/%Y").title()) == str(datas[mes]):
+                for parc in imovel:
+                    parcelas.append(f"""
+                    LOC:{parc.do_locatario}
+                    CON:{parc.do_contrato.codigo}
+                    VAL:{parc.do_contrato.valor_format()}
+                    VEN:{parc.do_contrato.dia_vencimento}
+                    PAG:{parc.do_contrato.total_quitado()}
+                    FAL:{parc.do_contrato.faltando_p_quitar()}""")
+            else:
+                parcelas.append('Sem contrato')
+        if len(parcelas) - meses_qtd != 0:
+            del parcelas[-(len(parcelas) - meses_qtd):]
+
+    # Deixei pro fabio do futuro: fazer mais testes na tabela e colocar mais opções
+
     dados = {'usuario': usuario,
              "usuario_username": usuario.username,
              "usuario_nome_compl": usuario.nome_completo().upper(),
-             'imoveis_ativos': nomes_imoveis_ativos,
+             'imoveis_nomes': imoveis_nomes,
              'datas': datas,
              'imov_qtd': imov_qtd,
+             'parcelas': lista_parcelas_compl,
              }
 
     # Finalizando para envio ao template
@@ -566,12 +601,12 @@ def tabela(request, pk):
     if tem_contratos:
         # Gerar a tabela com os dados
         gerar_tabela(dados)
-        # Link da tabela
-        link = rf'/media/tabela_docs/tabela_{usuario}.pdf'
+    # Link da tabela
+    link = rf'/media/tabela_docs/tabela_{usuario}.pdf'
 
-        # Preparar o context
-        context['tabela'] = link
-        context['form'] = form
+    # Preparar o context
+    context['tabela'] = link
+    context['form'] = form
 
     return render(request, 'gerar_tabela.html', context)
 
@@ -782,7 +817,7 @@ class Contratos(LoginRequiredMixin, ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_registro')
+        self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_entrada')
         return self.object_list
 
     def get_context_data(self, *, object_list=True, **kwargs):
