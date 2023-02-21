@@ -1,5 +1,7 @@
 Organizar os imoveis ativos por ordem de registro do contrato atual deles
-colocar um deseninho nas cardsdso ativos (emoji talvez)
+colocar um deseninho nas card dos ativos (emoji talvez)
+apagar a tabela do usuario quando ele terminar a sessão
+salvar todas as preferencias do usuario em um dicionario em uma célula da tabela dele, n]ao em varias como atualmente
 
 contrato nãp desativa, arrumar
 
