@@ -34,9 +34,9 @@ class Usuario(AbstractUser):
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
     ultimo_recibo_gerado = models.ForeignKey('Contrato', null=True, blank=True, on_delete=models.SET_NULL)
-    ultima_data_tabela_ger = models.IntegerField(null=True, blank=True)
-
-    tabela_pdf = models.FileField(upload_to='tabelas_docs/%Y/%m/', blank=True, verbose_name='Tabelas')
+    tabela_ultima_data_ger = models.IntegerField(null=True, blank=True)
+    tabela_meses_qtd = models.IntegerField(null=True, blank=True)
+    tabela_imov_qtd = models.IntegerField(null=True, blank=True)
 
     def apagar_recibos_pdf(self):
         # Apaga todos os recibos em pdf do usuario
@@ -73,6 +73,10 @@ class Usuario(AbstractUser):
 
     def nome_completo(self):
         return f'{str(self.first_name)} {str(self.last_name)}'
+
+    def primeiro_ultimo_nome(self):
+        nome = self.nome_completo().split()
+        return f'{nome[0]} {nome[len(nome) - 1]}'
 
 
 estados_civis = (
@@ -359,7 +363,8 @@ class Contrato(models.Model):
         return data
 
     def ativo_hoje(self):
-        return True if self.data_entrada <= datetime.today().date() <= self.data_saida() else False
+        return True if self.data_entrada <= datetime.today().date() <= self.data_saida() and self.em_posse is True \
+                       and self.rescindido is False and self.vencido is False else False
 
 
 class Parcela(models.Model):
@@ -370,11 +375,25 @@ class Parcela(models.Model):
 
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=11)
     data_pagm_ref = models.DateField(null=False, blank=False)
-    tt_pago = models.CharField(max_length=9, blank=False)
+    tt_pago = models.CharField(max_length=9, blank=False, default=0)
     recibo_entregue = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{str(self.do_imovel)[:5]} ({self.data_pagm_ref.strftime("%B/%Y")})'
+        return f'{str(self.do_imovel)[:8]} ({self.data_pagm_ref.strftime("%B/%Y")})'
+
+    def tt_pago_format(self):
+        return valor_format(self.tt_pago)
+
+    def falta_pagar_format(self):
+        contrato = Contrato.objects.get(pk=self.do_contrato.pk)
+        return valor_format(str(int(contrato.valor_mensal) - int(self.tt_pago)))
+
+    def esta_pago(self):
+        contrato = Contrato.objects.get(pk=self.do_contrato.pk)
+        return True if self.tt_pago == contrato.valor_mensal else False
+
+    def esta_vencido(self):
+        return True if datetime.today().date() > self.data_pagm_ref else False
 
 
 lista_pagamentos = (

@@ -154,8 +154,7 @@ def gerar_recibos(dados):
 
 
 # 101: -----------------------------------------------
-
-def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
+def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     # Atributos da página
     pag_lar = a4h[0]
     pag_alt = a4h[1]
@@ -163,34 +162,42 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
     pag_centro_v = pag_alt / 2
 
     # Customize a tabela
-    celula_largura = 164
-    celula_altura = 66
+
     celula_quantidade_h = len(dados['datas']) + 1
     celula_quantidade_v = fazer
-    separador_v = 3
-    separador_h = 1
     margem_vertical = 40
-    text_wrap = round(celula_largura / 6.3)
+    margem_horizontal = 0
+    if pag_n == 1:
+        celula_altura = round((pag_alt / celula_quantidade_v) - (margem_vertical / celula_quantidade_v))-1
+    celula_largura = round(pag_lar / celula_quantidade_h)-1
+
+    # Encaixe de texto
+    text_wrap_imo = 20
+    text_wrap_parc = 30
+    text_tam_imo = 10
+    text_tam_parc = 7
+    espacamento_h = 2
+    espacamento_v = 10
 
     # Calculos para organização
-    tam_tt_h = (celula_largura + separador_v) * celula_quantidade_h
-    tam_tt_v = (celula_altura + separador_h) * celula_quantidade_v
+    tam_tt_h = celula_largura * celula_quantidade_h
+    tam_tt_v = celula_altura * celula_quantidade_v
     centro_h = tam_tt_h / 2
     centro_v = tam_tt_v / 2
-    inicia_em_h = (tam_tt_h / pag_lar) + (pag_centro_h - centro_h)
+    inicia_em_h = (tam_tt_h / pag_lar) + (pag_centro_h - centro_h) - 1
     # \/ Para centralizar verticalmente: (tam_tt_v / pag_alt) + (pag_centro_v - centro_v)
     inicia_em_v = margem_vertical
 
     # Cria na horizontal
-    for horizontal, y in enumerate(range(0, tam_tt_h, celula_largura + separador_v)):
+    for horizontal, y in enumerate(range(0, tam_tt_h, celula_largura)):
         # Cria na vertical
-        for vertical, x in enumerate(range(0, tam_tt_v, celula_altura + separador_h)):
+        for vertical, x in enumerate(range(0, tam_tt_v, celula_altura)):
             if vertical % 2 == 0:
                 pdf.setFillColorRGB(0, 0, 0, 0.03)
             else:
                 pdf.setFillColorRGB(0, 0, 0, 0)
 
-            # Criar formas
+            # Criar tabela
             pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura, fill=1)
             pdf.rect(inicia_em_h + y, pag_alt - inicia_em_v - celula_altura - x, celula_largura, celula_altura, fill=1)
             pdf.setFillColorRGB(0, 0, 0, 1)
@@ -209,8 +216,8 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
                 textobject.setFillColor(colors.dimgray)
                 textobject.setFont('Times-Roman', 12)
                 textobject.textLine(
-                    "LOC: Locatário | CON: Cód. do Contrato | VAL: Valor do aluguel | VEN: Vencimento | PG: Pago |"
-                    " FA: Falta")
+                    "LOC: Locatário | CON: Cód. do Contrato | VAL: Valor do aluguel | VEN: Vencimento | "
+                    "ATI: Contrato ativo hoje | P-OK: Pagamento OK | C-OK: Recibo OK | R-F: Recibo falta")
                 pdf.drawText(textobject)
 
                 textobject = pdf.beginText(inicia_em_h + y,
@@ -225,30 +232,32 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf):
                                            pag_alt - inicia_em_v - celula_altura - x + celula_altura + 2)
                 textobject.setFillColor(colors.black)
                 textobject.setFont('Impact', 12)
-                textobject.textLine(f'{dados["datas"][horizontal-1]}')
+                textobject.textLine(f'{dados["datas"][horizontal - 1]}')
                 pdf.drawText(textobject)
 
             if vertical >= 0 and horizontal == 0:
-                mytext = f'{dados["imoveis_nomes"][((pag_n-1)*8)+vertical]}'
-                wraped_text = "\n".join(wrap(mytext, text_wrap))
-                textobject = pdf.beginText(inicia_em_h + y + 2,
-                                           pag_alt - inicia_em_v - x - 15)
+                mytext = f'{dados["imoveis_nomes"][((pag_n - 1) * dados["imov_qtd"]) + vertical]}'
+                wraped_text = "\n".join(wrap(mytext, text_wrap_imo))
+                textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
+                                           pag_alt - inicia_em_v - x - espacamento_v)
                 textobject.setFillColor(colors.black)
-                textobject.setFont('Arial', 12)
+                textobject.setFont('Arial', text_tam_imo)
                 for line in wraped_text.splitlines(False):
                     textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
 
             if vertical >= 0 and horizontal > 0:
-                parc = str(dados['parcelas'][((pag_n-1)*8)+vertical][horizontal-1])
-                wraped_text = "\n".join(wrap(parc, text_wrap))
-                textobject = pdf.beginText(inicia_em_h + y + 2,
-                                           pag_alt - inicia_em_v - x - 10)
+                parc = str(dados['parcelas'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
+                wraped_text = "\n".join(wrap(parc, text_wrap_parc))
+                textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
+                                           pag_alt - inicia_em_v - x - (espacamento_v-2))
                 textobject.setFillColor(colors.darkslategray)
-                textobject.setFont('Arial', 9)
+                textobject.setFont('Arial', text_tam_parc)
                 for line in wraped_text.splitlines(False):
                     textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
+
+    return celula_altura
 
 
 def gerar_tabela(dados):
@@ -264,11 +273,13 @@ def gerar_tabela(dados):
     ultima = len(dados['imoveis_nomes']) - ((paginas - 1) * dados['imov_qtd'])
     fazer = dados['imov_qtd']
 
+    celula_altura = 100
     for pagina in range(0, paginas):
         if pagina == paginas - 1:
             fazer = ultima
         pag_n = pdf.getPageNumber()
-        criar_uma_pagina_tabela(fazer=fazer, pag_n=pag_n, a4h=a4h, dados=dados, pdf=pdf)
+        celula_altura = criar_uma_pagina_tabela(fazer=fazer, pag_n=pag_n, a4h=a4h, dados=dados, pdf=pdf,
+                                                celula_altura=celula_altura)
         pdf.showPage()
 
     pdf.setCreator(settings.SITE_LINK)

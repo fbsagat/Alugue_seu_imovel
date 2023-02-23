@@ -244,10 +244,14 @@ class FormRecibos(forms.Form):
 
 
 meses = [(0, '...'), (1, '...'), (2, '...'), (3, '...'), (4, '...'), (5, '...'), (6, '...')]
+mostrar = [(4, '4'), (5, '5'), (6, '6'), (7, '7')]
+itens = [(6, '6'), (7, '7'), (8, '8'), (9, '9'), (10, '10')]
 
 
 class FormTabela(forms.Form):
-    mes = forms.ChoiceField(label='', initial='', choices=meses)
+    mes = forms.ChoiceField(label='', initial='', choices=meses, required=True)
+    mostrar_qtd = forms.ChoiceField(label='', initial=4, choices=mostrar, required=True)
+    itens_qtd = forms.ChoiceField(label='', initial=4, choices=itens, required=True)
 
 
 class FormAdmin(forms.Form):

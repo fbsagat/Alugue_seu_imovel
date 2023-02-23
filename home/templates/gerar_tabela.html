@@ -24,6 +24,12 @@ Tabela / {{ SITE_NAME }}
             <div class="p-1">
                 Selecione o mês de inicio: {{ form.mes|as_crispy_field }}
             </div>
+            <div class="p-1" style="cursor:default;" title="Seleciona a quantidade máxima de itens por página">
+                Itens qtd.: {{ form.itens_qtd|as_crispy_field }}
+            </div>
+            <div class="p-1" style="cursor:default;" title="Seleciona a quantidade de meses para mostrar na tabela">
+                Meses qtd.: {{ form.mostrar_qtd|as_crispy_field }}
+            </div>
             <div class="p-1">
                 <button class="bg-blue-600 py-2 px-3 text-white rounded-md form-control-sm" type="submit">Gerar
                 </button>
