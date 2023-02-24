@@ -1,4 +1,4 @@
-import io, datetime
+import io
 from math import ceil
 from textwrap import wrap
 
@@ -154,7 +154,7 @@ def gerar_recibos(dados):
 
 
 # 101: -----------------------------------------------
-def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
+def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura, tam_medida):
     # Atributos da página
     pag_lar = a4h[0]
     pag_alt = a4h[1]
@@ -162,22 +162,46 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     pag_centro_v = pag_alt / 2
 
     # Customize a tabela
-
     celula_quantidade_h = len(dados['datas']) + 1
     celula_quantidade_v = fazer
     margem_vertical = 40
     margem_horizontal = 0
+    celula_altura_max = 92
+
     if pag_n == 1:
-        celula_altura = round((pag_alt / celula_quantidade_v) - (margem_vertical / celula_quantidade_v))-1
-    celula_largura = round(pag_lar / celula_quantidade_h)-1
+        tam_calc = round((pag_alt / celula_quantidade_v) - (margem_vertical / celula_quantidade_v)) - 1
+        celula_altura = tam_calc if tam_calc <= celula_altura_max else celula_altura_max
+    celula_largura = round(pag_lar / celula_quantidade_h) - 1
 
     # Encaixe de texto
-    text_wrap_imo = 20
-    text_wrap_parc = 30
-    text_tam_imo = 10
-    text_tam_parc = 7
-    espacamento_h = 2
-    espacamento_v = 10
+    # FABIO DO FUTURO ARRUMAR ISSO, ENCAIXE EM TODOS OS TAMANHOS ABRAÇO!
+    if pag_n == 1:
+        tam_medida = celula_quantidade_v + celula_quantidade_h
+
+    if tam_medida <= 12:
+        text_wrap_imo = 22
+        text_wrap_parc = 33
+        text_tam_imo = 14
+        text_tam_parc = 10
+        espacamento_h = 2
+        espacamento_v = 13
+        leading = 10.5
+    elif tam_medida <= 15:
+        text_wrap_imo = 18
+        text_wrap_parc = 32
+        text_tam_imo = 11
+        text_tam_parc = 7
+        espacamento_h = 2
+        espacamento_v = 11
+        leading = 9
+    elif tam_medida <= 18:
+        text_wrap_imo = 20
+        text_wrap_parc = 30
+        text_tam_imo = 10
+        text_tam_parc = 7
+        espacamento_h = 2
+        espacamento_v = 12
+        leading = 8.5
 
     # Calculos para organização
     tam_tt_h = celula_largura * celula_quantidade_h
@@ -193,7 +217,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
         # Cria na vertical
         for vertical, x in enumerate(range(0, tam_tt_v, celula_altura)):
             if vertical % 2 == 0:
-                pdf.setFillColorRGB(0, 0, 0, 0.03)
+                pdf.setFillColorRGB(0, 0, 0, 0.05)
             else:
                 pdf.setFillColorRGB(0, 0, 0, 0)
 
@@ -214,10 +238,10 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 textobject = pdf.beginText(inicia_em_h + y + 2,
                                            pag_alt - inicia_em_v - celula_altura - x + celula_altura + 24)
                 textobject.setFillColor(colors.dimgray)
-                textobject.setFont('Times-Roman', 12)
+                textobject.setFont('Times-Roman', 11)
                 textobject.textLine(
-                    "LOC: Locatário | CON: Cód. do Contrato | VAL: Valor do aluguel | VEN: Vencimento | "
-                    "ATI: Contrato ativo hoje | P-OK: Pagamento OK | C-OK: Recibo OK | R-F: Recibo falta")
+                    f'Tabela de agenda dos imóveis de '
+                    f'{dados["usuario_username"]} (De {dados["datas"][0]} Até {dados["datas"][-1]})')
                 pdf.drawText(textobject)
 
                 textobject = pdf.beginText(inicia_em_h + y,
@@ -250,14 +274,16 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 parc = str(dados['parcelas'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
                 wraped_text = "\n".join(wrap(parc, text_wrap_parc))
                 textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
-                                           pag_alt - inicia_em_v - x - (espacamento_v-2))
-                textobject.setFillColor(colors.darkslategray)
+                                           pag_alt - inicia_em_v - x - (espacamento_v - 3))
+                textobject.setFillColor(colors.gray)
                 textobject.setFont('Arial', text_tam_parc)
+                textobject.setCharSpace(0.4)
+                textobject.setLeading(leading)
                 for line in wraped_text.splitlines(False):
                     textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
 
-    return celula_altura
+    return {'celula_altura': celula_altura, 'tam_media': tam_medida}
 
 
 def gerar_tabela(dados):
@@ -273,13 +299,13 @@ def gerar_tabela(dados):
     ultima = len(dados['imoveis_nomes']) - ((paginas - 1) * dados['imov_qtd'])
     fazer = dados['imov_qtd']
 
-    celula_altura = 100
+    infos = {'celula_altura': 100, 'tam_media': 5}
     for pagina in range(0, paginas):
         if pagina == paginas - 1:
             fazer = ultima
         pag_n = pdf.getPageNumber()
-        celula_altura = criar_uma_pagina_tabela(fazer=fazer, pag_n=pag_n, a4h=a4h, dados=dados, pdf=pdf,
-                                                celula_altura=celula_altura)
+        infos = criar_uma_pagina_tabela(fazer=fazer, pag_n=pag_n, a4h=a4h, dados=dados, pdf=pdf,
+                                        celula_altura=infos['celula_altura'], tam_medida=infos['tam_media'])
         pdf.showPage()
 
     pdf.setCreator(settings.SITE_LINK)

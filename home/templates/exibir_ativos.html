@@ -19,7 +19,7 @@ Itens Ativos / {{ SITE_NAME }}
         <div class="row row-cols-5 row-cols-md-3 g-3">
             {% for imovel in imoveis %}
             <div class="col">
-                <div class="card bg-black bg-opacity-75 border-dark h-100">
+                <div class="card bg-black bg-opacity-75 border-secondary h-100">
                     <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
                         {{ imovel.nome }} - {{ imovel.grupo }}
                     </div>
@@ -49,7 +49,7 @@ Itens Ativos / {{ SITE_NAME }}
         <div class="row row-cols-5 row-cols-md-3 g-3">
             {% for locatario in locatarios %}
             <div class="col">
-                <div class="card bg-black bg-opacity-75 border-dark h-100">
+                <div class="card bg-black bg-opacity-75 border-secondary h-100">
                     <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
                         {{ locatario.nome }}
                     </div>
@@ -84,7 +84,7 @@ Itens Ativos / {{ SITE_NAME }}
         <div class="row row-cols-5 row-cols-md-3 g-3">
             {% for contrato in contratos %}
             <div class="col">
-                <div class="card bg-black bg-opacity-75 border-dark h-100">
+                <div class="card bg-black bg-opacity-75 border-secondary h-100">
 
                     <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
                         {{ contrato }}

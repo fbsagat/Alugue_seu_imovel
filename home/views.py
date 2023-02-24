@@ -412,6 +412,9 @@ def registrar_anotacao(request):
 @login_required
 def recibos(request, pk):
     form = FormRecibos()
+    ativo_tempo = []
+    form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
+                                                               vencido=False).order_by('-data_entrada')
     context = {}
 
     # Indica se o usuario tem contrato para o template e ja pega o primeiro para carregar\/
@@ -585,16 +588,17 @@ def tabela(request, pk):
                             enviar = 'Pago! Recido não entregue'
                         else:
                             if vencido:
-                                enviar = f"""O Pagamento Venceu
-                                Pg: {parc.tt_pago_format()} Falta: {parc.falta_pagar_format()}
+                                enviar = f"""O Pagam. VENCEU dia {parc.do_contrato.dia_vencimento}
+                                Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
                                 """
                             else:
-                                enviar = f"""Pg: {parc.tt_pago_format()} Falta: {parc.falta_pagar_format()}
+                                enviar = f"""O Pagam. Vencerá dia {parc.do_contrato.dia_vencimento}
+                                Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
                                 """
-                    parcelas.append(f"""LOC:{parc.do_locatario.primeiro_ultimo_nome()}
-                    CON:{parc.do_contrato.codigo}
-                    VAL:{parc.do_contrato.valor_format()}
-                    VEN:{parc.do_contrato.dia_vencimento}/{parc.data_pagm_ref.strftime("%m")} | ATI: {'Sim' if parc.do_contrato.ativo_hoje() is True else 'Não'}
+                    parcelas.append(f"""Com: {parc.do_locatario.primeiro_ultimo_nome()}
+                    Contr. cód.: {parc.do_contrato.codigo}
+                    Valor: {parc.do_contrato.valor_format()}
+                    {'Contrato Ativo' if parc.do_contrato.ativo_hoje() is True else 'Contrato Inativo'}
                     {enviar}""")
             else:
                 parcelas.append('Sem contrato')

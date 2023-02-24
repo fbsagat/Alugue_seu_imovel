@@ -236,9 +236,10 @@ class FormAnotacoes(forms.ModelForm):
 
 
 class FormRecibos(forms.Form):
-    contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.all().order_by('-data_registro'), initial='')
+    contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.none(), initial='')
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
         super(FormRecibos, self).__init__(*args, **kwargs)
         self.fields['contrato'].widget.attrs['class'] = 'form-select form-select-sm'
 
@@ -271,8 +272,7 @@ class FormAdmin(forms.Form):
     )
 
     executar = forms.ChoiceField(choices=escolhas, initial='100')
-    p_usuario = forms.ModelChoiceField(label='', queryset=Usuario.objects.all(),
-                                       initial='')
+    p_usuario = forms.ModelChoiceField(label='', queryset=Usuario.objects.all(), initial='')
     multiplicar_por = forms.IntegerField(max_value=10, min_value=0, initial=1)
 
     def __init__(self, *args, **kwargs):

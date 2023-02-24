@@ -1,15 +1,18 @@
-Organizar os imoveis ativos por ordem de registro do contrato atual deles
-colocar um deseninho nas card dos ativos (emoji talvez)
-apagar a tabela do usuario quando ele terminar a sessão
-salvar todas as preferencias do usuario em um dicionario em uma célula da tabela dele, n]ao em varias como atualmente
-criar uma barra laterial com afazeres, dp it latter, simples para os usuarios
-melhorar o sisatema de fale com o desenvolvedor, colocando um mini fprus onde os usuario dão sugestãões de melhorias
+Criar uma barra laterial com afazeres, dp it latter, simples para os usuarios
+Melhorar o sisatema de fale com o desenvolvedor, colocando um mini fprus onde os usuario dão sugestãões de melhorias
  com sistema de votação.
 
-contrato nãp desativa, arrumar
+OK. Organizar os imoveis ativos por ordem de registro do contrato atual deles
+OK. (só mudei a cor da borda) Colocar um deseninho nas card dos ativos (emoji talvez)
+apagar a tabela do usuario quando ele terminar a sessão
+OK. (preferi deixar como está pois iria desperdiçar muita memoria no banco de dados) salvar todas as preferencias do usuario em um dicionario em uma célula da tabela dele, não em varias como atualmente
+Contrato nãp desativa, arrumar
 
+Colocar a opção de data preenchida no recibos
 problemas encontrados, sem solução até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
+Criar um botão de painel com configurações diverdsas e botão de backup de todos os dados
+Implementar buscas por palavras nas paginas do botão histórico
 
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
 
