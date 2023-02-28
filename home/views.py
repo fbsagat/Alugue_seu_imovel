@@ -552,7 +552,7 @@ def tabela(request, pk):
 
     # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
     parcelas = Parcela.objects.filter(do_usuario=usuario).filter(data_pagm_ref__range=[a_partir_de, ate]).order_by(
-        '-do_contrato')
+        'do_contrato')
 
     # Nomes
     imoveis_nomes = []
@@ -618,7 +618,6 @@ def tabela(request, pk):
 
     # Enviar tbm: 1. Status atual do contrato: ativo, inativo / Recibo: Entregue, não entregue / Pg esta parcela: Sim,
     # não).
-
     dados = {'usuario': usuario,
              "usuario_username": usuario.username,
              "usuario_nome_compl": usuario.nome_completo().upper(),
@@ -637,6 +636,9 @@ def tabela(request, pk):
     # verifica se o usuario tem contrato para o template assumir outro comportamento
     tem_contratos = True if Contrato.objects.filter(do_locador=request.user.pk).first() else False
     context['tem_contratos'] = tem_contratos
+
+    tem_imoveis = True if len(imoveis_nomes) > 0 else False
+    context['tem_imoveis'] = tem_imoveis
 
     if tem_contratos:
         # Gerar a tabela com os dados

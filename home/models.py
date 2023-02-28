@@ -314,20 +314,22 @@ class Contrato(models.Model):
         parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
 
         total = int(contrato.pagamento_total())
-        dividir = contrato.duracao
+        dividir = contrato.duracao - 1
         limite = int(contrato.valor_mensal)
 
         for mes in range(0, dividir):
             x = limite if (total / (mes + 1)) >= limite else (total - (mes * limite))
             if x <= 0:
+                parcela = parcelas[mes]
+                parcela.tt_pago = 0
+                parcela.save(update_fields=['tt_pago'])
                 break
             parcela = parcelas[mes]
             parcela.tt_pago = x
             parcela.save(update_fields=['tt_pago'])
-            # print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
 
     __original_duracao = None
-    __data_entrada = None
+    __original_data_entrada = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -335,11 +337,11 @@ class Contrato(models.Model):
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.pk:
-            if self.duracao != self.__original_duracao or self.data_entrada != self.__data_entrada:
+            if self.duracao != self.__original_duracao or self.data_entrada != self.__original_data_entrada:
                 self.gerenciar_parcelas()
-
         super().save(force_insert, force_update, *args, **kwargs)
         self.__original_duracao = self.duracao
+        self.__original_data_entrada = self.data_entrada
 
     def get_absolute_url(self):
         return reverse('home:Contratos', args=[str(self.pk), ])

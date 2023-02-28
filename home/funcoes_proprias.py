@@ -175,7 +175,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     celula_largura = round(pag_lar / celula_quantidade_h) - 1
     media_alt_larg = round(((celula_altura+celula_largura)/2))
 
-    print('celula_altura: ', celula_altura, 'celula_largura: ', celula_largura, 'media: ', media_alt_larg)
+    # print('celula_altura: ', celula_altura, 'celula_largura: ', celula_largura, 'media: ', media_alt_larg)
 
     # Encaixe de texto
     text_wrap_imo = espacamento_h = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc = leading = 0
@@ -193,20 +193,17 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
 
     # Horizontalmente  (wrap)
     if celula_largura <= 104:
-        espacamento_h = 2
         text_wrap_imo = 18
         text_wrap_parc = 30
         espacamento_h = 2
     elif celula_largura <= 135:
-        espacamento_h = 2
         text_wrap_imo = 20
         text_wrap_parc = 32
         espacamento_h = 2
     elif celula_largura <= 167:
-        espacamento_h = 2
         text_wrap_imo = 22
         text_wrap_parc = 33
-        espacamento_h = 2
+        espacamento_h = 4
 
     # media (tam)
     if media_alt_larg <= 82:
@@ -300,18 +297,20 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 pdf.drawText(textobject)
 
                 sinal = str(dados['sinais'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
-                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - 5,
+                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - 3,
                                            pag_alt - inicia_em_v - x - text_tam_parc)
                 textobject.setFillColor(colors.blue)
+
                 if sinal == 'O':
                     # Ok
                     textobject.setFillColor(HexColor(0x3D653D))
                 elif sinal == 'R':
                     # Falta recibo
-                    textobject.setFillColor(HexColor(0x636300))
+                    textobject.setFillColor(HexColor(0xCEAD4D))
                 elif sinal == 'V':
                     # Venceu
-                    textobject.setFillColor(HexColor(0x633737))
+                    textobject.setFillColor(HexColor(0x8D0000))
+
                 textobject.setFont('Impact', text_tam_parc)
                 textobject.setCharSpace(0.4)
                 textobject.setLeading(leading)

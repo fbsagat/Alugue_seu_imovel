@@ -9,6 +9,31 @@ from home.models import Contrato, Imovei, Locatario, Usuario
 from home.models import Parcela, Pagamento
 
 
+def distribuir_pagamentos(instance):
+    contrato = Contrato.objects.get(pk=instance.ao_contrato.pk)
+    parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
+
+    total = int(contrato.pagamento_total())
+    print(total)
+    dividir = contrato.duracao
+    limite = int(contrato.valor_mensal)
+
+    for mes in range(0, dividir):
+        x = limite if (total / (mes + 1)) >= limite else (total - (mes * limite))
+        print(x)
+        if x <= 0:
+            parcela = parcelas[mes]
+            parcela.tt_pago = 0
+            parcela.save(update_fields=['tt_pago'])
+            print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
+            break
+        else:
+            parcela = parcelas[mes]
+            parcela.tt_pago = x
+            parcela.save(update_fields=['tt_pago'])
+            print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
+
+
 @receiver(pre_delete, sender=Contrato)
 def contrato_delete(sender, instance, **kwards):
     # Pega os dados para tratamento:
@@ -68,24 +93,6 @@ def contrato_update(sender, instance, created, **kwargs):
                                            do_locatario=locatario, data_pagm_ref=data,
                                            codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
                     break
-
-
-def distribuir_pagamentos(instance):
-    contrato = Contrato.objects.get(pk=instance.ao_contrato.pk)
-    parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
-
-    total = int(contrato.pagamento_total())
-    dividir = contrato.duracao
-    limite = int(contrato.valor_mensal)
-
-    for mes in range(0, dividir):
-        x = limite if (total / (mes + 1)) >= limite else (total - (mes * limite))
-        if x <= 0:
-            break
-        parcela = parcelas[mes]
-        parcela.tt_pago = x
-        parcela.save(update_fields=['tt_pago'])
-        # print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
 
 
 @receiver(post_delete, sender=Pagamento)
