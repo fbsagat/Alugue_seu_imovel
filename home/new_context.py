@@ -22,7 +22,7 @@ def forms_da_navbar(request):
         if request.session.get('form1'):
             form1 = FormPagamento(request.user, request.session.get('form1'))
         else:
-            form1 = FormPagamento(request.user)
+            form1 = FormPagamento(request.user, initial={'data_pagamento': datetime.date.today().strftime('%Y-%m-%d')})
 
         if request.session.get('form2'):
             form2 = FormMensagem(request.session.get('form2'))

@@ -2,11 +2,11 @@ import random
 import string
 from dateutil.relativedelta import relativedelta
 
-from django.db.models.signals import pre_delete, post_save, pre_save
+from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
 from django.dispatch import receiver
 
 from home.models import Contrato, Imovei, Locatario, Usuario
-from home.models import Parcela
+from home.models import Parcela, Pagamento
 
 
 @receiver(pre_delete, sender=Contrato)
@@ -68,3 +68,35 @@ def contrato_update(sender, instance, created, **kwargs):
                                            do_locatario=locatario, data_pagm_ref=data,
                                            codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
                     break
+
+
+def distribuir_pagamentos(instance):
+    contrato = Contrato.objects.get(pk=instance.ao_contrato.pk)
+    parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
+
+    total = int(contrato.pagamento_total())
+    dividir = contrato.duracao
+    limite = int(contrato.valor_mensal)
+
+    for mes in range(0, dividir):
+        x = limite if (total / (mes + 1)) >= limite else (total - (mes * limite))
+        if x <= 0:
+            break
+        parcela = parcelas[mes]
+        parcela.tt_pago = x
+        parcela.save(update_fields=['tt_pago'])
+        # print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
+
+
+@receiver(post_delete, sender=Pagamento)
+def pagamento_delete(sender, instance, **kwards):
+    # Após apagar um pagamento, recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
+    # no seu respectivo contrato (função: pagamento_total)
+    distribuir_pagamentos(instance=instance)
+
+
+@receiver(post_save, sender=Pagamento)
+def pagamento_update(sender, instance, created, **kwargs):
+    # Após criar um pagamento, recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
+    # no seu respectivo contrato (função: pagamento_total)
+    distribuir_pagamentos(instance=instance)

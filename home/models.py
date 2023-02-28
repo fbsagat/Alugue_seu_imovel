@@ -310,6 +310,22 @@ class Contrato(models.Model):
                     parcela.save()
                     break
 
+        contrato = Contrato.objects.get(pk=self.pk)
+        parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
+
+        total = int(contrato.pagamento_total())
+        dividir = contrato.duracao
+        limite = int(contrato.valor_mensal)
+
+        for mes in range(0, dividir):
+            x = limite if (total / (mes + 1)) >= limite else (total - (mes * limite))
+            if x <= 0:
+                break
+            parcela = parcelas[mes]
+            parcela.tt_pago = x
+            parcela.save(update_fields=['tt_pago'])
+            # print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
+
     __original_duracao = None
     __data_entrada = None
 
@@ -365,6 +381,13 @@ class Contrato(models.Model):
     def ativo_hoje(self):
         return True if self.data_entrada <= datetime.today().date() <= self.data_saida() and self.em_posse is True \
                        and self.rescindido is False and self.vencido is False else False
+
+    def pagamento_total(self):
+        pagamentos = Pagamento.objects.filter(ao_contrato=self.pk).values('valor_pago')
+        valor_tt = 0
+        for valor in pagamentos:
+            valor_tt += int(valor['valor_pago'])
+        return valor_tt
 
 
 class Parcela(models.Model):

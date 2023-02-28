@@ -572,25 +572,32 @@ def tabela(request, pk):
                 parcelas_tratadas.append(parcela)
 
     lista_parcelas_compl = []
+    lista_parcsinais_compl = []
     for imovel in lista_parcelas:
         parcelas = []
+        sinais = []
         lista_parcelas_compl.append(parcelas)
+        lista_parcsinais_compl.append(sinais)
         for mes in range(0, meses_qtd):
             if str(imovel[0].data_pagm_ref.strftime("%B/%Y").title()) == str(datas[mes]):
                 for parc in imovel:
                     pago = parc.esta_pago()
                     recibo = parc.recibo_entregue
                     vencido = parc.esta_vencido()
+                    sinal = ''
                     if pago and recibo:
                         enviar = 'Pago! Recido entregue'
+                        sinal += str('OK')
                     else:
                         if pago:
-                            enviar = 'Pago! Recido não entregue'
+                            enviar = 'Pago! Recibo não entregue'
+                            sinal += 'R'
                         else:
                             if vencido:
                                 enviar = f"""O Pagam. VENCEU dia {parc.do_contrato.dia_vencimento}
                                 Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
                                 """
+                                sinal += 'V'
                             else:
                                 enviar = f"""O Pagam. Vencerá dia {parc.do_contrato.dia_vencimento}
                                 Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
@@ -598,12 +605,16 @@ def tabela(request, pk):
                     parcelas.append(f"""Com: {parc.do_locatario.primeiro_ultimo_nome()}
                     Contr. cód.: {parc.do_contrato.codigo}
                     Valor: {parc.do_contrato.valor_format()}
-                    {'Contrato Ativo' if parc.do_contrato.ativo_hoje() is True else 'Contrato Inativo'}
+                    {'Contrato Ativo hoje' if parc.do_contrato.ativo_hoje() is True else 'Contrato Inativo hoje'}
                     {enviar}""")
+                    sinais.append(sinal)
             else:
                 parcelas.append('Sem contrato')
+                sinais.append('')
         if len(parcelas) - meses_qtd != 0:
             del parcelas[-(len(parcelas) - meses_qtd):]
+        if len(sinais) - meses_qtd != 0:
+            del sinais[-(len(sinais) - meses_qtd):]
 
     # Enviar tbm: 1. Status atual do contrato: ativo, inativo / Recibo: Entregue, não entregue / Pg esta parcela: Sim,
     # não).
@@ -615,6 +626,7 @@ def tabela(request, pk):
              'datas': datas,
              'imov_qtd': imov_qtd,
              'parcelas': lista_parcelas_compl,
+             'sinais': lista_parcsinais_compl,
              }
 
     # Finalizando para envio ao template
@@ -1075,7 +1087,8 @@ def botaoteste(request):
         executar = int(form_adm.data['executar'])
 
     if executar == 170:
-        messages.success(request, f"Teste")
+        # Teste de mensagens \/
+        messages.success(request, f"{'Oi'}")
 
     if executar == 1 or executar == 100:
         count = 0

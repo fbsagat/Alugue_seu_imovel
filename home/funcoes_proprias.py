@@ -12,6 +12,7 @@ from reportlab.lib.units import mm
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
+from reportlab.lib.colors import HexColor
 
 from Alugue_seu_imovel import settings
 
@@ -154,7 +155,7 @@ def gerar_recibos(dados):
 
 
 # 101: -----------------------------------------------
-def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura, tam_medida):
+def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     # Atributos da página
     pag_lar = a4h[0]
     pag_alt = a4h[1]
@@ -172,36 +173,51 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura, tam_me
         tam_calc = round((pag_alt / celula_quantidade_v) - (margem_vertical / celula_quantidade_v)) - 1
         celula_altura = tam_calc if tam_calc <= celula_altura_max else celula_altura_max
     celula_largura = round(pag_lar / celula_quantidade_h) - 1
+    media_alt_larg = round(((celula_altura+celula_largura)/2))
+
+    print('celula_altura: ', celula_altura, 'celula_largura: ', celula_largura, 'media: ', media_alt_larg)
 
     # Encaixe de texto
-    # FABIO DO FUTURO ARRUMAR ISSO, ENCAIXE EM TODOS OS TAMANHOS ABRAÇO!
-    if pag_n == 1:
-        tam_medida = celula_quantidade_v + celula_quantidade_h
+    text_wrap_imo = espacamento_h = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc = leading = 0
 
-    if tam_medida <= 12:
+    # Verticalmente (leading)
+    if celula_altura <= 61:
+        leading = 8.5  # 9 10.5
+        espacamento_v = 11  # 12 13
+    elif celula_altura <= 76:
+        leading = 9
+        espacamento_v = 12
+    elif celula_altura <= 92:
+        leading = 10.5
+        espacamento_v = 13
+
+    # Horizontalmente  (wrap)
+    if celula_largura <= 104:
+        espacamento_h = 2
+        text_wrap_imo = 18
+        text_wrap_parc = 30
+        espacamento_h = 2
+    elif celula_largura <= 135:
+        espacamento_h = 2
+        text_wrap_imo = 20
+        text_wrap_parc = 32
+        espacamento_h = 2
+    elif celula_largura <= 167:
+        espacamento_h = 2
         text_wrap_imo = 22
         text_wrap_parc = 33
-        text_tam_imo = 14
-        text_tam_parc = 10
         espacamento_h = 2
-        espacamento_v = 13
-        leading = 10.5
-    elif tam_medida <= 15:
-        text_wrap_imo = 18
-        text_wrap_parc = 32
-        text_tam_imo = 11
-        text_tam_parc = 7
-        espacamento_h = 2
-        espacamento_v = 11
-        leading = 9
-    elif tam_medida <= 18:
-        text_wrap_imo = 20
-        text_wrap_parc = 30
+
+    # media (tam)
+    if media_alt_larg <= 82:
         text_tam_imo = 10
         text_tam_parc = 7
-        espacamento_h = 2
-        espacamento_v = 12
-        leading = 8.5
+    elif media_alt_larg <= 106:
+        text_tam_imo = 11
+        text_tam_parc = 7
+    elif media_alt_larg <= 130:
+        text_tam_imo = 14
+        text_tam_parc = 10
 
     # Calculos para organização
     tam_tt_h = celula_largura * celula_quantidade_h
@@ -283,7 +299,26 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura, tam_me
                     textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
 
-    return {'celula_altura': celula_altura, 'tam_media': tam_medida}
+                sinal = str(dados['sinais'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
+                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - 5,
+                                           pag_alt - inicia_em_v - x - text_tam_parc)
+                textobject.setFillColor(colors.blue)
+                if sinal == 'O':
+                    # Ok
+                    textobject.setFillColor(HexColor(0x3D653D))
+                elif sinal == 'R':
+                    # Falta recibo
+                    textobject.setFillColor(HexColor(0x636300))
+                elif sinal == 'V':
+                    # Venceu
+                    textobject.setFillColor(HexColor(0x633737))
+                textobject.setFont('Impact', text_tam_parc)
+                textobject.setCharSpace(0.4)
+                textobject.setLeading(leading)
+                textobject.textLine(sinal.rstrip())
+                pdf.drawText(textobject)
+
+    return {'celula_altura': celula_altura}
 
 
 def gerar_tabela(dados):
@@ -299,13 +334,13 @@ def gerar_tabela(dados):
     ultima = len(dados['imoveis_nomes']) - ((paginas - 1) * dados['imov_qtd'])
     fazer = dados['imov_qtd']
 
-    infos = {'celula_altura': 100, 'tam_media': 5}
+    infos = {'celula_altura': 100}
     for pagina in range(0, paginas):
         if pagina == paginas - 1:
             fazer = ultima
         pag_n = pdf.getPageNumber()
         infos = criar_uma_pagina_tabela(fazer=fazer, pag_n=pag_n, a4h=a4h, dados=dados, pdf=pdf,
-                                        celula_altura=infos['celula_altura'], tam_medida=infos['tam_media'])
+                                        celula_altura=infos['celula_altura'])
         pdf.showPage()
 
     pdf.setCreator(settings.SITE_LINK)
