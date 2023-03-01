@@ -3,6 +3,30 @@
 
 {% load static %}
 
+{% block head %}
+<style>
+ion-icon {
+  color: white;
+}
+ion-icon {
+  pointer-events: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+{% endblock %}
+
 <nav style="z-index: 20;" class="navbar w-full items-center align-middle py-1 px-1 fixed border-b-2 bg-dark">
 
 
@@ -71,7 +95,6 @@
 
     </div>
 
-
     <!-- REGISTRAR GERAR HISTÓRICO -->
     <div class="flex justify-content-center">
 
@@ -115,8 +138,6 @@
                 </ul>
             </div>
         </div>
-
-
         <!-- HISTÓRICO -->
         <div class="ps-2">
             <div class="dropdown">
@@ -140,25 +161,67 @@
         </div>
     </div>
 
-    <!-- EDITAR PERFIL SAIR -->
-    <div class="flex justify-content-end">
-
-        <!-- EDITAR PERFIL -->
-        <div class="ps-1">
-            <a href="{% url 'home:Editar Perfil' request.user.pk %}">
-                <button class="bg-blue-900 text-white p-1 px-2 rounded-md">
-                    Editar Perfil
-                </button>
-            </a>
+    <!-- NOTIFICAÇÕES -->
+    <button class="navbar-toggler position-relative" title="Notificações" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasDarkNavbar"
+            aria-controls="offcanvasDarkNavbar">
+        <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
+    12
+    <span class="visually-hidden">Mensagens não lidas</span>
+  </span>
+        <ion-icon size="large" name="notifications-outline"></ion-icon>
+    </button>
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
+         aria-labelledby="offcanvasDarkNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Notificações</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                <ion-icon name="close-outline"></ion-icon>
+            </button>
         </div>
 
-        <!-- SAIR -->
-        <div class="ps-1">
-            <a href="{% url 'home:Logout' %}">
-                <button class="bg-blue-900 text-white p-1 px-2 rounded-md">
-                    Sair
-                </button>
-            </a>
+        <div class="offcanvas-body">
+            <div class="row g-1">
+
+                <div class="card bg-black border-secondary">
+                    <div class="card-body mx-1 my-1 px-1 py-1">
+                        <p class="fw-bold">Recibo:</p>
+                        <p class="card-text small lh-sm">Detectado o pagamento da parcela 2 do contrato (bla bla bla bla bla),
+                            confirme
+                            a entrega do recibo</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <a href="#" class="btn btn-primary btn-sm small">Confirmar</a>
+                            </div>
+                            <div class="col text-muted text-end align-text-bottom">
+                                <small>(14/04/1900)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- PAINEL EDITAR PERFIL SAIR -->
+    <div class="flex justify-content-end">
+        <div class="btn-group ps-1">
+            <button type="button" class="dropdown-toggle bg-blue-700 text-white p-1 px-3 rounded-md"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                {{ request.user.username }}
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="">Painel 🎛️</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'home:Editar Perfil' request.user.pk %}">Editar Perfil 👨‍💼</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'home:Logout' %}">Sair 🚪</a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>

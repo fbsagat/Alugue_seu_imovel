@@ -13,7 +13,7 @@ problemas encontrados, sem solução até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
 Criar um botão de painel com configurações diverdsas e botão de backup de todos os dados
 Implementar buscas por palavras nas paginas do botão histórico
-fake está criando contratos com datas sobresalentes, arrumar
+Fake está criando contratos com datas sobresalentes, arrumar
 
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
 

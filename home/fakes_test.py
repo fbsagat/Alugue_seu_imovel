@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from faker import Faker
 from random import randrange, choice
@@ -16,10 +17,35 @@ def contratos_ficticios(request, locador):
     todos_imoveis = Imovei.objects.disponiveis().filter(do_locador=locador)
     do_imovel = choice(todos_imoveis)
 
-    data_entrada = fake.date_between(datetime.now().date() + timedelta(days=-215),
-                                     datetime.now().date() + timedelta(days=-145))
+    while True:
+        dias = randrange(1, 100)
+        entrada1 = fake.date_between(datetime.now().date() + timedelta(days=-dias*2),
+                                     datetime.now().date() + timedelta(days=-(dias)))
+        dias2 = randrange(1, 30)
+        entrada2 = fake.date_between(datetime.now().date() + timedelta(days=-dias2-5),
+                                     datetime.now().date() + timedelta(days=-dias2))
 
-    duracao = randrange(4, 18)
+        entrada = choice([entrada1, entrada2])
+
+        duracao = randrange(4, 18)
+        saida = entrada + relativedelta(months=duracao)
+
+        contratos_deste_imovel = Contrato.objects.filter(do_imovel=do_imovel.pk)
+        permitido = True
+
+        # Se a data de entrada(data_entrada) estiver entre as datas de
+        # entrada e de saida de cada contrato existente para este imovel, raise error
+        for contrato in contratos_deste_imovel:
+            data_in_out = {'entrada': contrato.data_entrada,
+                           'saida': contrato.data_entrada + relativedelta(months=contrato.duracao)}
+
+            if data_in_out['entrada'] <= entrada <= data_in_out['saida']:
+                permitido = False
+            if data_in_out['entrada'] <= saida <= data_in_out['saida']:
+                permitido = False
+        if permitido is True:
+            data_entrada = entrada
+            break
 
     centavos = ['00', '00', randrange(10, 99)]
     reais = [randrange(500, 1200, step=150), randrange(700, 3400, step=180), randrange(700, 3400, step=130),

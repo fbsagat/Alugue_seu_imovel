@@ -14,24 +14,22 @@ def distribuir_pagamentos(instance):
     parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
 
     total = int(contrato.pagamento_total())
-    print(total)
     dividir = contrato.duracao
     limite = int(contrato.valor_mensal)
 
     for mes in range(0, dividir):
         x = limite if (total / (mes + 1)) >= limite else (total - (mes * limite))
-        print(x)
         if x <= 0:
             parcela = parcelas[mes]
             parcela.tt_pago = 0
             parcela.save(update_fields=['tt_pago'])
-            print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
+            # print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
             break
         else:
             parcela = parcelas[mes]
             parcela.tt_pago = x
             parcela.save(update_fields=['tt_pago'])
-            print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
+            # print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
 
 
 @receiver(pre_delete, sender=Contrato)

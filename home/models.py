@@ -1,8 +1,6 @@
 import random
 import string
-import os
-from uuid import uuid4
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
