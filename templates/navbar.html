@@ -11,19 +11,6 @@ ion-icon {
 ion-icon {
   pointer-events: none;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 </style>
 {% endblock %}
 
@@ -162,49 +149,21 @@ ion-icon {
     </div>
 
     <!-- NOTIFICAÇÕES -->
-    <button class="navbar-toggler position-relative" title="Notificações" type="button" data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasDarkNavbar"
-            aria-controls="offcanvasDarkNavbar">
-        <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
-    12
-    <span class="visually-hidden">Mensagens não lidas</span>
-  </span>
+    {% if notifications.count == 0 %}
+    <button class="position-relative" title="Notificações" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
         <ion-icon size="large" name="notifications-outline"></ion-icon>
     </button>
-    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
-         aria-labelledby="offcanvasDarkNavbarLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Notificações</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
-                <ion-icon name="close-outline"></ion-icon>
-            </button>
-        </div>
-
-        <div class="offcanvas-body">
-            <div class="row g-1">
-
-                <div class="card bg-black border-secondary">
-                    <div class="card-body mx-1 my-1 px-1 py-1">
-                        <p class="fw-bold">Recibo:</p>
-                        <p class="card-text small lh-sm">Detectado o pagamento da parcela 2 do contrato (bla bla bla bla bla),
-                            confirme
-                            a entrega do recibo</p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col">
-                                <a href="#" class="btn btn-primary btn-sm small">Confirmar</a>
-                            </div>
-                            <div class="col text-muted text-end align-text-bottom">
-                                <small>(14/04/1900)</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
+    {% else %}
+    <button class="position-relative" title="Notificações" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+        <ion-icon size="large" name="notifications-outline"></ion-icon>
+        <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
+    {{ notifications.count }}
+    <span class="visually-hidden">Mensagens não lidas</span></span>
+    </button>
+    {% endif %}
+    {% include 'offcanvas.html' %}
 
     <!-- PAINEL EDITAR PERFIL SAIR -->
     <div class="flex justify-content-end">
@@ -224,7 +183,9 @@ ion-icon {
             </ul>
         </div>
     </div>
+
 </nav>
+<!--Fim da Navbar -->
 
 <!-- MODAL3 PAGAMENTO -->
 <div class="modal fade" id="modal3" tabindex="-1" aria-labelledby="MODAL3_PAGAMENTO" aria-hidden="true">

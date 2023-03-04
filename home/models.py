@@ -9,7 +9,9 @@ from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+from notifications.models import Notification
 from django_resized import ResizedImageField
+from notifications.signals import notify
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
@@ -35,36 +37,6 @@ class Usuario(AbstractUser):
     tabela_ultima_data_ger = models.IntegerField(null=True, blank=True)
     tabela_meses_qtd = models.IntegerField(null=True, blank=True)
     tabela_imov_qtd = models.IntegerField(null=True, blank=True)
-
-    def apagar_recibos_pdf(self):
-        # Apaga todos os recibos em pdf do usuario
-        usuario = Usuario.objects.get(pk=self.pk)
-        contratos = Contrato.objects.filter(do_locador=usuario)
-        for contrato in contratos:
-            contrato.recibos_pdf.delete()
-
-    __original_rg = None
-    __original_cpf = None
-    __original_nome = None
-    __original_sobrenome = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.__original_rg = self.RG
-        self.__original_cpf = self.CPF
-        self.__original_nome = self.first_name
-        self.__original_sobrenome = self.last_name
-
-    def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        if self.RG != self.__original_rg or self.CPF != self.__original_cpf or self.first_name != self.__original_nome \
-                or self.last_name != self.__original_sobrenome:
-            self.apagar_recibos_pdf()
-
-        super().save(force_insert, force_update, *args, **kwargs)
-        __original_rg = self.RG
-        __original_cpf = self.CPF
-        __original_nome = self.first_name
-        __original_sobrenome = self.last_name
 
     def get_absolute_url(self):
         return reverse('home:DashBoard', args=[str(self.pk, )])
@@ -117,31 +89,6 @@ class Locatario(models.Model):
     estadocivil = models.IntegerField(blank=False, verbose_name='Estado Civil', choices=estados_civis)
     data_registro = models.DateTimeField(auto_now_add=True)
     objects = LocatariosManager()
-
-    def apagar_recibos_pdf(self):
-        # Apaga todos os recibos em pdf do locatario
-        contratos = Contrato.objects.filter(do_locatario=self.pk)
-        for contrato in contratos:
-            contrato.recibos_pdf.delete()
-
-    __original_nome = None
-    __original_rg = None
-    __original_cpf = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.__original_nome = self.nome
-        self.__original_rg = self.RG
-        self.__original_cpf = self.CPF
-
-    def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        if self.nome != self.__original_nome or self.RG != self.__original_rg or self.CPF != self.__original_cpf:
-            self.apagar_recibos_pdf()
-
-        super().save(force_insert, force_update, *args, **kwargs)
-        self.__original_nome = self.nome
-        self.__original_rg = self.RG
-        self.__original_cpf = self.CPF
 
     def get_absolute_url(self):
         return reverse('home:Locatários', args=[str(self.pk, )])
@@ -287,60 +234,6 @@ class Contrato(models.Model):
     data_registro = models.DateTimeField(auto_now_add=True)
     objects = ContratoManager()
 
-    def gerenciar_parcelas(self):
-        # Editar as parcelas quando o contrato é editado:
-        Parcela.objects.filter(do_contrato=self.pk).delete()
-
-        for x in range(0, self.duracao):
-            data_entrada = self.data_entrada
-            data = data_entrada.replace(day=self.dia_vencimento) + relativedelta(months=x)
-
-            codigos_existentes = list(
-                Parcela.objects.filter(do_contrato=self).values("codigo").values_list('codigo', flat=True))
-            while True:
-                recibo_codigo = ''.join(
-                    random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
-                    range(6))
-                if recibo_codigo not in codigos_existentes:
-                    parcela = Parcela(do_usuario=self.do_locador, do_contrato=self, do_imovel=self.do_imovel,
-                                      do_locatario=self.do_locatario, data_pagm_ref=data,
-                                      codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
-                    parcela.save()
-                    break
-
-        contrato = Contrato.objects.get(pk=self.pk)
-        parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
-
-        total = int(contrato.pagamento_total())
-        dividir = contrato.duracao - 1
-        limite = int(contrato.valor_mensal)
-
-        for mes in range(0, dividir):
-            x = limite if (total / (mes + 1)) >= limite else (total - (mes * limite))
-            if x <= 0:
-                parcela = parcelas[mes]
-                parcela.tt_pago = 0
-                parcela.save(update_fields=['tt_pago'])
-                break
-            parcela = parcelas[mes]
-            parcela.tt_pago = x
-            parcela.save(update_fields=['tt_pago'])
-
-    __original_duracao = None
-    __original_data_entrada = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.__original_duracao = self.duracao
-
-    def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        if self.pk:
-            if self.duracao != self.__original_duracao or self.data_entrada != self.__original_data_entrada:
-                self.gerenciar_parcelas()
-        super().save(force_insert, force_update, *args, **kwargs)
-        self.__original_duracao = self.duracao
-        self.__original_data_entrada = self.data_entrada
-
     def get_absolute_url(self):
         return reverse('home:Contratos', args=[str(self.pk), ])
 
@@ -348,8 +241,8 @@ class Contrato(models.Model):
         ordering = ['data_entrada']
 
     def nome_curto(self):
-        return f'{self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
-               f'({self.codigo})'
+        return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
+               f'{self.codigo})'
 
     def __str__(self):
         return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.do_imovel.nome} - ' \
@@ -435,8 +328,6 @@ class Pagamento(models.Model):
     valor_pago = models.CharField(max_length=9, verbose_name='Valor Pago (R$): ', blank=False,
                                   validators=[apenas_numeros])
     data_pagamento = models.DateTimeField(blank=False, verbose_name='Data do Pagamento')
-    recibo = models.BooleanField(default=True, verbose_name='Recibo Entregue',
-                                 help_text='Marque quando o recido estiver esntregue')
     data_de_recibo = models.DateTimeField(blank=True, verbose_name='Data em que foi marcado recibo entregue', null=True)
     forma = models.IntegerField(blank=False, choices=lista_pagamentos, verbose_name='Forma de Pagamento')
     data_criacao = models.DateTimeField(auto_now_add=True)

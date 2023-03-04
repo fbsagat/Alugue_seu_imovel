@@ -297,17 +297,17 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 pdf.drawText(textobject)
 
                 sinal = str(dados['sinais'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
-                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - 3,
+                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - 8,
                                            pag_alt - inicia_em_v - x - text_tam_parc)
                 textobject.setFillColor(colors.blue)
 
-                if sinal == 'O':
+                if sinal == 'Ok':
                     # Ok
-                    textobject.setFillColor(HexColor(0x3D653D))
-                elif sinal == 'R':
+                    textobject.setFillColor(HexColor(0x354c70))
+                elif sinal == 'Re':
                     # Falta recibo
                     textobject.setFillColor(HexColor(0xCEAD4D))
-                elif sinal == 'V':
+                elif sinal == 'Ve':
                     # Venceu
                     textobject.setFillColor(HexColor(0x8D0000))
 

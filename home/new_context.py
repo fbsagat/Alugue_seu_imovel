@@ -4,8 +4,10 @@ from Alugue_seu_imovel import settings
 
 from django.urls import resolve
 
+from home.models import Parcela
 from home.forms import FormMensagem, FormAdmin
 from home.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, FormImovel, FormAnotacoes
+from notifications.models import Notification
 
 
 def titulo_pag(request):
@@ -56,8 +58,12 @@ def forms_da_navbar(request):
 
         form8 = FormAdmin(initial={'p_usuario': request.user})
 
+        notificacoes = Notification.objects.unread().filter(recipient=request.user, deleted=False)[:50]
+        notificacoes_lidas = Notification.objects.read().filter(recipient=request.user, deleted=False)[:50]
+
         context = {'form_pagamento': form1, 'form_mensagem': form2, 'form_gasto': form3, 'form_locatario': form4,
-                   'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8}
+                   'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8,
+                   'notifications': notificacoes, 'notifications_lidas': notificacoes_lidas}
 
         return context
     else:

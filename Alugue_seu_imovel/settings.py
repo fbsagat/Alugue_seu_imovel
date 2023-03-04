@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'crispy_forms',
     'crispy_bootstrap5',
+    'notifications',
 
 ]
 
@@ -167,7 +168,7 @@ SITE_NAME = 'Alugue Seu imóvel'
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': 8, 'pagamento': 5, 'gasto': 3, 'nota': 4,
+FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': 1, 'pagamento': 12, 'gasto': 3, 'nota': 4,
             'user': 10}
 
 # Tamanho em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/

@@ -8,7 +8,7 @@ from home.views import Dashboard, Locatarios, Imoveis, Contratos, \
     ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, entregar_recibo, ExcluirPagm, EditarContrato, \
     ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, ApagarConta, Homepage, \
     CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
-    LocatariosAtivos, ContratosAtivos, eventos, tabela
+    LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, recibo_nao_entregue
 
 from Alugue_seu_imovel import settings
 
@@ -17,6 +17,10 @@ app_name = 'home'
 urlpatterns = [
     # BOTÕES PRINCIPAIS -------------------
     path('dashboard/<int:pk>', Dashboard.as_view(), name='DashBoard'),
+    path('eventos/<int:pk>', eventos, name='Eventos'),
+    path('Checkimoveis/<int:pk>', ImoveisAtivos.as_view(), name='Check Imóveis'),
+    path('Checklocatarios/<int:pk>', LocatariosAtivos.as_view(), name='Check Locatários'),
+    path('Checkcontratos/<int:pk>', ContratosAtivos.as_view(), name='Check Contratos'),
 
     # ABA REGISTRAR -------------------
 
@@ -68,16 +72,17 @@ urlpatterns = [
     path('anotacoes/<int:pk>', Notas.as_view(), name='Anotações'),
     path('contratos/<int:pk>', Contratos.as_view(), name='Contratos'),
 
+    # NOTIFICAÇÕES -------------------
+    path('recibo_entregue/<int:pk>', recibo_entregue, name='Recibo Entregue'),
+    path('recibo_nao_entregue/<int:pk>', recibo_nao_entregue, name='Recibo não Entregue'),
+
+    # GERAL -------------------
     path('', Homepage.as_view(), name='home'),
     path('criarconta/', CriarConta.as_view(), name='Criar Conta'),
     path('apagarconta/<int:pk>/', ApagarConta.as_view(), name='Apagar Conta'),
     path('mudarsenha/', auth_view.PasswordChangeView.as_view(
         template_name='editar_perfil.html', success_url=reverse_lazy('home:home'),
         extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
-    path('eventos/<int:pk>', eventos, name='Eventos'),
-    path('Checkimoveis/<int:pk>', ImoveisAtivos.as_view(), name='Check Imóveis'),
-    path('Checklocatarios/<int:pk>', LocatariosAtivos.as_view(), name='Check Locatários'),
-    path('Checkcontratos/<int:pk>', ContratosAtivos.as_view(), name='Check Contratos'),
     path('editarperfil/<int:pk>', EditarPerfil.as_view(), name='Editar Perfil'),
     path('login/',
          auth_view.LoginView.as_view(template_name='Login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),

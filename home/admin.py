@@ -44,7 +44,7 @@ class ContratosAdmin(admin.ModelAdmin):
 class PagamentosAdmin(admin.ModelAdmin):
     list_display = ('ao_locador', 'ao_contrato', 'do_locatario', 'valor_pago', 'data_pagamento',
                     'data_de_recibo', 'data_criacao')
-    list_filter = ('recibo', 'forma')
+    list_filter = ('forma', )
 
 
 @admin.register(Parcela)

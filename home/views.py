@@ -18,6 +18,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
 
+from notifications.models import Notification
+
 from home.new_context import forms_da_navbar
 from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
@@ -586,18 +588,18 @@ def tabela(request, pk):
                     vencido = parc.esta_vencido()
                     sinal = ''
                     if pago and recibo:
-                        enviar = 'Pago! Recido entregue'
-                        sinal += str('OK')
+                        enviar = 'Pago! Recibo entregue'
+                        sinal += str('Ok')
                     else:
                         if pago:
                             enviar = 'Pago! Recibo não entregue'
-                            sinal += 'R'
+                            sinal += 'Re'
                         else:
                             if vencido:
                                 enviar = f"""O Pagam. VENCEU dia {parc.do_contrato.dia_vencimento}
                                 Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
                                 """
-                                sinal += 'V'
+                                sinal += 'Ve'
                             else:
                                 enviar = f"""O Pagam. Vencerá dia {parc.do_contrato.dia_vencimento}
                                 Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
@@ -974,6 +976,30 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
         context = super(ExcluirAnotacao, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
+
+
+# -=-=-=-=-=-=-=-= NOTIFICAÇÕES -=-=-=-=-=-=-=-=
+
+def recibo_entregue(request, pk):
+    notificacao = Notification.objects.get(pk=pk)
+    notificacao.unread = False
+    parcela = Parcela.objects.get(pk=notificacao.actor_object_id)
+    parcela.recibo_entregue = True
+
+    parcela.save()
+    notificacao.save()
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def recibo_nao_entregue(request, pk):
+    notificacao = Notification.objects.get(pk=pk)
+    notificacao.unread = False
+    parcela = Parcela.objects.get(pk=notificacao.actor_object_id)
+    parcela.recibo_entregue = False
+
+    parcela.save()
+    notificacao.save()
+    return redirect(request.META['HTTP_REFERER'])
 
 
 # -=-=-=-=-=-=-=-= USUARIO -=-=-=-=-=-=-=-=

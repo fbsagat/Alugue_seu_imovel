@@ -23,7 +23,6 @@ Pagamentos / {{ SITE_NAME }}
                 <th scope="col" style="cursor:default;">Valor</th>
                 <th scope="col" style="cursor:default;" title="Data de pagamento">Data do Pag.</th>
                 <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
-                <th scope="col" style="cursor:default;">Recibo</th>
                 <th scope="col" style="cursor:default;">Excluir</th>
             </tr>
             </thead>
@@ -40,13 +39,6 @@ Pagamentos / {{ SITE_NAME }}
                 <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
                 <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
-                {% if pagamento.recibo %}
-                <th scope="col"><a class="link-primary" href="{% url 'home:Recibo Entregue' pagamento.pk %}"
-                                   title="Entregue ao locatário">✅</a></th>
-                {% else %}
-                <th scope="col"><a class="link-primary" href="{% url 'home:Recibo Entregue' pagamento.pk %}"
-                                   title="Não entregue ao locatário">️✖️</a></th>
-                {% endif %}
                 <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Pagamento' pagamento.pk %}"
                                    title="Excluir">❌</a>
                 </th>

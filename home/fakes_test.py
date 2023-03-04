@@ -19,10 +19,10 @@ def contratos_ficticios(request, locador):
 
     while True:
         dias = randrange(1, 100)
-        entrada1 = fake.date_between(datetime.now().date() + timedelta(days=-dias*2),
+        entrada1 = fake.date_between(datetime.now().date() + timedelta(days=-dias * 2),
                                      datetime.now().date() + timedelta(days=-(dias)))
         dias2 = randrange(1, 30)
-        entrada2 = fake.date_between(datetime.now().date() + timedelta(days=-dias2-5),
+        entrada2 = fake.date_between(datetime.now().date() + timedelta(days=-dias2 - 5),
                                      datetime.now().date() + timedelta(days=-dias2))
 
         entrada = choice([entrada1, entrada2])

@@ -5,48 +5,112 @@ from dateutil.relativedelta import relativedelta
 from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
 from django.dispatch import receiver
 
-from home.models import Contrato, Imovei, Locatario, Usuario
-from home.models import Parcela, Pagamento
+from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario
+
+from notifications.signals import notify
+from notifications.models import Notification
 
 
-def distribuir_pagamentos(instance):
-    contrato = Contrato.objects.get(pk=instance.ao_contrato.pk)
+def gerenciar_parcelas(instance_contrato):
+    # Editar as parcelas quando o contrato é editado:
+    Parcela.objects.filter(do_contrato=instance_contrato.pk).delete()
+
+    for x in range(0, instance_contrato.duracao):
+        data_entrada = instance_contrato.data_entrada
+        data = data_entrada.replace(day=instance_contrato.dia_vencimento) + relativedelta(months=x)
+
+        codigos_existentes = list(
+            Parcela.objects.filter(do_contrato=instance_contrato).values("codigo").values_list('codigo', flat=True))
+        while True:
+            recibo_codigo = ''.join(
+                random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+                range(6))
+            if recibo_codigo not in codigos_existentes:
+                parcela = Parcela(do_usuario=instance_contrato.do_locador, do_contrato=instance_contrato,
+                                  do_imovel=instance_contrato.do_imovel, do_locatario=instance_contrato.do_locatario,
+                                  data_pagm_ref=data, codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
+                parcela.save()
+                break
+
+
+def tratar_pagamentos(instance_contrato):
+    # Pegar informações para tratamento
+    contrato = Contrato.objects.get(pk=instance_contrato.pk)
     parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
 
-    total = int(contrato.pagamento_total())
-    dividir = contrato.duracao
-    limite = int(contrato.valor_mensal)
+    # Listar actor_object_id de cada notificação do usuario
+    notif_exist = Notification.objects.filter(recipient=parcelas[0].do_usuario).values_list('actor_object_id')
+    lista_actor_object_id = []
+    for i in notif_exist:
+        lista_actor_object_id.append(int(i[0]))
 
-    for mes in range(0, dividir):
-        x = limite if (total / (mes + 1)) >= limite else (total - (mes * limite))
-        if x <= 0:
-            parcela = parcelas[mes]
-            parcela.tt_pago = 0
-            parcela.save(update_fields=['tt_pago'])
-            # print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
-            break
+    # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
+    pagamentos_tt = int(contrato.pagamento_total())
+    valor_mensal = int(contrato.valor_mensal)
+    for mes_n, parcela in enumerate(parcelas):
+        if pagamentos_tt > valor_mensal:
+            # print(f'Mês {mes_n}: Mensalidade({valor_mensal}), pois o pagamentos_total({pagamentos_total}) é maior')
+            parcela.tt_pago = valor_mensal
+            pagamentos_tt -= valor_mensal
+            if parcela.recibo_entregue is False and parcela.pk not in lista_actor_object_id:
+                mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome()} referente à ' \
+                           f'parcela de {parcela.data_pagm_ref.strftime("%B/%Y").upper()} do contrato ' \
+                           f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
+                notify.send(sender=parcela, recipient=parcela.do_usuario, verb=f'Recibo',
+                            description=mensagem, data={'parcela_id': parcela.pk})
+        elif 0 < pagamentos_tt <= valor_mensal:
+            # print(f'Mês {mes_n}: pagamentos_tt({pagamentos_total}), pois é menor que a mensalidade({valor_mensal})')
+            parcela.tt_pago = pagamentos_tt
+            pagamentos_tt -= valor_mensal
         else:
-            parcela = parcelas[mes]
-            parcela.tt_pago = x
-            parcela.save(update_fields=['tt_pago'])
-            # print(f'debug: {x} no mês {mes}, limite por mês é {limite}')
+            # print(f'Mês {mes_n}: 0, pois o pagamento total está em {pagamentos_total}')
+            parcela.tt_pago = 0
+        parcela.save(update_fields=['tt_pago'])
 
 
-@receiver(pre_delete, sender=Contrato)
-def contrato_delete(sender, instance, **kwards):
-    # Pega os dados para tratamento:
-    contrato = Contrato.objects.get(pk=instance.pk)
-    imovel = Imovei.objects.get(pk=contrato.do_imovel.pk)
-    locatario = Locatario.objects.get(pk=contrato.do_locatario.pk)
+@receiver(pre_save, sender=Usuario)
+def usuario_save(sender, instance, **kwargs):
+    if instance.id is None:  # if Criado
+        pass
+    else:
+        # Apaga todos os recibos em pdf do usuario(para que novos possam ser criados) quando se modifica informações
+        # desta model contidas neles
+        ante = Usuario.objects.get(id=instance.pk)
+        if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.first_name != instance.first_name or \
+                ante.last_name != instance.last_name:
+            contratos = Contrato.objects.filter(do_locador=instance)
+            for contrato in contratos:
+                contrato.recibos_pdf.delete()
 
-    # Remove locador do imovel quando deleta um contrato
-    if imovel.com_locatario is True:
-        locatario.com_imoveis.remove(imovel)
-        locatario.com_contratos.remove(contrato)
-        imovel.com_locatario = None
-        imovel.contrato_atual = None
-        imovel.save()
-        locatario.save()
+
+@receiver(pre_save, sender=Locatario)
+def locatario_save(sender, instance, **kwargs):
+    if instance.id is None:  # if Criado
+        pass
+    else:
+        # Apaga todos os recibos em pdf do locatario(para que novos possam ser criados) quando se modifica
+        # informações desta model contidas neles
+        ante = Locatario.objects.get(id=instance.pk)
+        if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.nome != instance.nome:
+            contratos = Contrato.objects.filter(do_locatario=instance)
+            for contrato in contratos:
+                contrato.recibos_pdf.delete()
+
+
+@receiver(pre_save, sender=Contrato)
+def contrato_save(sender, instance, **kwargs):
+    if instance.id is None:  # if Criado
+        pass
+    else:
+        # Após modificar um contrato(parametros: duracao e data_entrada):
+        # Editar as parcelas quando o contrato é editado (função gerenciar_parcelas):
+        # Recalc. as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
+        # Enviar as notificações relacionadas
+        # com a função: tratar_pagamentos
+        ante = Contrato.objects.get(id=instance.pk)
+        if ante.duracao != instance.duracao or ante.data_entrada != instance.data_entrada:
+            gerenciar_parcelas(instance_contrato=instance)
+            tratar_pagamentos(instance_contrato=instance)
 
 
 @receiver(post_save, sender=Contrato)
@@ -93,15 +157,36 @@ def contrato_update(sender, instance, created, **kwargs):
                     break
 
 
+@receiver(pre_delete, sender=Contrato)
+def contrato_delete(sender, instance, **kwards):
+    # Pega os dados para tratamento:
+    contrato = Contrato.objects.get(pk=instance.pk)
+    imovel = Imovei.objects.get(pk=contrato.do_imovel.pk)
+    locatario = Locatario.objects.get(pk=contrato.do_locatario.pk)
+
+    # Remove locador do imovel quando deleta um contrato
+    if imovel.com_locatario is True:
+        locatario.com_imoveis.remove(imovel)
+        locatario.com_contratos.remove(contrato)
+        imovel.com_locatario = None
+        imovel.contrato_atual = None
+        imovel.save()
+        locatario.save()
+
+
 @receiver(post_delete, sender=Pagamento)
 def pagamento_delete(sender, instance, **kwards):
-    # Após apagar um pagamento, recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
-    # no seu respectivo contrato (função: pagamento_total)
-    distribuir_pagamentos(instance=instance)
+    # Após apagar um pagamento:
+    # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
+    # Enviar as notificações relacionadas
+    # com a função: tratar_pagamentos
+    tratar_pagamentos(instance_contrato=instance.ao_contrato)
 
 
 @receiver(post_save, sender=Pagamento)
 def pagamento_update(sender, instance, created, **kwargs):
-    # Após criar um pagamento, recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
-    # no seu respectivo contrato (função: pagamento_total)
-    distribuir_pagamentos(instance=instance)
+    # Após criar um pagamento:
+    # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
+    # Enviar as notificações relacionadas
+    # com a função: tratar_pagamentos
+    tratar_pagamentos(instance_contrato=instance.ao_contrato)
