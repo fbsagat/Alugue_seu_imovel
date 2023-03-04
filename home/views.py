@@ -523,7 +523,7 @@ def tabela(request, pk):
         meses_qtd = usuario.tabela_meses_qtd
         imov_qtd = usuario.tabela_imov_qtd
     else:
-        form = FormTabela(initial={'mes': 3})
+        form = FormTabela(initial={'mes': 3, 'mostrar_qtd': 10, 'itens_qtd': 7})
         a_partir_de = datetime.now().date().replace(day=1)
         meses_qtd = 4
         imov_qtd = 6

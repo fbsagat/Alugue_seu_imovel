@@ -28,13 +28,13 @@
     <!-- Exibir conteúdo dos botões -->
     <div class="tab-content" style="height:100%; overflow-y:scroll; width:100%;" id="myTabContent">
 
-        <!-- Primeiro botão -->
+        <!-- Primeiro conteúdo -->
         <div class="tab-pane fade show active" id="home-tab-pane"
              role="tabpanel" aria-labelledby="home-tab"
              tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
                 {% for notification in notifications %}
-                <div class="card bg-black border-secondary">
+                <div class="card bg-black fw-semibold border-secondary">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ notification.verb }}:</p>
                         <p class="card-text small lh-sm">{{ notification.description }}</p>
@@ -54,13 +54,13 @@
                 {% endfor %}
             </div>
         </div>
-        <!-- Fim do Primeiro botão -->
+        <!-- Fim do Primeiro conteúdo -->
 
-        <!-- Segundo botão -->
+        <!-- Segundo conteúdo -->
         <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
                 {% for notification in notifications_lidas %}
-                <div class="card bg-black border-secondary">
+                <div class="card bg-dark border-secondary">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ notification.verb }}:</p>
                         <p class="card-text small lh-sm">{{ notification.description }}</p>
@@ -82,7 +82,7 @@
                 {% endfor %}
             </div>
         </div>
-        <!-- Fim do Segundo botão -->
+        <!-- Fim do Segundo conteúdo -->
 
     </div>
     <!--Fim do Exibir conteúdo dos botões -->

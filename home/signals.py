@@ -15,6 +15,7 @@ def gerenciar_parcelas(instance_contrato):
     # Editar as parcelas quando o contrato é editado:
     Parcela.objects.filter(do_contrato=instance_contrato.pk).delete()
 
+    # RECRIA AS PARCELAS, MAS NÃO SERIA MELHOR MANTER RECIBOS TRUE PARA OS MESES QUE JÁ RECEBERAM RECIBO? NÃO PERCA O PROXIMO EPISODIO
     for x in range(0, instance_contrato.duracao):
         data_entrada = instance_contrato.data_entrada
         data = data_entrada.replace(day=instance_contrato.dia_vencimento) + relativedelta(months=x)
@@ -58,27 +59,32 @@ def tratar_pagamentos(instance_contrato, delete=False):
             # print(f'Mês {mes_n}: pagamentos_tt({pagamentos_tt}), pois é menor que a mensalidade({valor_mensal})')
             parcela.tt_pago = pagamentos_tt
             pagamentos_tt -= valor_mensal
+            # parcela.recibo_entregue = False
         else:
             # print(f'Mês {mes_n}: 0, pois o pagamento total está em {pagamentos_tt}')
             parcela.tt_pago = 0
-        parcela.save(update_fields=['tt_pago'])
+            # parcela.recibo_entregue = False
+        parcela.save(update_fields=['tt_pago', 'recibo_entregue'])
 
-        # Notificação
-        # Listar actor_object_id de cada notificação do usuario
-        if delete:
-            notif_exist = Notification.objects.filter(recipient=parcelas[0].do_usuario).values_list('actor_object_id')
-            lista_actor_object_id = []
-            if notif_exist:
-                for i in notif_exist:
-                    lista_actor_object_id.append(int(i[0]))
-            # Enviar a notificação de recibo
+    # Notificação
+    # Listar actor_object_id de cada notificação do usuario
+    if delete is False:
+        notif_exist = Notification.objects.filter(recipient=parcelas[0].do_usuario).values_list('actor_object_id')
+        lista_actor_object_id = []
+        if notif_exist:
+            for i in notif_exist:
+                lista_actor_object_id.append(int(i[0]))
+
+        # Enviar a notificação de recibo
+        for parcela in parcelas:
+            mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome()} referente à ' \
+                       f'parcela de {parcela.data_pagm_ref.strftime("%B/%Y").upper()} do contrato ' \
+                       f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
+
             if parcela.tt_pago == valor_mensal and parcela.recibo_entregue is False and parcela.pk not in \
                     lista_actor_object_id:
-                mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome()} referente à ' \
-                           f'parcela de {parcela.data_pagm_ref.strftime("%B/%Y").upper()} do contrato ' \
-                           f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
                 notify.send(sender=parcela, recipient=parcela.do_usuario, verb=f'Recibo',
-                            description=mensagem, data={'parcela_id': parcela.pk})
+                            description=mensagem)
 
 
 @receiver(pre_save, sender=Usuario)
