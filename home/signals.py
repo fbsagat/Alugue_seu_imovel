@@ -32,40 +32,53 @@ def gerenciar_parcelas(instance_contrato):
                 parcela.save()
                 break
 
+    # "Apagar" notificações de recibos que se referem a parcelas fora do novo período do
+    # contrato(data de entrada-saída)
+    notificacoes_user = Notification.objects.filter(recipient=instance_contrato.do_locador, deleted=False)
+    parcelas_pks = Parcela.objects.filter(do_contrato=instance_contrato).values_list('pk', flat=True)
+    for notificacao in notificacoes_user:
+        if notificacao.target not in parcelas_pks:
+            notificacao.delete()
 
-def tratar_pagamentos(instance_contrato):
+
+def tratar_pagamentos(instance_contrato, delete=False):
     # Pegar informações para tratamento
     contrato = Contrato.objects.get(pk=instance_contrato.pk)
     parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
-
-    # Listar actor_object_id de cada notificação do usuario
-    notif_exist = Notification.objects.filter(recipient=parcelas[0].do_usuario).values_list('actor_object_id')
-    lista_actor_object_id = []
-    for i in notif_exist:
-        lista_actor_object_id.append(int(i[0]))
 
     # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
     pagamentos_tt = int(contrato.pagamento_total())
     valor_mensal = int(contrato.valor_mensal)
     for mes_n, parcela in enumerate(parcelas):
         if pagamentos_tt > valor_mensal:
-            # print(f'Mês {mes_n}: Mensalidade({valor_mensal}), pois o pagamentos_total({pagamentos_total}) é maior')
+            # print(f'Mês {mes_n}: Mensalidade({valor_mensal}), pois o pagamentos_total({pagamentos_tt}) é maior')
             parcela.tt_pago = valor_mensal
             pagamentos_tt -= valor_mensal
-            if parcela.recibo_entregue is False and parcela.pk not in lista_actor_object_id:
+        elif 0 < pagamentos_tt <= valor_mensal:
+            # print(f'Mês {mes_n}: pagamentos_tt({pagamentos_tt}), pois é menor que a mensalidade({valor_mensal})')
+            parcela.tt_pago = pagamentos_tt
+            pagamentos_tt -= valor_mensal
+        else:
+            # print(f'Mês {mes_n}: 0, pois o pagamento total está em {pagamentos_tt}')
+            parcela.tt_pago = 0
+        parcela.save(update_fields=['tt_pago'])
+
+        # Notificação
+        # Listar actor_object_id de cada notificação do usuario
+        if delete:
+            notif_exist = Notification.objects.filter(recipient=parcelas[0].do_usuario).values_list('actor_object_id')
+            lista_actor_object_id = []
+            if notif_exist:
+                for i in notif_exist:
+                    lista_actor_object_id.append(int(i[0]))
+            # Enviar a notificação de recibo
+            if parcela.tt_pago == valor_mensal and parcela.recibo_entregue is False and parcela.pk not in \
+                    lista_actor_object_id:
                 mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome()} referente à ' \
                            f'parcela de {parcela.data_pagm_ref.strftime("%B/%Y").upper()} do contrato ' \
                            f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
                 notify.send(sender=parcela, recipient=parcela.do_usuario, verb=f'Recibo',
                             description=mensagem, data={'parcela_id': parcela.pk})
-        elif 0 < pagamentos_tt <= valor_mensal:
-            # print(f'Mês {mes_n}: pagamentos_tt({pagamentos_total}), pois é menor que a mensalidade({valor_mensal})')
-            parcela.tt_pago = pagamentos_tt
-            pagamentos_tt -= valor_mensal
-        else:
-            # print(f'Mês {mes_n}: 0, pois o pagamento total está em {pagamentos_total}')
-            parcela.tt_pago = 0
-        parcela.save(update_fields=['tt_pago'])
 
 
 @receiver(pre_save, sender=Usuario)
@@ -180,7 +193,15 @@ def pagamento_delete(sender, instance, **kwards):
     # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
     # Enviar as notificações relacionadas
     # com a função: tratar_pagamentos
-    tratar_pagamentos(instance_contrato=instance.ao_contrato)
+    tratar_pagamentos(instance_contrato=instance.ao_contrato, delete=True)
+
+    # "Apagar" notificações de recibos que se referem a parcelas não kitadas (apenas ao deletar pagamentos)
+    notificacoes_user = Notification.objects.filter(recipient=instance.ao_locador, deleted=False)
+    parcelas_pks = Parcela.objects.filter(do_contrato=instance.ao_contrato,
+                                          tt_pago__lt=instance.ao_contrato.valor_mensal).values_list('pk', flat=True)
+    for notificacao in notificacoes_user:
+        if notificacao.target not in parcelas_pks:
+            notificacao.delete()
 
 
 @receiver(post_save, sender=Pagamento)

@@ -18,7 +18,6 @@ ALLOWED_HOSTS = ['127.0.0.1', ]
 # Resolve: 'A conexão com 127.0.0.1 foi recusada.' no iframe de exibição do pdf.
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
@@ -151,7 +150,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# Configurações do aplicativo de redimendionamento das imagens enviadas pelos usuários:
+# Configurações da biblioteca de redimendionamento das imagens enviadas pelos usuários:
 DJANGORESIZED_DEFAULT_SIZE = [1080, None]
 DJANGORESIZED_DEFAULT_SCALE = 0.5
 DJANGORESIZED_DEFAULT_QUALITY = 75
@@ -159,6 +158,9 @@ DJANGORESIZED_DEFAULT_KEEP_META = True
 DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG'
 DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': ".jpg"}
 DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
+
+# Configurações da biblioteca de notificações (django-notifications-hq):
+DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/
@@ -168,8 +170,9 @@ SITE_NAME = 'Alugue Seu imóvel'
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': 1, 'pagamento': 12, 'gasto': 3, 'nota': 4,
-            'user': 10}
+contrato = 8
+FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 3,
+            'nota': 4, 'user': 5}
 
 # Tamanho em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
 TAMANHO_DAS_IMAGENS_Mb = 4
