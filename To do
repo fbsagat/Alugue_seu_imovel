@@ -8,6 +8,7 @@ apagar a tabela do usuario quando ele terminar a sessão
 OK. (preferi deixar como está pois iria desperdiçar muita memoria no banco de dados) salvar todas as preferencias do usuario em um dicionario em uma célula da tabela dele, não em varias como atualmente
 Contrato nãp desativa, arrumar
 
+Os cards nos ativos estão retornando tudo misturado (arrumar)
 Colocar a opção de data preenchida no recibos
 problemas encontrados, sem solução até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site

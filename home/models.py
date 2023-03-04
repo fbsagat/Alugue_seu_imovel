@@ -238,7 +238,7 @@ class Contrato(models.Model):
         return reverse('home:Contratos', args=[str(self.pk), ])
 
     class Meta:
-        ordering = ['data_entrada']
+        ordering = ['-data_entrada']
 
     def nome_curto(self):
         return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \

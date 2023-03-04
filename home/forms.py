@@ -1,10 +1,10 @@
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
+from home.funcoes_proprias import valor_format
 
 from django import forms
-from django.core.validators import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
@@ -118,6 +118,24 @@ class FormPagamento(forms.ModelForm):
             'valor_pago': Numeros(),
         }
 
+    def clean_valor_pago(self):
+        valor_pago = self.cleaned_data['valor_pago']
+        ao_contrato = self.cleaned_data['ao_contrato']
+        # ao_contrato = self.data['duracao']
+        contrato = Contrato.objects.get(pk=ao_contrato.pk)
+        pagamento_tt = contrato.pagamento_total()
+        total = int(contrato.valor_mensal) * int(contrato.duracao)
+        total_futuro = pagamento_tt + int(valor_pago)
+        valor_maximo = total - pagamento_tt
+        if total_futuro > total:
+            raise forms.ValidationError(
+                f"Com este valor o limite total do contrato será ultrapassado. Valor máximo: "
+                f"{valor_format(str(total - pagamento_tt))}" if valor_maximo > 0 else
+                f'Impossível adicionar mais pagamentos, o contrato está quitado.'
+                f' Valor total: {valor_format(str(total))}.')
+        else:
+            return valor_pago
+
     def __init__(self, user, *args, **kwargs):
         super(FormPagamento, self).__init__(*args, **kwargs)
         self.fields['ao_contrato'].queryset = Contrato.objects.filter(do_locador=user)
@@ -166,10 +184,12 @@ class FormContrato(forms.ModelForm):
             'dia_vencimento': Numeros(),
         }
 
+    # ATENÇÃO VERIFICAR SE ISSO AQUI AINDA É ÚTIL OU DEIXEI LIXO PRA TRÁS \/
     def __init__(self, property_id, *args, **kwargs):
         self.property_id = property_id
         print(property_id)
         super(FormContrato, self).__init__(*args, **kwargs)
+        # ATENÇÃO VERIFICAR SE ISSO AQUI AINDA É ÚTIL OU DEIXEI LIXO PRA TRÁS /\
 
     def clean_data_entrada(self):
         entrada = self.cleaned_data['data_entrada']
