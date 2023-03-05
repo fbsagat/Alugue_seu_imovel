@@ -14,7 +14,7 @@ Eventos / {{ SITE_NAME }}
 
 <container class="container-xxl pt-1 text-center text-justify">
 
-    <form action="" method="POST">
+    <form method="POST">
         {% csrf_token %}
 
         <container
@@ -51,7 +51,7 @@ Eventos / {{ SITE_NAME }}
 
     <br>
 
-    {% if pagamentos or gastos or locatarios or contratos or imoveis or anotacoes %}
+    {% if retornou_algo %}
     {% if pagamentos %}
     <p class="text-start fw-bold">Pagamentos:</p>
 

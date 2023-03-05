@@ -4,15 +4,17 @@ OK. (preferi deixar como está pois iria desperdiçar muita memoria no banco de 
             do usuario em um dicionario em uma célula da tabela dele, não em varias como atualmente.
 Ok. Contrato não desativa, arrumar.
 OK. Os cards nos ativos estão retornando tudo misturado (arrumar).
+OK. O botão ir em eventos não funciona de primeira quando não existe o data_eventos_i preenchido no models do usuario.
+OK. (resolvido mas com uma pequena gambiarra, utilizando o campo emailed=true pra indicar recibo ok)Destivar o
+            botão desnecessário(da vez) no histórico de notificações na offcanvas.
+OK. Fake está criando contratos com datas sobresalentes, arrumar.
+
 Criar um botão de painel com configurações diverdsas e botão de backup de todos os dados.
 Colocar a opção de data preenchida nos recibos.
 Implementar buscas por palavras nas paginas do botão histórico.
-Fake está criando contratos com datas sobresalentes, arrumar.
 Criar uma barra laterial com afazeres, dp it latter, simples para os usuarios.
 Melhorar o sisatema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
 com sistema de votação.
-Destivar o botão desnecessário(da vez) no histórico de notificações na offcanvas.
-O botão ir em eventos não funciona de primeira quando não existe o data_eventos_i preenchido no models do usuario.
 apagar a tabela do usuario quando ele terminar a sessão.
 Salvar as forms com erros em cookies, não na session, economiza memória do servidor e coloca tempo limite de duração.
 Recriar as parcelas(model.parcelas), mantendo recibos true p/ os meses q ja receberam recibo(não tão urgente mas bom).

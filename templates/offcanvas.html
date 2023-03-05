@@ -18,7 +18,8 @@
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="naolidas-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
-                        type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Histórico de Notificações
+                        type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Histórico de
+                    Notificações
                 </button>
             </li>
         </ul>
@@ -59,7 +60,7 @@
         <!-- Segundo conteúdo -->
         <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
-                {% for notification in notifications_lidas %}
+                {% for notification in notificacoes_hist %}
                 <div class="card bg-dark text-secondary border-secondary">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ notification.verb }}:</p>
@@ -71,10 +72,21 @@
                     <div class="card-footer">
                         <div class="row">
                             <div class="col">
-                                <a href="{% url 'home:Recibo não Entregue' notification.pk %}"
-                                   class="btn btn-outline-primary bg-gray-800 btn-sm small">Não entregue</a>
-                                <a href="{% url 'home:Recibo Entregue' notification.pk %}"
-                                   class="btn btn-outline-primary bg-gray-800 btn-sm small">Confirmar</a>
+                                {% if notification.emailed %}
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
+                                        href="{% url 'home:Recibo não Entregue' notification.pk %}">Não entregue
+                                </a></button>
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
+                                    Confirmar
+                                </button>
+                                {% else %}
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
+                                    Não entregue
+                                </button>
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
+                                        href="{% url 'home:Recibo Entregue' notification.pk %}">Confirmar
+                                </a></button>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

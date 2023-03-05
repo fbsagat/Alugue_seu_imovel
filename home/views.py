@@ -72,6 +72,7 @@ def eventos(request, pk):
     if request.method == 'POST':
         form = FormEventos(request.POST)
         if form.is_valid():
+            pesquisa_req = True
             user.data_eventos_i = form.cleaned_data['data_eventos_i']
             user.itens_eventos = form.cleaned_data['itens_eventos']
             user.qtd_eventos = form.cleaned_data['qtd']
@@ -95,17 +96,14 @@ def eventos(request, pk):
         agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
         if agreg_1["total"]:
             pg_tt = f'{valor_format(str(agreg_1["total"]))}'
-
     if '2' in itens_eventos and pesquisa_req:
         gastos = Gasto.objects.filter(do_locador=request.user, data__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data')[:qtd_eventos]
         agreg_2 = gastos.aggregate(total=Sum("valor"))
         if agreg_2["total"]:
             gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
-
     if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
         pag_m_gast = valor_format(str(agreg_1["total"] - agreg_2["total"]))
-
     if '3' in itens_eventos and pesquisa_req:
         locatarios = Locatario.objects.filter(do_locador=request.user,
                                               data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
@@ -117,7 +115,6 @@ def eventos(request, pk):
         contratotal = contratos.aggregate(total=Sum("valor_mensal"))["total"]
         if contratotal:
             contr_tt = f'{valor_format(str(contratotal))}'
-
     if '5' in itens_eventos and pesquisa_req:
         imoveis = Imovei.objects.filter(do_locador=request.user,
                                         data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
@@ -127,10 +124,11 @@ def eventos(request, pk):
                                             data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data_registro')[:qtd_eventos]
 
+    retornou_algo = True if locatarios or imoveis else False
     context = {'form': form, 'pagamentos': pagamentos, 'gastos': gastos, 'locatarios': locatarios,
-               'contratos': contratos, 'imoveis': imoveis, 'anotacoes': anotacoes, 'pg_tt': pg_tt, 'gasto_tt': gasto_tt,
-               'contr_tt': contr_tt, 'pag_m_gast': pag_m_gast, 'SITE_NAME': settings.SITE_NAME}
-
+               'contratos': contratos, 'imoveis': imoveis, 'anotacoes': anotacoes, 'pg_tt': pg_tt,
+               'gasto_tt': gasto_tt, 'contr_tt': contr_tt, 'pag_m_gast': pag_m_gast,
+               'retornou_algo': retornou_algo, 'SITE_NAME': settings.SITE_NAME}
     return render(request, 'exibir_eventos.html', context)
 
 
