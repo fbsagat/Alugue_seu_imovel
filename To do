@@ -1,23 +1,28 @@
-Criar uma barra laterial com afazeres, dp it latter, simples para os usuarios
-Melhorar o sisatema de fale com o desenvolvedor, colocando um mini fprus onde os usuario dão sugestãões de melhorias
- com sistema de votação.
+OK. Organizar os imoveis ativos por ordem de registro do contrato atual deles.
+OK. (só mudei a cor da borda) Colocar um deseninho nas card dos ativos (emoji talvez).
+OK. (preferi deixar como está pois iria desperdiçar muita memoria no banco de dados) salvar todas as preferencias
+            do usuario em um dicionario em uma célula da tabela dele, não em varias como atualmente.
+Ok. Contrato não desativa, arrumar.
+OK. Os cards nos ativos estão retornando tudo misturado (arrumar).
+Criar um botão de painel com configurações diverdsas e botão de backup de todos os dados.
+Colocar a opção de data preenchida nos recibos.
+Implementar buscas por palavras nas paginas do botão histórico.
+Fake está criando contratos com datas sobresalentes, arrumar.
+Criar uma barra laterial com afazeres, dp it latter, simples para os usuarios.
+Melhorar o sisatema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
+com sistema de votação.
+Destivar o botão desnecessário(da vez) no histórico de notificações na offcanvas.
+O botão ir em eventos não funciona de primeira quando não existe o data_eventos_i preenchido no models do usuario.
+apagar a tabela do usuario quando ele terminar a sessão.
+Salvar as forms com erros em cookies, não na session, economiza memória do servidor e coloca tempo limite de duração.
+Recriar as parcelas(model.parcelas), mantendo recibos true p/ os meses q ja receberam recibo(não tão urgente mas bom).
+Criar uma uuid unica para cada usuario, para mascarar arquivos dele(segurança aumentada)
 
-OK. Organizar os imoveis ativos por ordem de registro do contrato atual deles
-OK. (só mudei a cor da borda) Colocar um deseninho nas card dos ativos (emoji talvez)
-apagar a tabela do usuario quando ele terminar a sessão
-OK. (preferi deixar como está pois iria desperdiçar muita memoria no banco de dados) salvar todas as preferencias do usuario em um dicionario em uma célula da tabela dele, não em varias como atualmente
-Contrato nãp desativa, arrumar
-
-Os cards nos ativos estão retornando tudo misturado (arrumar)
-Colocar a opção de data preenchida no recibos
 problemas encontrados, sem solução até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
-Criar um botão de painel com configurações diverdsas e botão de backup de todos os dados
-Implementar buscas por palavras nas paginas do botão histórico
-Fake está criando contratos com datas sobresalentes, arrumar
 
+Melhorias futuras:
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
-
-A fazer com o celery:
-Rotinas diarias/ ou schedule task nas datas finais dos contratos:
-Converter a propriedade vencido para True de todos os contratos cujas datas de vencimento estão posterio ao dia atual.
+aplicar ajax um dia: https://www.youtube.com/watch?v=hISSGMafzvU / https://www.youtube.com/watch?v=QDdLvImfq_g
+aplicar atomicidade no gerencimanto do banco de dados: https://www.youtube.com/watch?v=50N400-3MTI
+Aplicar o celery.

@@ -18,7 +18,10 @@ Editar Contrato / {{ SITE_NAME }}
         <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
             <p class="fs-3">Editar Contrato:</p>{{ contrato }}
             <hr width="75%" />
-            <br><br>
+            <br>
+            <p class="fs-6 fw-light fst-italic lh-1">*Recomendamos que só seja editado o contrato que ainda não tenha
+                sido assinado e reconhecido em cartório</p>
+            <br>
             <form action="{% url 'home:Editar Contrato' contrato.pk %}" method="POST" class="ps-5 pe-5 mask-x_form">
                 {% csrf_token %}
                 <div class="row">

@@ -14,8 +14,7 @@ from notifications.models import Notification
 def gerenciar_parcelas(instance_contrato):
     # Editar as parcelas quando o contrato é editado:
     Parcela.objects.filter(do_contrato=instance_contrato.pk).delete()
-
-    # RECRIA AS PARCELAS, MAS NÃO SERIA MELHOR MANTER RECIBOS TRUE PARA OS MESES QUE JÁ RECEBERAM RECIBO? NÃO PERCA O PROXIMO EPISODIO
+    # RECRIA AS PARCELAS, MAS NÃO SERIA MELHOR MANTER RECIBOS TRUE PARA OS MESES QUE JÁ RECEBERAM RECIBO?
     for x in range(0, instance_contrato.duracao):
         data_entrada = instance_contrato.data_entrada
         data = data_entrada.replace(day=instance_contrato.dia_vencimento) + relativedelta(months=x)

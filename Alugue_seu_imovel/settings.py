@@ -170,7 +170,7 @@ SITE_NAME = 'Alugue Seu imóvel'
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-contrato = 1
+contrato = 3
 FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 3,
             'nota': 4, 'user': 5}
 

@@ -44,7 +44,7 @@ def forms_da_navbar(request):
         if request.session.get('form5'):
             form5 = FormContrato(request.user, request.session.get('form5'))
         else:
-            form5 = FormContrato(request.user)
+            form5 = FormContrato(request.user, initial={'data_entrada': datetime.date.today().strftime('%Y-%m-%d')})
 
         if request.session.get('form6'):
             form6 = FormImovel(request.user, request.session.get('form6'))
