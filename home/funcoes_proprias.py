@@ -56,6 +56,17 @@ def tratar_imagem(arquivo_obj):
 
 # 100: -----------------------------------------------
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
+    """ Ex:
+        infos = {'cod_recibo': ['465736', '463416', '125736', '465676', '465756', '465346', '474936'],
+             'cod_contrato': '4536-3382', 'nome_locador': 'FÁBIO AUGUSTO MACEDO DOS SANTOS', 'rg_locd': '5667789',
+             'cpf_locd': '005.234.342-10', 'nome_locatario': 'SANDRA DINORIA CRAVO COUTINHO', 'rg_loct': '8798122',
+             'cpf_loct': '235.632.142-04', 'valor_e_extenso': 'R$800,00 (OITOCENTOS REAIS)',
+             'mes_e_ano': ['NOVEMBRO', '2022', 'DEZEMBRO', '2022', 'JANEIRO', '2023', 'FEVEREIRO', '2023', 'MARÇO', '2023',
+                           'ABRIL', '2023', 'MAIO', '2023'],
+             'endereco': "Passagem Péricles Guedes, 391, Apto 102 Castanheira Belém/PA 66645_290", 'cidade': 'Belém',
+             'data': '________________, ____ de _________ de ________'}
+    """
+
     rect_lar = pag_lar - (pag_lar * 10 / 100)
     rect_alt = pag_lar / 2.5
 
@@ -89,8 +100,8 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
         f'{dados["mes_e_ano"][(2 * (recibo_n - 1)) + 1]}</b> (Parcela {recibo_n} de um total '
         f'de {parcelas}), de um imóvel localizado no endereço: {dados["endereco"]}, declarando '
         f'portanto, plena, total e irrevogável quitação do mês referido a partir de então.'
-        f' <BR/><BR/><i> Para maior clareza firmo o presente em<BR/><BR/>{dados["cidade"]},'
-        f' {dados["data"]}.</i><BR/><BR/><BR/>'
+        f' <BR/><BR/><i> Para maior clareza firmo o presente em'
+        f'<BR/><BR/>{dados["data_preenchimento"][recibo_n-1]}</i><BR/><BR/><BR/>'
         f'___________________________________________________________________________________'
         f'<BR/>{dados["nome_locador"]}',
         texto_estilo)
@@ -113,17 +124,6 @@ def gerar_uma_pagina_recibo(pdf, parcelas, pag_centro, pag_alt, pag_lar, pag_n, 
 
 # Principal:
 def gerar_recibos(dados):
-    """ Ex:
-    infos = {'cod_recibo': ['465736', '463416', '125736', '465676', '465756', '465346', '474936'],
-         'cod_contrato': '4536-3382', 'nome_locador': 'FÁBIO AUGUSTO MACEDO DOS SANTOS', 'rg_locd': '5667789',
-         'cpf_locd': '005.234.342-10', 'nome_locatario': 'SANDRA DINORIA CRAVO COUTINHO', 'rg_loct': '8798122',
-         'cpf_loct': '235.632.142-04', 'valor_e_extenso': 'R$800,00 (OITOCENTOS REAIS)',
-         'mes_e_ano': ['NOVEMBRO', '2022', 'DEZEMBRO', '2022', 'JANEIRO', '2023', 'FEVEREIRO', '2023', 'MARÇO', '2023',
-                       'ABRIL', '2023', 'MAIO', '2023'],
-         'endereco': "Passagem Péricles Guedes, 391, Apto 102 Castanheira Belém/PA 66645_290", 'cidade': 'Belém',
-         'data': '________________, ____ de _________ de ________'}
-    """
-
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
     pdf.setAuthor(f'{dados["nome_locador"]}')
@@ -142,6 +142,11 @@ def gerar_recibos(dados):
     # Tratando itens opcionais \/
     dados['rg_locd'] = '' if dados['rg_locd'] == 'None' else f' RG sob o nº {dados["rg_locd"]} e '
     dados['rg_loct'] = f' RG sob o nº {dados["rg_loct"]} e ' if dados['rg_loct'] != '' else ''
+    if dados['data_preenchimento']:
+        pass
+    else:
+        for x in range(0, (len(dados['mes_e_ano']))):
+            dados['data_preenchimento'].append("________________, ____ de ____________ de ________")
 
     for pagina in range(paginas):
         page_num = pdf.getPageNumber()
@@ -322,7 +327,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
 
 def gerar_tabela(dados):
     # Preparando o PDF:
-    local = f'{settings.MEDIA_ROOT}tabela_docs/tabela_{dados["usuario"]}.pdf'
+    local = f'{settings.MEDIA_ROOT}tabela_docs/tabela_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
     a4h = (297 * mm, 210 * mm)
     pdf = canvas.Canvas(local, pagesize=a4h)
     pdfmetrics.registerFont(TTFont('Impact', 'Impact.ttf'))

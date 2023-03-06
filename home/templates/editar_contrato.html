@@ -19,8 +19,10 @@ Editar Contrato / {{ SITE_NAME }}
             <p class="fs-3">Editar Contrato:</p>{{ contrato }}
             <hr width="75%" />
             <br>
-            <p class="fs-6 fw-light fst-italic lh-1">*Recomendamos que só seja editado o contrato que ainda não tenha
-                sido assinado e reconhecido em cartório</p>
+            <p class="fs-6 fw-light fst-italic lh-1 text-wrap" style="width: 40rem;">*Recomendamos que seja editado
+                apenas o contrato que ainda não esteja com firma reconhecida. Se você deseja estender o
+                período de locação após reconhecido, faça um novo contrato ou renove este com um termo
+                de aditivo de renovação contratual.</p>
             <br>
             <form action="{% url 'home:Editar Contrato' contrato.pk %}" method="POST" class="ps-5 pe-5 mask-x_form">
                 {% csrf_token %}

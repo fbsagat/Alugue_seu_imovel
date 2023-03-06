@@ -8,20 +8,26 @@ OK. O botão ir em eventos não funciona de primeira quando não existe o data_e
 OK. (resolvido mas com uma pequena gambiarra, utilizando o campo emailed=true pra indicar recibo ok)Destivar o
             botão desnecessário(da vez) no histórico de notificações na offcanvas.
 OK. Fake está criando contratos com datas sobresalentes, arrumar.
+OK. Criar uma uuid unica para cada usuario, para proteger os arquivos dele(segurança aumentada)
+OK. (mantive só o codigo) Quando recriar as parcelas(model.parcelas) ao usuario editar o periodo do contrato, manter
+        recibos true p/ os meses q ja receberam recibo(não tão urgente mas bom)(ou manter todas as outras informações).
+OK. Apagar a tabela do usuario quando ele terminar a sessão.
+OK. Colocar a opção de data preenchida nos recibos.
 
-Criar um botão de painel com configurações diverdsas e botão de backup de todos os dados.
-Colocar a opção de data preenchida nos recibos.
+Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar buscas por palavras nas paginas do botão histórico.
 Criar uma barra laterial com afazeres, dp it latter, simples para os usuarios.
-Melhorar o sisatema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
+Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
 com sistema de votação.
-apagar a tabela do usuario quando ele terminar a sessão.
+
 Salvar as forms com erros em cookies, não na session, economiza memória do servidor e coloca tempo limite de duração.
-Recriar as parcelas(model.parcelas), mantendo recibos true p/ os meses q ja receberam recibo(não tão urgente mas bom).
-Criar uma uuid unica para cada usuario, para mascarar arquivos dele(segurança aumentada)
+
+
+Habilitar segurança SSL/HTTPS
 
 problemas encontrados, sem solução até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
+pk do usuario deve ser aleatorio e grande, não sequencial desde o 1, arrumar
 
 Melhorias futuras:
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0

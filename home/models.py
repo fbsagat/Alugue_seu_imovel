@@ -1,6 +1,6 @@
-import random
-import string
+import random, string
 from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
@@ -8,23 +8,26 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
-
-from notifications.models import Notification
 from django_resized import ResizedImageField
-from notifications.signals import notify
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 
 
+def user_uuid():
+    con_codigo = ''.join(
+        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
+    return f'{con_codigo[:10]}'
+
+
 class Usuario(AbstractUser):
-    anotacoes = models.ManyToManyField('Anotacoe', blank=True)
     RG = models.CharField(max_length=9, null=True, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
     CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números',
                            validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números',
                                 validators=[apenas_numeros])
+    uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
 
     locat_slots = models.IntegerField(default=2)
 
@@ -33,7 +36,9 @@ class Usuario(AbstractUser):
     qtd_eventos = models.IntegerField(blank=True, null=True, default=10)
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
-    ultimo_recibo_gerado = models.ForeignKey('Contrato', null=True, blank=True, on_delete=models.SET_NULL)
+    recibo_ultimo = models.ForeignKey('Contrato', null=True, blank=True, on_delete=models.SET_NULL)
+    recibo_preenchimento = models.IntegerField(null=True, blank=True)
+
     tabela_ultima_data_ger = models.IntegerField(null=True, blank=True)
     tabela_meses_qtd = models.IntegerField(null=True, blank=True)
     tabela_imov_qtd = models.IntegerField(null=True, blank=True)
@@ -228,7 +233,7 @@ class Contrato(models.Model):
                                    help_text='Marque quando receber a sua via assinada e registrada em cartório')
     rescindido = models.BooleanField(default=False, null=False, help_text='Marque caso haja rescisão do contrato')
     vencido = models.BooleanField(default=False, null=False)
-    codigo = models.CharField(null=True, editable=False, max_length=11, default=gerar_codigo_contrato)
+    codigo = models.CharField(null=False, editable=False, max_length=11, default=gerar_codigo_contrato)
     data_de_rescisao = models.DateField(blank=True, verbose_name='Data da rescisão', null=True)
     recibos_pdf = models.FileField(upload_to='recibos_docs/%Y/%m/', blank=True, verbose_name='Recibos')
     data_registro = models.DateTimeField(auto_now_add=True)

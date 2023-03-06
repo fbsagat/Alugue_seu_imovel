@@ -60,7 +60,7 @@ Editar Perfil / {{ SITE_NAME }}
             <br><br>
             <small><a href="{% url 'home:Mudar Senha' %}">Quer mudar sua senha?</a></small>
             <br>
-            <small><a href="{% url 'home:Apagar Conta' user.id %}">Quer excluir sua conta?
+            <small><a href="{% url 'home:Apagar Conta' user.pk %}">Quer excluir sua conta?
                 <ion-icon name="trash-outline"></ion-icon>
             </a></small>
             {% endif %}

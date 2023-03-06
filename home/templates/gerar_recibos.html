@@ -34,7 +34,10 @@ Recibos / {{ SITE_NAME }}
         <container
                 class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
             <div class="p-1">
-                Contrato: {{ form|crispy }}
+                Contrato: {{ form.contrato|as_crispy_field }}
+            </div>
+            <div class="p-1">
+                Preenchimento da data: {{ form.data_preenchimento|as_crispy_field }}
             </div>
             <div class="p-1">
                 <button class="bg-blue-600 py-2 px-3 text-white rounded-md form-control-sm" type="submit">Gerar

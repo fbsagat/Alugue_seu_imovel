@@ -131,7 +131,7 @@ MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'home:Login'
 LOGOUT_REDIRECT_URL = '/'
@@ -170,8 +170,8 @@ SITE_NAME = 'Alugue Seu imóvel'
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-contrato = 3
-FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 3,
+contrato = 1
+FICT_QTD = {'locatario': 10, 'imovel_g': 4, 'imovel': 10, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 4,
             'nota': 4, 'user': 5}
 
 # Tamanho em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/

@@ -256,23 +256,25 @@ class FormAnotacoes(forms.ModelForm):
 
 
 class FormRecibos(forms.Form):
+    data_pre = [(1, 'Vazio'), (2, 'Vencimento')]
     contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.none(), initial='')
+    data_preenchimento = forms.ChoiceField(label='', choices=data_pre, required=True)
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(FormRecibos, self).__init__(*args, **kwargs)
         self.fields['contrato'].widget.attrs['class'] = 'form-select form-select-sm'
-
-
-meses = [(0, '...'), (1, '...'), (2, '...'), (3, '...'), (4, '...'), (5, '...'), (6, '...')]
-mostrar = [(4, '4'), (5, '5'), (6, '6'), (7, '7')]
-itens = [(6, '6'), (7, '7'), (8, '8'), (9, '9'), (10, '10')]
+        self.fields['data_preenchimento'].widget.attrs['class'] = 'form-select form-select-sm'
 
 
 class FormTabela(forms.Form):
+    meses = [(0, '...'), (1, '...'), (2, '...'), (3, '...'), (4, '...'), (5, '...'), (6, '...')]
+    mostrar = [(4, '4'), (5, '5'), (6, '6'), (7, '7')]
+    itens = [(6, '6'), (7, '7'), (8, '8'), (9, '9'), (10, '10')]
+
     mes = forms.ChoiceField(label='', initial='', choices=meses, required=True)
-    mostrar_qtd = forms.ChoiceField(label='', initial=10, choices=mostrar, required=True)
-    itens_qtd = forms.ChoiceField(label='', initial=7, choices=itens, required=True)
+    mostrar_qtd = forms.ChoiceField(label='', initial=7, choices=mostrar, required=True)
+    itens_qtd = forms.ChoiceField(label='', initial=10, choices=itens, required=True)
 
 
 class FormAdmin(forms.Form):
