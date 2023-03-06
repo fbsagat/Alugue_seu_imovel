@@ -1,4 +1,4 @@
-import locale, calendar
+import locale, os
 from num2words import num2words
 from datetime import datetime, timedelta
 from os import path
@@ -244,7 +244,7 @@ class ExcluirPagm(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Pagamentos', args=[self.request.user.id])
+        return reverse_lazy('home:Pagamentos', args=[self.request.user.pk])
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Pagamento, pk=self.kwargs['pk'], ao_locador=self.request.user)
@@ -412,7 +412,6 @@ def registrar_anotacao(request):
 @login_required
 def recibos(request, pk):
     form = FormRecibos()
-    ativo_tempo = []
     form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
                                                                vencido=False).order_by('-data_entrada')
     context = {}
@@ -429,20 +428,26 @@ def recibos(request, pk):
         if usuario.first_name == '' or usuario.last_name == '' or usuario.CPF == '':
             pede_dados = True
         else:
-            if request.user.ultimo_recibo_gerado:
-                contrato = Contrato.objects.get(pk=request.user.ultimo_recibo_gerado.pk)
+            if request.user.recibo_ultimo:
+                contrato = Contrato.objects.get(pk=request.user.recibo_ultimo.pk)
 
             # Carrega do model do usuario o ultimo recibo salvo no form, se existe\/
-            if usuario.ultimo_recibo_gerado:
-                form = FormRecibos(initial={'contrato': usuario.ultimo_recibo_gerado})
+            if usuario.recibo_ultimo and usuario.recibo_preenchimento:
+                form = FormRecibos(
+                    initial={'contrato': usuario.recibo_ultimo, 'data_preenchimento': usuario.recibo_preenchimento})
+                form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
+                                                                           vencido=False).order_by('-data_entrada')
 
-            # Se for um post, salvar o novo contrato no campo 'ultimo recibo salvo' do usuario\/
+            # Se for um post, salvar o novo contrato no campo 'ultimo recibo salvo' do usuario e etc...\/
             if request.method == 'POST':
                 form = FormRecibos(request.POST)
+                form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
+                                                                           vencido=False).order_by('-data_entrada')
                 if form.is_valid():
                     contrato = Contrato.objects.get(pk=form.cleaned_data['contrato'].pk)
-                    usuario.ultimo_recibo_gerado = contrato
-                    usuario.save(update_fields=['ultimo_recibo_gerado'])
+                    usuario.recibo_preenchimento = form.cleaned_data['data_preenchimento']
+                    usuario.recibo_ultimo = contrato
+                    usuario.save(update_fields=['recibo_ultimo', 'recibo_preenchimento'])
 
             # Criar o arquivo se não existe ou carregar se existe:
             if contrato.recibos_pdf and path.exists(f'{settings.MEDIA_ROOT}{contrato.recibos_pdf}'):
@@ -465,11 +470,18 @@ def recibos(request, pk):
                     Parcela.objects.filter(do_contrato=contrato.pk).values("data_pagm_ref").values_list('data_pagm_ref',
                                                                                                         flat=True))
                 datas_tratadas = list()
+                data_preenchimento = list()
                 for data in datas:
                     month = data.strftime('%B')
                     year = data.strftime('%Y')
                     datas_tratadas.append(f'{month.upper()}')
                     datas_tratadas.append(f'{year}')
+
+                if usuario.recibo_preenchimento == '2':
+                    for x in range(0, contrato.duracao):
+                        data = contrato.data_entrada + relativedelta(months=x)
+                        data_preenchimento.append(
+                            f'{contrato.do_imovel.cidade}, {data.replace(day=contrato.dia_vencimento).strftime("%d de %B de %Y")}')
 
                 # Preparar dados para envio
                 dados = {'cod_contrato': f'{contrato.codigo}',
@@ -482,13 +494,13 @@ def recibos(request, pk):
                          'valor_e_extenso': f'{contrato.valor_format()} ({num_ptbr_reais.upper()} REAIS{completo.upper()})',
                          'endereco': f"{imovel.endereco_completo()}",
                          'cidade': f'{imovel.cidade}',
-                         'data': '________________, ____ de _________ de ________',
+                         'data_preenchimento': data_preenchimento,
                          'cod_recibo': codigos,
                          'mes_e_ano': datas_tratadas,
                          }
 
                 local_temp = gerar_recibos(dados=dados)
-                contrato.recibos_pdf = File(local_temp, name=f'recibos de {dados["cod_contrato"]}.pdf')
+                contrato.recibos_pdf = File(local_temp, name=f'recibos_de_{usuario.uuid}_{dados["cod_contrato"]}.pdf')
                 contrato.save()
 
         context = {'form': form, 'contrato': contrato, 'tem_contratos': tem_contratos, 'pede_dados': pede_dados,
@@ -498,14 +510,18 @@ def recibos(request, pk):
 
 @login_required
 def tabela(request, pk):
+    # Criar a pasta tabela_docs se não existe
+    pasta = rf'{settings.MEDIA_ROOT}/tabela_docs/'
+    se_existe = os.path.exists(pasta)
+    if not se_existe:
+        os.makedirs(pasta)
+
     # Cria o objeto usuario
     usuario = Usuario.objects.get(pk=request.user.pk)
 
     # Cria os meses a partir da mes atual do usuario para escolher no form
     meses = []
     mes_inicial = datetime.now().date().replace(day=1) - relativedelta(months=3)
-    meses_qtd = 4
-    imov_qtd = 6
 
     for imovel in range(7):
         meses.append(
@@ -521,12 +537,12 @@ def tabela(request, pk):
         meses_qtd = usuario.tabela_meses_qtd
         imov_qtd = usuario.tabela_imov_qtd
     else:
-        form = FormTabela(initial={'mes': 3, 'mostrar_qtd': 10, 'itens_qtd': 7})
+        form = FormTabela(initial={'mes': 3})
         a_partir_de = datetime.now().date().replace(day=1)
-        meses_qtd = 4
-        imov_qtd = 6
+        meses_qtd = 7
+        imov_qtd = 10
 
-    # Salva o último post do form no perfil do usuario, se form valido
+    # Salva o último post do 'form' no perfil do usuario, se 'form' valido
     if request.method == 'POST':
         form = FormTabela(request.POST)
         if form.is_valid():
@@ -616,9 +632,8 @@ def tabela(request, pk):
         if len(sinais) - meses_qtd != 0:
             del sinais[-(len(sinais) - meses_qtd):]
 
-    # Enviar tbm: 1. Status atual do contrato: ativo, inativo / Recibo: Entregue, não entregue / Pg esta parcela: Sim,
-    # não).
     dados = {'usuario': usuario,
+             "usuario_uuid": usuario.uuid,
              "usuario_username": usuario.username,
              "usuario_nome_compl": usuario.nome_completo().upper(),
              'imoveis_nomes': imoveis_nomes,
@@ -644,7 +659,7 @@ def tabela(request, pk):
         # Gerar a tabela com os dados
         gerar_tabela(dados)
     # Link da tabela
-    link = rf'/media/tabela_docs/tabela_{usuario}.pdf'
+    link = rf'/media/tabela_docs/tabela_{dados["usuario_uuid"]}_{usuario}.pdf'
 
     # Preparar o context
     context['tabela'] = link
@@ -1008,7 +1023,7 @@ class Homepage(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(f'dashboard/{request.user.id}')
+            return redirect(f'dashboard/{request.user.pk}')
         else:
             return super().get(request, *args, **kwargs)
 
@@ -1114,7 +1129,7 @@ def botaoteste(request):
 
     if executar == 170:
         # Teste de mensagens \/
-        messages.success(request, f"{'Oi'}")
+        messages.success(request, f"{'oi'}")
 
     if executar == 1 or executar == 100:
         count = 0
