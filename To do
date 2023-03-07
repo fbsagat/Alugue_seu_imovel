@@ -13,14 +13,15 @@ OK. (mantive só o codigo) Quando recriar as parcelas(model.parcelas) ao usuario
         recibos true p/ os meses q ja receberam recibo(não tão urgente mas bom)(ou manter todas as outras informações).
 OK. Apagar a tabela do usuario quando ele terminar a sessão.
 OK. Colocar a opção de data preenchida nos recibos.
+OK. (fiz um pouco diferente, usei o model das anotações)Criar uma barra laterial com afazeres, dp it latter simples.
+OK. Ao excluir uma anotação, excluir a tarefa dela tbm.
+Salvar as forms com erros em cookies, não na session, economiza memória do servidor e coloca tempo limite de duração.
 
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar buscas por palavras nas paginas do botão histórico.
-Criar uma barra laterial com afazeres, dp it latter, simples para os usuarios.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
 com sistema de votação.
-
-Salvar as forms com erros em cookies, não na session, economiza memória do servidor e coloca tempo limite de duração.
+Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
 
 
 Habilitar segurança SSL/HTTPS

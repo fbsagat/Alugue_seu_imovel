@@ -1,6 +1,7 @@
 from django.contrib import admin
 from home.forms import Mascara
-from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, MensagemDev, ImovGrupo, Parcela
+from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, MensagemDev, ImovGrupo, Parcela, \
+    Tarefa
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -35,16 +36,16 @@ class ImoveisAdmin(admin.ModelAdmin):
 
 @admin.register(Contrato)
 class ContratosAdmin(admin.ModelAdmin):
-    list_display = ('do_locador', 'do_locatario',  'do_imovel',  'data_entrada',  'duracao',  'valor_mensal',
+    list_display = ('do_locador', 'do_locatario', 'do_imovel', 'data_entrada', 'duracao', 'valor_mensal',
                     'data_registro')
-    list_filter = ('em_posse',  'rescindido',  'vencido')
+    list_filter = ('em_posse', 'rescindido', 'vencido')
 
 
 @admin.register(Pagamento)
 class PagamentosAdmin(admin.ModelAdmin):
     list_display = ('ao_locador', 'ao_contrato', 'do_locatario', 'valor_pago', 'data_pagamento',
                     'data_de_recibo', 'data_criacao')
-    list_filter = ('forma', )
+    list_filter = ('forma',)
 
 
 @admin.register(Parcela)
@@ -68,3 +69,9 @@ class MensagemDevAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'do_usuario', 'data_registro', 'imagem')
     list_filter = ('tipo_msg',)
     search_fields = ('titulo',)
+
+
+@admin.register(Tarefa)
+class Tarefas(admin.ModelAdmin):
+    list_display = ('do_usuario', 'autor_tipo', 'data_registro')
+    list_filter = ('autor_tipo', 'lida', )

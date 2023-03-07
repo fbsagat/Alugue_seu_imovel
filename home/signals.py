@@ -8,10 +8,7 @@ from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
 from django.dispatch import receiver
 
-from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario
-
-from notifications.signals import notify
-from notifications.models import Notification
+from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa
 
 
 def gerenciar_parcelas(instance_contrato):
@@ -40,7 +37,7 @@ def gerenciar_parcelas(instance_contrato):
                 break
 
     if parcelas_anter:
-        # No ato de editar o período do contrato esta função irá copiar uns dados(recibo_entregue e codigo)
+        # No ato de editar o período do contrato essa função irá copiar o dado(codigo)
         # das parcelas antigas(apagadas) que possuem a mesma data para as novas parcelas.
         parcelas_novas = Parcela.objects.filter(do_contrato=instance_contrato)
 
@@ -54,12 +51,12 @@ def gerenciar_parcelas(instance_contrato):
                 parcela.codigo = parcelas_anter[index]['codigo']
                 parcela.save(update_fields=['codigo'])
 
-        # "Apagar" notificações antigas deste contrato
-        notificacoes_user = Notification.objects.filter(recipient=instance_contrato.do_locador, deleted=False)
+        # "Apagar" tarefas antigas deste contrato
+        tarefas_user = Tarefa.objects.filter(do_usuario=instance_contrato.do_locador, deleted=False)
         parcelas_pks = Parcela.objects.filter(do_contrato=instance_contrato).values_list('pk', flat=True)
-        for notificacao in notificacoes_user:
-            if notificacao.actor_object_id not in parcelas_pks:
-                notificacao.delete()
+        for tarefa in tarefas_user:
+            if tarefa.autor_id not in parcelas_pks:
+                tarefa.delete()
 
 
 def tratar_pagamentos(instance_contrato, delete=False):
@@ -87,13 +84,13 @@ def tratar_pagamentos(instance_contrato, delete=False):
         parcela.save(update_fields=['tt_pago', 'recibo_entregue'])
 
     # Notificação
-    # Listar actor_object_id de cada notificação do usuario
+    # Listar autor_id de cada notificação do usuario
     if delete is False:
-        notif_exist = Notification.objects.filter(recipient=parcelas[0].do_usuario).values_list('actor_object_id')
-        lista_actor_object_id = []
-        if notif_exist:
-            for i in notif_exist:
-                lista_actor_object_id.append(int(i[0]))
+        tarefa_exist = Tarefa.objects.filter(do_usuario=parcelas[0].do_usuario).values_list('autor_id')
+        lista_autor_id = []
+        if tarefa_exist:
+            for i in tarefa_exist:
+                lista_autor_id.append(int(i[0]))
 
         # Enviar a notificação de recibo
         for parcela in parcelas:
@@ -101,8 +98,14 @@ def tratar_pagamentos(instance_contrato, delete=False):
                        f'parcela de {parcela.data_pagm_ref.strftime("%B/%Y").upper()} do contrato ' \
                        f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
 
-            if parcela.tt_pago == valor_mensal and parcela.pk not in lista_actor_object_id:
-                notify.send(sender=parcela, recipient=parcela.do_usuario, verb=f'Recibo', description=mensagem)
+            if parcela.tt_pago == valor_mensal and parcela.pk not in lista_autor_id:
+                tarefa = Tarefa()
+                tarefa.autor_id = parcela.pk
+                tarefa.do_usuario = parcela.do_usuario
+                tarefa.autor_tipo = 1
+                tarefa.texto = mensagem
+                tarefa.dados = {'recibo_entregue': parcela.recibo_entregue}
+                tarefa.save()
 
 
 @receiver(user_logged_in)
@@ -218,12 +221,12 @@ def pagamento_delete(sender, instance, **kwards):
     tratar_pagamentos(instance_contrato=instance.ao_contrato, delete=True)
 
     # "Apagar" notificações de recibos que se referem a parcelas não kitadas (apenas ao deletar pagamentos)
-    notificacoes_user = Notification.objects.filter(recipient=instance.ao_locador, deleted=False)
+    tarefa_user = Tarefa.objects.filter(do_usuario=instance.ao_locador)
     parcelas_pks = Parcela.objects.filter(do_contrato=instance.ao_contrato,
                                           tt_pago__lt=instance.ao_contrato.valor_mensal).values_list('pk', flat=True)
-    for notificacao in notificacoes_user:
-        if notificacao.target not in parcelas_pks:
-            notificacao.delete()
+    for tarefa in tarefa_user:
+        if tarefa.autor_id not in parcelas_pks:
+            tarefa.delete()
 
 
 @receiver(post_save, sender=Pagamento)

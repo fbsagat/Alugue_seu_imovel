@@ -4,10 +4,9 @@ from Alugue_seu_imovel import settings
 
 from django.urls import resolve
 
-from home.models import Parcela
+from home.models import Tarefa
 from home.forms import FormMensagem, FormAdmin
 from home.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, FormImovel, FormAnotacoes
-from notifications.models import Notification
 
 
 def titulo_pag(request):
@@ -58,17 +57,12 @@ def forms_da_navbar(request):
 
         form8 = FormAdmin(initial={'p_usuario': request.user})
 
-        notificacoes = Notification.objects.unread().filter(recipient=request.user, deleted=False)[:60]
-        notificacoes_hist = Notification.objects.read().filter(recipient=request.user, deleted=False)[:30]
-        # True para o campo emailed(arrumar em breve) quando o recibo ao qual essa notificação se refere
-        # está marcado Entregue. Serve para desativar botões no offcanvas.
-        for n, notificacao in enumerate(notificacoes_hist):
-            parcela = Parcela.objects.get(pk=notificacao.actor_object_id)
-            notificacoes_hist[n].emailed = parcela.recibo_entregue
+        tarefas = Tarefa.objects.filter(do_usuario=request.user, lida=False)[:60]
+        tarefas_hist = Tarefa.objects.filter(do_usuario=request.user, lida=True)[:30]
 
         context = {'form_pagamento': form1, 'form_mensagem': form2, 'form_gasto': form3, 'form_locatario': form4,
                    'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8,
-                   'notifications': notificacoes, 'notificacoes_hist': notificacoes_hist}
+                   'tarefas': tarefas, 'tarefas_hist': tarefas_hist}
 
         return context
     else:

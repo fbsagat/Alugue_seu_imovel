@@ -14,18 +14,32 @@ Editar Anotação / {{ SITE_NAME }}
 
 <container class="flex justify-center items-center">
 
-    <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
-        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+    <container class="container-lg p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full py-32 md:py-0 text-gray-100 flex items-center flex-col">
             <p class="fs-3">Editar Anotação:</p>{{ anotacoe }}
-            <hr width="75%" />
+            <hr width="75%"/>
             <br><br>
-            <form action="{% url 'home:Editar Anotação' anotacoe.pk %}" method="POST"
-                  class="ps-5 pe-5">
+
+            <form action="{% url 'home:Editar Anotação' anotacoe.pk %}" method="POST" class="ps-5 pe-5">
                 {% csrf_token %}
-                {{ form.titulo|as_crispy_field }}
-                {{ form.data_registro|as_crispy_field }}
-                {{ form.texto|as_crispy_field }}
-                <div class="justify-center items-center">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            {{ form_notas.titulo|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row items-center">
+                        <div class="col">
+                            {{ form_notas.data_registro|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form_notas.tarefa|as_crispy_field }}
+                        </div>
+                        {{ form_notas.texto|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="justify-center items-center text-center">
                     <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" type="button"
                             onClick="history.go(-1)">Voltar
                     </button>
@@ -33,6 +47,7 @@ Editar Anotação / {{ SITE_NAME }}
                     </button>
                 </div>
             </form>
+
         </div>
     </container>
 

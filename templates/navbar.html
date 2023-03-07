@@ -6,10 +6,10 @@
 {% block head %}
 <style>
 ion-icon {
-  color: white;
+    color: white;
 }
 ion-icon {
-  pointer-events: none;
+    pointer-events: none;
 }
 </style>
 {% endblock %}
@@ -105,7 +105,7 @@ ion-icon {
                     </li>
                     <li><a data-bs-toggle="modal" data-bs-target="#modal4" class="dropdown-item" href="#">Gasto 💸</a>
                     </li>
-                    <li><a data-bs-toggle="modal" data-bs-target="#modal7" class="dropdown-item" href="#">Anotação
+                    <li><a data-bs-toggle="modal" data-bs-target="#modal7" class="dropdown-item" href="#">Nota/Tarefa
                         🗒️</a>
                     </li>
                 </ul>
@@ -141,26 +141,26 @@ ion-icon {
                     <li><a class="dropdown-item" href="{% url 'home:Gastos' request.user.pk %}">Gastos 💸</a></li>
                     </li>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'home:Anotações' request.user.pk %}">Anotações 🗒️</a>
+                    <li><a class="dropdown-item" href="{% url 'home:Anotações' request.user.pk %}">Notas/Tarefas 🗒️</a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- NOTIFICAÇÕES -->
-    {% if notifications.count == 0 %}
-    <button class="position-relative" title="Notificações" type="button" data-bs-toggle="offcanvas"
+    <!-- TAREFAS -->
+    {% if tarefas.count == 0 %}
+    <button class="position-relative" title="Tarefas" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
         <ion-icon size="large" name="notifications-outline"></ion-icon>
     </button>
     {% else %}
-    <button class="position-relative" title="Notificações" type="button" data-bs-toggle="offcanvas"
+    <button class="position-relative" title="Tarefas" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
         <ion-icon size="large" name="notifications-outline"></ion-icon>
         <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
-    {{ notifications.count }}
-    <span class="visually-hidden">Mensagens não lidas</span></span>
+    {{ tarefas.count }}
+    <span class="visually-hidden">Tarefas não lidas</span></span>
     </button>
     {% endif %}
     {% include 'offcanvas.html' %}
@@ -424,26 +424,40 @@ ion-icon {
 <div class="modal fade modal-lg" id="modal7" tabindex="-1" aria-labelledby="MODAL8_ANOTAÇÃO" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="MODAL8_ANOTAÇÃO">Registrar Anotação</h1>
             </div>
-            <div class="">
+
+            <form action="{% url 'home:Registrar Anotação' %}" method="POST" class="ps-5 pe-5">
+                {% csrf_token %}
                 <div class="modal-body">
-                    <form action="{% url 'home:Registrar Anotação' %}" method="POST"
-                          class="ps-5 pe-5">
-                        {% csrf_token %}
-                        {{ form_notas.titulo|as_crispy_field }}
-                        {{ form_notas.data_registro|as_crispy_field }}
-                        {{ form_notas.texto|as_crispy_field }}
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
-                            </button>
-                            <button type="submit" class="btn btn-primary">Confirmar
-                            </button>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_notas.titulo|as_crispy_field }}
                         </div>
-                    </form>
+                    </div>
+                    <div class="row items-center">
+                        <div class="col">
+                            {{ form_notas.data_registro|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form_notas.tarefa|as_crispy_field }}
+                        </div>
+                        {{ form_notas.texto|as_crispy_field }}
+                    </div>
                 </div>
-            </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
+
+            </form>
+
         </div>
     </div>
 </div>
+
+
+

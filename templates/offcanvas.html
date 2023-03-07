@@ -3,7 +3,7 @@
 
     <!-- Offcanvas header -->
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Notificações</h5>
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Tarefas</h5>
         <button type="button" class="btn-close-black" data-bs-dismiss="offcanvas" aria-label="Close">X</button>
     </div>
     <!-- Fim do Offcanvas header -->
@@ -13,13 +13,13 @@
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="lidas-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
-                        type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Notificações Novas
+                        type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Tarefas Novas
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="naolidas-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
                         type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Histórico de
-                    Notificações
+                    Tarefas
                 </button>
             </li>
         </ul>
@@ -34,24 +34,35 @@
              role="tabpanel" aria-labelledby="home-tab"
              tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
-                {% for notification in notifications %}
+                {% for tarefa in tarefas %}
+
                 <div class="card bg-black fw-semibold border-secondary">
                     <div class="card-body mx-1 my-1 px-1 py-1">
-                        <p class="fw-bold">{{ notification.verb }}:</p>
-                        <p class="card-text small lh-sm">{{ notification.description }}</p>
+                        <p class="fw-bold">{{ tarefa.get_autor_tipo_display }}:</p>
+                        <p class="card-text small lh-sm">{{ tarefa.texto }}</p>
                     </div>
                     <div class="col text-muted text-end align-text-bottom">
-                        <small>{{ notification.timestamp }} </small>
+                        <small class="me-1">{{ tarefa.data_registro }}</small>
                     </div>
                     <div class="card-footer">
                         <div class="row">
                             <div class="col">
-                                <a href="{% url 'home:Recibo Entregue' notification.pk %}"
+                                {% if tarefa.autor_tipo == 1 %}
+
+                                <a href="{% url 'home:Recibo Entregue' tarefa.pk %}"
                                    class="btn btn-outline-primary btn-sm small">Confirmar</a>
+
+                                {% elif tarefa.autor_tipo == 2 %}
+
+                                <a href="{% url 'home:Afazer Concluida' tarefa.pk %}"
+                                   class="btn btn-outline-primary btn-sm small">Concluída</a>
+
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
+
                 {% endfor %}
             </div>
         </div>
@@ -60,21 +71,23 @@
         <!-- Segundo conteúdo -->
         <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
-                {% for notification in notificacoes_hist %}
+                {% for tarefa in tarefas_hist %}
                 <div class="card bg-dark text-secondary border-secondary">
                     <div class="card-body mx-1 my-1 px-1 py-1">
-                        <p class="fw-bold">{{ notification.verb }}:</p>
-                        <p class="card-text small lh-sm">{{ notification.description }}</p>
+                        <p class="fw-bold">{{ tarefa.get_autor_tipo_display }}:</p>
+                        <p class="card-text small lh-sm">{{ tarefa.texto }}</p>
                     </div>
                     <div class="col text-muted text-end align-text-bottom">
-                        <small>{{ notification.timestamp }} </small>
+                        <small class="me-1">{{ tarefa.data_registro }} </small>
                     </div>
                     <div class="card-footer">
                         <div class="row">
                             <div class="col">
-                                {% if notification.emailed %}
+                                {% if tarefa.autor_tipo == 1 %}
+
+                                {% if tarefa.recibo_entregue is True %}
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Recibo não Entregue' notification.pk %}">Não entregue
+                                        href="{% url 'home:Recibo não Entregue' tarefa.pk %}">Não entregue
                                 </a></button>
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
                                     Confirmar
@@ -84,8 +97,28 @@
                                     Não entregue
                                 </button>
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Recibo Entregue' notification.pk %}">Confirmar
+                                        href="{% url 'home:Recibo Entregue' tarefa.pk %}">Confirmar
                                 </a></button>
+                                {% endif %}
+
+                                {% elif tarefa.autor_tipo == 2 %}
+
+                                {% if tarefa.afazer_concluida %}
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
+                                    À fazer
+                                </button>
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
+                                        href="{% url 'home:Afazer Concluida' tarefa.pk %}">Concluída
+                                </a></button>
+                                {% else %}
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
+                                        href="{% url 'home:Afazer não Concluida' tarefa.pk %}">À fazer
+                                </a></button>
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
+                                    Confirmar
+                                </button>
+                                {% endif %}
+
                                 {% endif %}
                             </div>
                         </div>

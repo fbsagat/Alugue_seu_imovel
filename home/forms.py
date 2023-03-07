@@ -245,23 +245,27 @@ class FormImovel(forms.ModelForm):
 
 
 class FormAnotacoes(forms.ModelForm):
+    tarefa = forms.BooleanField(required=False,
+                                help_text='Marque para adicionar este registro na sua lista de tarefas.',
+                                widget=forms.CheckboxInput())
+
     class Meta:
         model = Anotacoe
         fields = '__all__'
-        exclude = ['do_usuario']
+        exclude = ['do_usuario', 'feito']
         widgets = {
-            'data_registro': DateInput(),
-            'texto': Textarea(attrs={'cols': 120, 'rows': 15}),
+            'data_registro': DateInput(attrs={'style': 'width: 140px;'}),
+            'texto': Textarea(attrs={'cols': 10, 'rows': 15}),
         }
 
 
 class FormRecibos(forms.Form):
-    data_pre = [(1, 'Vazio'), (2, 'Vencimento')]
+    data_pre = [(1, 'Preenchimento manual'), (2, 'Cidade dia/mês/ano'), (3, 'Cidade ___/mês/ano')]
     contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.none(), initial='')
     data_preenchimento = forms.ChoiceField(label='', choices=data_pre, required=True)
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
+        # user = kwargs.pop('user', None) # Acho q não é util
         super(FormRecibos, self).__init__(*args, **kwargs)
         self.fields['contrato'].widget.attrs['class'] = 'form-select form-select-sm'
         self.fields['data_preenchimento'].widget.attrs['class'] = 'form-select form-select-sm'

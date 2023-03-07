@@ -18,16 +18,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
 
-from notifications.models import Notification
-
-from home.new_context import forms_da_navbar
 from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela
 
-from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela
+from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa
 
 locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')
 
@@ -124,7 +121,7 @@ def eventos(request, pk):
                                             data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data_registro')[:qtd_eventos]
 
-    retornou_algo = True if locatarios or imoveis else False
+    retornou_algo = True if locatarios or imoveis or pagamentos or gastos or contratos or anotacoes else False
     context = {'form': form, 'pagamentos': pagamentos, 'gastos': gastos, 'locatarios': locatarios,
                'contratos': contratos, 'imoveis': imoveis, 'anotacoes': anotacoes, 'pg_tt': pg_tt,
                'gasto_tt': gasto_tt, 'contr_tt': contr_tt, 'pag_m_gast': pag_m_gast,
@@ -395,9 +392,20 @@ def registrar_imovel(request):
 def registrar_anotacao(request):
     form = FormAnotacoes(request.POST)
     if form.is_valid():
-        notas = form.save(commit=False)
-        notas.do_usuario = request.user
-        notas.save()
+        nota = form.save(commit=False)
+        nota.do_usuario = request.user
+        nota.feito = 2
+        nota.save()
+        if form.cleaned_data['tarefa']:
+            texto = f': {nota.texto}'
+            mensagem = f'{nota.titulo}{texto}'
+            tarefa = Tarefa()
+            tarefa.autor_id = nota.pk
+            tarefa.do_usuario = nota.do_usuario
+            tarefa.autor_tipo = 2
+            tarefa.texto = mensagem
+            tarefa.dados = {'afazer_concluida': 1}
+            tarefa.save()
         messages.success(request, "Anotação resgistrada com sucesso!")
         if 'form7' in request.session:
             del request.session['form7']
@@ -481,7 +489,13 @@ def recibos(request, pk):
                     for x in range(0, contrato.duracao):
                         data = contrato.data_entrada + relativedelta(months=x)
                         data_preenchimento.append(
-                            f'{contrato.do_imovel.cidade}, {data.replace(day=contrato.dia_vencimento).strftime("%d de %B de %Y")}')
+                            f'{contrato.do_imovel.cidade}, '
+                            f'{data.replace(day=contrato.dia_vencimento).strftime("%d de %B de %Y")}')
+                elif usuario.recibo_preenchimento == '3':
+                    for x in range(0, contrato.duracao):
+                        data = contrato.data_entrada + relativedelta(months=x)
+                        data_preenchimento.append(
+                            f'{contrato.do_imovel.cidade}, {data.strftime("____ de %B de %Y")}')
 
                 # Preparar dados para envio
                 dados = {'cod_contrato': f'{contrato.codigo}',
@@ -990,28 +1004,63 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
         context['SITE_NAME'] = settings.SITE_NAME
         return context
 
+    def post(self, request, *args, **kwargs):
+        tarefa = Tarefa.objects.get(autor_tipo=2, autor_id=self.get_object().pk)
+        tarefa.delete()
+        return self.delete(request, *args, **kwargs)
 
-# -=-=-=-=-=-=-=-= NOTIFICAÇÕES -=-=-=-=-=-=-=-=
+
+# -=-=-=-=-=-=-=-= TAREFAS -=-=-=-=-=-=-=-=
 
 def recibo_entregue(request, pk):
-    notificacao = Notification.objects.get(pk=pk)
-    notificacao.unread = False
-    parcela = Parcela.objects.get(pk=notificacao.actor_object_id)
-    parcela.recibo_entregue = True
+    tarefa = Tarefa.objects.get(pk=pk)
+    tarefa.lida = True
+    dados = tarefa.dados
+    dados['recibo_entregue'] = True
+    tarefa.save()
 
+    parcela = Parcela.objects.get(pk=tarefa.autor_id)
+    parcela.recibo_entregue = True
     parcela.save()
-    notificacao.save()
     return redirect(request.META['HTTP_REFERER'])
 
 
 def recibo_nao_entregue(request, pk):
-    notificacao = Notification.objects.get(pk=pk)
-    notificacao.unread = False
-    parcela = Parcela.objects.get(pk=notificacao.actor_object_id)
-    parcela.recibo_entregue = False
+    tarefa = Tarefa.objects.get(pk=pk)
+    tarefa.lida = False
+    dados = tarefa.dados
+    dados['recibo_entregue'] = False
+    tarefa.save()
 
+    parcela = Parcela.objects.get(pk=tarefa.autor_id)
+    parcela.recibo_entregue = False
     parcela.save()
-    notificacao.save()
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def afazer_concluida(request, pk):
+    tarefa = Tarefa.objects.get(pk=pk)
+    tarefa.lida = True
+    dados = tarefa.dados
+    dados['afazer_concluida'] = True
+    tarefa.save()
+
+    nota = Anotacoe.objects.get(pk=tarefa.autor_id)
+    nota.feito = 3
+    nota.save()
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def afazer_nao_concluida(request, pk):
+    tarefa = Tarefa.objects.get(pk=pk)
+    tarefa.lida = False
+    dados = tarefa.dados
+    dados['afazer_concluida'] = False
+    tarefa.save()
+
+    nota = Anotacoe.objects.get(pk=tarefa.autor_id)
+    nota.feito = 2
+    nota.save()
     return redirect(request.META['HTTP_REFERER'])
 
 

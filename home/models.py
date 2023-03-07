@@ -1,4 +1,4 @@
-import random, string
+import random, string, json
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
@@ -373,13 +373,58 @@ class Anotacoe(models.Model):
 
     titulo = models.CharField(blank=False, max_length=100, verbose_name='Título')
     data_registro = models.DateTimeField(blank=True)
-    texto = models.TextField(blank=False)
+    texto = models.TextField(blank=True, null=True)
+    feito = models.IntegerField(choices=[(1, 'Anotação'), (2, 'Tarefa'), (3, 'Tarefa Concluida')], default=1)
 
     def get_absolute_url(self):
         return reverse('home:Anotações', args=[(str(self.pk)), ])
 
     def __str__(self):
         return f'{self.titulo} - {self.data_registro.strftime("%d/%m/%Y")}'
+
+    def tarefa_afazer_concluida(self):
+        if self.feito == 1:
+            return 'Anotação'
+        elif self.feito == 2:
+            return 'Tarefa afazer'
+        else:
+            return 'Tarefa concluida'
+
+
+tipos = [(1, 'Recibo 🧾'), (2, 'Tarefa 🗒️')]
+
+
+class Tarefa(models.Model):
+    do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
+    autor_id = models.IntegerField()
+    autor_tipo = models.IntegerField(choices=tipos)
+    texto = models.TextField(blank=False)
+    data_registro = models.DateTimeField(auto_now_add=True)
+    lida = models.BooleanField(default=False)
+    dados = models.JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.pk} - {self.texto[:15]}'
+
+    class Meta:
+        ordering = ['-data_registro']
+
+    def recibo_entregue(self):
+        if self.dados['recibo_entregue']:
+            return self.dados['recibo_entregue']
+        else:
+            print('Esta tarefa não possui o dado "recibo_entregue"')
+            return False
+
+    def afazer_concluida(self):
+        if self.dados['afazer_concluida']:
+            if self.dados['afazer_concluida'] == 2:
+                return True
+            elif self.dados['afazer_concluida'] == 3:
+                return False
+        else:
+            print('Esta tarefa não possui o dado "afazer_concluida"')
+            return 1
 
 
 lista_mensagem = (

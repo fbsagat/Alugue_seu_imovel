@@ -8,7 +8,8 @@ from home.views import Dashboard, Locatarios, Imoveis, Contratos, \
     ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, entregar_recibo, ExcluirPagm, EditarContrato, \
     ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, ApagarConta, Homepage, \
     CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
-    LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, recibo_nao_entregue
+    LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, recibo_nao_entregue, afazer_concluida, \
+    afazer_nao_concluida
 
 from Alugue_seu_imovel import settings
 
@@ -72,9 +73,11 @@ urlpatterns = [
     path('anotacoes/<int:pk>', Notas.as_view(), name='Anotações'),
     path('contratos/<int:pk>', Contratos.as_view(), name='Contratos'),
 
-    # NOTIFICAÇÕES -------------------
+    # AFAZERES -------------------
     path('recibo_entregue/<int:pk>', recibo_entregue, name='Recibo Entregue'),
     path('recibo_nao_entregue/<int:pk>', recibo_nao_entregue, name='Recibo não Entregue'),
+    path('afazer_concluida/<int:pk>', afazer_concluida, name='Afazer Concluida'),
+    path('afazer_nao_concluida/<int:pk>', afazer_nao_concluida, name='Afazer não Concluida'),
 
     # GERAL -------------------
     path('', Homepage.as_view(), name='home'),

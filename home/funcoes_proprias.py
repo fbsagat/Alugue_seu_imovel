@@ -88,7 +88,7 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
 
     pdf.setFont('Helvetica-Bold', 10)
 
-    texto_estilo = ParagraphStyle('My Para style', fontName='Times-Roman', fontSize=11, borderPadding=(20, 20, 20),
+    texto_estilo = ParagraphStyle('My Para style', fontName='Times-Roman', fontSize=12, borderPadding=(20, 20, 20),
                                   leading=14, alignment=1)
 
     texto = Paragraph(
@@ -100,8 +100,8 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
         f'{dados["mes_e_ano"][(2 * (recibo_n - 1)) + 1]}</b> (Parcela {recibo_n} de um total '
         f'de {parcelas}), de um imóvel localizado no endereço: {dados["endereco"]}, declarando '
         f'portanto, plena, total e irrevogável quitação do mês referido a partir de então.'
-        f' <BR/><BR/><i> Para maior clareza firmo o presente em'
-        f'<BR/><BR/>{dados["data_preenchimento"][recibo_n-1]}</i><BR/><BR/><BR/>'
+        f' <BR/><BR/><i> Para maior clareza firmo o presente em:'
+        f'<BR/>{dados["data_preenchimento"][recibo_n-1]}</i><BR/><BR/><BR/>'
         f'___________________________________________________________________________________'
         f'<BR/>{dados["nome_locador"]}',
         texto_estilo)
