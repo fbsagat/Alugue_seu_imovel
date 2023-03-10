@@ -1,18 +1,38 @@
 from django.contrib import admin
-from home.forms import Mascara
+from home.forms import Mascara, FormUsuario
 from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, MensagemDev, ImovGrupo, Parcela, \
     Tarefa
 from django.contrib.auth.admin import UserAdmin
 
 
-class LocatarioAdmin(admin.ModelAdmin):
-    form = Mascara
+# class LocatarioAdmin(admin.ModelAdmin):
+#     form = Mascara
+#
+#
+# campos = list(UserAdmin.fieldsets)
+# UserAdmin.fieldsets = tuple(campos)
+# admin.site.register(Usuario, UserAdmin)
 
-
-campos = list(UserAdmin.fieldsets)
-
-UserAdmin.fieldsets = tuple(campos)
-admin.site.register(Usuario, UserAdmin)
+@admin.register(Usuario)
+class UsuarioAdmin(admin.ModelAdmin):
+    model = Usuario
+    list_display = ("email", "is_staff", "is_active", 'first_name', 'last_name', 'email')
+    list_filter = ("is_staff", "is_active",)
+    search_fields = ('first_name', 'email')
+    fieldsets = (
+        (None, {"fields": ("email", "password")}),
+        ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
+    )
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": (
+                "email", "password1", "password2", "is_staff",
+                "is_active", "groups", "user_permissions"
+            )}
+         ),
+    )
+    ordering = ("email",)
 
 
 @admin.register(Locatario)

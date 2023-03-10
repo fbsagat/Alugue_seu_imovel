@@ -18,6 +18,7 @@ OK. Ao excluir uma anotação, excluir a tarefa dela tbm.
 OK. (mantive nas sessions (pois em cookies tem limite de characteres e problemas de ms) mas com tempo limite,
         configurável, em settings.py)Salvar as forms com erros em cookies, não na session, economiza memória do
         servidor e coloca tempo limite de duração.
+Arrumar o UsuarioAdmin no admin.py.
 
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar filtros nas paginas do botão histórico.

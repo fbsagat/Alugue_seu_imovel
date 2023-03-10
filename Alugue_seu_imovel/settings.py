@@ -1,12 +1,13 @@
 from pathlib import Path
 from django.contrib.messages import constants as messages
-import os
+import os, environ, dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+env = environ.Env()
+environ.Env.read_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
@@ -76,17 +77,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+USAR_DB = 2
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db_admlco32_.sqlite3',
+if USAR_DB == 1:
+    # SQlite3 Local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db_admlco32_.sqlite3',
+        }
     }
-}
+elif USAR_DB == 2:
+    # PostGreSQL + Render.com ( with dj-database-url)
+    DATABASES = {
+        'default': dj_database_url.parse(env('DATABASE_URL'))
+    }
 
 # Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = "home.Usuario"
 
@@ -106,7 +113,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'pt-BR'
 
@@ -117,7 +123,6 @@ USE_I18N = True
 USE_L10N = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
@@ -129,7 +134,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/').replace('\\', '/')
 MEDIA_URL = '/media/'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'home:Login'
@@ -161,8 +165,7 @@ DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 # Configurações da biblioteca de notificações (django-notifications-hq):
 DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/
+# A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 SITE_LINK = 'www.alugueseuimovel.com.br'
 SITE_NAME = 'Alugue Seu imóvel'
