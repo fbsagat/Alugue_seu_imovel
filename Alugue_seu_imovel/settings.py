@@ -60,7 +60,8 @@ ROOT_URLCONF = 'Alugue_seu_imovel.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': os.path.join(BASE_DIR, 'templates'),
+        'DIRS': [BASE_DIR, '/templates/',
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,7 +79,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-USAR_DB = 3
+USAR_DB = 1
 
 if USAR_DB == 1:
     # SQlite3 Local
