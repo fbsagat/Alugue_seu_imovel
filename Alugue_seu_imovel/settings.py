@@ -14,8 +14,8 @@ SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', ]
-# Resolve: 'A conexão com 127.0.0.1 foi recusada.' no iframe de exibição do pdf.
+ALLOWED_HOSTS = ['*']
+
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 INTERNAL_IPS = [

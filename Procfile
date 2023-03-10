@@ -1,1 +1,1 @@
-web: gunicorn 'Alugue_seu_imovel.wsgi'
+web: gunicorn Alugue_seu_imovel.wsgi
