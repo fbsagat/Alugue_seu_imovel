@@ -38,7 +38,7 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.runserver">
+  <component name="RunManager" selected="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver">
     <list>
       <item itemvalue="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver" />
       <item itemvalue="Python.makemigrations" />
@@ -245,7 +245,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678485873475</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Melhorias e correções">
+      <created>1678486064176</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1678486064176</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
