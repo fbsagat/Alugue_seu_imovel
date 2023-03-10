@@ -78,7 +78,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-USAR_DB = 1
+USAR_DB = 3
 
 if USAR_DB == 1:
     # SQlite3 Local
@@ -141,7 +141,7 @@ USE_L10N = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 if USAR_DB == 3:
-    STATIC_ROOT = [BASE_DIR / "staticfiles"]
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
