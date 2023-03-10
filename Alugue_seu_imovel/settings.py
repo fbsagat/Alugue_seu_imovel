@@ -95,17 +95,14 @@ elif USAR_DB == 2:
     }
 elif USAR_DB == 3:
     # PostGreSQL + railway.app ( with dj-database-url)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db_admlco32_.sqlite3',
-        }
-    }
-    DATABASE_URL = os.getenv('DATABASE_URL')
-    if DATABASE_URL:
-        DATABASES = {
-            'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)
-        }
+    DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
+                             'NAME': 'railway',
+                             'USER': 'postgres',
+                             'PASSWORD': '71TMIFqslekSFOHMLUBC',
+                             'HOST': 'containers-us-west-50.railway.app',
+                             'PORT': '5725',
+                             }
+                 }
 
 # Password validation
 
@@ -141,7 +138,8 @@ USE_L10N = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 if USAR_DB == 3:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
