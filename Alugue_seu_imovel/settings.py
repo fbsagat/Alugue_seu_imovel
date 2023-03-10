@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 USAR_DB = 3
 
 if USAR_DB == 1:
-    # SQlite3 Locala
+    # SQlite3 Local
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
