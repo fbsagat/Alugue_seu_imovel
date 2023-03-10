@@ -78,7 +78,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-USAR_DB = 3
+USAR_DB = 1
 
 if USAR_DB == 1:
     # SQlite3 Local
@@ -101,7 +101,6 @@ elif USAR_DB == 3:
             'NAME': BASE_DIR / 'db_admlco32_.sqlite3',
         }
     }
-
     DATABASE_URL = os.getenv('DATABASE_URL')
     if DATABASE_URL:
         DATABASES = {
@@ -141,7 +140,8 @@ USE_L10N = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = [BASE_DIR / "staticfiles"]
+if USAR_DB == 3:
+    STATIC_ROOT = [BASE_DIR / "staticfiles"]
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
