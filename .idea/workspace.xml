@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções">
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/Migrate___superUser___Runserver.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/makemigrations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/makemigrations.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/runserver.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/runserver.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="origin/Servidores_teste" />
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2MpbsD3GyaL4fh7bvhUUjjE7Utd" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "D:/Documentos/Dev Projects/Alugue_seu_imovel",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  }
+}]]></component>
+  <component name="RunManager" selected="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver">
+    <list>
+      <item itemvalue="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver" />
+      <item itemvalue="Python.makemigrations" />
+      <item itemvalue="Python.migrate" />
+      <item itemvalue="Python.runserver" />
+      <item itemvalue="Python.superUser" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="" />
+      <created>1678467679553</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1678467679553</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Melhorias e correções">
+      <created>1678468117167</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1678468117167</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Melhorias e correções">
+      <created>1678468148987</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1678468148987</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Melhorias e correções">
+      <created>1678469303041</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1678469303041</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Melhorias e correções">
+      <created>1678469459689</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1678469459689</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Melhorias e correções">
+      <created>1678469706931</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1678469706931</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Melhorias e correções" />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções" />
+  </component>
+</project>
