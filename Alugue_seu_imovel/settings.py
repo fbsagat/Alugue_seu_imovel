@@ -78,7 +78,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-USAR_DB = 3
+USAR_DB = 1
 
 if USAR_DB == 1:
     # SQlite3 Local
@@ -95,14 +95,18 @@ elif USAR_DB == 2:
     }
 elif USAR_DB == 3:
     # PostGreSQL + railway.app ( with dj-database-url)
-    DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
-                             'NAME': 'railway',
-                             'USER': 'postgres',
-                             'PASSWORD': '71TMIFqslekSFOHMLUBC',
-                             'HOST': 'containers-us-west-50.railway.app',
-                             'PORT': '5725',
-                             }
-                 }
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    if DATABASE_URL:
+        databases = {'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)}
+
+    # DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
+    #                          'NAME': 'railway',
+    #                          'USER': 'postgres',
+    #                          'PASSWORD': '***',
+    #                          'HOST': 'containers-us-west-50.railway.app',
+    #                          'PORT': '5725',
+    #                          }
+    #              }
 
 # Password validation
 
@@ -136,10 +140,9 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
 if USAR_DB == 3:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
