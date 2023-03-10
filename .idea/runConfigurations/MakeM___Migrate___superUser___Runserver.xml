@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="MakeM &gt; Migrate &gt; superUser &gt; Runserver" type="PythonConfigurationType" factoryName="Python" singleton="false">
+  <configuration default="false" name="Migrate &gt; superUser &gt; Runserver" type="PythonConfigurationType" factoryName="Python">
     <module name="administrador_de_locacao" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -20,10 +20,8 @@
     <option name="REDIRECT_INPUT" value="false" />
     <option name="INPUT_FILE" value="" />
     <method v="2">
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="makemigrations" run_configuration_type="PythonConfigurationType" />
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="migrate" run_configuration_type="PythonConfigurationType" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Migrate" run_configuration_type="PythonConfigurationType" />
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="superUser" run_configuration_type="PythonConfigurationType" />
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="runserver" run_configuration_type="PythonConfigurationType" />
     </method>
   </configuration>
 </component>
