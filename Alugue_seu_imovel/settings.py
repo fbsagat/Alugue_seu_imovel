@@ -77,7 +77,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-USAR_DB = 2
+USAR_DB = 1
 
 if USAR_DB == 1:
     # SQlite3 Local
