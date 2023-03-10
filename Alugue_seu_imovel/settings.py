@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', ]
+ALLOWED_HOSTS = ['*', ]
 # Resolve: 'A conexão com 127.0.0.1 foi recusada.' no iframe de exibição do pdf.
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -120,8 +120,8 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -166,6 +166,9 @@ DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 
 SITE_LINK = 'www.alugueseuimovel.com.br'
 SITE_NAME = 'Alugue Seu imóvel'
+
+# tempo para apagar a form inválida da navbar das sessions
+TEMPO_SESSION_FORM = 60
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/

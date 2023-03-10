@@ -211,7 +211,7 @@ def registrar_pagamento(request):
             del request.session['form1']
         return redirect(request.META['HTTP_REFERER'])
     else:
-        request.session['form1'] = request.POST
+        request.session['form1'] = [request.POST, str(datetime.now().time().strftime('%H:%M:%S'))]
         messages.error(request, f"Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
@@ -262,7 +262,7 @@ def registrar_gasto(request):
             del request.session['form3']
         return redirect(request.META['HTTP_REFERER'])
     else:
-        request.session['form3'] = request.POST
+        request.session['form3'] = [request.POST, str(datetime.now().time().strftime('%H:%M:%S'))]
         messages.error(request, "Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
@@ -308,7 +308,7 @@ def registrar_locat(request):
             del request.session['form4']
         return redirect(request.META['HTTP_REFERER'])
     else:
-        request.session['form4'] = request.POST
+        request.session['form4'] = [request.POST, str(datetime.now().time().strftime('%H:%M:%S'))]
         messages.error(request, f"Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
@@ -327,7 +327,7 @@ def registrar_contrato(request):
             del request.session['form5']
         return redirect(request.META['HTTP_REFERER'])
     else:
-        request.session['form5'] = request.POST
+        request.session['form5'] = [request.POST, str(datetime.now().time().strftime('%H:%M:%S'))]
         messages.error(request, "Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 
@@ -382,7 +382,7 @@ def registrar_imovel(request):
                 del request.session['form6']
             return redirect(request.META['HTTP_REFERER'])
         else:
-            request.session['form6'] = request.POST
+            request.session['form6'] = [request.POST, str(datetime.now().time().strftime('%H:%M:%S'))]
             messages.error(request, "Formulário inválido.")
             return redirect(request.META['HTTP_REFERER'])
 
@@ -411,7 +411,7 @@ def registrar_anotacao(request):
             del request.session['form7']
         return redirect(request.META['HTTP_REFERER'])
     else:
-        request.session['form7'] = request.POST
+        request.session['form7'] = [request.POST, str(datetime.now().time().strftime('%H:%M:%S'))]
         messages.error(request, "Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
 

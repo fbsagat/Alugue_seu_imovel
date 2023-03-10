@@ -94,7 +94,7 @@ def tratar_pagamentos(instance_contrato, delete=False):
 
         # Enviar a notificação de recibo
         for parcela in parcelas:
-            mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome()} referente à ' \
+            mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()} referente à ' \
                        f'parcela de {parcela.data_pagm_ref.strftime("%B/%Y").upper()} do contrato ' \
                        f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
 

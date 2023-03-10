@@ -391,7 +391,7 @@ class Anotacoe(models.Model):
             return 'Tarefa concluida'
 
 
-tipos = [(1, 'Recibo 🧾'), (2, 'Tarefa 🗒️')]
+tipos = [(1, '🧾Recibo'), (2, '🗒️Tarefa')]
 
 
 class Tarefa(models.Model):
@@ -425,6 +425,12 @@ class Tarefa(models.Model):
         else:
             print('Esta tarefa não possui o dado "afazer_concluida"')
             return 1
+
+    def borda(self):
+        if self.autor_tipo == 1:
+            return 'border-white'
+        elif self.autor_tipo == 2:
+            return 'border-warning'
 
 
 lista_mensagem = (

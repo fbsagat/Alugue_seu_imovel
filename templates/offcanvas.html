@@ -36,7 +36,7 @@
             <div class="offcanvas-body d-grid gap-1">
                 {% for tarefa in tarefas %}
 
-                <div class="card bg-black fw-semibold border-secondary">
+                <div class="card bg-gray-900 {{ tarefa.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ tarefa.get_autor_tipo_display }}:</p>
                         <p class="card-text small lh-sm">{{ tarefa.texto }}</p>
@@ -72,7 +72,7 @@
         <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
                 {% for tarefa in tarefas_hist %}
-                <div class="card bg-dark text-secondary border-secondary">
+                <div class="card bg-dark text-secondary {{ tarefa.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ tarefa.get_autor_tipo_display }}:</p>
                         <p class="card-text small lh-sm">{{ tarefa.texto }}</p>
@@ -115,7 +115,7 @@
                                         href="{% url 'home:Afazer não Concluida' tarefa.pk %}">À fazer
                                 </a></button>
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    Confirmar
+                                    Concluída
                                 </button>
                                 {% endif %}
 
