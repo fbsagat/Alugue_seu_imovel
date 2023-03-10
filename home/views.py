@@ -26,8 +26,6 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa
 
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-
 
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
 
