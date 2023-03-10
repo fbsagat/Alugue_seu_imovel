@@ -88,7 +88,7 @@ urlpatterns = [
         extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
     path('editarperfil/<int:pk>', EditarPerfil.as_view(), name='Editar Perfil'),
     path('login/',
-         auth_view.LoginView.as_view(template_name='Login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),
+         auth_view.LoginView.as_view(template_name='login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),
          name='Login'),
     path('logout/', auth_view.LogoutView.as_view(), name='Logout'),
     path('msgm', mensagem_desenvolvedor, name='Mensagem pro Desenvolvedor'),
