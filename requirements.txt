@@ -1,4 +1,6 @@
 pip===23.0.1
+setuptools==67.6.0
+wheel==0.38.4
 asgiref==3.6.0
 contourpy==1.0.7
 crispy==0.7.3
