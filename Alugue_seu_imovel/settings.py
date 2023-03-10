@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 
     'home',
 
+    'whitenoise.runserver_nostatic',
     'crispy_forms',
     'crispy_bootstrap5',
 
@@ -140,9 +141,10 @@ USE_L10N = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 if USAR_DB == 3:
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATIC_ROOT = BASE_DIR / 'static'
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
