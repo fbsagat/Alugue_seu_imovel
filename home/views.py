@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render, reverse, get_object_or_404, Http4
 from django.utils import timezone, dateformat
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
@@ -1167,6 +1167,7 @@ def mensagem_desenvolvedor(request):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def botaoteste(request):
     form_adm = FormAdmin(request.POST, initial={'p_usuario': request.user})
     fict_qtd = settings.FICT_QTD

@@ -45,7 +45,8 @@
         {% if user.is_authenticated %}
         <a href="" data-bs-toggle="modal" data-bs-target="#modal1">Fale com o Desenvolvedor</a>
         {% endif %}
-        {% if debug %}
+
+        {% if user.is_superuser %}
         <li>
             <form method="POST" action="{% url 'home:botaoteste' %}">
                 {% csrf_token %}

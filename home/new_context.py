@@ -105,7 +105,10 @@ def forms_da_navbar(request):
         else:
             form7 = FormAnotacoes(initial={'data_registro': datetime.date.today().strftime('%Y-%m-%d')})
 
-        form8 = FormAdmin(initial={'p_usuario': request.user})
+        if request.user.is_superuser:
+            form8 = FormAdmin(initial={'p_usuario': request.user})
+        else:
+            form8 = ''
 
         tarefas = Tarefa.objects.filter(do_usuario=request.user, lida=False)[:60]
         tarefas_hist = Tarefa.objects.filter(do_usuario=request.user, lida=True)[:30]
