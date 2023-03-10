@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,7 +78,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-USAR_DB = 1
+USAR_DB = 3
 
 if USAR_DB == 1:
     # SQlite3 Local
@@ -92,6 +93,20 @@ elif USAR_DB == 2:
     DATABASES = {
         'default': dj_database_url.parse(env('DATABASE_URL'))
     }
+elif USAR_DB == 3:
+    # PostGreSQL + railway.app ( with dj-database-url)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db_admlco32_.sqlite3',
+        }
+    }
+
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    if DATABASE_URL:
+        DATABASES = {
+            'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)
+        }
 
 # Password validation
 
@@ -126,7 +141,7 @@ USE_L10N = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = [BASE_DIR / "staticfiles"]
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 

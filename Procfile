@@ -1,1 +1,1 @@
-web: gunicorn Alugue_seu_imovel.wsgi
+web: python manage.py migrate && gunicorn Alugue_seu_imovel.wsgi --log-file -
