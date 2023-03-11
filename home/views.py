@@ -635,7 +635,6 @@ def tabela(request, pk):
                     parcelas.append(f"""Com: {parc.do_locatario.primeiro_ultimo_nome()}
                     Contr. cód.: {parc.do_contrato.codigo}
                     Valor: {parc.do_contrato.valor_format()}
-                    {'―――――――――――――'}
                     {enviar}""")
                     sinais.append(sinal)
             else:
