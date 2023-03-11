@@ -265,7 +265,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 textobject = pdf.beginText(inicia_em_h + y,
                                            pag_alt - inicia_em_v - celula_altura - x + celula_altura + 2)
                 textobject.setFillColor(colors.black)
-                textobject.setFont('Arial', 14)
+                textobject.setFont('Helvetica-Bold', 14)
                 textobject.textLine('Imóveis Ativos')
                 pdf.drawText(textobject)
 
@@ -273,7 +273,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 textobject = pdf.beginText(inicia_em_h + y,
                                            pag_alt - inicia_em_v - celula_altura - x + celula_altura + 2)
                 textobject.setFillColor(colors.black)
-                textobject.setFont('Arial', 14)
+                textobject.setFont('Helvetica-Bold', 14)
                 textobject.textLine(f'{dados["datas"][horizontal - 1]}')
                 pdf.drawText(textobject)
 
@@ -283,7 +283,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
                                            pag_alt - inicia_em_v - x - espacamento_v)
                 textobject.setFillColor(colors.black)
-                textobject.setFont('Arial', text_tam_imo)
+                textobject.setFont('Helvetica-Bold', text_tam_imo)
                 for line in wraped_text.splitlines(False):
                     textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
@@ -294,7 +294,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
                                            pag_alt - inicia_em_v - x - (espacamento_v - 3))
                 textobject.setFillColor(colors.gray)
-                textobject.setFont('Arial', text_tam_parc)
+                textobject.setFont('Helvetica-Bold', text_tam_parc)
                 textobject.setCharSpace(0.4)
                 textobject.setLeading(leading)
                 for line in wraped_text.splitlines(False):
@@ -316,7 +316,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                     # Venceu
                     textobject.setFillColor(HexColor(0x8D0000))
 
-                textobject.setFont('Arial', text_tam_parc)
+                textobject.setFont('Helvetica-Bold', text_tam_parc)
                 textobject.setCharSpace(0.4)
                 textobject.setLeading(leading)
                 textobject.textLine(sinal.rstrip())
@@ -330,7 +330,6 @@ def gerar_tabela(dados):
     local = f'{settings.MEDIA_ROOT}tabela_docs/tabela_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
     a4h = (297 * mm, 210 * mm)
     pdf = canvas.Canvas(local, pagesize=a4h)
-    pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
 
     paginas = int((len(dados['imoveis_nomes'])) / dados['imov_qtd']) if (len(dados['imoveis_nomes'])) / dados[
         'imov_qtd'] % 2 == 1 else ceil((len(dados['imoveis_nomes'])) / dados['imov_qtd'])
