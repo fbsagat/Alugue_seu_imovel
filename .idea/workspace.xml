@@ -7,6 +7,7 @@
     <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,13 +57,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1678467679553</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Melhorias e correções">
-      <created>1678468148987</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1678468148987</updated>
     </task>
     <task id="LOCAL-00003" summary="Melhorias e correções">
       <created>1678469303041</created>
@@ -400,7 +394,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678493935613</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Melhorias e correções">
+      <created>1678494077460</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1678494077460</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

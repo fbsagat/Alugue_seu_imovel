@@ -2,16 +2,16 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 
-import Alugue_seu_imovel.settings
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 env = environ.Env()
 environ.Env.read_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 TOKEN_CSRF = os.getenv('TOKEN_CSRF')
+CSRF_TRUSTED_ORIGINS = ''
 if TOKEN_CSRF:
     SECRET_KEY = TOKEN_CSRF
     CSRF_TRUSTED_ORIGINS = ['https://alugueseuimovel.up.railway.app']
@@ -151,8 +151,6 @@ if USAR_DB == 3:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/').replace('\\', '/')
 MEDIA_URL = '/media/'
 
@@ -191,7 +189,7 @@ DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 # A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 SITE_NAME = 'Alugue Seu imóvel'
-SITE_LINK = Alugue_seu_imovel.settings.CSRF_TRUSTED_ORIGINS[0] or None
+SITE_LINK = CSRF_TRUSTED_ORIGINS[0]
 
 # tempo para apagar a form inválida da navbar das sessions
 TEMPO_SESSION_FORM = 60
