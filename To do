@@ -23,7 +23,6 @@ OK. (usei o built-in do django, jango.template.defaultfilters)Colocar em portugu
 OK. AS vezes o recibo não obedece a form do usuario(preenchimento de data). arrumar.
 OK. Arrumar o UsuarioAdmin no admin.py.
 
-
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
