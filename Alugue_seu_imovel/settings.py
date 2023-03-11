@@ -2,6 +2,7 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 
+import Alugue_seu_imovel.settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -190,6 +191,7 @@ DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 # A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 SITE_NAME = 'Alugue Seu imóvel'
+SITE_LINK = Alugue_seu_imovel.settings.CSRF_TRUSTED_ORIGINS[0] or None
 
 # tempo para apagar a form inválida da navbar das sessions
 TEMPO_SESSION_FORM = 60
