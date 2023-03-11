@@ -479,7 +479,7 @@ def recibos(request, pk):
                 data_preenchimento = list()
                 for data in datas:
                     loc = locale.getlocale()
-                    locale.setlocale(locale.LC_ALL, 'Portuguese_Brazil.1252')
+                    locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
                     month = data.strftime('%B')
                     year = data.strftime('%Y')
                     locale.setlocale(locale.LC_ALL, loc)
