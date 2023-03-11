@@ -52,7 +52,22 @@ def tratar_imagem(arquivo_obj):
 
 # 006: -----------------------------------------------
 
-# eu ia fazer uma funçao aqui, nçao precisei mais
+def meses_portugues(numero):
+    meses = {
+        1: 'Janeiro',
+        2: 'Fevereiro',
+        3: 'Março',
+        4: 'Abril',
+        5: 'Maio',
+        6: 'Junho',
+        7: 'Julho',
+        8: 'Agosto',
+        9: 'Setembro',
+        10: 'Outubro',
+        11: 'Novembro',
+        12: 'Dezembro'}
+    return meses[int(numero)]
+
 
 # 100: -----------------------------------------------
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
