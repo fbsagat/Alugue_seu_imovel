@@ -456,4 +456,4 @@ class MensagemDev(models.Model):
         return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])
 
     def __str__(self):
-        return f'{self.do_usuario} - {self.titulo} - {self.data}'
+        return f'{self.do_usuario} - {self.titulo} - {self.data_registro}'
