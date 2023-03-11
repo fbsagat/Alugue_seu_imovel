@@ -100,4 +100,6 @@
 </div>
 </div>
 
-{{ pageinfo }}
+{% if user.is_superuser %}
+<h3>Superuser_infos: {{ pageinfo }}</h3>
+{% endif %}
