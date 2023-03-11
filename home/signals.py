@@ -4,6 +4,8 @@ import string
 from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
+
+from django.template.defaultfilters import date as data_ptbr
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
 from django.dispatch import receiver
@@ -95,7 +97,7 @@ def tratar_pagamentos(instance_contrato, delete=False):
         # Enviar a notificação de recibo
         for parcela in parcelas:
             mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()} referente à ' \
-                       f'parcela de {parcela.data_pagm_ref.strftime("%B/%Y").upper()} do contrato ' \
+                       f'parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()} do contrato ' \
                        f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
 
             if parcela.tt_pago == valor_mensal and parcela.pk not in lista_autor_id:
@@ -129,7 +131,7 @@ def usuario_save(sender, instance, **kwargs):
         # desta model contidas neles
         ante = Usuario.objects.get(pk=instance.pk)
         if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.first_name != instance.first_name or \
-                ante.last_name != instance.last_name or ante.recibo_preenchimento != instance.recibo_preenchimento:
+                ante.last_name != instance.last_name or ante.recibo_preenchimento != int(instance.recibo_preenchimento):
             contratos = Contrato.objects.filter(do_locador=instance)
             for contrato in contratos:
                 contrato.recibos_pdf.delete()

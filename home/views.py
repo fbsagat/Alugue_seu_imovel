@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
+from django.template.defaultfilters import date as data_ptbr
 
 from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
@@ -25,10 +26,6 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa
-
-
-from django.template.defaultfilters import date as data_ptbr
-from datetime import datetime
 
 
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=

@@ -20,9 +20,9 @@ OK. (mantive nas sessions (pois em cookies tem limite de characteres e problemas
         servidor e coloca tempo limite de duração.
 OK. (usei o built-in do django, jango.template.defaultfilters)Colocar em português manualmente na tabea e nos recibos
         e outros q usem.
+OK. AS vezes o recibo não obedece a form do usuario(preenchimento de data). arrumar.
+OK. Arrumar o UsuarioAdmin no admin.py.
 
-Arrumar o UsuarioAdmin no admin.py.
-AS vezes o recibo não obedece a form do usuario(preenchimento de data). arrumar.
 
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar filtros nas paginas do botão histórico.

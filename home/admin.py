@@ -16,12 +16,16 @@ from django.contrib.auth.admin import UserAdmin
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
     model = Usuario
-    list_display = ("email", "is_staff", "is_active", 'first_name', 'last_name', 'email')
-    list_filter = ("is_staff", "is_active",)
-    search_fields = ('first_name', 'email')
+    list_display = ('first_name', 'last_name', 'email', 'is_staff', 'is_active')
+    list_filter = ("is_staff", "is_active", 'is_superuser',)
+    search_fields = ('first_name', 'email',)
     fieldsets = (
-        (None, {"fields": ("email", "password")}),
-        ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
+        ('Informações', {"fields": (
+            'first_name', 'last_name', 'telefone', 'RG', 'CPF', 'locat_slots', 'email', 'password', 'data_eventos_i',
+            'itens_eventos', 'qtd_eventos', 'ordem_eventos', 'recibo_ultimo', 'recibo_preenchimento',
+            'tabela_ultima_data_ger', 'tabela_meses_qtd', 'tabela_imov_qtd',)}),
+
+        ("Permissões", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
     )
     add_fieldsets = (
         (None, {
@@ -32,7 +36,7 @@ class UsuarioAdmin(admin.ModelAdmin):
             )}
          ),
     )
-    ordering = ("email",)
+    ordering = ("first_name",)
 
 
 @admin.register(Locatario)
@@ -94,4 +98,4 @@ class MensagemDevAdmin(admin.ModelAdmin):
 @admin.register(Tarefa)
 class Tarefas(admin.ModelAdmin):
     list_display = ('do_usuario', 'autor_tipo', 'data_registro')
-    list_filter = ('autor_tipo', 'lida', )
+    list_filter = ('autor_tipo', 'lida',)
