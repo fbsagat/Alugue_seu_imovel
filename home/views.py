@@ -27,6 +27,10 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa
 
 
+from django.template.defaultfilters import date as data_ptbr
+from datetime import datetime
+
+
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
 
 class Dashboard(LoginRequiredMixin, TemplateView):
@@ -478,7 +482,7 @@ def recibos(request, pk):
                 datas_tratadas = list()
                 data_preenchimento = list()
                 for data in datas:
-                    month = data.strftime('%B')
+                    month = data_ptbr(data, "F")
                     year = data.strftime('%Y')
                     datas_tratadas.append(f'{month.upper()}')
                     datas_tratadas.append(f'{year}')
@@ -488,12 +492,13 @@ def recibos(request, pk):
                         data = contrato.data_entrada + relativedelta(months=x)
                         data_preenchimento.append(
                             f'{contrato.do_imovel.cidade}, '
-                            f'{data.replace(day=contrato.dia_vencimento).strftime("%d de %B de %Y")}')
+                            f'{data_ptbr(data.replace(day=contrato.dia_vencimento), "l, d F Y")}')
                 elif usuario.recibo_preenchimento == '3':
                     for x in range(0, contrato.duracao):
                         data = contrato.data_entrada + relativedelta(months=x)
                         data_preenchimento.append(
-                            f'{contrato.do_imovel.cidade}, {data.strftime("____ de %B de %Y")}')
+                            f'{contrato.do_imovel.cidade}, '
+                            f'____________ ,____ de {data_ptbr(data.replace(day=contrato.dia_vencimento), "F Y")}')
 
                 # Preparar dados para envio
                 dados = {'cod_contrato': f'{contrato.codigo}',
@@ -535,9 +540,9 @@ def tabela(request, pk):
     meses = []
     mes_inicial = datetime.now().date().replace(day=1) - relativedelta(months=3)
 
-    for imovel in range(7):
+    for mes in range(7):
         meses.append(
-            (imovel, str((mes_inicial + relativedelta(months=imovel)).strftime('%B/%Y'))))
+            (mes, str(data_ptbr(mes_inicial + relativedelta(months=mes), "F/Y"))))
 
     # Carregar os dados de mes para o form e tabela da informação salva no perfil
     # ou datetime.now() quando não há info salva
@@ -576,7 +581,7 @@ def tabela(request, pk):
     # Cria a lista de mes/ano para a tabela a partir da mes definida pelo usuario na variavel ('a_partir_de')
     datas = []
     for imovel in range(0, meses_qtd):
-        datas.append(str((a_partir_de + relativedelta(months=imovel)).strftime("%B/%Y").title()))
+        datas.append(str(data_ptbr(a_partir_de + relativedelta(months=imovel), "F/Y")).title())
 
     # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
     parcelas = Parcela.objects.filter(do_usuario=usuario).filter(data_pagm_ref__range=[a_partir_de, ate]).order_by(
@@ -607,7 +612,7 @@ def tabela(request, pk):
         lista_parcelas_compl.append(parcelas)
         lista_parcsinais_compl.append(sinais)
         for mes in range(0, meses_qtd):
-            if str(imovel[0].data_pagm_ref.strftime("%B/%Y").title()) == str(datas[mes]):
+            if str(data_ptbr(imovel[0].data_pagm_ref, "F/Y").title()) == str(datas[mes]):
                 for parc in imovel:
                     pago = parc.esta_pago()
                     recibo = parc.recibo_entregue
