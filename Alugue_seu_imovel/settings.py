@@ -13,14 +13,14 @@ environ.Env.read_env()
 TOKEN_CSRF = os.getenv('TOKEN_CSRF')
 if TOKEN_CSRF:
     SECRET_KEY = TOKEN_CSRF
-    CSRF_TRUSTED_ORIGINS = ['https://alugueseuimovel-production.up.railway.app']
+    CSRF_TRUSTED_ORIGINS = ['https://alugueseuimovel.up.railway.app']
 else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['alugueseuimovel-production.up.railway.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['alugueseuimovel.up.railway.app', 'localhost', '127.0.0.1']
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -189,7 +189,6 @@ DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 
 # A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-SITE_LINK = 'www.alugueseuimovel.com.br'
 SITE_NAME = 'Alugue Seu imóvel'
 
 # tempo para apagar a form inválida da navbar das sessions
