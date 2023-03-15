@@ -260,7 +260,7 @@ class FormAnotacoes(forms.ModelForm):
 
 
 class FormRecibos(forms.Form):
-    data_pre = [(1, 'Preenchimento manual'), (2, 'Cidade dia/mês/ano'), (3, 'Cidade ___/mês/ano')]
+    data_pre = [(1, '___/___/___'), (2, '___/mês/ano'), (3, 'dia/mês/ano')]
     contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.none(), initial='')
     data_preenchimento = forms.ChoiceField(label='', choices=data_pre, required=True)
 

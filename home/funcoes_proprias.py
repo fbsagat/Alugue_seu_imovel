@@ -146,7 +146,7 @@ def gerar_recibos(dados):
         pass
     else:
         for x in range(0, (len(dados['mes_e_ano']))):
-            dados['data_preenchimento'].append("________________, ____ de ____________ de ________")
+            dados['data_preenchimento'].append(f"{dados['cidade']} ,____________, ____ de ____________ de ________")
 
     for pagina in range(paginas):
         page_num = pdf.getPageNumber()

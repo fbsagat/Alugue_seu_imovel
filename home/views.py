@@ -149,7 +149,7 @@ def eventos(request, pk):
                 t += int(_)
             contratotal = {'total': t}
             if contratotal:
-                contr_tt = f'{valor_format(str(contratotal))}'
+                contr_tt = f'{valor_format(str(contratotal["total"]))}'
 
     if '5' in itens_eventos and pesquisa_req:
         imoveis = Imovei.objects.filter(do_locador=request.user,
@@ -529,13 +529,13 @@ def recibos(request, pk):
                         data = contrato.data_entrada + relativedelta(months=x)
                         data_preenchimento.append(
                             f'{contrato.do_imovel.cidade}, '
-                            f'{data_ptbr(data.replace(day=contrato.dia_vencimento), "l, d F Y")}')
+                            f'____________ ,____ de {data_ptbr(data.replace(day=contrato.dia_vencimento), "F Y")}')
                 elif usuario.recibo_preenchimento == '3':
                     for x in range(0, contrato.duracao):
                         data = contrato.data_entrada + relativedelta(months=x)
                         data_preenchimento.append(
                             f'{contrato.do_imovel.cidade}, '
-                            f'____________ ,____ de {data_ptbr(data.replace(day=contrato.dia_vencimento), "F Y")}')
+                            f'{data_ptbr(data.replace(day=contrato.dia_vencimento), "l, d F Y")}')
 
                 # Preparar dados para envio
                 dados = {'cod_contrato': f'{contrato.codigo}',
