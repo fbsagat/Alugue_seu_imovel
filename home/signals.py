@@ -130,11 +130,16 @@ def usuario_save(sender, instance, **kwargs):
         # Apaga todos os recibos em pdf do usuario(para que novos possam ser criados) quando se modifica informações
         # desta model contidas neles
         ante = Usuario.objects.get(pk=instance.pk)
-        if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.first_name != instance.first_name or \
-                ante.last_name != instance.last_name or ante.recibo_preenchimento != int(instance.recibo_preenchimento):
-            contratos = Contrato.objects.filter(do_locador=instance)
-            for contrato in contratos:
-                contrato.recibos_pdf.delete()
+
+        try:
+            if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.first_name != instance.first_name \
+                    or ante.last_name != instance.last_name \
+                    or ante.recibo_preenchimento != int(instance.recibo_preenchimento):
+                contratos = Contrato.objects.filter(do_locador=instance)
+                for contrato in contratos:
+                    contrato.recibos_pdf.delete()
+        except:
+            pass
 
 
 @receiver(pre_save, sender=Locatario)

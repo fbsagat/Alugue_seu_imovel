@@ -53,8 +53,8 @@ class FormEventos(forms.Form):
     ]
 
     ordem_em_eventos = [
-        (1, 'Recentes primeiro'),
-        (2, 'Antigos primeiro'),
+        (1, 'Recentes'),
+        (2, 'Antigos'),
     ]
 
     data_eventos_i = forms.DateField(label='A partir de',

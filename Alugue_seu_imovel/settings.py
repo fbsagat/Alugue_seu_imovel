@@ -7,6 +7,8 @@ from Alugue_seu_imovel import settings
 
 SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
+USAR_DB = 2
+# /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar a form inválida da navbar das sessions
 TEMPO_SESSION_FORM = 60
@@ -105,8 +107,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-USAR_DB = 3
-
 if USAR_DB == 1:
     # SQlite3 Local
     DATABASES = {
@@ -116,28 +116,27 @@ if USAR_DB == 1:
         }
     }
 elif USAR_DB == 2:
-    # PostGreSQL + Render.com ( with dj-database-url)
-    DATABASES = {
-        'default': dj_database_url.parse(env('DATABASE_URL'))
-    }
-elif USAR_DB == 3:
     # PostGreSQL + railway.app ( with dj-database-url)
     DATABASE_URL = os.getenv('DATABASE_URL')
     if DATABASE_URL:
         DATABASES = {'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)}
-
-    # Para criar a base de dados inicial(makemigrations e migrate). Conecta e cria.
-    # DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
-    #                          'NAME': 'railway',
-    #                          'USER': 'postgres',
-    #                          'PASSWORD': 'D1BnEouPU6kL5tKdHw0J',
-    #                          'HOST': 'containers-us-west-76.railway.app',
-    #                          'PORT': '5829',
-    #                          }
-    #              }
+    else:
+        # Para criar a base de dados inicial(makemigrations e migrate). Conecta e cria.
+        DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
+                                 'NAME': 'railway',
+                                 'USER': 'postgres',
+                                 'PASSWORD': 'HknBUcYGjg3ySf13lXNn',
+                                 'HOST': 'containers-us-west-40.railway.app',
+                                 'PORT': '6017',
+                                 }
+                     }
+elif USAR_DB == 3:
+    # PostGreSQL + Render.com ( with dj-database-url)
+    DATABASES = {
+        'default': dj_database_url.parse(env('DATABASE_URL'))
+    }
 
 # Password validation
-
 AUTH_USER_MODEL = "home.Usuario"
 
 AUTH_PASSWORD_VALIDATORS = [
