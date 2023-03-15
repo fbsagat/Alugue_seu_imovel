@@ -2,8 +2,6 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 
-import Alugue_seu_imovel.settings
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # BASE_DIR = os.path.dirname(os.path.dirname(__file__))
