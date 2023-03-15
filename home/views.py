@@ -1,4 +1,4 @@
-import locale, os
+import os
 from num2words import num2words
 from datetime import datetime, timedelta
 from os import path
@@ -98,11 +98,11 @@ def eventos(request, pk):
                 pg_tt = f'{valor_format(str(agreg_1["total"]))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            # array = pagamentos.aggregate(arr=ArrayAgg('valor_pago'))
-            # t = 0
-            # for _ in array['arr']:
-            #     t += _
-            agreg_1 = {'total': 100000}
+            array = pagamentos.aggregate(arr=ArrayAgg('valor_pago'))
+            t = 0
+            for _ in array['arr']:
+                t += _
+            agreg_1 = {'total': t}
             if agreg_1["total"]:
                 pg_tt = f'{valor_format(str(agreg_1["total"]))}'
 
@@ -117,11 +117,11 @@ def eventos(request, pk):
                 gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            # array = gastos.aggregate(arr=ArrayAgg('valor'))
-            # t = 0
-            # for _ in array['arr']:
-            #     t += _
-            agreg_2 = {'total': 200000}
+            array = gastos.aggregate(arr=ArrayAgg('valor'))
+            t = 0
+            for _ in array['arr']:
+                t += _
+            agreg_2 = {'total': t}
             if agreg_2["total"]:
                 gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
 
@@ -143,7 +143,11 @@ def eventos(request, pk):
                 contr_tt = f'{valor_format(str(contratotal))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            contratotal = {'total': 500000}["total"]
+            array = contratos.aggregate(total=ArrayAgg("valor_mensal"))["total"]
+            t = 0
+            for _ in array['arr']:
+                t += _
+            contratotal = {'total': t}
             if contratotal:
                 contr_tt = f'{valor_format(str(contratotal))}'
 
