@@ -101,7 +101,7 @@ def eventos(request, pk):
             array = pagamentos.aggregate(arr=ArrayAgg('valor_pago'))
             t = 0
             for _ in array['arr']:
-                t += _
+                t += int(_)
             agreg_1 = {'total': t}
             if agreg_1["total"]:
                 pg_tt = f'{valor_format(str(agreg_1["total"]))}'
@@ -120,7 +120,7 @@ def eventos(request, pk):
             array = gastos.aggregate(arr=ArrayAgg('valor'))
             t = 0
             for _ in array['arr']:
-                t += _
+                t += int(_)
             agreg_2 = {'total': t}
             if agreg_2["total"]:
                 gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
@@ -146,7 +146,7 @@ def eventos(request, pk):
             array = contratos.aggregate(total=ArrayAgg("valor_mensal"))["total"]
             t = 0
             for _ in array['arr']:
-                t += _
+                t += int(_)
             contratotal = {'total': t}
             if contratotal:
                 contr_tt = f'{valor_format(str(contratotal))}'
