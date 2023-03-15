@@ -128,7 +128,7 @@ def gerar_recibos(dados):
     pdf = canvas.Canvas(buffer, pagesize=A4)
     pdf.setAuthor(f'{dados["nome_locador"]}')
     pdf.setTitle(f'Recibos do contrato {dados["cod_contrato"]}')
-    pdf.setCreator(settings.SITE_LINK)
+    pdf.setCreator(settings.SITE_URL)
     pdf.setSubject(f'Locatário: {dados["nome_locatario"]}')
 
     pag_lar = A4[0]
@@ -345,7 +345,7 @@ def gerar_tabela(dados):
                                         celula_altura=infos['celula_altura'])
         pdf.showPage()
 
-    pdf.setCreator(settings.SITE_LINK)
+    pdf.setCreator(settings.SITE_URL)
     pdf.setAuthor(f'{dados["usuario_nome_compl"]}')
     pdf.setTitle(f'Tabela de agenda dos imóveis de {dados["usuario_username"]}')
     pdf.setSubject(f'Tabela completa com a agenda dos imóveis ativos.')
