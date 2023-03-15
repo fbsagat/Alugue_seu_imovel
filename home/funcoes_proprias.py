@@ -4,8 +4,6 @@ from textwrap import wrap
 
 from django.core.exceptions import ValidationError
 
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import mm

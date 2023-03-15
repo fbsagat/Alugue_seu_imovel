@@ -3,6 +3,7 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
+from django.db.models.aggregates import Sum
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 from django.urls import reverse
@@ -116,6 +117,9 @@ class Locatario(models.Model):
 
     def f_tel2(self):
         return cel_format(self.telefone2)
+
+    def contratos_qtd(self):
+        return Contrato.objects.filter(do_locatario=self).count()
 
 
 class ImovGrupo(models.Model):
@@ -264,10 +268,21 @@ class Contrato(models.Model):
         return valor_format(str(int(self.valor_mensal) * int(self.duracao)))
 
     def total_quitado(self):
-        pass
+        valor = Parcela.objects.filter(do_contrato=self, tt_pago=self.valor_mensal).values_list('tt_pago').aggregate(
+            Sum('tt_pago'))
+        return valor['tt_pago__sum']
 
-    def faltando_p_quitar(self):
-        pass
+    def total_pg_format(self):
+        if self.total_quitado() is None:
+            return 'R$0,00'
+        else:
+            return valor_format(str(self.total_quitado()))
+
+    def falta_pg_format(self):
+        if self.total_quitado() is None:
+            return self.valor_do_contrato()
+        else:
+            return valor_format(str((int(self.valor_mensal) * int(self.duracao)) - self.total_quitado()))
 
     def em_maos(self):
         return 'Sim' if self.em_posse else 'Não'
@@ -401,6 +416,7 @@ class Tarefa(models.Model):
     texto = models.TextField(blank=False)
     data_registro = models.DateTimeField(auto_now_add=True)
     lida = models.BooleanField(default=False)
+    apagada = models.BooleanField(default=False)
     dados = models.JSONField(null=True, blank=True)
 
     def __str__(self):

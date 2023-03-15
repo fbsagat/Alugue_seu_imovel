@@ -54,7 +54,7 @@ def gerenciar_parcelas(instance_contrato):
                 parcela.save(update_fields=['codigo'])
 
         # "Apagar" tarefas antigas deste contrato
-        tarefas_user = Tarefa.objects.filter(do_usuario=instance_contrato.do_locador, deleted=False)
+        tarefas_user = Tarefa.objects.filter(do_usuario=instance_contrato.do_locador, apagada=False)
         parcelas_pks = Parcela.objects.filter(do_contrato=instance_contrato).values_list('pk', flat=True)
         for tarefa in tarefas_user:
             if tarefa.autor_id not in parcelas_pks:

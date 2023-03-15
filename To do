@@ -22,8 +22,8 @@ OK. (usei o built-in do django, jango.template.defaultfilters)Colocar em portugu
         e outros q usem.
 OK. AS vezes o recibo não obedece a form do usuario(preenchimento de data). arrumar.
 OK. Arrumar o UsuarioAdmin no admin.py.
-
-Arrumar tabela onde contratos mantém 'O Pagam. VENCEU' até mesmo qdo vencimento se encontra depois do dia atual,
+OK. Concluir total_quitado e faltando_p_quitar de contratos.
+OK. Arrumar tabela onde contratos mantém 'O Pagam. VENCEU' até mesmo qdo vencimento se encontra depois do dia atual,
         quando algum contrato existia e foi apagado antes do novo ser criado.
 
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
@@ -31,7 +31,6 @@ Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
 com sistema de votação.
 Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
-Habilitar segurança SSL/HTTPS
 
 problemas encontrados, sem solução até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site

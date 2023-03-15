@@ -110,8 +110,8 @@ def forms_da_navbar(request):
         else:
             form8 = ''
 
-        tarefas = Tarefa.objects.filter(do_usuario=request.user, lida=False)[:60]
-        tarefas_hist = Tarefa.objects.filter(do_usuario=request.user, lida=True)[:30]
+        tarefas = Tarefa.objects.filter(do_usuario=request.user, lida=False, apagada=False)[:60]
+        tarefas_hist = Tarefa.objects.filter(do_usuario=request.user, lida=True, apagada=False)[:30]
 
         context = {'form_pagamento': form1, 'form_mensagem': form2, 'form_gasto': form3, 'form_locatario': form4,
                    'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8,

@@ -62,7 +62,12 @@ Itens Ativos / {{ SITE_NAME }}
                         <p class="card-text">NACIONALID.: {{ locatario.nacionalidade }} / EST. CIVIL:
                             {{locatario.get_estadocivil_display }}
                             {% for imovel in locatario.com_imoveis.all %}
+                        {% if forloop.counter0 < 4 %}
                         <p class="card-text">COM: {{ imovel }} </p>
+                        {% elif forloop.counter0 == 4 %}
+                        <p class="card-text">Com: mais {{ locatario.contratos_qtd|add:-4 }} contrato(s).</p>
+                        {% else %}
+                        {% endif %}
                         {% endfor %}
 
                     </div>
@@ -97,6 +102,9 @@ Itens Ativos / {{ SITE_NAME }}
                         <p class="card-text">MENSALIDAE: {{ contrato.valor_format }} / VENCIMENTO DIA:
                             {{contrato.dia_vencimento }}</p>
                         <p class="card-text">VALOR DO CONTRATO: {{ contrato.valor_do_contrato }}</p>
+                        <p class="card-text">TOTAL PG: {{ contrato.total_pg_format }} / FALTA:
+                            {{ contrato.falta_pg_format }}</p>
+                        <p class="card-text"></p>
                         <p class="card-text">CÓDIGO: {{ contrato.codigo }}</p>
                     </div>
                 </div>

@@ -199,9 +199,12 @@ class LocatariosAtivos(LoginRequiredMixin, ListView):
     def get_queryset(self):
         self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_entrada')
         ativo_tempo = []
+        pks = []
         for obj in self.object_list:
             if obj.ativo_hoje() is True:
-                ativo_tempo.append(obj.do_locatario)
+                if obj.do_locatario.pk not in pks:
+                    ativo_tempo.append(obj.do_locatario)
+                    pks.append(obj.do_locatario.pk)
         return ativo_tempo
 
     def get_context_data(self, *, object_list=None, **kwargs):
