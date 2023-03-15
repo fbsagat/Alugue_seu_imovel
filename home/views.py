@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
-from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 
 from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
@@ -113,7 +113,11 @@ def eventos(request, pk):
                 gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            agreg_2 = {'total': 250000}
+            array = gastos.aggregate(arr=ArrayAgg('valor'))
+            t = 0
+            for _ in array['arr']:
+                t += _
+            agreg_2 = {'total': t}
             if agreg_2["total"]:
                 gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
 
