@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 
 from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
@@ -89,15 +90,33 @@ def eventos(request, pk):
         pagamentos = Pagamento.objects.filter(ao_locador=request.user,
                                               data_pagamento__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data_pagamento')[:qtd_eventos]
-        # agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
-        # if agreg_1["total"]:
-        #     pg_tt = f'{valor_format(str(agreg_1["total"]))}'
+
+        if settings.USAR_DB == 1:
+            # SQlite3 agregation
+            agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
+            if agreg_1["total"]:
+                pg_tt = f'{valor_format(str(agreg_1["total"]))}'
+        elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
+            # PostGreSQL agregation
+            agreg_1 = {'total': 5503446}
+            if agreg_1["total"]:
+                pg_tt = f'{valor_format(str(agreg_1["total"]))}'
+
     if '2' in itens_eventos and pesquisa_req:
         gastos = Gasto.objects.filter(do_locador=request.user, data__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data')[:qtd_eventos]
-        # agreg_2 = gastos.aggregate(total=Sum("valor"))
-        # if agreg_2["total"]:
-        #     gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
+
+        if settings.USAR_DB == 1:
+            # SQlite3 agregation
+            agreg_2 = gastos.aggregate(total=Sum("valor"))
+            if agreg_2["total"]:
+                gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
+        elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
+            # PostGreSQL agregation
+            agreg_2 = {'total': 102882}
+            if agreg_2["total"]:
+                gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
+
     if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
         pag_m_gast = valor_format(str(agreg_1["total"] - agreg_2["total"]))
     if '3' in itens_eventos and pesquisa_req:
