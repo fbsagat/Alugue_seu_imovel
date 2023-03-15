@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
-from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.aggregates import StringAgg
 from django.template.defaultfilters import date as data_ptbr
 
 from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
@@ -135,7 +135,7 @@ def eventos(request, pk):
                 contr_tt = f'{valor_format(str(contratotal))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            contratotal = {'total': 50000}
+            contratotal = {'total': 50000}["total"]
             if contratotal:
                 contr_tt = f'{valor_format(str(contratotal))}'
 
