@@ -2,6 +2,8 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 
+import Alugue_seu_imovel.settings
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -14,7 +16,7 @@ TOKEN_CSRF = os.getenv('TOKEN_CSRF')
 CSRF_TRUSTED_ORIGINS = ''
 if TOKEN_CSRF:
     SECRET_KEY = TOKEN_CSRF
-    CSRF_TRUSTED_ORIGINS = ['https://alugueseuimovel.up.railway.app']
+    CSRF_TRUSTED_ORIGINS = Alugue_seu_imovel.settings.SITE_LINK
 else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
@@ -106,6 +108,7 @@ elif USAR_DB == 3:
     if DATABASE_URL:
         DATABASES = {'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)}
 
+    # Para criar a base de dados inicial(makemigrations e migrate). Conecta e cria.
     # DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
     #                          'NAME': 'railway',
     #                          'USER': 'postgres',
@@ -189,7 +192,7 @@ DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 # A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 SITE_NAME = 'Alugue Seu imóvel'
-SITE_LINK = CSRF_TRUSTED_ORIGINS[0]
+SITE_LINK = 'https://alugueseuimovel.up.railway.app'
 
 # tempo para apagar a form inválida da navbar das sessions
 TEMPO_SESSION_FORM = 60
