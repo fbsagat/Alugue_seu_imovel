@@ -86,7 +86,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
-# Database #
+# Database
 USAR_DB = 3
 
 if USAR_DB == 1:
