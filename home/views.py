@@ -143,7 +143,7 @@ def eventos(request, pk):
                 contr_tt = f'{valor_format(str(contratotal))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            array = contratos.aggregate(total=ArrayAgg("valor_mensal"))["total"]
+            array = contratos.aggregate(total=ArrayAgg("valor_mensal"))
             t = 0
             for _ in array['total']:
                 t += int(_)
