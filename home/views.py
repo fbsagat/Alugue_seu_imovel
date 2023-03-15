@@ -562,7 +562,10 @@ def recibos(request, pk):
 
         context = {'form': form, 'contrato': contrato, 'tem_contratos': tem_contratos, 'pede_dados': pede_dados,
                    'SITE_NAME': settings.SITE_NAME}
-    return render(request, 'gerar_recibos.html', context)
+        return render(request, 'gerar_recibos.html', context)
+    else:
+        context = {'tem_contratos': tem_contratos, 'SITE_NAME': settings.SITE_NAME}
+        return render(request, 'gerar_recibos.html', context)
 
 
 @login_required

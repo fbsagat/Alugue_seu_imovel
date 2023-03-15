@@ -7,7 +7,7 @@ from Alugue_seu_imovel import settings
 
 SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
-USAR_DB = 2
+USAR_DB = 1
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar a form inválida da navbar das sessions
@@ -125,9 +125,9 @@ elif USAR_DB == 2:
         DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
                                  'NAME': 'railway',
                                  'USER': 'postgres',
-                                 'PASSWORD': 'HknBUcYGjg3ySf13lXNn',
-                                 'HOST': 'containers-us-west-40.railway.app',
-                                 'PORT': '6017',
+                                 'PASSWORD': 'qi0mBuCiZGvyEVdRpVS3',
+                                 'HOST': 'containers-us-west-105.railway.app',
+                                 'PORT': '6733',
                                  }
                      }
 elif USAR_DB == 3:
