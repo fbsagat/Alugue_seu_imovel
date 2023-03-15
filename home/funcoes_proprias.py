@@ -183,32 +183,36 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     # print('celula_altura: ', celula_altura, 'celula_largura: ', celula_largura, 'media: ', media_alt_larg)
 
     # Encaixe de texto
-    text_wrap_imo = espacamento_h = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc = leading = 0
+    text_wrap_imo = espacamento_h = espacamento_h_s = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc =\
+        leading = 0
 
     # Verticalmente (leading)
     if celula_altura <= 61:
-        leading = 8.5
+        leading = 7
         espacamento_v = 11
     elif celula_altura <= 76:
-        leading = 9
+        leading = 8.5
         espacamento_v = 12
     elif celula_altura <= 92:
-        leading = 10.5
+        leading = 10
         espacamento_v = 13
 
     # Horizontalmente  (wrap)
     if celula_largura <= 104:
         text_wrap_imo = 18
         text_wrap_parc = 30
-        espacamento_h = 4
+        espacamento_h = 2
+        espacamento_h_s = 9
     elif celula_largura <= 135:
         text_wrap_imo = 20
         text_wrap_parc = 32
-        espacamento_h = 4
+        espacamento_h = 2
+        espacamento_h_s = 9
     elif celula_largura <= 167:
         text_wrap_imo = 22
         text_wrap_parc = 33
-        espacamento_h = 6
+        espacamento_h = 3
+        espacamento_h_s = 11
 
     # media (tam)
     if media_alt_larg <= 82:
@@ -302,7 +306,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 pdf.drawText(textobject)
 
                 sinal = str(dados['sinais'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
-                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - 8,
+                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - espacamento_h_s,
                                            pag_alt - inicia_em_v - x - text_tam_parc)
                 textobject.setFillColor(colors.blue)
 

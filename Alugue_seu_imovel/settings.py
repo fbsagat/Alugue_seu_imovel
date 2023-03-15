@@ -7,7 +7,7 @@ from Alugue_seu_imovel import settings
 
 SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
-USAR_DB = 2
+USAR_DB = 1
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar a form inválida da navbar das sessions
