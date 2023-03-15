@@ -34,7 +34,7 @@ TOKEN_CSRF = os.getenv('TOKEN_CSRF')
 CSRF_TRUSTED_ORIGINS = ''
 if TOKEN_CSRF:
     SECRET_KEY = TOKEN_CSRF
-    CSRF_TRUSTED_ORIGINS = [SITE_URL, ]
+    CSRF_TRUSTED_ORIGINS = [SITE_URL.split('//')[1] or None, ]
 else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
@@ -105,7 +105,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
 # Database
-USAR_DB = 3
+USAR_DB = 1
 
 if USAR_DB == 1:
     # SQlite3 Local
