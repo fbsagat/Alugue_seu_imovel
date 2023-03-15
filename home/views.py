@@ -98,7 +98,11 @@ def eventos(request, pk):
                 pg_tt = f'{valor_format(str(agreg_1["total"]))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
+            array = pagamentos.aggregate(arr=ArrayAgg('valor_pago'))
+            t = 0
+            for _ in array['arr']:
+                t += _
+            agreg_1 = {'total': t}
             if agreg_1["total"]:
                 pg_tt = f'{valor_format(str(agreg_1["total"]))}'
 
