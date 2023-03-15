@@ -34,7 +34,7 @@ TOKEN_CSRF = os.getenv('TOKEN_CSRF')
 CSRF_TRUSTED_ORIGINS = ''
 if TOKEN_CSRF:
     SECRET_KEY = TOKEN_CSRF
-    CSRF_TRUSTED_ORIGINS = [SITE_URL.split('//')[1] or None, ]
+    CSRF_TRUSTED_ORIGINS = [SITE_URL.split('//')[1], ]
 else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
