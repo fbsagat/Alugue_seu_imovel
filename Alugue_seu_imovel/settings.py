@@ -3,7 +3,24 @@ from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 from Alugue_seu_imovel import settings
 
+# CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
+
+# tempo para apagar a form inválida da navbar das sessions
+TEMPO_SESSION_FORM = 60
+
+# Configurações do gerador de dados fictícios (home.views / home.fakes_test):
+# Total a ser criado para cada item \/
+contrato = 4
+FICT_QTD = {'locatario': 5, 'imovel_g': 2, 'imovel': 5, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 3,
+            'nota': 3, 'user': 5}
+
+# Tamanho em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
+TAMANHO_DAS_IMAGENS_Mb = 4
+
+# CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -189,19 +206,3 @@ DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 
 # Configurações da biblioteca de notificações (django-notifications-hq):
 DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
-
-# A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-SITE_NAME = 'Alugue Seu imóvel'
-
-# tempo para apagar a form inválida da navbar das sessions
-TEMPO_SESSION_FORM = 60
-
-# Configurações do gerador de dados fictícios (home.views / home.fakes_test):
-# Total a ser criado para cada item \/
-contrato = 4
-FICT_QTD = {'locatario': 5, 'imovel_g': 2, 'imovel': 5, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 3,
-            'nota': 3, 'user': 5}
-
-# Tamanho em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
-TAMANHO_DAS_IMAGENS_Mb = 4
