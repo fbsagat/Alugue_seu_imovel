@@ -187,8 +187,8 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
 
     # Verticalmente (leading)
     if celula_altura <= 61:
-        leading = 8.5  # 9 10.5
-        espacamento_v = 11  # 12 13
+        leading = 8.5
+        espacamento_v = 11
     elif celula_altura <= 76:
         leading = 9
         espacamento_v = 12
@@ -200,15 +200,15 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     if celula_largura <= 104:
         text_wrap_imo = 18
         text_wrap_parc = 30
-        espacamento_h = 2
+        espacamento_h = 4
     elif celula_largura <= 135:
         text_wrap_imo = 20
         text_wrap_parc = 32
-        espacamento_h = 2
+        espacamento_h = 4
     elif celula_largura <= 167:
         text_wrap_imo = 22
         text_wrap_parc = 33
-        espacamento_h = 4
+        espacamento_h = 6
 
     # media (tam)
     if media_alt_larg <= 82:
