@@ -145,7 +145,7 @@ def eventos(request, pk):
             # PostGreSQL agregation
             array = contratos.aggregate(total=ArrayAgg("valor_mensal"))["total"]
             t = 0
-            for _ in array['arr']:
+            for _ in array['total']:
                 t += int(_)
             contratotal = {'total': t}
             if contratotal:
