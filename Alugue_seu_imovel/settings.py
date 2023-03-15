@@ -16,7 +16,7 @@ TOKEN_CSRF = os.getenv('TOKEN_CSRF')
 CSRF_TRUSTED_ORIGINS = ''
 if TOKEN_CSRF:
     SECRET_KEY = TOKEN_CSRF
-    CSRF_TRUSTED_ORIGINS = 'https://alugueseuimovel.up.railway.app'
+    CSRF_TRUSTED_ORIGINS = ['https://alugueseuimovel.up.railway.app', ]
 else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
@@ -192,7 +192,7 @@ DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 # A PARTIR DAQUI CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 SITE_NAME = 'Alugue Seu imóvel'
-SITE_LINK = 'https://alugueseuimovel.up.railway.app'
+SITE_LINK = CSRF_TRUSTED_ORIGINS
 
 # tempo para apagar a form inválida da navbar das sessions
 TEMPO_SESSION_FORM = 60
