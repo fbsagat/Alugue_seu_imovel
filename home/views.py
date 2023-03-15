@@ -564,6 +564,7 @@ def recibos(request, pk):
                    'SITE_NAME': settings.SITE_NAME}
         return render(request, 'gerar_recibos.html', context)
     else:
+        #
         context = {'tem_contratos': tem_contratos, 'SITE_NAME': settings.SITE_NAME}
         return render(request, 'gerar_recibos.html', context)
 
