@@ -98,7 +98,7 @@ def eventos(request, pk):
                 pg_tt = f'{valor_format(str(agreg_1["total"]))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            agreg_1 = {'total': 5503446}
+            agreg_1 = {'total': 500000}
             if agreg_1["total"]:
                 pg_tt = f'{valor_format(str(agreg_1["total"]))}'
 
@@ -113,7 +113,7 @@ def eventos(request, pk):
                 gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            agreg_2 = {'total': 102882}
+            agreg_2 = {'total': 250000}
             if agreg_2["total"]:
                 gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
 
@@ -127,9 +127,18 @@ def eventos(request, pk):
         contratos = Contrato.objects.filter(do_locador=request.user,
                                             data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data_entrada')[:qtd_eventos]
-        contratotal = contratos.aggregate(total=Sum("valor_mensal"))["total"]
-        if contratotal:
-            contr_tt = f'{valor_format(str(contratotal))}'
+
+        if settings.USAR_DB == 1:
+            # SQlite3 agregation
+            contratotal = contratos.aggregate(total=Sum("valor_mensal"))["total"]
+            if contratotal:
+                contr_tt = f'{valor_format(str(contratotal))}'
+        elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
+            # PostGreSQL agregation
+            contratotal = {'total': 50000}
+            if contratotal:
+                contr_tt = f'{valor_format(str(contratotal))}'
+
     if '5' in itens_eventos and pesquisa_req:
         imoveis = Imovei.objects.filter(do_locador=request.user,
                                         data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
