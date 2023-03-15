@@ -117,9 +117,9 @@ def eventos(request, pk):
                 gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             # PostGreSQL agregation
-            array = gastos.aggregate(arr=ArrayAgg('valor'))
+            array = gastos.aggregate(total=ArrayAgg('valor'))
             t = 0
-            for _ in array['arr']:
+            for _ in array['total']:
                 t += int(_)
             agreg_2 = {'total': t}
             if agreg_2["total"]:
