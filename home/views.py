@@ -89,13 +89,13 @@ def eventos(request, pk):
         pagamentos = Pagamento.objects.filter(ao_locador=request.user,
                                               data_pagamento__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data_pagamento')[:qtd_eventos]
-        agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
+        # agreg_1 = pagamentos.aggregate(total=Sum("valor_pago"))
         if agreg_1["total"]:
             pg_tt = f'{valor_format(str(agreg_1["total"]))}'
     if '2' in itens_eventos and pesquisa_req:
         gastos = Gasto.objects.filter(do_locador=request.user, data__range=[data_eventos_i, data_eventos_f]).order_by(
             f'{ordem}data')[:qtd_eventos]
-        agreg_2 = gastos.aggregate(total=Sum("valor"))
+        # agreg_2 = gastos.aggregate(total=Sum("valor"))
         if agreg_2["total"]:
             gasto_tt = f'{valor_format(str(agreg_2["total"]))}'
     if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
