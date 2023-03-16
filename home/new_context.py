@@ -62,12 +62,12 @@ def forms_da_navbar(request):
             tempo_agora = datetime.datetime.strptime(datetime.datetime.now().time().strftime('%H:%M:%S'), '%H:%M:%S')
 
             if tempo_form + timedelta(seconds=settings.TEMPO_SESSION_FORM) > tempo_agora:
-                form4 = FormLocatario(request.session.get('form4')[0])
+                form4 = FormLocatario(request.session.get('form4')[0], usuario=request.user.pk)
             else:
-                form4 = FormLocatario()
+                form4 = FormLocatario(usuario=request.user.pk)
                 request.session.pop('form4')
         else:
-            form4 = FormLocatario()
+            form4 = FormLocatario(usuario=request.user.pk)
 
         if request.session.get('form5'):
             tempo_form = datetime.datetime.strptime(request.session.get('form5')[1], '%H:%M:%S')

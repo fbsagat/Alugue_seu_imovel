@@ -15,7 +15,7 @@ TEMPO_SESSION_FORM = 60
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-contrato = 1
+contrato = 5
 FICT_QTD = {'locatario': 5, 'imovel_g': 2, 'imovel': 5, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 3,
             'nota': 3, 'user': 5}
 

@@ -1,3 +1,4 @@
+Corrigidos:
 OK. Organizar os imoveis ativos por ordem de registro do contrato atual deles.
 OK. (só mudei a cor da borda) Colocar um deseninho nas card dos ativos (emoji talvez).
 OK. (preferi deixar como está pois iria desperdiçar muita memoria no banco de dados) salvar todas as preferencias
@@ -25,16 +26,19 @@ OK. Arrumar o UsuarioAdmin no admin.py.
 OK. Concluir total_quitado e faltando_p_quitar de contratos.
 OK. Arrumar tabela onde contratos mantém 'O Pagam. VENCEU' até mesmo qdo vencimento se encontra depois do dia atual,
         quando algum contrato existia e foi apagado antes do novo ser criado.
+OK. Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
 
+Corrigir:
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
-com sistema de votação.
-Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
+        com sistema de votação.
+Colocar autentificação no email e telefone do usuario.
 
-problemas encontrados, sem solução até agora:
+PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
 pk do usuario deve ser aleatorio e grande, não sequencial desde o 1, arrumar
+Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir também nas forms.
 
 Melhorias futuras:
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0

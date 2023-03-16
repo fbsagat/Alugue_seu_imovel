@@ -340,7 +340,7 @@ class ExcluirGasto(LoginRequiredMixin, DeleteView):
 # LOCATARIO ---------------------------------------
 @login_required
 def registrar_locat(request):
-    form = FormLocatario(request.POST, request.FILES)
+    form = FormLocatario(request.POST, request.FILES, usuario=request.user.pk)
     if form.is_valid():
         locatario = form.save(commit=False)
         locatario.do_locador = request.user
@@ -676,10 +676,10 @@ def tabela(request, pk):
                                 sinal += 'Ve'
                             else:
                                 enviar = f"""O Pagam. Vencerá dia {parc.do_contrato.dia_vencimento}
-                                Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
+                                P:{parc.tt_pago_format()} F:{parc.falta_pagar_format()}
                                 """
                     parcelas.append(f"""Com: {parc.do_locatario.primeiro_ultimo_nome()}
-                    Contr. cód.: {parc.do_contrato.codigo}
+                    Con. cód.: {parc.do_contrato.codigo}
                     Valor: {parc.do_contrato.valor_format()}
                     {enviar}""")
                     sinais.append(sinal)
@@ -1231,7 +1231,7 @@ def botaoteste(request):
         for x in range(fict_multi * fict_qtd['locatario']):
             count += 1
             aleatorio = locatarios_ficticios()
-            form = FormLocatario()
+            form = FormLocatario(usuario=request.user.pk)
             locatario = form.save(commit=False)
             locatario.do_locador = usuario
             locatario.nome = aleatorio.get('nome')

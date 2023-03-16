@@ -181,47 +181,50 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     # print('celula_altura: ', celula_altura, 'celula_largura: ', celula_largura, 'media: ', media_alt_larg)
 
     # Encaixe de texto
-    text_wrap_imo = espacamento_h = espacamento_h_s = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc =\
+    text_wrap_imo = espacamento_h = espac_h_sinal = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc =\
         leading = 0
 
     # Verticalmente (leading)
-    if celula_altura <= 61:
-        leading = 7
-        espacamento_v = 11
-    elif celula_altura <= 76:
+    if celula_altura <= 61:  # Célula pequena
+        leading = 9
+        espacamento_v = 12
+    elif celula_altura <= 76:  # Célula média
         leading = 8.5
         espacamento_v = 12
-    elif celula_altura <= 92:
-        leading = 10
+    elif celula_altura <= 92:  # Célula grande
+        leading = 12
         espacamento_v = 13
 
     # Horizontalmente  (wrap)
-    if celula_largura <= 104:
+    if celula_largura <= 104:  # Célula pequena
         text_wrap_imo = 18
         text_wrap_parc = 30
         espacamento_h = 2
-        espacamento_h_s = 9
-    elif celula_largura <= 135:
+        espac_h_sinal = 9
+        char_space = 0
+    elif celula_largura <= 135:  # Célula média
         text_wrap_imo = 20
         text_wrap_parc = 32
         espacamento_h = 2
-        espacamento_h_s = 9
-    elif celula_largura <= 167:
+        espac_h_sinal = 9
+        char_space = 0.1
+    elif celula_largura <= 167:  # Célula grande
         text_wrap_imo = 22
         text_wrap_parc = 33
         espacamento_h = 3
-        espacamento_h_s = 11
+        espac_h_sinal = 12
+        char_space = 0.2
 
     # media (tam)
-    if media_alt_larg <= 82:
+    if media_alt_larg <= 82:  # Célula pequena
         text_tam_imo = 11
         text_tam_parc = 8
-    elif media_alt_larg <= 106:
+    elif media_alt_larg <= 106:  # Célula média
         text_tam_imo = 12
         text_tam_parc = 8
-    elif media_alt_larg <= 130:
+    elif media_alt_larg <= 130:  # Célula grande
         text_tam_imo = 15
-        text_tam_parc = 11
+        text_tam_parc = 12
 
     # Calculos para organização
     tam_tt_h = celula_largura * celula_quantidade_h
@@ -297,14 +300,14 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                                            pag_alt - inicia_em_v - x - (espacamento_v - 3))
                 textobject.setFillColor(colors.gray)
                 textobject.setFont('Times-Roman', text_tam_parc)
-                textobject.setCharSpace(0.4)
+                textobject.setCharSpace(char_space)
                 textobject.setLeading(leading)
                 for line in wraped_text.splitlines(False):
                     textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
 
                 sinal = str(dados['sinais'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
-                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - espacamento_h_s,
+                textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - espac_h_sinal,
                                            pag_alt - inicia_em_v - x - text_tam_parc)
                 textobject.setFillColor(colors.blue)
 
@@ -319,7 +322,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                     textobject.setFillColor(HexColor(0x8D0000))
 
                 textobject.setFont('Times-Roman', text_tam_parc)
-                textobject.setCharSpace(0.4)
+                textobject.setCharSpace(char_space)
                 textobject.setLeading(leading)
                 textobject.textLine(sinal.rstrip())
                 pdf.drawText(textobject)

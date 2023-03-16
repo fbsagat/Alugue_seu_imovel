@@ -12,6 +12,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 
+
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 
 
@@ -24,10 +25,11 @@ def user_uuid():
 class Usuario(AbstractUser):
     RG = models.CharField(max_length=9, null=True, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
-    CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números',
+    CPF = models.CharField(max_length=11, null=True, blank=True, unique=True, help_text='Digite apenas números',
                            validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
-    telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Digite apenas números',
+    telefone = models.CharField(max_length=11, null=False, blank=True, unique=True, help_text='Digite apenas números',
                                 validators=[apenas_numeros])
+    email = models.EmailField(unique=True)
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
 
     locat_slots = models.IntegerField(default=2)
@@ -96,6 +98,11 @@ class Locatario(models.Model):
     data_registro = models.DateTimeField(auto_now_add=True)
     objects = LocatariosManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["CPF", "do_locador"], name="cpf_locatario_por_usuario"),
+        ]
+
     def get_absolute_url(self):
         return reverse('home:Locatários', args=[str(self.pk, )])
 
@@ -116,7 +123,10 @@ class Locatario(models.Model):
         return cel_format(self.telefone1)
 
     def f_tel2(self):
-        return cel_format(self.telefone2)
+        if self.telefone2:
+            return cel_format(self.telefone2)
+        else:
+            return ''
 
     def contratos_qtd(self):
         return Contrato.objects.filter(do_locatario=self).count()
@@ -179,6 +189,11 @@ class Imovei(models.Model):
                                validators=[MinLengthValidator(4), MaxLengthValidator(15)])
     data_registro = models.DateTimeField(default=datetime.now)
     objects = ImoveiManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["nome", "do_locador"], name="nome_imovel_por_usuario"),
+        ]
 
     def __str__(self):
         return f'{self.nome} ({self.grupo})'
@@ -429,7 +444,6 @@ class Tarefa(models.Model):
         if self.dados['recibo_entregue']:
             return self.dados['recibo_entregue']
         else:
-            print('Esta tarefa não possui o dado "recibo_entregue"')
             return False
 
     def afazer_concluida(self):
@@ -439,7 +453,6 @@ class Tarefa(models.Model):
             elif self.dados['afazer_concluida'] == 3:
                 return False
         else:
-            print('Esta tarefa não possui o dado "afazer_concluida"')
             return 1
 
     def borda(self):

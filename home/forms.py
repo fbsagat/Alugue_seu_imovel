@@ -121,7 +121,6 @@ class FormPagamento(forms.ModelForm):
     def clean_valor_pago(self):
         valor_pago = self.cleaned_data['valor_pago']
         ao_contrato = self.cleaned_data['ao_contrato']
-        # ao_contrato = self.data['duracao']
         contrato = Contrato.objects.get(pk=ao_contrato.pk)
         pagamento_tt = contrato.pagamento_total()
         total = int(contrato.valor_mensal) * int(contrato.duracao)
@@ -164,11 +163,20 @@ class FormLocatario(forms.ModelForm):
         fields = '__all__'
         exclude = ['do_locador', 'dataentrada', 'com_imoveis', 'com_contratos', 'data_registro']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, usuario, **kwargs):
         super(FormLocatario, self).__init__(*args, **kwargs)
         self.fields['CPF'].widget.attrs.update({'class': 'mask-cpf'})
         self.fields['telefone1'].widget.attrs.update({'class': 'mask-telefone1'})
         self.fields['telefone2'].widget.attrs.update({'class': 'mask-telefone2'})
+        self.locador_pk = usuario
+
+    def clean_CPF(self):
+        cpf = self.cleaned_data['CPF']
+        cpfs_dos_locat_deste_user = Locatario.objects.filter(do_locador=self.locador_pk).values_list('CPF', flat=True)
+        if cpf in cpfs_dos_locat_deste_user:
+            raise forms.ValidationError("Já existe um locatário registrado com este CPF.")
+        else:
+            return cpf
 
 
 class FormContrato(forms.ModelForm):
@@ -185,11 +193,9 @@ class FormContrato(forms.ModelForm):
         }
 
     # ATENÇÃO VERIFICAR SE ISSO AQUI AINDA É ÚTIL OU DEIXEI LIXO PRA TRÁS \/
-    def __init__(self, property_id, *args, **kwargs):
-        self.property_id = property_id
-        print(property_id)
-        super(FormContrato, self).__init__(*args, **kwargs)
-        # ATENÇÃO VERIFICAR SE ISSO AQUI AINDA É ÚTIL OU DEIXEI LIXO PRA TRÁS /\
+    # def __init__(self, property_id, *args, **kwargs):
+    #     self.property_id = property_id
+    #     super(FormContrato, self).__init__(*args, **kwargs)
 
     def clean_data_entrada(self):
         entrada = self.cleaned_data['data_entrada']
@@ -242,6 +248,15 @@ class FormImovel(forms.ModelForm):
         self.fields['grupo'].queryset = ImovGrupo.objects.filter(do_usuario=user)
         self.fields['cep'].widget.attrs.update({'class': 'mask-cep'})
         self.fields['cep'].widget.attrs.update({'id': 'id_CEP'})
+        self.user = user
+
+    def clean_nome(self):
+        nome = self.cleaned_data['nome']
+        nomes_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('nome', flat=True)
+        if nome in nomes_dos_imoveis_deste_user:
+            raise forms.ValidationError("Já existe um Imóvel registrado com este rótulo.")
+        else:
+            return nome
 
 
 class FormAnotacoes(forms.ModelForm):
