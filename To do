@@ -1,4 +1,4 @@
-Corrigidos:
+Feitos:
 OK. Organizar os imoveis ativos por ordem de registro do contrato atual deles.
 OK. (só mudei a cor da borda) Colocar um deseninho nas card dos ativos (emoji talvez).
 OK. (preferi deixar como está pois iria desperdiçar muita memoria no banco de dados) salvar todas as preferencias
@@ -28,12 +28,11 @@ OK. Arrumar tabela onde contratos mantém 'O Pagam. VENCEU' até mesmo qdo venci
         quando algum contrato existia e foi apagado antes do novo ser criado.
 OK. Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
 
-Corrigir:
+Fazer:
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
         com sistema de votação.
-Colocar autentificação no email e telefone do usuario.
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
@@ -41,6 +40,8 @@ pk do usuario deve ser aleatorio e grande, não sequencial desde o 1, arrumar
 Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir também nas forms.
 
 Melhorias futuras:
+Confirmação de email e celular.
+Criptografar informações sensíveis no banco de dados(ex: cpf dos locatarios)
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
 aplicar ajax um dia: https://www.youtube.com/watch?v=hISSGMafzvU / https://www.youtube.com/watch?v=QDdLvImfq_g
 aplicar atomicidade no gerencimanto do banco de dados: https://www.youtube.com/watch?v=50N400-3MTI

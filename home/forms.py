@@ -258,6 +258,24 @@ class FormImovel(forms.ModelForm):
         else:
             return nome
 
+    def clean_uc_energia(self):
+        uc_energia = self.cleaned_data['uc_energia']
+        uc_energia_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('uc_energia', flat=True)
+        if uc_energia in uc_energia_dos_imoveis_deste_user:
+            raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Energia.")
+        else:
+            return uc_energia
+
+    def clean_(self):
+        uc_agua = self.cleaned_data['uc_agua']
+        uc_agua_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('uc_agua', flat=True)
+        if uc_agua in uc_agua_dos_imoveis_deste_user:
+            raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Saneamento.")
+        else:
+            return uc_agua
+
+        # fazer o mesmo para outros campos /\
+
 
 class FormAnotacoes(forms.ModelForm):
     tarefa = forms.BooleanField(required=False,

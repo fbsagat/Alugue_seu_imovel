@@ -1050,8 +1050,9 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
         return context
 
     def post(self, request, *args, **kwargs):
-        tarefa = Tarefa.objects.get(autor_tipo=2, autor_id=self.get_object().pk)
-        tarefa.delete()
+        tarefa = Tarefa.objects.filter(autor_tipo=2, autor_id=self.get_object().pk).first()
+        if tarefa:
+            tarefa.definir_apagada()
         return self.delete(request, *args, **kwargs)
 
 

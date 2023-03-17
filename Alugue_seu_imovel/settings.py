@@ -10,8 +10,8 @@ SITE_URL = 'https://alugueseuimovel.up.railway.app'
 USAR_DB = 2
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
-# tempo para apagar a form inválida da navbar das sessions
-TEMPO_SESSION_FORM = 60
+# tempo para apagar a form inválida da navbar das sessions (segundos)
+TEMPO_SESSION_FORM = 30
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/

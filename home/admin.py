@@ -98,4 +98,4 @@ class MensagemDevAdmin(admin.ModelAdmin):
 @admin.register(Tarefa)
 class Tarefas(admin.ModelAdmin):
     list_display = ('do_usuario', 'autor_tipo', 'data_registro')
-    list_filter = ('autor_tipo', 'lida',)
+    list_filter = ('autor_tipo', 'lida', 'apagada')

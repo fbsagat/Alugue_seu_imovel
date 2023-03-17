@@ -10,7 +10,7 @@ from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
 from django.dispatch import receiver
 
-from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa
+from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe
 
 
 def gerenciar_parcelas(instance_contrato):
@@ -58,7 +58,7 @@ def gerenciar_parcelas(instance_contrato):
         parcelas_pks = Parcela.objects.filter(do_contrato=instance_contrato).values_list('pk', flat=True)
         for tarefa in tarefas_user:
             if tarefa.autor_id not in parcelas_pks:
-                tarefa.delete()
+                tarefa.definir_apagada()
 
 
 def tratar_pagamentos(instance_contrato, delete=False):
@@ -233,7 +233,7 @@ def pagamento_delete(sender, instance, **kwards):
                                           tt_pago__lt=instance.ao_contrato.valor_mensal).values_list('pk', flat=True)
     for tarefa in tarefa_user:
         if tarefa.autor_id not in parcelas_pks:
-            tarefa.delete()
+            tarefa.definir_apagada()
 
 
 @receiver(post_save, sender=Pagamento)
@@ -243,3 +243,30 @@ def pagamento_update(sender, instance, created, **kwargs):
     # Enviar as notificações relacionadas
     # com a função: tratar_pagamentos
     tratar_pagamentos(instance_contrato=instance.ao_contrato)
+
+
+@receiver(pre_save, sender=Anotacoe)
+def anotacao_save(sender, instance, **kwargs):
+    # Criar e apagar tarefa referente a anotações
+    if instance.pk is None:  # if Criado
+        pass
+    else:
+        ante = Anotacoe.objects.get(pk=instance.pk)
+        if instance.tarefa is False and ante.tarefa != instance.tarefa:
+            # Apaga a tarefa referente à anotação se o usuário ao editar a anotação, desmarcar o botão tarefa.
+            tarefa = Tarefa.objects.filter(autor_tipo=2, autor_id=instance.pk).first()
+            if tarefa:
+                tarefa.definir_apagada()
+
+        elif instance.tarefa is True and ante.tarefa != instance.tarefa:
+            # Criar a tarefa referente à anotação se o usuário ao editar a anotação, marcando o botão tarefa.
+            texto = f': {ante.texto}'
+            mensagem = f'{ante.titulo}{texto}'
+            tarefa = Tarefa()
+            tarefa.autor_id = ante.pk
+            tarefa.do_usuario = ante.do_usuario
+            tarefa.autor_tipo = 2
+            tarefa.texto = mensagem
+            tarefa.dados = {'afazer_concluida': 1}
+            tarefa.save()
+

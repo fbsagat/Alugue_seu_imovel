@@ -25,17 +25,17 @@ Editar Anotação / {{ SITE_NAME }}
                 <div class="modal-body">
                     <div class="row">
                         <div class="col">
-                            {{ form_notas.titulo|as_crispy_field }}
+                            {{ form.titulo|as_crispy_field }}
                         </div>
                     </div>
                     <div class="row items-center">
                         <div class="col">
-                            {{ form_notas.data_registro|as_crispy_field }}
+                            {{ form.data_registro|as_crispy_field }}
                         </div>
                         <div class="col">
-                            {{ form_notas.tarefa|as_crispy_field }}
+                            {{ form.tarefa|as_crispy_field }}
                         </div>
-                        {{ form_notas.texto|as_crispy_field }}
+                        {{ form.texto|as_crispy_field }}
                     </div>
                 </div>
 

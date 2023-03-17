@@ -404,6 +404,7 @@ class Anotacoe(models.Model):
     titulo = models.CharField(blank=False, max_length=100, verbose_name='Título')
     data_registro = models.DateTimeField(blank=True)
     texto = models.TextField(blank=True, null=True)
+    tarefa = models.BooleanField(default=False)
     feito = models.IntegerField(choices=[(1, 'Anotação'), (2, 'Tarefa'), (3, 'Tarefa Concluida')], default=1)
 
     def get_absolute_url(self):
@@ -416,9 +417,18 @@ class Anotacoe(models.Model):
         if self.feito == 1:
             return 'Anotação'
         elif self.feito == 2:
-            return 'Tarefa afazer'
+            return 'Tarefa(Pendente)'
         else:
-            return 'Tarefa concluida'
+            return 'Tarefa(Concluida)'
+
+    def texto_pequeno(self):
+        tamanho = 50
+        if len(self.texto) == 0:
+            return [0, '---']
+        elif len(self.texto) < tamanho:
+            return [1, self.texto]
+        else:
+            return [2, f'{self.texto[:tamanho]}...']
 
 
 tipos = [(1, '🧾Recibo'), (2, '🗒️Tarefa')]
@@ -445,6 +455,10 @@ class Tarefa(models.Model):
             return self.dados['recibo_entregue']
         else:
             return False
+
+    def definir_apagada(self):
+        self.apagada = True
+        self.save(update_fields=['apagada'])
 
     def afazer_concluida(self):
         if self.dados['afazer_concluida']:
