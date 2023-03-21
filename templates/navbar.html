@@ -116,12 +116,12 @@ ion-icon {
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                    Gerar
+                    Gerar PDF
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'home:Recibos' request.user.pk %}">Recibos 🧾</a></li>
-                    <li><a class="dropdown-item" href="{% url 'home:Tabela' request.user.pk %}">Tabela 📑</a></li>
-                    <li><a class="dropdown-item" href="#">Contrato 📃</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Recibos PDF' request.user.pk %}">de Recibos 🧾</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Tabela PDF' request.user.pk %}">de Tabela 📑</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Contrato PDF' request.user.pk %}">de Contrato 📃</a></li>
                 </ul>
             </div>
         </div>

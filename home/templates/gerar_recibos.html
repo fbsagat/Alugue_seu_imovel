@@ -46,7 +46,7 @@ Recibos / {{ SITE_NAME }}
         </container>
     </form>
     {% if contrato.recibos_pdf.url is not '' %}
-    <iframe src="{{ contrato.recibos_pdf.url }}"
+    <iframe class="border border-white rounded-2 my-2" src="{{ contrato.recibos_pdf.url }}"
             style="width:100%; height:820px;" frameborder="0"></iframe>
     {% endif %}
 

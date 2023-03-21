@@ -121,7 +121,7 @@ def gerar_uma_pagina_recibo(pdf, parcelas, pag_centro, pag_alt, pag_lar, pag_n, 
 
 
 # Principal:
-def gerar_recibos(dados):
+def gerar_recibos_pdf(dados):
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
     pdf.setAuthor(f'{dados["nome_locador"]}')
@@ -330,7 +330,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     return {'celula_altura': celula_altura}
 
 
-def gerar_tabela(dados):
+def gerar_tabela_pdf(dados):
     # Preparando o PDF:
     local = f'{settings.MEDIA_ROOT}tabela_docs/tabela_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
     a4h = (297 * mm, 210 * mm)
@@ -356,3 +356,10 @@ def gerar_tabela(dados):
     pdf.setSubject(f'Tabela completa com a agenda dos imóveis ativos.')
 
     pdf.save()
+
+
+# 102: -----------------------------------------------
+def gerar_contrato_pdf(dados):
+    pass
+    # print('gerar modelo em pdf e salvar em media/contrato_docs para ser carregado pela view')
+

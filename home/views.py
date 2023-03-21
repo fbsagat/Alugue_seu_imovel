@@ -20,13 +20,15 @@ from django.db.models.aggregates import Count, Sum
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 
-from home.funcoes_proprias import valor_format, gerar_recibos, gerar_tabela
+from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
-    FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela
+    FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
+    FormContratoDoc, FormContratoDocConfig, FormContratoModelo
 
-from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa
+from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
+    ContratoDocConfig
 
 
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
@@ -556,7 +558,7 @@ def recibos(request, pk):
                          'mes_e_ano': datas_tratadas,
                          }
 
-                local_temp = gerar_recibos(dados=dados)
+                local_temp = gerar_recibos_pdf(dados=dados)
                 contrato.recibos_pdf = File(local_temp, name=f'recibos_de_{usuario.uuid}_{dados["cod_contrato"]}.pdf')
                 contrato.save()
 
@@ -716,7 +718,7 @@ def tabela(request, pk):
 
     if tem_contratos:
         # Gerar a tabela com os dados
-        gerar_tabela(dados)
+        gerar_tabela_pdf(dados)
     # Link da tabela
     link = rf'/media/tabela_docs/tabela_{dados["usuario_uuid"]}_{usuario}.pdf'
 
@@ -725,6 +727,76 @@ def tabela(request, pk):
     context['form'] = form
 
     return render(request, 'gerar_tabela.html', context)
+
+
+@login_required
+def gerar_contrato(request, pk):
+    context = {}
+    # Criando objetos para tratamentos
+    usuario = Usuario.objects.get(pk=request.user.pk)
+    contrato = usuario.contrato_ultimo
+    contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato)
+    form = FormContratoDoc(initial={'contrato': contrato})
+    form2 = FormContratoDocConfig(initial={'do_contrato': contr_doc_configs})
+
+    # Se for POST
+    if request.method == 'POST':
+        # Se for um POST do primeiro form
+        if 'contrato' in request.POST:
+            form = FormContratoDoc(request.POST)
+            form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
+                                                                       vencido=False).order_by('-data_entrada')
+            if form.is_valid():
+                # Se o form for valido atualiza o campo contrato_ultimo do usuario
+                usuario.contrato_ultimo = form.cleaned_data['contrato']
+                usuario.save(update_fields=['contrato_ultimo', ])
+                # O contrato carregado inicialmente pelo campo do usuario(contrato_ultimo) é atualizado para o
+                # do form(mais atual)
+                contrato = form.cleaned_data['contrato']
+                contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato)
+
+        # Se for um POST do segundo form
+        elif 'do_modelo' in request.POST:
+            form2 = FormContratoDocConfig(request.POST)
+            if form2.is_valid():
+                # Se o form for válido cria uma instância do ContratoDocConfig para o contrato selecionado.
+                configs = form2.save(commit=False)
+                configs.do_modelo = form2.cleaned_data['do_modelo']
+                configs.do_contrato = contrato
+                configs.save()
+
+    form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
+                                                               vencido=False).order_by('-data_entrada')
+    context['form'] = form
+
+    if contr_doc_configs:
+        # print('o contrato tem configurações')
+        # Se o contrato tem configurações para o documento
+        # Carregar o contrato e liberar o botão para modificar configurações
+        dados = []
+        gerar_contrato_pdf(dados=dados)
+        # Link do contrato_doc
+        link = rf'/media/tabela_docs/tabela_{usuario.uuid}_{usuario}.pdf'
+        # Preparar o context
+        context['contrato_doc'] = link
+    else:
+        # print('o contrato não tem configurações')
+        # Carrega o formulario de configuração para criar uma instância para este contrato
+        context['form2'] = form2
+
+    context['SITE_NAME'] = settings.SITE_NAME
+    return render(request, 'gerar_contrato.html', context)
+
+
+@login_required
+def editor_de_modelos(request, pk):
+    context = {}
+    usuario = Usuario.objects.get(pk=request.user.pk)
+    form = FormContratoModelo()
+
+    context['form'] = form
+    context['SITE_NAME'] = settings.SITE_NAME
+    return render(request, 'editor_de_modelos.html', context)
 
 
 # -=-=-=-=-=-=-=-= BOTÃO HISTORICO -=-=-=-=-=-=-=-=

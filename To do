@@ -33,6 +33,7 @@ Criar um botão de painel com configurações diversas e botão de backup de tod
 Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
         com sistema de votação.
+arrumar os botões do gerar_contrato (não estão pequenos)
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
@@ -40,6 +41,8 @@ pk do usuario deve ser aleatorio e grande, não sequencial desde o 1, arrumar
 Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir também nas forms.
 
 Melhorias futuras:
+Criar o help (sistema de dicas e recomendações espalhados por to_do o site, referentes ao manuseio do mesmo e a regras
+        e dicas de locação)
 Confirmação de email e celular.
 Criptografar informações sensíveis no banco de dados(ex: cpf dos locatarios)
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0

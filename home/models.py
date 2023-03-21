@@ -11,7 +11,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
-
+from ckeditor.fields import RichTextField
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 
@@ -39,12 +39,16 @@ class Usuario(AbstractUser):
     qtd_eventos = models.IntegerField(blank=True, null=True, default=10)
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
-    recibo_ultimo = models.ForeignKey('Contrato', null=True, blank=True, on_delete=models.SET_NULL)
+    recibo_ultimo = models.ForeignKey('Contrato', null=True, blank=True, related_name='usuario_recibo_set',
+                                      on_delete=models.SET_NULL)
     recibo_preenchimento = models.IntegerField(null=True, blank=True)
 
     tabela_ultima_data_ger = models.IntegerField(null=True, blank=True)
     tabela_meses_qtd = models.IntegerField(null=True, blank=True)
     tabela_imov_qtd = models.IntegerField(null=True, blank=True)
+
+    contrato_ultimo = models.ForeignKey('Contrato', null=True, blank=True, related_name='usuario_contrato_set',
+                                        on_delete=models.SET_NULL)
 
     def get_absolute_url(self):
         return reverse('home:DashBoard', args=[str(self.pk, )])
@@ -318,6 +322,29 @@ class Contrato(models.Model):
         return valor_tt
 
 
+class ContratoModelo(models.Model):
+    titulo = models.CharField(blank=False, max_length=100, verbose_name='', help_text='Titulo')
+    autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
+                              on_delete=models.SET_NULL)
+    corpo = RichTextField(null=True, blank=True, verbose_name='')
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField('Usuario', related_name='contratomod_likes_set')
+
+    def __str__(self):
+        return f'{self.titulo} ({self.autor})'
+
+
+class ContratoDocConfig(models.Model):
+    do_contrato = models.ForeignKey('Contrato', null=True, blank=False, on_delete=models.CASCADE)
+
+    do_modelo = models.ForeignKey('ContratoModelo', null=True, blank=False, on_delete=models.SET_NULL,
+                                  verbose_name='Modelo de contrato:')
+    # Adicionar futuramente configurações do contrato_doc aqui
+
+    def __str__(self):
+        return f'{self.do_contrato} ({self.do_modelo})'
+
+
 class Parcela(models.Model):
     do_usuario = models.ForeignKey('Usuario', blank=False, on_delete=models.CASCADE)
     do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
@@ -484,7 +511,7 @@ lista_mensagem = (
     (5, 'Report de bug'))
 
 
-class MensagemDev(models.Model):
+class DevMensagen(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=True, blank=True,
                                    on_delete=models.CASCADE)
 

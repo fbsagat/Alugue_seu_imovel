@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Contrato / {{ SITE_NAME }}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<container class="container pt-1 text-center text-justify justify-center">
+
+    <container
+            class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-around items-center">
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="flex justify-content-start items-center">
+                <div class="p-1">
+                    Contrato:
+                </div>
+                <div class="p-1">
+                    {{ form.contrato|as_crispy_field }}
+                </div>
+
+                <div class="p-1">
+                    <button class="btn bg-blue-600 py-2 px-3 text-white rounded-md form-control-sm" type="submit">
+                        Carregar
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="flex justify-content-end items-center">
+            {% if form2 %}
+            <div class="p-1">
+                <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm" disabled>
+                    Modificar Configurações
+                </button>
+            </div>
+
+            <div class="p-1">
+                <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                    Editor de Modelos
+                </button>
+            </div>
+            {% else %}
+            <div class="p-1">
+                <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                    Modificar Configurações
+                </button>
+            </div>
+
+            <div class="p-1">
+                <a href="{% url 'home:Editor de Modelos' request.user.pk %}">
+                    <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                        Editor de Modelos
+                    </button>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+
+    </container>
+
+    {% if form2 %}
+    <container class="flex justify-center items-center">
+        <container
+                class="container-sm p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
+            <div class="z-10 h-full py-32 md:py-0 text-gray-100 flex items-center flex-col">
+                <p class="fs-3">Configurar documento deste contrato:</p>{{ contrato }}
+                <hr width="75%"/>
+                <br>
+                <form method="POST" class="ps-5 pe-5">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                {{ form2.do_modelo|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="justify-center items-center text-center">
+                        <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" type="submit">Gerar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </container>
+    </container>
+    {% elif contrato_doc %}
+    <iframe class="border border-white rounded-2 my-2" src="{{ contrato_doc }}" style="width:100%; height:920px;"
+            frameborder="0"></iframe>
+    {% else %}
+    {% include 'selecione_um_contrato.html' %}
+    {% endif %}
+
+</container>
+
+{% endblock %}

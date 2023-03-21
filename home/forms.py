@@ -10,8 +10,9 @@ from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
 
-from home.models import Usuario, MensagemDev
-from home.models import Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo
+from home.models import Usuario, DevMensagen
+from home.models import Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo, ContratoDocConfig, \
+    ContratoModelo
 
 
 class Textarea(forms.Textarea):
@@ -89,7 +90,7 @@ class FormHomePage(forms.Form):
 
 class FormMensagem(forms.ModelForm):
     class Meta:
-        model = MensagemDev
+        model = DevMensagen
         fields = '__all__'
         exclude = ['do_usuario', 'data_criacao']
         widgets = {
@@ -228,6 +229,33 @@ class FormContrato(forms.ModelForm):
         self.fields['valor_mensal'].widget.attrs.update({'class': 'mask-valor'})
 
 
+class FormContratoDoc(forms.Form):
+    contrato = forms.ModelChoiceField(label='', queryset=Contrato.objects.none(), initial='')
+
+    def __init__(self, *args, **kwargs):
+        super(FormContratoDoc, self).__init__(*args, **kwargs)
+        self.fields['contrato'].widget.attrs.update({'class': 'mt-3'})
+
+
+class FormContratoDocConfig(forms.ModelForm):
+    class Meta:
+        model = ContratoDocConfig
+        fields = '__all__'
+        exclude = ['do_contrato']
+
+
+class FormContratoModelo(forms.ModelForm):
+    class Meta:
+        model = ContratoModelo
+        fields = '__all__'
+        exclude = ['autor', 'data_criacao', 'likes']
+
+    # def __init__(self, *args, **kwargs):
+    #     super(FormContratoModelo, self).__init__(*args, **kwargs)
+    #     self.fields['corpo'].widget.attrs.update({'class': 'ratio'})
+    #     self.fields['corpo'].widget.attrs.update({'style': '--bs-aspect-ratio: 50%;'})
+
+
 class FormimovelGrupo(forms.ModelForm):
     class Meta:
         model = ImovGrupo
@@ -260,7 +288,8 @@ class FormImovel(forms.ModelForm):
 
     def clean_uc_energia(self):
         uc_energia = self.cleaned_data['uc_energia']
-        uc_energia_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('uc_energia', flat=True)
+        uc_energia_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('uc_energia',
+                                                                                                    flat=True)
         if uc_energia in uc_energia_dos_imoveis_deste_user:
             raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Energia.")
         else:

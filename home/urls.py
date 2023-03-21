@@ -9,7 +9,7 @@ from home.views import Dashboard, Locatarios, Imoveis, Contratos, \
     ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, ApagarConta, Homepage, \
     CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
     LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, recibo_nao_entregue, afazer_concluida, \
-    afazer_nao_concluida
+    afazer_nao_concluida, gerar_contrato, editor_de_modelos
 
 from Alugue_seu_imovel import settings
 
@@ -62,8 +62,10 @@ urlpatterns = [
     path('excluiranotacao/<int:pk>', ExcluirAnotacao.as_view(), name='Excluir Anotação'),
 
     # ABA GERAR -------------------
-    path('recibos/<int:pk>', recibos, name='Recibos'),
-    path('tabela/<int:pk>', tabela, name='Tabela'),
+    path('recibos/<int:pk>', recibos, name='Recibos PDF'),
+    path('tabela/<int:pk>', tabela, name='Tabela PDF'),
+    path('contrato/<int:pk>', gerar_contrato, name='Contrato PDF'),
+    path('editor_de_modelos/<int:pk>', editor_de_modelos, name='Editor de Modelos'),
 
     # ABA HISTORICO -------------------
     path('pagamentos/<int:pk>', Pagamentos.as_view(), name='Pagamentos'),

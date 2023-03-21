@@ -1,7 +1,7 @@
 from django.contrib import admin
 from home.forms import Mascara, FormUsuario
-from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, MensagemDev, ImovGrupo, Parcela, \
-    Tarefa
+from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, DevMensagen, ImovGrupo, Parcela, \
+    Tarefa, ContratoDocConfig, ContratoModelo
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -65,6 +65,17 @@ class ContratosAdmin(admin.ModelAdmin):
     list_filter = ('em_posse', 'rescindido', 'vencido')
 
 
+@admin.register(ContratoDocConfig)
+class ContratoDocConfigsAdmin(admin.ModelAdmin):
+    list_display = ('do_modelo', )
+
+
+@admin.register(ContratoModelo)
+class ContratoModeloAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'autor', 'data_criacao',)
+    list_filter = ('likes', )
+
+
 @admin.register(Pagamento)
 class PagamentosAdmin(admin.ModelAdmin):
     list_display = ('ao_locador', 'ao_contrato', 'do_locatario', 'valor_pago', 'data_pagamento',
@@ -88,7 +99,7 @@ class AnotacoeAdmin(admin.ModelAdmin):
     search_fields = ('titulo',)
 
 
-@admin.register(MensagemDev)
+@admin.register(DevMensagen)
 class MensagemDevAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'do_usuario', 'data_registro', 'imagem')
     list_filter = ('tipo_msg',)

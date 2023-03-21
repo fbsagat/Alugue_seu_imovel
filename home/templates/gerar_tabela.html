@@ -38,7 +38,7 @@ Tabela / {{ SITE_NAME }}
     </form>
 
     {% if tem_imoveis %}
-    <iframe src="{{ tabela }}" style="width:100%; height:920px;" frameborder="0"></iframe>
+    <iframe class="border border-white rounded-2 my-2" src="{{ tabela }}" style="width:100%; height:920px;" frameborder="0"></iframe>
     {% else %}
     {% include 'nenhum_retorno_intervalo.html' %}
     {% endif %}
