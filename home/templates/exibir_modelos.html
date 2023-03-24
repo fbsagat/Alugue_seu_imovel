@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Itens Ativos / {{ SITE_NAME }}
+{% endblock %}
+
+{% block content %}
+
+{% if modelos %}
+
+<container class="container pt-1 text-center text-justify justify-center">
+    <container
+            class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
+        <a class="py-2 px-3" href="{% url 'home:Criar Modelo' %}">
+            <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                Criar novo modelo
+            </button>
+        </a>
+        <a class="py-2 px-3" href="{% url 'home:Contrato PDF' request.user.pk %}">
+            <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                Sair do editor
+            </button>
+        </a>
+    </container>
+    <br>
+    <div class="container-xxl">
+        <div class="row row-cols-5 row-cols-md-3 g-3">
+            {% for modelo in modelos %}
+            <div class="col">
+                <div class="card bg-secondary text-white bg-opacity-50 border-white h-100">
+                    <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
+                        {{ modelo.titulo }}
+                    </div>
+                    <div class="card-body">
+                        {% if request.user.is_superuser == True %}
+                        <p class="card-text">Criado por.: {{ modelo.autor }}</p>
+                        <p class="card-text">Criado em: {{ modelo.data_criacao }}</p>
+                        {% else%}
+                        {% if modelo.autor == request.user %}
+                        <p class="card-text">Criado por.: {{ modelo.autor }}</p>
+                        <p class="card-text">Criado em: {{ modelo.data_criacao }}</p>
+                        {% else %}
+                        <p class="card-text">Criado por.: {{ SITE_NAME }}</p>
+                        {% endif %}
+                        {% endif %}
+                        <br>
+                        {% if modelo.autor == request.user %}
+                        <p class="card-text"><a href="{% url 'home:Editar Modelo' modelo.pk %}" class="link-primary"
+                                                title="Editar">✒️</a>
+                            <a href="{% url 'home:Excluir Modelo' modelo.pk %}" class="link-danger"
+                               title="Excluir">❌</a>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+    <br>
+</container>
+
+{% else %}
+<div class="container-fluid pt-1 text-center text-justify">
+    <br>
+    <div class="container-xxl">
+        <div class="row row-cols-5 row-cols-md-3 g-3 d-flex justify-content-center">
+            <div class="col ">
+                <div class="card bg-secondary text-white bg-opacity-50 border-white h-100">
+                    <div class="card-body flex items-center justify-content-center">
+                        <a class="py-2 px-3" href="{% url 'home:Criar Modelo' %}">
+                            <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                                Criar novo modelo
+                            </button>
+                        </a>
+                        <a class="py-2 px-3" href="{% url 'home:Contrato PDF' request.user.pk %}">
+                            <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                                Sair do editor
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

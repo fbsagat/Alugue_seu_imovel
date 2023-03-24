@@ -15,7 +15,7 @@ Editar Grupo / {{ SITE_NAME }}
 <container class="flex justify-center items-center">
 
     <container class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
-        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+        <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
             <form method="POST" action="{% url 'home:Editar Grupo Imóveis' object.pk %}" class="ps-5 pe-5">
                 {% csrf_token %}
                 Editar grupo*

@@ -12,6 +12,7 @@ Contrato / {{ SITE_NAME }}
 
 {% block content %}
 
+{% if tem_contratos %}
 <container class="container pt-1 text-center text-justify justify-center">
 
     <container
@@ -44,9 +45,11 @@ Contrato / {{ SITE_NAME }}
             </div>
 
             <div class="p-1">
-                <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
-                    Editor de Modelos
-                </button>
+                <a href="{% url 'home:Modelos' request.user.pk %}">
+                    <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                        Editor de Modelos
+                    </button>
+                </a>
             </div>
             {% else %}
             <div class="p-1">
@@ -56,7 +59,7 @@ Contrato / {{ SITE_NAME }}
             </div>
 
             <div class="p-1">
-                <a href="{% url 'home:Editor de Modelos' request.user.pk %}">
+                <a href="{% url 'home:Modelos' request.user.pk %}">
                     <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
                         Editor de Modelos
                     </button>
@@ -72,8 +75,8 @@ Contrato / {{ SITE_NAME }}
     <container class="flex justify-center items-center">
         <container
                 class="container-sm p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
-            <div class="z-10 h-full py-32 md:py-0 text-gray-100 flex items-center flex-col">
-                <p class="fs-3">Configurar documento deste contrato:</p>{{ contrato }}
+            <div class="z-10 h-full  md:py-0 text-gray-100 flex items-center flex-col">
+                <p class="fs-3">Configurar documento deste contrato:</p>{{ contrato_ultimo }}
                 <hr width="75%"/>
                 <br>
                 <form method="POST" class="ps-5 pe-5">
@@ -103,5 +106,9 @@ Contrato / {{ SITE_NAME }}
     {% endif %}
 
 </container>
+
+{% else %}
+{% include 'nenhum_registrado.html' %}
+{% endif %}
 
 {% endblock %}

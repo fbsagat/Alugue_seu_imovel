@@ -34,6 +34,7 @@ Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
         com sistema de votação.
 arrumar os botões do gerar_contrato (não estão pequenos)
+Algun itens no urls.py não precisam enviar o pk, arrumar
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site

@@ -9,7 +9,7 @@ from home.views import Dashboard, Locatarios, Imoveis, Contratos, \
     ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, ApagarConta, Homepage, \
     CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
     LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, recibo_nao_entregue, afazer_concluida, \
-    afazer_nao_concluida, gerar_contrato, editor_de_modelos
+    afazer_nao_concluida, gerar_contrato, criar_modelo, EditarModelo, ExcluirModelo, Modelos
 
 from Alugue_seu_imovel import settings
 
@@ -47,14 +47,15 @@ urlpatterns = [
     path('editarcontrato/<int:pk>', EditarContrato.as_view(), name='Editar Contrato'),
     path('excluircontrato/<int:pk>', ExcluirContrato.as_view(), name='Excluir Contrato'),
 
-    # IMOVEL -------------------
-    path('regimov', registrar_imovel, name='Registrar Imóvel'),
-    path('editarregimov/<int:pk>', EditarImov.as_view(), name='Editar Imóvel'),
-    path('excluirregimov/<int:pk>', ExcluirImov.as_view(), name='Excluir Imóvel'),
     # GRUPO -------------------
     path('criargrupo/', criar_grupo, name='Criar Grupo Imóveis'),
     path('editargrupo/<int:pk>', EditarGrup.as_view(), name='Editar Grupo Imóveis'),
     path('excluirgrupo/<int:pk>', ExcluirGrupo.as_view(), name='Excluir Grupo Imóveis'),
+
+    # IMOVEL -------------------
+    path('regimov', registrar_imovel, name='Registrar Imóvel'),
+    path('editarregimov/<int:pk>', EditarImov.as_view(), name='Editar Imóvel'),
+    path('excluirregimov/<int:pk>', ExcluirImov.as_view(), name='Excluir Imóvel'),
 
     # ANOTAÇÕES -------------------
     path('reganota', registrar_anotacao, name='Registrar Anotação'),
@@ -65,7 +66,12 @@ urlpatterns = [
     path('recibos/<int:pk>', recibos, name='Recibos PDF'),
     path('tabela/<int:pk>', tabela, name='Tabela PDF'),
     path('contrato/<int:pk>', gerar_contrato, name='Contrato PDF'),
-    path('editor_de_modelos/<int:pk>', editor_de_modelos, name='Editor de Modelos'),
+
+    # Modelo de contrato:
+    path('modelos/<int:pk>', Modelos.as_view(), name='Modelos'),
+    path('criarmodelo', criar_modelo, name='Criar Modelo'),
+    path('editarmodelo/<int:pk>', EditarModelo.as_view(), name='Editar Modelo'),
+    path('excluirmodelo/<int:pk>', ExcluirModelo.as_view(), name='Excluir Modelo'),
 
     # ABA HISTORICO -------------------
     path('pagamentos/<int:pk>', Pagamentos.as_view(), name='Pagamentos'),

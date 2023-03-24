@@ -9,6 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
+from ckeditor.widgets import CKEditorWidget
 
 from home.models import Usuario, DevMensagen
 from home.models import Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo, ContratoDocConfig, \
@@ -245,15 +246,11 @@ class FormContratoDocConfig(forms.ModelForm):
 
 
 class FormContratoModelo(forms.ModelForm):
+
     class Meta:
         model = ContratoModelo
         fields = '__all__'
         exclude = ['autor', 'data_criacao', 'likes']
-
-    # def __init__(self, *args, **kwargs):
-    #     super(FormContratoModelo, self).__init__(*args, **kwargs)
-    #     self.fields['corpo'].widget.attrs.update({'class': 'ratio'})
-    #     self.fields['corpo'].widget.attrs.update({'style': '--bs-aspect-ratio: 50%;'})
 
 
 class FormimovelGrupo(forms.ModelForm):

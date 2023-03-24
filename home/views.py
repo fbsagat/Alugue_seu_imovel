@@ -28,7 +28,7 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
-    ContratoDocConfig
+    ContratoDocConfig, ContratoModelo
 
 
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
@@ -734,26 +734,31 @@ def gerar_contrato(request, pk):
     context = {}
     # Criando objetos para tratamentos
     usuario = Usuario.objects.get(pk=request.user.pk)
-    contrato = usuario.contrato_ultimo
-    contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato)
-    form = FormContratoDoc(initial={'contrato': contrato})
+    contrato_ultimo = usuario.contrato_ultimo
+    contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato_ultimo)
+    form = FormContratoDoc(initial={'contrato': contrato_ultimo})
     form2 = FormContratoDocConfig(initial={'do_contrato': contr_doc_configs})
+    admins = Usuario.objects.filter(is_superuser=True).values_list('pk').first()
+    qs1 = ContratoModelo.objects.filter(autor=request.user)
+    qs2 = ContratoModelo.objects.filter(autor=admins)
+    form2.fields['do_modelo'].queryset = qs1.union(qs2).order_by('-data_criacao')
+    contratos = Contrato.objects.filter(do_locador=request.user, rescindido=False,
+                                        vencido=False).order_by('-data_entrada')
 
     # Se for POST
     if request.method == 'POST':
         # Se for um POST do primeiro form
         if 'contrato' in request.POST:
             form = FormContratoDoc(request.POST)
-            form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
-                                                                       vencido=False).order_by('-data_entrada')
+            form.fields['contrato'].queryset = contratos
             if form.is_valid():
                 # Se o form for valido atualiza o campo contrato_ultimo do usuario
                 usuario.contrato_ultimo = form.cleaned_data['contrato']
                 usuario.save(update_fields=['contrato_ultimo', ])
                 # O contrato carregado inicialmente pelo campo do usuario(contrato_ultimo) é atualizado para o
                 # do form(mais atual)
-                contrato = form.cleaned_data['contrato']
-                contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato)
+                contrato_ultimo = form.cleaned_data['contrato']
+                contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato_ultimo)
 
         # Se for um POST do segundo form
         elif 'do_modelo' in request.POST:
@@ -762,16 +767,15 @@ def gerar_contrato(request, pk):
                 # Se o form for válido cria uma instância do ContratoDocConfig para o contrato selecionado.
                 configs = form2.save(commit=False)
                 configs.do_modelo = form2.cleaned_data['do_modelo']
-                configs.do_contrato = contrato
+                configs.do_contrato = contrato_ultimo
                 configs.save()
 
-    form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
-                                                               vencido=False).order_by('-data_entrada')
+    form.fields['contrato'].queryset = contratos
     context['form'] = form
 
     if contr_doc_configs:
         # print('o contrato tem configurações')
-        # Se o contrato tem configurações para o documento
+        # Se o contrato tem configurações para o documento e todas estão presentes(principalmente o modelo)
         # Carregar o contrato e liberar o botão para modificar configurações
         dados = []
         gerar_contrato_pdf(dados=dados)
@@ -783,20 +787,86 @@ def gerar_contrato(request, pk):
         # print('o contrato não tem configurações')
         # Carrega o formulario de configuração para criar uma instância para este contrato
         context['form2'] = form2
+        context['contrato_ultimo'] = contrato_ultimo
 
     context['SITE_NAME'] = settings.SITE_NAME
+    context['tem_contratos'] = True if contratos else False
     return render(request, 'gerar_contrato.html', context)
 
 
 @login_required
-def editor_de_modelos(request, pk):
+def criar_modelo(request):
     context = {}
-    usuario = Usuario.objects.get(pk=request.user.pk)
     form = FormContratoModelo()
+
+    if request.method == 'POST':
+        form = FormContratoModelo(request.POST)
+        if form.is_valid():
+            modelo = form.save(commit=False)
+            modelo.autor = request.user
+            modelo.save()
+
+            return redirect(f'modelos/{request.user.pk}')
 
     context['form'] = form
     context['SITE_NAME'] = settings.SITE_NAME
-    return render(request, 'editor_de_modelos.html', context)
+    return render(request, 'criar_modelo.html', context)
+
+
+class Modelos(LoginRequiredMixin, ListView):
+    template_name = 'exibir_modelos.html'
+    model = ContratoModelo
+    context_object_name = 'modelos'
+    paginate_by = 9
+
+    def get_queryset(self):
+        admins = Usuario.objects.filter(is_superuser=True).values_list('pk').first()
+        qs1 = ContratoModelo.objects.filter(autor=self.request.user)
+        qs2 = ContratoModelo.objects.filter(autor=admins)
+        return qs1.union(qs2).order_by('-data_criacao')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(Modelos, self).get_context_data(**kwargs)
+        context['SITE_NAME'] = settings.SITE_NAME
+        return context
+
+
+class EditarModelo(LoginRequiredMixin, UpdateView):
+    model = ContratoModelo
+    template_name = 'editar_modelo.html'
+    form_class = FormContratoModelo
+
+    def get_success_url(self):
+        return reverse_lazy('home:Modelos', kwargs={'pk': self.request.user.pk})
+
+    def get_object(self, queryset=None):
+        self.object = get_object_or_404(ContratoModelo, pk=self.kwargs['pk'], autor=self.request.user)
+        return self.object
+
+    def get_context_data(self, *, object_list=True, **kwargs):
+        context = super(EditarModelo, self).get_context_data(**kwargs)
+        context['SITE_NAME'] = settings.SITE_NAME
+        return context
+
+
+class ExcluirModelo(LoginRequiredMixin, DeleteView):
+    model = ContratoModelo
+    template_name = 'excluir_item.html'
+
+    def get_success_url(self):
+        return reverse_lazy('home:Modelos', kwargs={'pk': self.request.user.pk})
+
+    def get_object(self, queryset=None):
+        self.object = get_object_or_404(ContratoModelo, pk=self.kwargs['pk'], autor=self.request.user)
+        return self.object
+
+    def get_context_data(self, *, object_list=True, **kwargs):
+        context = super(ExcluirModelo, self).get_context_data(**kwargs)
+        context['SITE_NAME'] = settings.SITE_NAME
+        contratos_config = ContratoDocConfig.objects.filter(do_modelo=self.object).values_list('do_contrato')
+        contratos = Contrato.objects.filter(pk__in=contratos_config)
+        context['contratos_modelo'] = contratos
+        return context
 
 
 # -=-=-=-=-=-=-=-= BOTÃO HISTORICO -=-=-=-=-=-=-=-=
@@ -974,9 +1044,14 @@ class EditarLocat(LoginRequiredMixin, UpdateView):
         self.object = get_object_or_404(Locatario, pk=self.kwargs['pk'], do_locador=self.request.user)
         return self.object
 
+    def get_form(self, form_class=None):
+        form = FormLocatario(usuario=self.request.user)
+        return form
+
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(EditarLocat, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
+        context['form'] = self.get_form()
         return context
 
 

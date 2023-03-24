@@ -248,7 +248,7 @@ class Contrato(models.Model):
     data_entrada = models.DateField(blank=False, verbose_name='Data de Entrada')
     duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)',
                                   validators=[MaxValueValidator(18), MinValueValidator(1)])
-    valor_mensal = models.CharField(max_length=9, verbose_name='Valor Mensal (R$): ', blank=False,
+    valor_mensal = models.CharField(max_length=9, verbose_name='Valor Mensal (R$) ', blank=False,
                                     help_text='Digite apenas números', validators=[apenas_numeros])
     dia_vencimento = models.IntegerField(blank=False, validators=[MaxValueValidator(28), MinValueValidator(1)],
                                          verbose_name='Dia do vencimento', help_text='(1-28)')
@@ -328,7 +328,6 @@ class ContratoModelo(models.Model):
                               on_delete=models.SET_NULL)
     corpo = RichTextField(null=True, blank=True, verbose_name='')
     data_criacao = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField('Usuario', related_name='contratomod_likes_set')
 
     def __str__(self):
         return f'{self.titulo} ({self.autor})'
@@ -338,7 +337,7 @@ class ContratoDocConfig(models.Model):
     do_contrato = models.ForeignKey('Contrato', null=True, blank=False, on_delete=models.CASCADE)
 
     do_modelo = models.ForeignKey('ContratoModelo', null=True, blank=False, on_delete=models.SET_NULL,
-                                  verbose_name='Modelo de contrato:')
+                                  verbose_name='Modelo de contrato')
     # Adicionar futuramente configurações do contrato_doc aqui
 
     def __str__(self):
@@ -387,7 +386,7 @@ class Pagamento(models.Model):
                                     verbose_name='Do Contrato')
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE)
 
-    valor_pago = models.CharField(max_length=9, verbose_name='Valor Pago (R$): ', blank=False,
+    valor_pago = models.CharField(max_length=9, verbose_name='Valor Pago (R$) ', blank=False,
                                   validators=[apenas_numeros])
     data_pagamento = models.DateTimeField(blank=False, verbose_name='Data do Pagamento')
     data_de_recibo = models.DateTimeField(blank=True, verbose_name='Data em que foi marcado recibo entregue', null=True)
@@ -408,7 +407,7 @@ class Gasto(models.Model):
     do_locador = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
     do_imovel = models.ForeignKey('Imovei', blank=False, on_delete=models.CASCADE)
 
-    valor = models.CharField(max_length=9, verbose_name='Valor Gasto (R$): ', blank=False, validators=[apenas_numeros])
+    valor = models.CharField(max_length=9, verbose_name='Valor Gasto (R$) ', blank=False, validators=[apenas_numeros])
     data = models.DateTimeField(blank=False)
     observacoes = models.TextField(max_length=500, blank=True, verbose_name='Observações')
     comprovante = ResizedImageField(size=[1280, None], upload_to='gastos_comprovantes/%Y/%m/', blank=True,

@@ -23,7 +23,7 @@ class UsuarioAdmin(admin.ModelAdmin):
         ('Informações', {"fields": (
             'first_name', 'last_name', 'telefone', 'RG', 'CPF', 'locat_slots', 'email', 'password', 'data_eventos_i',
             'itens_eventos', 'qtd_eventos', 'ordem_eventos', 'recibo_ultimo', 'recibo_preenchimento',
-            'tabela_ultima_data_ger', 'tabela_meses_qtd', 'tabela_imov_qtd',)}),
+            'tabela_ultima_data_ger', 'tabela_meses_qtd', 'tabela_imov_qtd', 'contrato_modelos', )}),
 
         ("Permissões", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
     )
@@ -73,7 +73,6 @@ class ContratoDocConfigsAdmin(admin.ModelAdmin):
 @admin.register(ContratoModelo)
 class ContratoModeloAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'autor', 'data_criacao',)
-    list_filter = ('likes', )
 
 
 @admin.register(Pagamento)

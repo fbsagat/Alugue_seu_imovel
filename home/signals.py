@@ -177,8 +177,6 @@ def contrato_update(sender, instance, created, **kwargs):
     # Pega os dados para tratamento:
     contrato = Contrato.objects.get(pk=instance.pk)
     imovel = Imovei.objects.get(pk=contrato.do_imovel.pk)
-    usuario = Usuario.objects.get(pk=contrato.do_locador.pk)
-    local = ''
 
     # Remove locador do imovel quando um contrato fica inativo e adiciona quando fica ativo:
     locatario = Locatario.objects.get(pk=contrato.do_locatario.pk)
