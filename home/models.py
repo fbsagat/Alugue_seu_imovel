@@ -2,18 +2,25 @@ import random, string, json
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
+from num2words import num2words
 
 from django.db.models.aggregates import Sum
-from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator, MinValueValidator, \
+    MaxValueValidator
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
+estados_civis = (
+    (0, 'Solteiro(a)'),
+    (1, 'Casado(a)'),
+    (2, 'Separado(a)'),
+    (3, 'Divorciado(a)'),
+    (4, 'Viuvo(a)'))
 
 
 def user_uuid():
@@ -30,6 +37,10 @@ class Usuario(AbstractUser):
     telefone = models.CharField(max_length=11, null=False, blank=True, unique=True, help_text='Digite apenas números',
                                 validators=[apenas_numeros])
     email = models.EmailField(unique=True)
+    nacionalidade = models.CharField(null=True, blank=True, max_length=40, default='Brasileiro(a)')
+    estadocivil = models.IntegerField(null=True, blank=True, verbose_name='Estado Civil', choices=estados_civis)
+    ocupacao = models.CharField(null=True, blank=True, max_length=85, verbose_name='Ocupação')
+    endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
 
     locat_slots = models.IntegerField(default=2)
@@ -60,13 +71,8 @@ class Usuario(AbstractUser):
         nome = self.nome_completo().split()
         return f'{nome[0]} {nome[len(nome) - 1]}'
 
-
-estados_civis = (
-    (0, 'Solteiro(a)'),
-    (1, 'Casado(a)'),
-    (2, 'Separado(a)'),
-    (3, 'Divorciado(a)'),
-    (4, 'Viuvo(a)'))
+    def f_cpf(self):
+        return cpf_format(self.CPF)
 
 
 class LocatariosManager(models.Manager):
@@ -249,7 +255,8 @@ class Contrato(models.Model):
     duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)',
                                   validators=[MaxValueValidator(18), MinValueValidator(1)])
     valor_mensal = models.CharField(max_length=9, verbose_name='Valor Mensal (R$) ', blank=False,
-                                    help_text='Digite apenas números', validators=[apenas_numeros])
+                                    help_text='Digite apenas números',
+                                    validators=[apenas_numeros, MinLengthValidator(3)])
     dia_vencimento = models.IntegerField(blank=False, validators=[MaxValueValidator(28), MinValueValidator(1)],
                                          verbose_name='Dia do vencimento', help_text='(1-28)')
     em_posse = models.BooleanField(default=False, null=False,
@@ -282,6 +289,13 @@ class Contrato(models.Model):
 
     def valor_format(self):
         return valor_format(self.valor_mensal)
+
+    def valor_por_extenso(self):
+        reais = self.valor_mensal[:-2]
+        centavos = self.valor_mensal[-2:]
+        centavos_format = f' e {num2words(int(centavos), lang="pt-br")} centavos'
+
+        return f'{num2words(int(reais), lang="pt-br").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
 
     def valor_do_contrato(self):
         return valor_format(str(int(self.valor_mensal) * int(self.duracao)))
@@ -321,6 +335,9 @@ class Contrato(models.Model):
             valor_tt += int(valor['valor_pago'])
         return valor_tt
 
+    def duracao_por_extenso(self):
+        return num2words(self.duracao, lang='pt-br')
+
 
 class ContratoModelo(models.Model):
     titulo = models.CharField(blank=False, max_length=100, verbose_name='', help_text='Titulo')
@@ -338,6 +355,7 @@ class ContratoDocConfig(models.Model):
 
     do_modelo = models.ForeignKey('ContratoModelo', null=True, blank=False, on_delete=models.SET_NULL,
                                   verbose_name='Modelo de contrato')
+
     # Adicionar futuramente configurações do contrato_doc aqui
 
     def __str__(self):

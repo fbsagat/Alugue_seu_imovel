@@ -1,5 +1,4 @@
 from django.contrib import admin
-from home.forms import Mascara, FormUsuario
 from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, DevMensagen, ImovGrupo, Parcela, \
     Tarefa, ContratoDocConfig, ContratoModelo
 from django.contrib.auth.admin import UserAdmin
@@ -67,7 +66,7 @@ class ContratosAdmin(admin.ModelAdmin):
 
 @admin.register(ContratoDocConfig)
 class ContratoDocConfigsAdmin(admin.ModelAdmin):
-    list_display = ('do_modelo', )
+    list_display = ('do_contrato', 'do_modelo', )
 
 
 @admin.register(ContratoModelo)

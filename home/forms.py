@@ -41,7 +41,8 @@ class FormCriarConta(UserCreationForm):
 class FormUsuario(forms.ModelForm):
     class Meta:
         model = Usuario
-        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF']
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF', 'nacionalidade',
+                  'estadocivil', 'ocupacao', 'endereco_completo']
 
 
 class FormEventos(forms.Form):
@@ -246,7 +247,6 @@ class FormContratoDocConfig(forms.ModelForm):
 
 
 class FormContratoModelo(forms.ModelForm):
-
     class Meta:
         model = ContratoModelo
         fields = '__all__'

@@ -63,9 +63,9 @@ urlpatterns = [
     path('excluiranotacao/<int:pk>', ExcluirAnotacao.as_view(), name='Excluir Anotação'),
 
     # ABA GERAR -------------------
-    path('recibos/<int:pk>', recibos, name='Recibos PDF'),
-    path('tabela/<int:pk>', tabela, name='Tabela PDF'),
-    path('contrato/<int:pk>', gerar_contrato, name='Contrato PDF'),
+    path('recibos_PDF/<int:pk>', recibos, name='Recibos PDF'),
+    path('tabela_PDF/<int:pk>', tabela, name='Tabela PDF'),
+    path('contrato_PDF/<int:pk>', gerar_contrato, name='Contrato PDF'),
 
     # Modelo de contrato:
     path('modelos/<int:pk>', Modelos.as_view(), name='Modelos'),

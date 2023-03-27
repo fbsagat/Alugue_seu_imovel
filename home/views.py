@@ -1,10 +1,10 @@
 import os
-from num2words import num2words
 from datetime import datetime, timedelta
 from os import path
 from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
+from num2words import num2words
 
 from django.core.files import File
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView, TemplateView
@@ -25,7 +25,7 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
-    FormContratoDoc, FormContratoDocConfig, FormContratoModelo
+    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
     ContratoDocConfig, ContratoModelo
@@ -536,11 +536,14 @@ def recibos(request, pk):
                             f'{contrato.do_imovel.cidade}, '
                             f'____________ ,____ de {data_ptbr(data.replace(day=contrato.dia_vencimento), "F Y")}')
                 elif usuario.recibo_preenchimento == '3':
+                    dia_venc = contrato.dia_vencimento
                     for x in range(0, contrato.duracao):
                         data = contrato.data_entrada + relativedelta(months=x)
                         data_preenchimento.append(
                             f'{contrato.do_imovel.cidade}, '
-                            f'{data_ptbr(data.replace(day=contrato.dia_vencimento), "l, d F Y")}')
+                            f'{data_ptbr(data.replace(day=dia_venc), "l, d")} de '
+                            f'{data_ptbr(data.replace(day=dia_venc), "F")} de '
+                            f'{data_ptbr(data.replace(day=dia_venc), "Y")}')
 
                 # Preparar dados para envio
                 dados = {'cod_contrato': f'{contrato.codigo}',
@@ -735,7 +738,7 @@ def gerar_contrato(request, pk):
     # Criando objetos para tratamentos
     usuario = Usuario.objects.get(pk=request.user.pk)
     contrato_ultimo = usuario.contrato_ultimo
-    contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato_ultimo)
+    contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato_ultimo).first()
     form = FormContratoDoc(initial={'contrato': contrato_ultimo})
     form2 = FormContratoDocConfig(initial={'do_contrato': contr_doc_configs})
     admins = Usuario.objects.filter(is_superuser=True).values_list('pk').first()
@@ -758,39 +761,103 @@ def gerar_contrato(request, pk):
                 # O contrato carregado inicialmente pelo campo do usuario(contrato_ultimo) é atualizado para o
                 # do form(mais atual)
                 contrato_ultimo = form.cleaned_data['contrato']
-                contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato_ultimo)
+                contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato_ultimo).first()
 
         # Se for um POST do segundo form
         elif 'do_modelo' in request.POST:
             form2 = FormContratoDocConfig(request.POST)
             if form2.is_valid():
-                # Se o form for válido cria uma instância do ContratoDocConfig para o contrato selecionado.
-                configs = form2.save(commit=False)
-                configs.do_modelo = form2.cleaned_data['do_modelo']
-                configs.do_contrato = contrato_ultimo
-                configs.save()
+                if contr_doc_configs:
+                    # Se o form for válido e houver configs para o contrato selecionado, atualiza a instância do
+                    # ContratoDocConfig deste contrato.
+                    configs = form2.save(commit=False)
+                    configs.pk = contr_doc_configs.pk
+                    configs.do_modelo = form2.cleaned_data['do_modelo']
+                    configs.do_contrato = contrato_ultimo
+                    configs.save(update_fields=['do_modelo', 'do_contrato'])
+
+                else:
+                    # Se o form for válido e não houver configs para o contrato selecionado, cria uma instância do
+                    # ContratoDocConfig para o contrato selecionado.
+                    configs = form2.save(commit=False)
+                    configs.do_modelo = form2.cleaned_data['do_modelo']
+                    configs.do_contrato = contrato_ultimo
+                    configs.save()
+                    return redirect(f'/contrato_PDF/{request.user.pk}')
+
+        elif request.POST.get("mod", ""):
+            form2 = FormContratoDocConfig(initial={'do_modelo': contr_doc_configs.do_modelo})
+            contr_doc_configs = None
 
     form.fields['contrato'].queryset = contratos
     context['form'] = form
 
     if contr_doc_configs:
-        # print('o contrato tem configurações')
+        imovel = contrato_ultimo.do_imovel
+        contrato = contrato_ultimo
+        locatario = contrato_ultimo.do_locatario
+        data = datetime.today()
         # Se o contrato tem configurações para o documento e todas estão presentes(principalmente o modelo)
+        # Verificar se os campos obrigatório estão validos(para não ocorrer erros)
         # Carregar o contrato e liberar o botão para modificar configurações
-        dados = []
+        dados = {'modelo': contr_doc_configs.do_modelo,
+                 'usuario_uuid': usuario.uuid,
+                 'usuario': usuario.username,
+
+                 'semana_extenso_hoje': f'{data_ptbr(data, "l, d")} de {data_ptbr(data, "F")}  de {data_ptbr(data, "Y")}',
+                 'data_hoje': str(data.strftime('%d/%m/%Y')),
+
+                 'locador_nome_completo': usuario.nome_completo(),
+                 'locador_nacionalidade': str(getattr(usuario, 'nacionalidade', 'None')),
+                 'locador_estado_civil': str(getattr(usuario, 'estado_civil', 'None')),
+                 'locador_ocupacao': str(getattr(usuario, 'ocupacao', 'None')),
+                 'locador_rg': str(getattr(usuario, 'RG', 'None')),
+                 'locador_cpf': usuario.f_cpf(),
+                 'locador_endereco_completo': str((getattr(usuario, 'endereco_completo', 'None'))),
+
+                 'contrato_data_entrada': str(contrato.data_entrada.strftime('%d/%m/%Y')),
+                 'contrato_data_saida': str(contrato.data_saida().strftime('%d/%m/%Y')),
+                 'contrato_codigo': contrato.codigo,
+                 'contrato_periodo': str(contrato.duracao),
+                 'contrato_periodo_por_extenso': contrato.duracao_por_extenso(),
+                 'contrato_parcela_valor': contrato.valor_format(),
+                 'contrato_parcela_valor_por_extenso': contrato.valor_por_extenso(),
+                 'contrato_valor': contrato.valor_por_extenso(),
+                 'contrato_anterior-codigo': '',
+                 'contrato_anterior-data_entrada': '',
+                 'contrato_anterior-data_saida': '',
+
+                 'imovel_rotulo': imovel.nome,
+                 'imovel_uc_energia': imovel.uc_energia,
+                 'imovel_uc_sanemameto': imovel.uc_agua,
+                 'imovel_endereco_completo': imovel.endereco_completo(),
+                 'imovel_cidade': imovel.cidade,
+
+                 'locatario_nome_completo': locatario.nome,
+                 'locatario_cpf': locatario.f_cpf(),
+                 'locatario_rg': locatario.RG,
+                 'locatario_nacionalidade': locatario.nacionalidade,
+                 'locatario_estado_civil': locatario.get_estadocivil_display(),
+                 'locatario_ocupacao': locatario.ocupacao,
+                 'locatario_celular_1': locatario.f_tel1(),
+                 'locatario_celular_2': locatario.f_tel1(),
+                 }
+
         gerar_contrato_pdf(dados=dados)
         # Link do contrato_doc
-        link = rf'/media/tabela_docs/tabela_{usuario.uuid}_{usuario}.pdf'
+        link = rf'/media/contrato_docs/contrato_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
         # Preparar o context
         context['contrato_doc'] = link
     else:
-        # print('o contrato não tem configurações')
-        # Carrega o formulario de configuração para criar uma instância para este contrato
-        context['form2'] = form2
-        context['contrato_ultimo'] = contrato_ultimo
+        if contrato_ultimo:
+            # Se o contrato não tem configurações, carrega o formulario de configuração para criar uma instância
+            # de configurações para este contrato
+            context['form2'] = form2
+            context['contrato_ultimo_nome'] = contrato_ultimo
 
     context['SITE_NAME'] = settings.SITE_NAME
     context['tem_contratos'] = True if contratos else False
+    context['contrato_ultimo'] = True if contrato_ultimo is not None else False
     return render(request, 'gerar_contrato.html', context)
 
 
@@ -1302,7 +1369,7 @@ class CriarConta(CreateView):
 class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     template_name = 'editar_perfil.html'
     model = Usuario
-    fields = ['username', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF']
+    form_class = FormUsuario
 
     def get_form(self, form_class=None):
         form = super(EditarPerfil, self).get_form(form_class)

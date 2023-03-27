@@ -29,7 +29,33 @@ Editar Perfil / {{ SITE_NAME }}
                             {{ form.first_name|as_crispy_field }}
                         </div>
                     </div>
-                    {{ form.last_name|as_crispy_field }}
+                    <div class="row">
+                        <div class="col">
+                            {{ form.last_name|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form.CPF|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form.RG|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form.nacionalidade|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form.estadocivil|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form.ocupacao|as_crispy_field }}
+                        </div>
+                        <div class="col">
+                            {{ form.endereco_completo|as_crispy_field }}
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col">
                             {{ form.email|as_crispy_field }}
@@ -38,14 +64,7 @@ Editar Perfil / {{ SITE_NAME }}
                             {{ form.telefone|as_crispy_field }}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            {{ form.RG|as_crispy_field }}
-                        </div>
-                        <div class="col">
-                            {{ form.CPF|as_crispy_field }}
-                        </div>
-                    </div>
+
                 </fieldset>
                 {% else %}
                 {{ form|crispy }}

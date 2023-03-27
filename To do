@@ -35,6 +35,7 @@ Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os
         com sistema de votação.
 arrumar os botões do gerar_contrato (não estão pequenos)
 Algun itens no urls.py não precisam enviar o pk, arrumar
+Adiconar possibilidade de criar um gasto geral, não exclusivo de algum imóvel.
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site

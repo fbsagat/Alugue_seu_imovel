@@ -11,6 +11,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
 from reportlab.lib.colors import HexColor
+from xhtml2pdf import pisa
 
 from Alugue_seu_imovel import settings
 
@@ -99,7 +100,7 @@ def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
         f'de {parcelas}), de um imóvel localizado no endereço: {dados["endereco"]}, declarando '
         f'portanto, plena, total e irrevogável quitação do mês referido a partir de então.'
         f' <BR/><BR/><i> Para maior clareza firmo o presente em:'
-        f'<BR/>{dados["data_preenchimento"][recibo_n-1]}</i><BR/><BR/><BR/>'
+        f'<BR/>{dados["data_preenchimento"][recibo_n - 1]}</i><BR/><BR/><BR/>'
         f'___________________________________________________________________________________'
         f'<BR/>{dados["nome_locador"]}',
         texto_estilo)
@@ -176,12 +177,12 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
         tam_calc = round((pag_alt / celula_quantidade_v) - (margem_vertical / celula_quantidade_v)) - 1
         celula_altura = tam_calc if tam_calc <= celula_altura_max else celula_altura_max
     celula_largura = round(pag_lar / celula_quantidade_h) - 1
-    media_alt_larg = round(((celula_altura+celula_largura)/2))
+    media_alt_larg = round(((celula_altura + celula_largura) / 2))
 
     # print('celula_altura: ', celula_altura, 'celula_largura: ', celula_largura, 'media: ', media_alt_larg)
 
     # Encaixe de texto
-    text_wrap_imo = espacamento_h = espac_h_sinal = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc =\
+    text_wrap_imo = espacamento_h = espac_h_sinal = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc = \
         leading = 0
 
     # Verticalmente (leading)
@@ -360,6 +361,45 @@ def gerar_tabela_pdf(dados):
 
 # 102: -----------------------------------------------
 def gerar_contrato_pdf(dados):
-    pass
     # print('gerar modelo em pdf e salvar em media/contrato_docs para ser carregado pela view')
+    modelo_corpo_pre = dados['modelo'].corpo
+    local = f'{settings.MEDIA_ROOT}contrato_docs/contrato_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
 
+    # Aplicar Variaveis \/
+    modelo_corpo_pos = modelo_corpo_pre \
+        .replace('[*[variavel: semana_extenso_hoje]*]', dados['semana_extenso_hoje']) \
+        .replace('[*[variavel: data_hoje]*]', dados['data_hoje']) \
+        .replace('[*[variavel: contrato_data_entrada]*]', dados['contrato_data_entrada']) \
+        .replace('[*[variavel: contrato_data_saida]*]', dados['contrato_data_saida']) \
+        .replace('[*[variavel: contrato_codigo]*]', dados['contrato_codigo'])\
+        .replace('[*[variavel: contrato_periodo]*]', dados['contrato_periodo'])\
+        .replace('[*[variavel: contrato_periodo_por_extenso]*]', dados['contrato_periodo_por_extenso'])\
+        .replace('[*[variavel: contrato_parcela_valor]*]', dados['contrato_parcela_valor'])\
+        .replace('[*[variavel: contrato_parcela_valor_por_extenso]*]', dados['contrato_parcela_valor_por_extenso'])\
+        .replace('[*[variavel: contrato_anterior-codigo]*]', dados['contrato_anterior-codigo'])\
+        .replace('[*[variavel: contrato_anterior-data_entrada]*]', dados['contrato_anterior-data_entrada'])\
+        .replace('[*[variavel: contrato_anterior-data_saida]*]', dados['contrato_anterior-data_saida'])\
+        .replace('[*[variavel: imovel_rotulo]*]', dados['imovel_rotulo'])\
+        .replace('[*[variavel: imovel_uc_energia]*]', dados['imovel_uc_energia'])\
+        .replace('[*[variavel: imovel_uc_sanemameto]*]', dados['imovel_uc_sanemameto']) \
+        .replace('[*[variavel: imovel_cidade]*]', dados['imovel_cidade']) \
+        .replace('[*[variavel: imovel_endereco_completo]*]', dados['imovel_endereco_completo']) \
+        .replace('[*[variavel: locador_nome_completo]*]', dados['locador_nome_completo']) \
+        .replace('[*[variavel: locador_nacionalidade]*]', dados['locador_nacionalidade']) \
+        .replace('[*[variavel: locador_estado_civil]*]', dados['locador_estado_civil']) \
+        .replace('[*[variavel: locador_ocupacao]*]', dados['locador_ocupacao']) \
+        .replace('[*[variavel: locador_rg]*]', dados['locador_rg']) \
+        .replace('[*[variavel: locador_cpf]*]', dados['locador_cpf']) \
+        .replace('[*[variavel: locador_endereco_completo]*]', dados['locador_endereco_completo']) \
+        .replace('[*[variavel: locatario_nome_completo]*]', dados['locatario_nome_completo']) \
+        .replace('[*[variavel: locatario_cpf]*]', dados['locatario_cpf'])\
+        .replace('[*[variavel: locatario_rg]*]', dados['locatario_rg'])\
+        .replace('[*[variavel: locatario_nacionalidade]*]', dados['locatario_nacionalidade'])\
+        .replace('[*[variavel: locatario_estado_civil]*]', dados['locatario_estado_civil'])\
+        .replace('[*[variavel: locatario_ocupacao]*]', dados['locatario_ocupacao'])\
+        .replace('[*[variavel: locatario_celular_1]*]', dados['locatario_celular_1'])\
+        .replace('[*[variavel: locatario_celular_2]*]', dados['locatario_celular_2'])
+
+    with open(local, "wb") as f:
+        pisa.CreatePDF(modelo_corpo_pos, dest=f)
+    f.close()
