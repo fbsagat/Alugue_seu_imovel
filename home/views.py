@@ -20,7 +20,7 @@ from django.db.models.aggregates import Count, Sum
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 
-from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf
+from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, modelo_variaveis
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
@@ -511,10 +511,10 @@ def recibos(request, pk):
                 # Tratamentos
                 reais = int(contrato.valor_mensal[:-2])
                 centavos = int(contrato.valor_mensal[-2:])
-                num_ptbr_reais = num2words(reais, lang='pt-br')
+                num_ptbr_reais = num2words(reais, lang='pt_BR')
                 completo = ''
                 if centavos > 0:
-                    num_ptbr_centavos = num2words(centavos, lang='pt-br')
+                    num_ptbr_centavos = num2words(centavos, lang='pt_BR')
                     completo = f' E {num_ptbr_centavos} centavos'
                 codigos = list(
                     Parcela.objects.filter(do_contrato=contrato.pk).values("codigo").values_list('codigo', flat=True))
@@ -775,7 +775,6 @@ def gerar_contrato(request, pk):
                     configs.do_modelo = form2.cleaned_data['do_modelo']
                     configs.do_contrato = contrato_ultimo
                     configs.save(update_fields=['do_modelo', 'do_contrato'])
-
                 else:
                     # Se o form for válido e não houver configs para o contrato selecionado, cria uma instância do
                     # ContratoDocConfig para o contrato selecionado.
@@ -783,7 +782,7 @@ def gerar_contrato(request, pk):
                     configs.do_modelo = form2.cleaned_data['do_modelo']
                     configs.do_contrato = contrato_ultimo
                     configs.save()
-                    return redirect(f'/contrato_PDF/{request.user.pk}')
+                return redirect(f'/contrato_PDF/{request.user.pk}')
 
         elif request.POST.get("mod", ""):
             form2 = FormContratoDocConfig(initial={'do_modelo': contr_doc_configs.do_modelo})
@@ -792,7 +791,7 @@ def gerar_contrato(request, pk):
     form.fields['contrato'].queryset = contratos
     context['form'] = form
 
-    if contr_doc_configs:
+    if contr_doc_configs and contr_doc_configs.do_modelo:
         imovel = contrato_ultimo.do_imovel
         contrato = contrato_ultimo
         locatario = contrato_ultimo.do_locatario
@@ -800,20 +799,27 @@ def gerar_contrato(request, pk):
         # Se o contrato tem configurações para o documento e todas estão presentes(principalmente o modelo)
         # Verificar se os campos obrigatório estão validos(para não ocorrer erros)
         # Carregar o contrato e liberar o botão para modificar configurações
+        mensagem = '[ESTE DADO NÃO FOI PREENCHIDO]'
         dados = {'modelo': contr_doc_configs.do_modelo,
                  'usuario_uuid': usuario.uuid,
                  'usuario': usuario.username,
 
+                 # A partir deste ponto, variaveis do contrato \/
+                 # Regra:
+                 # A variavel no documento: [!variavel: locador_pagamento_2]
+                 # logo o nome deve ser: locador_pagamento_2
                  'semana_extenso_hoje': f'{data_ptbr(data, "l, d")} de {data_ptbr(data, "F")}  de {data_ptbr(data, "Y")}',
                  'data_hoje': str(data.strftime('%d/%m/%Y')),
 
                  'locador_nome_completo': usuario.nome_completo(),
-                 'locador_nacionalidade': str(getattr(usuario, 'nacionalidade', 'None')),
-                 'locador_estado_civil': str(getattr(usuario, 'estado_civil', 'None')),
-                 'locador_ocupacao': str(getattr(usuario, 'ocupacao', 'None')),
-                 'locador_rg': str(getattr(usuario, 'RG', 'None')),
+                 'locador_nacionalidade': str(getattr(usuario, 'nacionalidade', f'{mensagem}')),
+                 'locador_estado_civil': str(usuario.get_estadocivil_display()),
+                 'locador_ocupacao': str(getattr(usuario, 'ocupacao', f'{mensagem}')),
+                 'locador_rg': str(getattr(usuario, 'RG', f'{mensagem}')),
                  'locador_cpf': usuario.f_cpf(),
-                 'locador_endereco_completo': str((getattr(usuario, 'endereco_completo', 'None'))),
+                 'locador_endereco_completo': str((getattr(usuario, 'endereco_completo', f'{mensagem}'))),
+                 'locador_pagamento_1': str((getattr(usuario, 'dados_pagamento1', f'{mensagem}'))),
+                 'locador_pagamento_2': str((getattr(usuario, 'dados_pagamento2', f'{mensagem}'))),
 
                  'contrato_data_entrada': str(contrato.data_entrada.strftime('%d/%m/%Y')),
                  'contrato_data_saida': str(contrato.data_saida().strftime('%d/%m/%Y')),
@@ -823,6 +829,8 @@ def gerar_contrato(request, pk):
                  'contrato_parcela_valor': contrato.valor_format(),
                  'contrato_parcela_valor_por_extenso': contrato.valor_por_extenso(),
                  'contrato_valor': contrato.valor_por_extenso(),
+                 'contrato_vencimento': str(contrato.dia_vencimento),
+                 'contrato_vencimento_por_extenso': contrato.dia_vencimento_por_extenso(),
                  'contrato_anterior-codigo': '',
                  'contrato_anterior-data_entrada': '',
                  'contrato_anterior-data_saida': '',
@@ -871,12 +879,20 @@ def criar_modelo(request):
         if form.is_valid():
             modelo = form.save(commit=False)
             modelo.autor = request.user
+
+            variaveis = []
+            for i, j in modelo_variaveis.items():
+                if j[0] in modelo.corpo:
+                    variaveis.append(i)
+            variaveis = list(dict.fromkeys(variaveis))
+            modelo.variaveis = variaveis
             modelo.save()
 
             return redirect(f'modelos/{request.user.pk}')
 
     context['form'] = form
     context['SITE_NAME'] = settings.SITE_NAME
+    context['variaveis'] = modelo_variaveis
     return render(request, 'criar_modelo.html', context)
 
 
@@ -884,7 +900,7 @@ class Modelos(LoginRequiredMixin, ListView):
     template_name = 'exibir_modelos.html'
     model = ContratoModelo
     context_object_name = 'modelos'
-    paginate_by = 9
+    paginate_by = 3
 
     def get_queryset(self):
         admins = Usuario.objects.filter(is_superuser=True).values_list('pk').first()
@@ -913,7 +929,21 @@ class EditarModelo(LoginRequiredMixin, UpdateView):
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(EditarModelo, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
+        context['variaveis'] = modelo_variaveis
         return context
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        variaveis = []
+        for i, j in modelo_variaveis.items():
+            if j[0] in self.object.corpo:
+                variaveis.append(i)
+        variaveis = list(dict.fromkeys(variaveis))
+        self.object.variaveis = variaveis
+        self.object.save(update_fields=['variaveis'])
+
+        return super().form_valid(form)
 
 
 class ExcluirModelo(LoginRequiredMixin, DeleteView):
@@ -1378,17 +1408,17 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         form.fields['CPF'].required = True
         return form
 
-    def get_success_message(self, cleaned_data):
-        success_message = 'Perfil editado com sucesso!'
-        return success_message
-
-    def get_object(self):
-        return self.request.user
-
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(EditarPerfil, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_success_message(self, cleaned_data):
+        success_message = 'Perfil editado com sucesso!'
+        return success_message
 
     def get_success_url(self):
         return reverse("home:DashBoard", kwargs={"pk": self.request.user.pk})
@@ -1400,7 +1430,7 @@ class ApagarConta(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_message = 'Conta apagada'
     success_url = reverse_lazy('home:home')
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         return self.request.user
 
     def get_context_data(self, *, object_list=True, **kwargs):

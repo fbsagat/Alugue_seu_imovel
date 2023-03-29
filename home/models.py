@@ -13,6 +13,7 @@ from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
+from home.funcoes_proprias import modelo_variaveis
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 estados_civis = (
@@ -41,6 +42,11 @@ class Usuario(AbstractUser):
     estadocivil = models.IntegerField(null=True, blank=True, verbose_name='Estado Civil', choices=estados_civis)
     ocupacao = models.CharField(null=True, blank=True, max_length=85, verbose_name='Ocupação')
     endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
+    dados_pagamento1 = models.CharField(null=True, blank=True, max_length=90,
+                                        verbose_name='Informações de pagamentos 1',
+                                        help_text='Sua conta PIX ou dado bancário ou carteira crypto, etc...')
+    dados_pagamento2 = models.CharField(null=True, blank=True, max_length=90,
+                                        verbose_name='Informações de pagamentos 2')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
 
     locat_slots = models.IntegerField(default=2)
@@ -293,9 +299,9 @@ class Contrato(models.Model):
     def valor_por_extenso(self):
         reais = self.valor_mensal[:-2]
         centavos = self.valor_mensal[-2:]
-        centavos_format = f' e {num2words(int(centavos), lang="pt-br")} centavos'
+        centavos_format = f' e {num2words(int(centavos), lang="pt_BR")} centavos'
 
-        return f'{num2words(int(reais), lang="pt-br").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
+        return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
 
     def valor_do_contrato(self):
         return valor_format(str(int(self.valor_mensal) * int(self.duracao)))
@@ -336,7 +342,10 @@ class Contrato(models.Model):
         return valor_tt
 
     def duracao_por_extenso(self):
-        return num2words(self.duracao, lang='pt-br')
+        return num2words(self.duracao, lang='pt_BR')
+
+    def dia_vencimento_por_extenso(self):
+        return num2words(self.dia_vencimento, lang='pt_BR')
 
 
 class ContratoModelo(models.Model):
@@ -345,9 +354,17 @@ class ContratoModelo(models.Model):
                               on_delete=models.SET_NULL)
     corpo = RichTextField(null=True, blank=True, verbose_name='')
     data_criacao = models.DateTimeField(auto_now_add=True)
+    variaveis = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.titulo} ({self.autor})'
+
+    def display_variaveis(self):
+        variaveis = []
+        for variavel in list(self.variaveis):
+            if variavel in modelo_variaveis:
+                variaveis.append([modelo_variaveis[variavel][0], modelo_variaveis[variavel][1]])
+        return variaveis
 
 
 class ContratoDocConfig(models.Model):

@@ -20,9 +20,10 @@ class UsuarioAdmin(admin.ModelAdmin):
     search_fields = ('first_name', 'email',)
     fieldsets = (
         ('Informações', {"fields": (
-            'first_name', 'last_name', 'telefone', 'RG', 'CPF', 'locat_slots', 'email', 'password', 'data_eventos_i',
-            'itens_eventos', 'qtd_eventos', 'ordem_eventos', 'recibo_ultimo', 'recibo_preenchimento',
-            'tabela_ultima_data_ger', 'tabela_meses_qtd', 'tabela_imov_qtd', 'contrato_modelos', )}),
+            'first_name', 'last_name', 'telefone', 'RG', 'CPF', 'locat_slots', 'email', 'nacionalidade', 'estadocivil',
+            'ocupacao', 'endereco_completo', 'password', 'data_eventos_i', 'itens_eventos', 'qtd_eventos',
+            'ordem_eventos', 'recibo_ultimo', 'recibo_preenchimento', 'tabela_ultima_data_ger', 'tabela_meses_qtd',
+            'tabela_imov_qtd',)}),
 
         ("Permissões", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
     )
@@ -66,7 +67,7 @@ class ContratosAdmin(admin.ModelAdmin):
 
 @admin.register(ContratoDocConfig)
 class ContratoDocConfigsAdmin(admin.ModelAdmin):
-    list_display = ('do_contrato', 'do_modelo', )
+    list_display = ('do_contrato', 'do_modelo',)
 
 
 @admin.register(ContratoModelo)

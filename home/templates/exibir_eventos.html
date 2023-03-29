@@ -12,7 +12,7 @@ Eventos / {{ SITE_NAME }}
 
 {% block content %}
 
-<container class="container-xxl pt-1 text-center text-justify">
+<div class="container-xxl pt-1 text-center text-justify">
 
     <form method="POST">
         {% csrf_token %}
@@ -52,10 +52,11 @@ Eventos / {{ SITE_NAME }}
     <br>
 
     {% if retornou_algo %}
+
     {% if pagamentos %}
     <p class="text-start fw-bold">Pagamentos:</p>
 
-    <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+    <table class="table align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
         <thead>
         <tr>
             <th scope="col" style="cursor:default;"></th>
@@ -64,7 +65,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">Data do pagam.</th>
             <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
             <th scope="col" style="cursor:default;">Recibo</th>
-            <th scope="col" style="cursor:default;">Excluir</th>
         </tr>
         </thead>
         <tbody>
@@ -85,9 +85,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col"><a class="link-primary" href="{% url 'home:Recibo Entregue' pagamento.pk %}"
                                title="Não entregue ao locatário">️✖️</a></th>
             {% endif %}
-            <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Pagamento' pagamento.pk %}"
-                               title="Excluir">❌</a>
-            </th>
         </tr>
         {% endfor %}
         <tr>
@@ -112,8 +109,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">Data do Envento</th>
             <th scope="col" style="cursor:default;">Observações</th>
             <th scope="col" style="cursor:default;">Docs</th>
-            <th scope="col" style="cursor:default;">Editar</th>
-            <th scope="col" style="cursor:default;">Excluir</th>
         </tr>
         </thead>
 
@@ -135,10 +130,6 @@ Eventos / {{ SITE_NAME }}
             {% else %}
             <th scope="col" style="cursor:default;" title="Sem registro">✖️</th>
             {% endif %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Editar Gasto' gasto.pk %}"
-                               title="Editar">✒️</a></th>
-            <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Gasto' gasto.pk %}"
-                               title="Excluir">❌</a></th>
         </tr>
         {% endfor %}
         <tr>
@@ -153,52 +144,40 @@ Eventos / {{ SITE_NAME }}
 
     {% if pagamentos and gastos %}
 
-    <table class="table align-middle table-sm table-hover table-bordered border-success table-striped table-dark">
-        <thead>
-        <tr>
-            <th>Pagamentos menos Gastos</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th><p class="text-success fw-bold">{{ pag_m_gast }}</p></th>
-        </tr>
-        </tbody>
-    </table>
+    <div class="card bg-black bg-opacity-75">
+        <p class="fs-5 mb-1">Pagamentos menos Gastos: <span class="badge bg-secondary">{{ pag_m_gast }}</span></p>
+    </div>
+    <br>
+
     {% endif %}
 
     {% if locatarios %}
     <p class="text-start fw-bold">Locatários:</p>
 
-    <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+    <table class="table align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
         <thead>
         <tr>
             <th scope="col" style="cursor:default;"></th>
             <th scope="col" style="cursor:default;">Nome</th>
             <th scope="col" style="cursor:default;">RG</th>
             <th scope="col" style="cursor:default;">CPF</th>
-            <th scope="col" style="cursor:default;">Ocupação</th>
             <th scope="col" style="cursor:default;">Telefone 1</th>
             <th scope="col" style="cursor:default;">Telefone 2</th>
             <th scope="col" style="cursor:default;">Email</th>
-            <th scope="col" style="cursor:default;">Nacionalidade</th>
-            <th scope="col" style="cursor:default;">Estado Civil</th>
+            <th scope="col" style="cursor:default;" title="Nacionalidade">Nacion.</th>
+            <th scope="col" style="cursor:default;" title="Estado Civil">Estado C.</th>
             <th scope="col" style="cursor:default;" title="Documentos">Docs</th>
-            <th scope="col" style="cursor:default;">Editar</th>
-            <th scope="col" style="cursor:default;">Excluir</th>
         </tr>
         </thead>
-        <tbody>
 
+        <tbody>
         {% for locatario in locatarios %}
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
-            <th scope="col" style="cursor:default;">{{ locatario.nome }}</th>
+            <th scope="col" style="cursor:default;" title="{{ locatario.nome }}">{{ locatario.primeiro_ultimo_nome }}
+            </th>
             <th scope="col" style="cursor:default;">{{ locatario.RG }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_cpf }}</th>
-            <th scope="col" style="cursor:default;" title="{{ locatario.ocupacao }}">
-                {{ locatario.ocupacao|truncatechars:45 }}
-            </th>
             <th scope="col" style="cursor:default;">{{ locatario.f_tel1 }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_tel2 }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.email }}</th>
@@ -212,14 +191,8 @@ Eventos / {{ SITE_NAME }}
             {% else %}
             <th scope="col" style="cursor:default;" title="Sem registro">✖️</th>
             {% endif %}
-
-            <th scope="col"><a class="link-primary" href="{% url 'home:Editar Locatario' locatario.pk %}"
-                               title="Editar">✒️</a></th>
-            <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Locatario' locatario.pk %}"
-                               title="Excluir">❌</a></th>
-
-            {% endfor %}
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 
@@ -241,8 +214,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;" title="Dia de vencimento">Venc. d</th>
             <th scope="col" style="cursor:default;" title="Minha Via em mãos Ativado/Desativado">M. via</th>
             <th scope="col" style="cursor:default;" title="Contrato Ativado/Rescindido">Ativado</th>
-            <th scope="col" style="cursor:default;" title="Editar Contrato">Editar</th>
-            <th scope="col" style="cursor:default;" title="Excluir Contrato">Excluir</th>
         </tr>
         </thead>
         <tbody>
@@ -261,35 +232,20 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">{{ contrato.dia_vencimento }}</th>
 
             {% if contrato.em_posse %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
-                               title="Em mãos, clique para designar não recebido">✅️</a></th>
+            <th scope="col"><a style="cursor:default;" class="link-primary">✅️</a></th>
             {% else %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
-                               title="Não recebido, clique para designar recebido">✖️</a></th>
+            <th scope="col"><a style="cursor:default;" class="link-primary">✖️</a></th>
             {% endif %}
 
             {% if contrato.vencido %}
             <th scope="col" style="cursor:default;"><a class="link-primary" title="Contrato Vencido">️✖️</a></th>
             {% else %}
             {% if contrato.rescindido %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Rescindir Contrato' contrato.pk %}"
-                               title="Rescindido, clique para ativar">️✖️</a></th>
+            <th scope="col"><a style="cursor:default;" class="link-primary">️✖️</a></th>
             {% else %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Rescindir Contrato' contrato.pk %}"
-                               title="Ativado, clique para rescindir">✅</a></th>
+            <th scope="col"><a style="cursor:default;" class="link-primary">✅</a></th>
             {% endif %}
             {% endif %}
-
-            {% if contrato.em_posse %}
-            <th scope="col" style="cursor:default;" title="Edição bloqueada">🔒</th>
-            <th scope="col" style="cursor:default;" title="Exclusão bloqueada">🔒</th>
-            {% else %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Editar Contrato' contrato.pk %}"
-                               title="Editar">✒️</a></th>
-            <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Contrato' contrato.pk %}"
-                               title="Excluir">❌</a></th>
-            {% endif %}
-
             {% endfor %}
         </tr>
         </tbody>
@@ -314,8 +270,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">Endereço</th>
             <th scope="col" style="cursor:default;">UC Energia</th>
             <th scope="col" style="cursor:default;">UC Saneamento</th>
-            <th scope="col" style="cursor:default;">Editar</th>
-            <th scope="col" style="cursor:default;">Excluir</th>
         </tr>
         </thead>
         <tbody>
@@ -334,12 +288,6 @@ Eventos / {{ SITE_NAME }}
             </th>
             <th scope="col" style="cursor:default;">{{ imovel.uc_energia }}</th>
             <th scope="col" style="cursor:default;">{{ imovel.uc_agua }}</th>
-            <th scope="col"><a href="{% url 'home:Editar Imóvel' imovel.pk %}" class="link-primary"
-                               title="Editar">✒️</a>
-            </th>
-            <th scope="col"><a href="{% url 'home:Excluir Imóvel' imovel.pk %}" class="link-danger"
-                               title="Excluir">❌</a>
-            </th>
         </tr>
         {% endfor %}
 
@@ -359,8 +307,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">Titulo</th>
             <th scope="col" style="cursor:default;">Data</th>
             <th scope="col" style="cursor:default;">Anotações</th>
-            <th scope="col" style="cursor:default;">Editar</th>
-            <th scope="col" style="cursor:default;">Excluir</th>
         </tr>
         </thead>
 
@@ -372,10 +318,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">{{ anotacao.titulo }}</th>
             <th scope="col" style="cursor:default;">{{ anotacao.data_registro|date:"d/m/Y" }}</th>
             <th scope="col" style="cursor:default;">{{ anotacao.texto }}</th>
-            <th scope="col"><a class="link-primary" href="{% url 'home:Editar Anotação' anotacao.pk %}"
-                               title="Editar">✒️</a></th>
-            <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Anotação' anotacao.pk %}"
-                               title="Excluir">❌</a></th>
             {% endfor %}
         </tr>
         </tbody>
@@ -387,6 +329,6 @@ Eventos / {{ SITE_NAME }}
     {% include 'faca_pesquisa.html' %}
     {% endif %}
 
-</container>
+</div>
 
 {% endblock %}

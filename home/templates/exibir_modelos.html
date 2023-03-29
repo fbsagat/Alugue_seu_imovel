@@ -55,7 +55,27 @@ Itens Ativos / {{ SITE_NAME }}
                         </p>
                         {% endif %}
                     </div>
+                    <div class="card-footer">
+                        {% if modelo.display_variaveis %}
+                        <small>Variáveis neste modelo:</small>
+                        <div class="row row-cols-md-1 g-1">
+                            {% for variavel in modelo.display_variaveis %}
+                            <div class="col">
+                                <div class="card bg-black border-secondary" style="cursor:default;" title="{{ variavel.1 }}">
+                                    <div class="card-head align-items-center d-flex justify-content-between">
+                                        <h1 class="flex-grow-1" value="">{{ variavel.0 }}</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <small>Variáveis neste modelo: Nenhuma</small>
+                        {% endif %}
+
+                    </div>
                 </div>
+
             </div>
             {% endfor %}
 

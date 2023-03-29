@@ -11,28 +11,54 @@ Editar Modelo / {{ SITE_NAME }}
 {% endblock %}
 
 {% block content %}
+<div class="container-fluid pt-1 text-center text-justify">
+    <div class="container bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
+        <div class="container flex justify-center items-center">
 
-<container class="flex justify-center items-center">
+            <div class="row flex items-center">
 
-    <container class="bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
-        <div class="text-gray-100 text-center flex items-center flex-col">
-            <p class="fs-6">Editar Modelo: {{ object }}</p>
-            <form action="{% url 'home:Editar Modelo' object.pk %}" method="POST">
-                {% csrf_token %}
-                {{ form.media }}
-                {{ form|crispy }}
-                <div class="justify-center items-center">
-                    <button class="mb-1 btn btn-sm bg-blue-600 text-white rounded-md" type="button"
-                            onClick="history.go(-1)">Voltar
-                    </button>
-                    <button class="mb-1 btn btn-sm bg-blue-600 text-white rounded-md" type="submit">Salvar Modelo
-                    </button>
+                <div class="col">
+
+                    <div accesskey="q" title="Tecla de atalho: Alt + Q" style="cursor:pointer;"
+                         class="position-relative badge bg-secondary text-wrap" data-bs-toggle="offcanvas"
+                         data-bs-target="#offcanvasVariaveis" aria-controls="offcanvasScrolling">
+                        <ion-icon size="large" name="alert-outline"></ion-icon>
+                        <small>Variáveis</small>
+                    </div>
+
                 </div>
-            </form>
+
+                <div class="col">
+                    <div class="text-gray-100 text-center flex items-center flex-col">
+                        <p class="fs-6">Editar Modelo: {{ object }}</p>
+                        <form action="{% url 'home:Editar Modelo' object.pk %}" method="POST">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            {{ form|crispy }}
+                            <div class="justify-center items-center">
+                                <button accesskey="s" title="Tecla de atalho: Alt + S" class="mb-1 btn btn-sm bg-blue-600 text-white rounded-md"
+                                        type="submit">Salvar
+                                    Modelo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col">
+
+                    <div accesskey="q" title="Tecla de atalho: Alt + Q" style="cursor:pointer;"
+                         class="position-relative badge bg-secondary text-wrap" data-bs-toggle="offcanvas"
+                         data-bs-target="#offcanvasVariaveis" aria-controls="offcanvasScrolling">
+                        <ion-icon size="large" name="alert-outline"></ion-icon>
+                        <small>Variáveis</small>
+                    </div>
+
+                </div>
+            </div>
         </div>
+    </div>
+</div>
 
-    </container>
-
-</container>
-
+{% include 'offcanvas_variaveis.html' %}
 {% endblock %}

@@ -28,13 +28,16 @@ Editar Perfil / {{ SITE_NAME }}
                         <div class="col">
                             {{ form.first_name|as_crispy_field }}
                         </div>
+                        <div class="col">
+                            {{ form.CPF|as_crispy_field }}
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col">
                             {{ form.last_name|as_crispy_field }}
                         </div>
                         <div class="col">
-                            {{ form.CPF|as_crispy_field }}
+                            {{ form.email|as_crispy_field }}
                         </div>
                     </div>
                     <div class="row">
@@ -47,6 +50,9 @@ Editar Perfil / {{ SITE_NAME }}
                         <div class="col">
                             {{ form.estadocivil|as_crispy_field }}
                         </div>
+                        <div class="col">
+                            {{ form.telefone|as_crispy_field }}
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col">
@@ -57,11 +63,11 @@ Editar Perfil / {{ SITE_NAME }}
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            {{ form.email|as_crispy_field }}
+                        <div class="row">
+                            {{ form.dados_pagamento1|as_crispy_field }}
                         </div>
-                        <div class="col">
-                            {{ form.telefone|as_crispy_field }}
+                        <div class="row">
+                            {{ form.dados_pagamento2|as_crispy_field }}
                         </div>
                     </div>
 

@@ -10,7 +10,7 @@ from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
 from django.dispatch import receiver
 
-from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe
+from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, ContratoModelo
 
 
 def gerenciar_parcelas(instance_contrato):
@@ -128,7 +128,8 @@ def usuario_save(sender, instance, **kwargs):
         pass
     else:
         # Apaga todos os recibos em pdf do usuario(para que novos possam ser criados) quando se modifica informações
-        # desta model contidas neles
+        # desta model contidas neles (RG, CPF, First Name, Last Name)
+        # Também apaga quando o usuario troca o preenchimento do campo data
         ante = Usuario.objects.get(pk=instance.pk)
 
         try:
@@ -267,4 +268,3 @@ def anotacao_save(sender, instance, **kwargs):
             tarefa.texto = mensagem
             tarefa.dados = {'afazer_concluida': 1}
             tarefa.save()
-

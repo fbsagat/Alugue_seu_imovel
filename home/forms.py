@@ -5,11 +5,10 @@ from Alugue_seu_imovel import settings
 from home.funcoes_proprias import valor_format
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
-from ckeditor.widgets import CKEditorWidget
 
 from home.models import Usuario, DevMensagen
 from home.models import Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo, ContratoDocConfig, \
@@ -38,11 +37,16 @@ class FormCriarConta(UserCreationForm):
         self.fields['telefone'].widget.attrs['class'] = 'mask-telefone1'
 
 
-class FormUsuario(forms.ModelForm):
+class FormUsuario(UserChangeForm):
     class Meta:
         model = Usuario
         fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF', 'nacionalidade',
-                  'estadocivil', 'ocupacao', 'endereco_completo']
+                  'estadocivil', 'ocupacao', 'endereco_completo', 'dados_pagamento1', 'dados_pagamento2']
+
+    def __init__(self, *args, **kwargs):
+        super(FormUsuario, self).__init__(*args, **kwargs)
+        self.fields['dados_pagamento1'].widget.attrs['class'] = 'form-control-sm'
+        self.fields['dados_pagamento2'].widget.attrs['class'] = 'form-control-sm'
 
 
 class FormEventos(forms.Form):
@@ -250,7 +254,11 @@ class FormContratoModelo(forms.ModelForm):
     class Meta:
         model = ContratoModelo
         fields = '__all__'
-        exclude = ['autor', 'data_criacao', 'likes']
+        exclude = ['autor', 'data_criacao', 'variaveis']
+
+    def __init__(self, *args, **kwargs):
+        super(FormContratoModelo, self).__init__(*args, **kwargs)
+        self.fields['titulo'].widget.attrs.update({'class': 'text-center'})
 
 
 class FormimovelGrupo(forms.ModelForm):

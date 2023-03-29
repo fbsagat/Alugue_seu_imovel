@@ -183,18 +183,21 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
 
     # Encaixe de texto
     text_wrap_imo = espacamento_h = espac_h_sinal = espacamento_v = text_tam_imo = text_wrap_parc = text_tam_parc = \
-        leading = 0
+        leading = char_space = 0
 
     # Verticalmente (leading)
     if celula_altura <= 61:  # Célula pequena
         leading = 9
         espacamento_v = 12
+        max_linhas = 4
     elif celula_altura <= 76:  # Célula média
         leading = 8.5
         espacamento_v = 12
+        max_linhas = 5
     elif celula_altura <= 92:  # Célula grande
         leading = 12
         espacamento_v = 13
+        max_linhas = 6
 
     # Horizontalmente  (wrap)
     if celula_largura <= 104:  # Célula pequena
@@ -204,13 +207,13 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
         espac_h_sinal = 9
         char_space = 0
     elif celula_largura <= 135:  # Célula média
-        text_wrap_imo = 20
+        text_wrap_imo = 19
         text_wrap_parc = 32
         espacamento_h = 2
         espac_h_sinal = 9
         char_space = 0.1
     elif celula_largura <= 167:  # Célula grande
-        text_wrap_imo = 22
+        text_wrap_imo = 19
         text_wrap_parc = 33
         espacamento_h = 3
         espac_h_sinal = 12
@@ -221,11 +224,11 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
         text_tam_imo = 11
         text_tam_parc = 8
     elif media_alt_larg <= 106:  # Célula média
-        text_tam_imo = 12
+        text_tam_imo = 11
         text_tam_parc = 8
     elif media_alt_larg <= 130:  # Célula grande
-        text_tam_imo = 15
-        text_tam_parc = 12
+        text_tam_imo = 12
+        text_tam_parc = 11
 
     # Calculos para organização
     tam_tt_h = celula_largura * celula_quantidade_h
@@ -290,8 +293,9 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                                            pag_alt - inicia_em_v - x - espacamento_v)
                 textobject.setFillColor(colors.black)
                 textobject.setFont('Times-Roman', text_tam_imo)
-                for line in wraped_text.splitlines(False):
-                    textobject.textLine(line.rstrip())
+                for n, line in enumerate(wraped_text.splitlines(False)):
+                    if n < max_linhas:
+                        textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
 
             if vertical >= 0 and horizontal > 0:
@@ -360,46 +364,61 @@ def gerar_tabela_pdf(dados):
 
 
 # 102: -----------------------------------------------
+modelo_variaveis = {
+    0: ['[!variavel: semana_extenso_hoje]', 'Dia da semana hoje escrito por extenso'],
+    1: ['[!variavel: data_hoje]', 'Data de hoje'],
+
+    2: ['[!variavel: locador_nome_completo]', 'Nome completo do locador do imóvel deste contrato'],
+    3: ['[!variavel: locador_nacionalidade]', 'Nacionalidade do locador do imóvel deste contrato'],
+    4: ['[!variavel: locador_estado_civil]', 'Estado civil do locador do imóvel deste contrato'],
+    5: ['[!variavel: locador_ocupacao]', 'Ocupação trabalhista do locador do imóvel deste contrato'],
+    6: ['[!variavel: locador_rg]', 'Documento número de RG do locador do imóvel deste contrato'],
+    7: ['[!variavel: locador_cpf]', 'Documento número de CPF do locador do imóvel deste contrato'],
+    8: ['[!variavel: locador_endereco_completo]', 'Endereço completo do locador do imóvel deste contrato'],
+    32: ['[!variavel: locador_pagamento_1]', 'Informações de pagamento 1 do locador do imóvel deste contrato'],
+    33: ['[!variavel: locador_pagamento_2]', 'Informações de pagamento 2 do locador do imóvel deste contrato'],
+
+    9: ['[!variavel: imovel_rotulo]', 'Rótulo do imóvel deste contrato'],
+    10: ['[!variavel: imovel_uc_energia]', 'Unidade consumidora de energia do imóvel deste contrato'],
+    11: ['[!variavel: imovel_uc_sanemameto]', 'Unidade consumidora de saneamento do imóvel deste contrato'],
+    12: ['[!variavel: imovel_cidade]', 'Cidade onde se localiza o imóvel deste contrato'],
+    13: ['[!variavel: imovel_endereco_completo]', 'Endereço completo do imóvel deste contrato'],
+
+    14: ['[!variavel: locatario_nome_completo]', 'Nome completo do locatário do imóvel deste contrato'],
+    15: ['[!variavel: locatario_cpf]', 'Documento número de CPF do locatário do imóvel deste contrato'],
+    16: ['[!variavel: locatario_rg]', 'Documento número de RG do locatário do imóvel deste contrato'],
+    17: ['[!variavel: locatario_nacionalidade]', 'Nacionalidade do locatário do imóvel deste contrato'],
+    18: ['[!variavel: locatario_estado_civil]', 'Estado civil do locatário do imóvel deste contrato'],
+    19: ['[!variavel: locatario_ocupacao]', 'Ocupação trabalhista do locatário do imóvel deste contrato'],
+    20: ['[!variavel: locatario_celular_1]', 'Número de celular 1 do locatário do imóvel deste contrato'],
+    21: ['[!variavel: locatario_celular_2]', 'Número de celular 2 do locatário do imóvel deste contrato'],
+
+    22: ['[!variavel: contrato_data_entrada]', 'Data de entrada do locatário no imóvel'],
+    23: ['[!variavel: contrato_data_saida]', 'Data de saída do locatário no imóvel'],
+    24: ['[!variavel: contrato_codigo]', 'Código do contrato'],
+    25: ['[!variavel: contrato_periodo]', 'Período, em meses, de validade do contrato'],
+    26: ['[!variavel: contrato_periodo_por_extenso]', 'Período, em meses, de validade do contrato, por extenso'],
+    27: ['[!variavel: contrato_parcela_valor]', 'Valor da mensalidade do aluguel'],
+    28: ['[!variavel: contrato_parcela_valor_por_extenso]', 'Valor da mensalidade do aluguel, por extenso'],
+    34: ['[!variavel: contrato_vencimento]', 'Dia de vencimento do pagamento da mensalidade do aluguel'],
+    35: ['[!variavel: contrato_vencimento_por_extenso]',
+         'Dia de vencimento do pagamento da mensalidade do aluguel, por extenso'],
+
+    29: ['[!variavel: contrato_anterior-codigo]', 'Código do contrato anterior deste locatário, neste imóvel'],
+    30: ['[!variavel: contrato_anterior-data_entrada]',
+         'Data de entrada do locatário no imóvel no contrato anterior'],
+    31: ['[!variavel: contrato_anterior-data_saida]', 'Data de saída do locatário no imóvel no contrato anterior']}
+
+
 def gerar_contrato_pdf(dados):
     # print('gerar modelo em pdf e salvar em media/contrato_docs para ser carregado pela view')
-    modelo_corpo_pre = dados['modelo'].corpo
+    modelo_corpo = dados['modelo'].corpo
     local = f'{settings.MEDIA_ROOT}contrato_docs/contrato_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
 
     # Aplicar Variaveis \/
-    modelo_corpo_pos = modelo_corpo_pre \
-        .replace('[*[variavel: semana_extenso_hoje]*]', dados['semana_extenso_hoje']) \
-        .replace('[*[variavel: data_hoje]*]', dados['data_hoje']) \
-        .replace('[*[variavel: contrato_data_entrada]*]', dados['contrato_data_entrada']) \
-        .replace('[*[variavel: contrato_data_saida]*]', dados['contrato_data_saida']) \
-        .replace('[*[variavel: contrato_codigo]*]', dados['contrato_codigo'])\
-        .replace('[*[variavel: contrato_periodo]*]', dados['contrato_periodo'])\
-        .replace('[*[variavel: contrato_periodo_por_extenso]*]', dados['contrato_periodo_por_extenso'])\
-        .replace('[*[variavel: contrato_parcela_valor]*]', dados['contrato_parcela_valor'])\
-        .replace('[*[variavel: contrato_parcela_valor_por_extenso]*]', dados['contrato_parcela_valor_por_extenso'])\
-        .replace('[*[variavel: contrato_anterior-codigo]*]', dados['contrato_anterior-codigo'])\
-        .replace('[*[variavel: contrato_anterior-data_entrada]*]', dados['contrato_anterior-data_entrada'])\
-        .replace('[*[variavel: contrato_anterior-data_saida]*]', dados['contrato_anterior-data_saida'])\
-        .replace('[*[variavel: imovel_rotulo]*]', dados['imovel_rotulo'])\
-        .replace('[*[variavel: imovel_uc_energia]*]', dados['imovel_uc_energia'])\
-        .replace('[*[variavel: imovel_uc_sanemameto]*]', dados['imovel_uc_sanemameto']) \
-        .replace('[*[variavel: imovel_cidade]*]', dados['imovel_cidade']) \
-        .replace('[*[variavel: imovel_endereco_completo]*]', dados['imovel_endereco_completo']) \
-        .replace('[*[variavel: locador_nome_completo]*]', dados['locador_nome_completo']) \
-        .replace('[*[variavel: locador_nacionalidade]*]', dados['locador_nacionalidade']) \
-        .replace('[*[variavel: locador_estado_civil]*]', dados['locador_estado_civil']) \
-        .replace('[*[variavel: locador_ocupacao]*]', dados['locador_ocupacao']) \
-        .replace('[*[variavel: locador_rg]*]', dados['locador_rg']) \
-        .replace('[*[variavel: locador_cpf]*]', dados['locador_cpf']) \
-        .replace('[*[variavel: locador_endereco_completo]*]', dados['locador_endereco_completo']) \
-        .replace('[*[variavel: locatario_nome_completo]*]', dados['locatario_nome_completo']) \
-        .replace('[*[variavel: locatario_cpf]*]', dados['locatario_cpf'])\
-        .replace('[*[variavel: locatario_rg]*]', dados['locatario_rg'])\
-        .replace('[*[variavel: locatario_nacionalidade]*]', dados['locatario_nacionalidade'])\
-        .replace('[*[variavel: locatario_estado_civil]*]', dados['locatario_estado_civil'])\
-        .replace('[*[variavel: locatario_ocupacao]*]', dados['locatario_ocupacao'])\
-        .replace('[*[variavel: locatario_celular_1]*]', dados['locatario_celular_1'])\
-        .replace('[*[variavel: locatario_celular_2]*]', dados['locatario_celular_2'])
+    for i, j in modelo_variaveis.items():
+        modelo_corpo = modelo_corpo.replace(j[0], dados[f"{j[0][j[0].find(': ') + 2:-1]}"])
 
     with open(local, "wb") as f:
-        pisa.CreatePDF(modelo_corpo_pos, dest=f)
+        pisa.CreatePDF(modelo_corpo, dest=f)
     f.close()

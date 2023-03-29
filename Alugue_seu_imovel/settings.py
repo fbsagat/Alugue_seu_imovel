@@ -136,9 +136,9 @@ elif USAR_DB == 3:
         'default': dj_database_url.parse(env('DATABASE_URL'))
     }
 
-# Password validation
 AUTH_USER_MODEL = "home.Usuario"
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -207,7 +207,7 @@ DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'Custom',
-        'height': 575,
+        'height': 620,
         'width': 1280,
         'toolbar_Custom': [
             {'name': 'document', 'items': ['Save', 'NewPage', 'Preview']},

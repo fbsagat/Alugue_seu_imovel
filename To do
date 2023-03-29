@@ -29,6 +29,7 @@ OK. Arrumar tabela onde contratos mantém 'O Pagam. VENCEU' até mesmo qdo venci
 OK. Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
 
 Fazer:
+Criar a função comunidade no editor de modelos.
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
@@ -36,6 +37,7 @@ Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os
 arrumar os botões do gerar_contrato (não estão pequenos)
 Algun itens no urls.py não precisam enviar o pk, arrumar
 Adiconar possibilidade de criar um gasto geral, não exclusivo de algum imóvel.
+Aplicar o cursor pointer em alguns itens nos templates. (copia logo pae: style="cursor:pointer;")
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
