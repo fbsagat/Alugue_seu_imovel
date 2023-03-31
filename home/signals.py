@@ -117,9 +117,12 @@ def usuario_fez_login(sender, user, **kwargs):
 
 @receiver(user_logged_out)
 def usuario_fez_logout(sender, user, **kwargs):
-    file = rf'{settings.MEDIA_ROOT}/tabela_docs/tabela_{user.uuid}_{user}.pdf'
-    if os.path.exists(file):
-        os.remove(file)
+    file1 = rf'{settings.MEDIA_ROOT}/tabela_docs/tabela_{user.uuid}_{user}.pdf'
+    if os.path.exists(file1):
+        os.remove(file1)
+    file2 = rf'{settings.MEDIA_ROOT}/contrato_docs/tabela_{user.uuid}_{user}.pdf'
+    if os.path.exists(file2):
+        os.remove(file2)
 
 
 @receiver(pre_save, sender=Usuario)

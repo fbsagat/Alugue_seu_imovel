@@ -20,7 +20,8 @@ from django.db.models.aggregates import Count, Sum
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 
-from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, modelo_variaveis
+from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
+    modelo_variaveis, valor_por_extenso
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
@@ -740,7 +741,7 @@ def gerar_contrato(request, pk):
     contrato_ultimo = usuario.contrato_ultimo
     contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato_ultimo).first()
     form = FormContratoDoc(initial={'contrato': contrato_ultimo})
-    form2 = FormContratoDocConfig(initial={'do_contrato': contr_doc_configs})
+    form2 = FormContratoDocConfig()  # ver se ainda é util: initial={'do_modelo': contr_doc_configs.do_modelo}
     admins = Usuario.objects.filter(is_superuser=True).values_list('pk').first()
     qs1 = ContratoModelo.objects.filter(autor=request.user)
     qs2 = ContratoModelo.objects.filter(autor=admins)
@@ -767,25 +768,39 @@ def gerar_contrato(request, pk):
         elif 'do_modelo' in request.POST:
             form2 = FormContratoDocConfig(request.POST)
             if form2.is_valid():
+                configs = form2.save(commit=False)
+                configs.do_modelo = form2.cleaned_data['do_modelo']
+                configs.tipo_de_locacao = form2.cleaned_data['tipo_de_locacao']
+                configs.fiador_nome = form2.cleaned_data['fiador_nome']
+                configs.fiador_RG = form2.cleaned_data['fiador_RG']
+                configs.fiador_CPF = form2.cleaned_data['fiador_CPF']
+                configs.fiador_ocupacao = form2.cleaned_data['fiador_ocupacao']
+                configs.fiador_nacionalidade = form2.cleaned_data['fiador_nacionalidade']
+                configs.fiador_estadocivil = form2.cleaned_data['fiador_estadocivil']
+                configs.do_contrato = contrato_ultimo
                 if contr_doc_configs:
                     # Se o form for válido e houver configs para o contrato selecionado, atualiza a instância do
                     # ContratoDocConfig deste contrato.
-                    configs = form2.save(commit=False)
                     configs.pk = contr_doc_configs.pk
-                    configs.do_modelo = form2.cleaned_data['do_modelo']
-                    configs.do_contrato = contrato_ultimo
-                    configs.save(update_fields=['do_modelo', 'do_contrato'])
+                    configs.save()
                 else:
                     # Se o form for válido e não houver configs para o contrato selecionado, cria uma instância do
                     # ContratoDocConfig para o contrato selecionado.
-                    configs = form2.save(commit=False)
-                    configs.do_modelo = form2.cleaned_data['do_modelo']
-                    configs.do_contrato = contrato_ultimo
                     configs.save()
                 return redirect(f'/contrato_PDF/{request.user.pk}')
 
         elif request.POST.get("mod", ""):
-            form2 = FormContratoDocConfig(initial={'do_modelo': contr_doc_configs.do_modelo})
+            form2 = FormContratoDocConfig(
+                initial={'do_modelo': contr_doc_configs.do_modelo,
+                         'tipo_de_locacao': contr_doc_configs.tipo_de_locacao,
+                         'caucao': contr_doc_configs.caucao,
+                         'fiador_nome': contr_doc_configs.fiador_nome,
+                         'fiador_RG': contr_doc_configs.fiador_RG,
+                         'fiador_CPF': contr_doc_configs.fiador_CPF,
+                         'fiador_ocupacao': contr_doc_configs.fiador_ocupacao,
+                         'fiador_endereco_completo': contr_doc_configs.fiador_endereco_completo,
+                         'fiador_nacionalidade': contr_doc_configs.fiador_nacionalidade,
+                         'fiador_estadocivil': contr_doc_configs.fiador_estadocivil})
             contr_doc_configs = None
 
     form.fields['contrato'].queryset = contratos
@@ -795,11 +810,35 @@ def gerar_contrato(request, pk):
         imovel = contrato_ultimo.do_imovel
         contrato = contrato_ultimo
         locatario = contrato_ultimo.do_locatario
+        try:
+            contrato_anterior = Contrato.objects.filter(do_locatario=locatario, do_imovel=imovel).order_by('-pk')[1]
+        except:
+            contrato_anterior = None
         data = datetime.today()
         # Se o contrato tem configurações para o documento e todas estão presentes(principalmente o modelo)
         # Verificar se os campos obrigatório estão validos(para não ocorrer erros)
         # Carregar o contrato e liberar o botão para modificar configurações
-        mensagem = '[ESTE DADO NÃO FOI PREENCHIDO]'
+        erro1 = '<span style="color:#ffffff"><strong><span style="background-color:#ff0000">' \
+                '[ESTE DADO DO LOCADOR NÃO FOI PREENCHIDO]</span></strong></span>'
+        erro2 = '<span style="color:#ffffff"><strong><span style="background-color:#ff0000">' \
+                '[ESTE DADO DO CONTRATO NÃO FOI PREENCHIDO]</span></strong></span>'
+        erro3 = '<span style="color:#ffffff"><strong><span style="background-color:#ff0000">' \
+                '[NÃO EXISTE CONTRATO ANTERIOR A ESTE]</span></strong></span>'
+        erro4 = '<span style="color:#ffffff"><strong><span style="background-color:#ff0000">' \
+                '[ESTE DADO DO IMÓVEL NÃO FOI PREENCHIDO]</span></strong></span>'
+        erro5 = '<span style="color:#ffffff"><strong><span style="background-color:#ff0000">' \
+                '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]</span></strong></span>'
+        erro6 = '<span style="color:#ffffff"><strong><span style="background-color:#ff0000">' \
+                '[ESTE DADO DO LOCATÁRIO NÃO FOI PREENCHIDO]</span></strong></span>'
+        erro7 = '<span style="color:#ffffff"><strong><span style="background-color:#ff0000">' \
+                '[ESTE DADO NÃO FOI PREENCHIDO]</span></strong></span>'
+
+        caucao = None
+        caucao_por_extenso = None
+        if contr_doc_configs.caucao and contrato.valor_mensal:
+            caucao = valor_format(str(contr_doc_configs.caucao * int(contrato.valor_mensal)))
+            caucao_por_extenso = valor_por_extenso(str(contr_doc_configs.caucao * int(contrato.valor_mensal)))
+
         dados = {'modelo': contr_doc_configs.do_modelo,
                  'usuario_uuid': usuario.uuid,
                  'usuario': usuario.username,
@@ -808,47 +847,69 @@ def gerar_contrato(request, pk):
                  # Regra:
                  # A variavel no documento: [!variavel: locador_pagamento_2]
                  # logo o nome deve ser: locador_pagamento_2
+
                  'semana_extenso_hoje': f'{data_ptbr(data, "l, d")} de {data_ptbr(data, "F")}  de {data_ptbr(data, "Y")}',
                  'data_hoje': str(data.strftime('%d/%m/%Y')),
+                 'tipo_de_locacao': erro1 if contr_doc_configs.tipo_de_locacao is None else \
+                     contr_doc_configs.get_tipo_de_locacao_display(),
+                 'caucao': caucao or erro7,
+                 'caucao_por_extenso': caucao_por_extenso or erro7,
 
-                 'locador_nome_completo': usuario.nome_completo(),
-                 'locador_nacionalidade': str(getattr(usuario, 'nacionalidade', f'{mensagem}')),
-                 'locador_estado_civil': str(usuario.get_estadocivil_display()),
-                 'locador_ocupacao': str(getattr(usuario, 'ocupacao', f'{mensagem}')),
-                 'locador_rg': str(getattr(usuario, 'RG', f'{mensagem}')),
-                 'locador_cpf': usuario.f_cpf(),
-                 'locador_endereco_completo': str((getattr(usuario, 'endereco_completo', f'{mensagem}'))),
-                 'locador_pagamento_1': str((getattr(usuario, 'dados_pagamento1', f'{mensagem}'))),
-                 'locador_pagamento_2': str((getattr(usuario, 'dados_pagamento2', f'{mensagem}'))),
+                 'locador_nome_completo': usuario.nome_completo() or erro1,
+                 'locador_nacionalidade': getattr(usuario, 'nacionalidade') or erro1,
+                 'locador_estado_civil': str(usuario.get_estadocivil_display() or erro1),
+                 'locador_ocupacao': getattr(usuario, 'ocupacao') or erro1,
+                 'locador_rg': str(getattr(usuario, 'RG') or erro1),
+                 'locador_cpf': usuario.f_cpf() or erro1,
+                 'locador_endereco_completo': getattr(usuario, 'endereco_completo') or erro1,
+                 'locador_email': getattr(usuario, 'email') or erro1,
+                 'locador_pagamento_1': getattr(usuario, 'dados_pagamento1') or erro1,
+                 'locador_pagamento_2': getattr(usuario, 'dados_pagamento2') or erro1,
 
-                 'contrato_data_entrada': str(contrato.data_entrada.strftime('%d/%m/%Y')),
-                 'contrato_data_saida': str(contrato.data_saida().strftime('%d/%m/%Y')),
-                 'contrato_codigo': contrato.codigo,
-                 'contrato_periodo': str(contrato.duracao),
-                 'contrato_periodo_por_extenso': contrato.duracao_por_extenso(),
-                 'contrato_parcela_valor': contrato.valor_format(),
-                 'contrato_parcela_valor_por_extenso': contrato.valor_por_extenso(),
-                 'contrato_valor': contrato.valor_por_extenso(),
-                 'contrato_vencimento': str(contrato.dia_vencimento),
-                 'contrato_vencimento_por_extenso': contrato.dia_vencimento_por_extenso(),
-                 'contrato_anterior-codigo': '',
-                 'contrato_anterior-data_entrada': '',
-                 'contrato_anterior-data_saida': '',
+                 'contrato_data_entrada': str(contrato.data_entrada.strftime('%d/%m/%Y') or erro2),
+                 'contrato_data_saida': str(contrato.data_saida().strftime('%d/%m/%Y') or erro2),
+                 'contrato_codigo': getattr(contrato, 'codigo') or erro2,
+                 'contrato_periodo': str(getattr(contrato, 'duracao') or erro2),
+                 'contrato_periodo_por_extenso': contrato.duracao_por_extenso() or erro2,
+                 'contrato_parcela_valor': contrato.valor_format() or erro2,
+                 'contrato_parcela_valor_por_extenso': contrato.valor_por_extenso() or erro2,
+                 'contrato_valor_total': contrato.valor_do_contrato() or erro2,
+                 'contrato_valor_total_por_extenso': str(contrato.valor_do_contrato_por_extenso() or erro2),
+                 'contrato_vencimento': str(getattr(contrato, 'dia_vencimento') or erro2),
+                 'contrato_vencimento_por_extenso': contrato.dia_vencimento_por_extenso() or erro2,
+                 'contrato_anterior-codigo': getattr(contrato_anterior,
+                                                     'codigo') or erro2 if contrato_anterior else erro3,
+                 'contrato_anterior-parcela_valor': contrato_anterior.valor_format() or erro2 if contrato_anterior else \
+                     erro3, 'contrato_anterior-data_entrada': str(
+                contrato_anterior.data_entrada.strftime('%d/%m/%Y') or erro2) if contrato_anterior else erro3,
+                 'contrato_anterior-data_saida': str(
+                     contrato_anterior.data_saida().strftime('%d/%m/%Y') or erro2) if contrato_anterior else erro3,
 
-                 'imovel_rotulo': imovel.nome,
-                 'imovel_uc_energia': imovel.uc_energia,
-                 'imovel_uc_sanemameto': imovel.uc_agua,
-                 'imovel_endereco_completo': imovel.endereco_completo(),
-                 'imovel_cidade': imovel.cidade,
+                 'imovel_rotulo': getattr(imovel, 'nome') or erro4,
+                 'imovel_uc_energia': getattr(imovel, 'uc_energia') or erro4,
+                 'imovel_uc_sanemameto': getattr(imovel, 'uc_agua') or erro4,
+                 'imovel_endereco_completo': imovel.endereco_completo() or erro4,
+                 'imovel_cidade': getattr(imovel, 'cidade') or erro4,
+                 'imovel_estado': imovel.get_estado_display() or erro4,
+                 'imovel_grupo': str(getattr(imovel, 'grupo') or erro4),
 
-                 'locatario_nome_completo': locatario.nome,
-                 'locatario_cpf': locatario.f_cpf(),
-                 'locatario_rg': locatario.RG,
-                 'locatario_nacionalidade': locatario.nacionalidade,
-                 'locatario_estado_civil': locatario.get_estadocivil_display(),
-                 'locatario_ocupacao': locatario.ocupacao,
-                 'locatario_celular_1': locatario.f_tel1(),
-                 'locatario_celular_2': locatario.f_tel1(),
+                 'fiador_nome': getattr(contr_doc_configs, 'fiador_nome') or erro5,
+                 'fiador_cpf': contr_doc_configs.f_cpf() or erro5,
+                 'fiador_rg': getattr(contr_doc_configs, 'fiador_RG') or erro5,
+                 'fiador_nacionalidade': getattr(contr_doc_configs, 'fiador_nacionalidade') or erro5,
+                 'fiador_estado_civil': contr_doc_configs.get_fiador_estadocivil_display() or erro5,
+                 'fiador_ocupacao': getattr(contr_doc_configs, 'fiador_ocupacao') or erro5,
+                 'fiador_endereco_completo': getattr(contr_doc_configs, 'fiador_endereco_completo') or erro5,
+
+                 'locatario_nome_completo': getattr(locatario, 'nome') or erro6,
+                 'locatario_cpf': locatario.f_cpf() or erro6,
+                 'locatario_rg': getattr(locatario, 'RG') or erro6,
+                 'locatario_nacionalidade': getattr(locatario, 'nacionalidade') or erro6,
+                 'locatario_estado_civil': locatario.get_estadocivil_display() or erro6,
+                 'locatario_ocupacao': getattr(locatario, 'ocupacao') or erro6,
+                 'locatario_celular_1': locatario.f_tel1() or erro6,
+                 'locatario_celular_2': locatario.f_tel1() or erro6,
+                 'locatario_email': getattr(locatario, 'email') or erro6,
                  }
 
         gerar_contrato_pdf(dados=dados)

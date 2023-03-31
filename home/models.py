@@ -1,4 +1,4 @@
-import random, string, json
+import random, string
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
@@ -35,8 +35,9 @@ class Usuario(AbstractUser):
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
     CPF = models.CharField(max_length=11, null=True, blank=True, unique=True, help_text='Digite apenas números',
                            validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
-    telefone = models.CharField(max_length=11, null=False, blank=True, unique=True, help_text='Digite apenas números',
-                                validators=[apenas_numeros])
+    telefone = models.CharField(max_length=11, null=False, blank=True, unique=True,
+                                help_text='Celular/Digite apenas números',
+                                validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     email = models.EmailField(unique=True)
     nacionalidade = models.CharField(null=True, blank=True, max_length=40, default='Brasileiro(a)')
     estadocivil = models.IntegerField(null=True, blank=True, verbose_name='Estado Civil', choices=estados_civis)
@@ -48,6 +49,7 @@ class Usuario(AbstractUser):
     dados_pagamento2 = models.CharField(null=True, blank=True, max_length=90,
                                         verbose_name='Informações de pagamentos 2')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
+    # outros poderão ter acesso ao uuid por cópias digitais de pdfs que poderão ser repassadas pelo usuario
 
     locat_slots = models.IntegerField(default=2)
 
@@ -103,10 +105,10 @@ class Locatario(models.Model):
                            validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
     telefone1 = models.CharField(max_length=11, blank=False, verbose_name='Telefone 1',
-                                 help_text='Digite apenas números',
+                                 help_text='Celular/Digite apenas números',
                                  validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     telefone2 = models.CharField(max_length=11, blank=True, verbose_name='Telefone 2',
-                                 help_text='Digite apenas números',
+                                 help_text='Celular/Digite apenas números',
                                  validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     email = models.EmailField(max_length=45, blank=True)
     nacionalidade = models.CharField(max_length=40, blank=False, default='Brasileiro(a)')
@@ -300,11 +302,17 @@ class Contrato(models.Model):
         reais = self.valor_mensal[:-2]
         centavos = self.valor_mensal[-2:]
         centavos_format = f' e {num2words(int(centavos), lang="pt_BR")} centavos'
-
         return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
 
     def valor_do_contrato(self):
         return valor_format(str(int(self.valor_mensal) * int(self.duracao)))
+
+    def valor_do_contrato_por_extenso(self):
+        valor = str(int(self.valor_mensal) * int(self.duracao))
+        reais = valor[:-2]
+        centavos = valor[-2:]
+        centavos_format = f' e {num2words(int(centavos), lang="pt_BR")} centavos'
+        return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
 
     def total_quitado(self):
         valor = Parcela.objects.filter(do_contrato=self, tt_pago=self.valor_mensal).values_list('tt_pago').aggregate(
@@ -349,7 +357,7 @@ class Contrato(models.Model):
 
 
 class ContratoModelo(models.Model):
-    titulo = models.CharField(blank=False, max_length=100, verbose_name='', help_text='Titulo')
+    titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo')
     autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
                               on_delete=models.SET_NULL)
     corpo = RichTextField(null=True, blank=True, verbose_name='')
@@ -357,7 +365,7 @@ class ContratoModelo(models.Model):
     variaveis = models.JSONField(null=True, blank=True)
 
     def __str__(self):
-        return f'{self.titulo} ({self.autor})'
+        return f'{self.titulo}'
 
     def display_variaveis(self):
         variaveis = []
@@ -367,16 +375,39 @@ class ContratoModelo(models.Model):
         return variaveis
 
 
+tipos_de_locacao = (
+    (None, '-----------'),
+    (1, 'residencial'),
+    (2, 'não residencial'))
+
+
 class ContratoDocConfig(models.Model):
     do_contrato = models.ForeignKey('Contrato', null=True, blank=False, on_delete=models.CASCADE)
-
     do_modelo = models.ForeignKey('ContratoModelo', null=True, blank=False, on_delete=models.SET_NULL,
                                   verbose_name='Modelo de contrato')
 
-    # Adicionar futuramente configurações do contrato_doc aqui
+    tipo_de_locacao = models.IntegerField(null=True, blank=True, choices=tipos_de_locacao,
+                                          verbose_name='Tipo de Locação')
+    caucao = models.IntegerField(null=True, blank=True,
+                                 validators=[MinValueValidator(0), MaxValueValidator(3), apenas_numeros])
+
+    fiador_nome = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nome Completo')
+    fiador_RG = models.CharField(max_length=9, null=True, blank=True, help_text='Digite apenas números',
+                                 validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros],
+                                 verbose_name='RG')
+    fiador_CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números',
+                                  validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros],
+                                  verbose_name='CPF')
+    fiador_ocupacao = models.CharField(max_length=85, null=True, blank=True, verbose_name='Ocupação')
+    fiador_endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
+    fiador_nacionalidade = models.CharField(max_length=40, null=True, blank=True, verbose_name='Nacionalidade')
+    fiador_estadocivil = models.IntegerField(null=True, blank=True, verbose_name='Estado Civil', choices=estados_civis)
 
     def __str__(self):
         return f'{self.do_contrato} ({self.do_modelo})'
+
+    def f_cpf(self):
+        return cpf_format(self.fiador_CPF)
 
 
 class Parcela(models.Model):

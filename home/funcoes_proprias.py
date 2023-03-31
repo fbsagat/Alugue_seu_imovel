@@ -3,6 +3,7 @@ from math import ceil
 from textwrap import wrap
 
 from django.core.exceptions import ValidationError
+from num2words import num2words
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -28,7 +29,10 @@ def valor_format(valor):
 
 # 002: -----------------------------------------------
 def cpf_format(cpf):
-    return f'{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:11]}'
+    if cpf is None:
+        return None
+    else:
+        return f'{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:11]}'
 
 
 # 003: -----------------------------------------------
@@ -51,7 +55,15 @@ def tratar_imagem(arquivo_obj):
 
 # 006: -----------------------------------------------
 
-# eu ia fazer uma funçao aqui, nçao precisei mais
+def valor_por_extenso(valor):
+    if type(valor) == str:
+        reais = valor[:-2]
+        centavos = valor[-2:]
+        centavos_format = f' e {num2words(int(centavos), lang="pt_BR")} centavos'
+        return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
+    else:
+        return None
+
 
 # 100: -----------------------------------------------
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
@@ -367,6 +379,9 @@ def gerar_tabela_pdf(dados):
 modelo_variaveis = {
     0: ['[!variavel: semana_extenso_hoje]', 'Dia da semana hoje escrito por extenso'],
     1: ['[!variavel: data_hoje]', 'Data de hoje'],
+    43: ['[!variavel: tipo_de_locacao]', 'Locação residencial ou locação não residencial'],
+    49: ['[!variavel: caucao]', 'Valor do caução/depósito a ser pago'],
+    50: ['[!variavel: caucao_por_extenso]', 'Valor do caução/depósito a ser pago por extenso'],
 
     2: ['[!variavel: locador_nome_completo]', 'Nome completo do locador do imóvel deste contrato'],
     3: ['[!variavel: locador_nacionalidade]', 'Nacionalidade do locador do imóvel deste contrato'],
@@ -375,13 +390,16 @@ modelo_variaveis = {
     6: ['[!variavel: locador_rg]', 'Documento número de RG do locador do imóvel deste contrato'],
     7: ['[!variavel: locador_cpf]', 'Documento número de CPF do locador do imóvel deste contrato'],
     8: ['[!variavel: locador_endereco_completo]', 'Endereço completo do locador do imóvel deste contrato'],
+    47: ['[!variavel: locador_email]', 'Endereço de email do locador do imóvel deste contrato'],
     32: ['[!variavel: locador_pagamento_1]', 'Informações de pagamento 1 do locador do imóvel deste contrato'],
     33: ['[!variavel: locador_pagamento_2]', 'Informações de pagamento 2 do locador do imóvel deste contrato'],
 
     9: ['[!variavel: imovel_rotulo]', 'Rótulo do imóvel deste contrato'],
+    44: ['[!variavel: imovel_grupo]', 'Grupo no qual o imóvel deste contrato está inserido'],
     10: ['[!variavel: imovel_uc_energia]', 'Unidade consumidora de energia do imóvel deste contrato'],
     11: ['[!variavel: imovel_uc_sanemameto]', 'Unidade consumidora de saneamento do imóvel deste contrato'],
     12: ['[!variavel: imovel_cidade]', 'Cidade onde se localiza o imóvel deste contrato'],
+    48: ['[!variavel: imovel_estado]', 'Estado onde se localiza o imóvel deste contrato'],
     13: ['[!variavel: imovel_endereco_completo]', 'Endereço completo do imóvel deste contrato'],
 
     14: ['[!variavel: locatario_nome_completo]', 'Nome completo do locatário do imóvel deste contrato'],
@@ -392,6 +410,15 @@ modelo_variaveis = {
     19: ['[!variavel: locatario_ocupacao]', 'Ocupação trabalhista do locatário do imóvel deste contrato'],
     20: ['[!variavel: locatario_celular_1]', 'Número de celular 1 do locatário do imóvel deste contrato'],
     21: ['[!variavel: locatario_celular_2]', 'Número de celular 2 do locatário do imóvel deste contrato'],
+    42: ['[!variavel: locatario_email]', 'Endereço de email do locatário do imóvel deste contrato'],
+
+    36: ['[!variavel: fiador_nome]', 'Nome completo do fiador do imóvel deste contrato'],
+    37: ['[!variavel: fiador_rg]', 'Documento número de RG do fiador do imóvel deste contrato'],
+    38: ['[!variavel: fiador_cpf]', 'Documento número de CPF do fiador do imóvel deste contrato'],
+    51: ['[!variavel: fiador_endereco_completo]', 'Endereço completo do fiador do imóvel deste contrato'],
+    39: ['[!variavel: fiador_ocupacao]', 'Ocupação trabalhista do fiador do imóvel deste contrato'],
+    40: ['[!variavel: fiador_nacionalidade]', 'Nacionalidade do fiador do imóvel deste contrato'],
+    41: ['[!variavel: fiador_estado_civil]', 'Estado civil do fiador do imóvel deste contrato'],
 
     22: ['[!variavel: contrato_data_entrada]', 'Data de entrada do locatário no imóvel'],
     23: ['[!variavel: contrato_data_saida]', 'Data de saída do locatário no imóvel'],
@@ -400,6 +427,8 @@ modelo_variaveis = {
     26: ['[!variavel: contrato_periodo_por_extenso]', 'Período, em meses, de validade do contrato, por extenso'],
     27: ['[!variavel: contrato_parcela_valor]', 'Valor da mensalidade do aluguel'],
     28: ['[!variavel: contrato_parcela_valor_por_extenso]', 'Valor da mensalidade do aluguel, por extenso'],
+    45: ['[!variavel: contrato_valor_total]', 'Valor total do contrato, todas as parcelas juntas'],
+    46: ['[!variavel: contrato_valor_total_por_extenso]', 'Valor total do contrato, por extenso'],
     34: ['[!variavel: contrato_vencimento]', 'Dia de vencimento do pagamento da mensalidade do aluguel'],
     35: ['[!variavel: contrato_vencimento_por_extenso]',
          'Dia de vencimento do pagamento da mensalidade do aluguel, por extenso'],

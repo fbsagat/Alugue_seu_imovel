@@ -244,10 +244,18 @@ class FormContratoDoc(forms.Form):
 
 
 class FormContratoDocConfig(forms.ModelForm):
+    caucao = forms.IntegerField(help_text='Multiplicado pelo valor de uma parcela', label='Caução', max_value=3,
+                                min_value=0, initial=1, required=False)
+
     class Meta:
         model = ContratoDocConfig
         fields = '__all__'
         exclude = ['do_contrato']
+
+    def __init__(self, *args, **kwargs):
+        super(FormContratoDocConfig, self).__init__(*args, **kwargs)
+        self.fields['fiador_CPF'].widget.attrs['id'] = 'id_CPF'
+        self.fields['tipo_de_locacao'].choices = ((None, '-----------'), (1, 'Residencial'), (2, 'Não residencial'))
 
 
 class FormContratoModelo(forms.ModelForm):
