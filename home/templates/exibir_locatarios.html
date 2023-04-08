@@ -23,6 +23,7 @@ Locatários / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">RG</th>
             <th scope="col" style="cursor:default;">CPF</th>
             <th scope="col" style="cursor:default;">Ocupação</th>
+            <th scope="col" style="cursor:default;">Endereço</th>
             <th scope="col" style="cursor:default;">Telefone 1</th>
             <th scope="col" style="cursor:default;">Telefone 2</th>
             <th scope="col" style="cursor:default;">Email</th>
@@ -42,8 +43,17 @@ Locatários / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">{{ locatario.RG }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_cpf }}</th>
             <th scope="col" style="cursor:default;" title="{{ locatario.ocupacao }}">
-                {{ locatario.ocupacao|truncatechars:45 }}
+                {{ locatario.ocupacao|truncatechars:25 }}
             </th>
+            {% if locatario.endereco_completo %}
+            <th scope="col" style="cursor:default;" title="{{ locatario.endereco_completo }}">
+                {{ locatario.endereco_completo|truncatechars:25 }}
+            </th>
+            {% else %}
+            <th scope="col" style="cursor:default;">
+                ---
+            </th>
+            {% endif %}
             <th scope="col" style="cursor:default;">{{ locatario.f_tel1 }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_tel2 }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.email }}</th>

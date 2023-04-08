@@ -168,7 +168,7 @@ class FormLocatario(forms.ModelForm):
     class Meta:
         model = Locatario
         fields = '__all__'
-        exclude = ['do_locador', 'dataentrada', 'com_imoveis', 'com_contratos', 'data_registro']
+        exclude = ['do_locador', 'com_imoveis', 'com_contratos', 'data_registro']
 
     def __init__(self, *args, usuario, **kwargs):
         super(FormLocatario, self).__init__(*args, **kwargs)
@@ -179,7 +179,8 @@ class FormLocatario(forms.ModelForm):
 
     def clean_CPF(self):
         cpf = self.cleaned_data['CPF']
-        cpfs_dos_locat_deste_user = Locatario.objects.filter(do_locador=self.locador_pk).values_list('CPF', flat=True)
+        cpfs_dos_locat_deste_user = Locatario.objects.filter(do_locador=self.locador_pk).exclude(
+            pk=self.instance.pk).values_list('CPF', flat=True)
         if cpf in cpfs_dos_locat_deste_user:
             raise forms.ValidationError("Já existe um locatário registrado com este CPF.")
         else:
@@ -244,8 +245,8 @@ class FormContratoDoc(forms.Form):
 
 
 class FormContratoDocConfig(forms.ModelForm):
-    caucao = forms.IntegerField(help_text='Multiplicado pelo valor de uma parcela', label='Caução', max_value=3,
-                                min_value=0, initial=1, required=False)
+    caucao = forms.IntegerField(help_text='Multiplicado pelo valor de uma parcela', label='Caução (parcela multipl.)',
+                                max_value=3, min_value=0, initial=1, required=False)
 
     class Meta:
         model = ContratoDocConfig
@@ -262,7 +263,7 @@ class FormContratoModelo(forms.ModelForm):
     class Meta:
         model = ContratoModelo
         fields = '__all__'
-        exclude = ['autor', 'data_criacao', 'variaveis']
+        exclude = ['autor', 'data_criacao', 'variaveis', 'condicoes']
 
     def __init__(self, *args, **kwargs):
         super(FormContratoModelo, self).__init__(*args, **kwargs)
@@ -293,30 +294,42 @@ class FormImovel(forms.ModelForm):
 
     def clean_nome(self):
         nome = self.cleaned_data['nome']
-        nomes_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('nome', flat=True)
+        nomes_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).exclude(
+            pk=self.instance.pk).values_list('nome', flat=True)
         if nome in nomes_dos_imoveis_deste_user:
             raise forms.ValidationError("Já existe um Imóvel registrado com este rótulo.")
         else:
             return nome
 
+    # Forma clean do campo unico
     def clean_uc_energia(self):
         uc_energia = self.cleaned_data['uc_energia']
-        uc_energia_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('uc_energia',
-                                                                                                    flat=True)
+        uc_energia_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).exclude(
+            pk=self.instance.pk).values_list('uc_energia',
+                                             flat=True)
         if uc_energia in uc_energia_dos_imoveis_deste_user:
             raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Energia.")
         else:
             return uc_energia
 
-    def clean_(self):
+    def clean_uc_agua(self):
         uc_agua = self.cleaned_data['uc_agua']
-        uc_agua_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('uc_agua', flat=True)
+        uc_agua_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).exclude(
+            pk=self.instance.pk).values_list('uc_agua',
+                                             flat=True)
         if uc_agua in uc_agua_dos_imoveis_deste_user:
-            raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Saneamento.")
+            raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Energia.")
         else:
             return uc_agua
 
-        # fazer o mesmo para outros campos /\
+    # forma clean do campo total,depois retira o campo unico
+    # def clean_(self):
+    #     uc_agua = self.cleaned_data['uc_agua']
+    #     uc_agua_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('uc_agua', flat=True)
+    #     if uc_agua in uc_agua_dos_imoveis_deste_user:
+    #         raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Saneamento.")
+    #     else:
+    #         return uc_agua
 
 
 class FormAnotacoes(forms.ModelForm):

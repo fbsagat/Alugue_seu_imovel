@@ -27,6 +27,7 @@ OK. Concluir total_quitado e faltando_p_quitar de contratos.
 OK. Arrumar tabela onde contratos mantém 'O Pagam. VENCEU' até mesmo qdo vencimento se encontra depois do dia atual,
         quando algum contrato existia e foi apagado antes do novo ser criado.
 OK. Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
+OK. (e ainda consertei varios bugs no caminho) Criar formulario de locatario: endereço, para contratos não residenciais.
 
 Fazer:
 Criar a função comunidade no editor de modelos.
@@ -34,10 +35,12 @@ Criar um botão de painel com configurações diversas e botão de backup de tod
 Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
         com sistema de votação.
-arrumar os botões do gerar_contrato (não estão pequenos)
 Algun itens no urls.py não precisam enviar o pk, arrumar
 Adiconar possibilidade de criar um gasto geral, não exclusivo de algum imóvel.
 Aplicar o cursor pointer em alguns itens nos templates. (copia logo pae: style="cursor:pointer;")
+Arrumar CLÁUSULA DÉCIMA PRIMEIRA do contrato, opção casa ou prédio.
+Implementar data especifica nas configurações do gerador de contrato pdf.
+Quando gerar contratos fakes, limitar estes ao número disponível de imóveis.
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site

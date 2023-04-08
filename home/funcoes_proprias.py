@@ -379,9 +379,9 @@ def gerar_tabela_pdf(dados):
 modelo_variaveis = {
     0: ['[!variavel: semana_extenso_hoje]', 'Dia da semana hoje escrito por extenso'],
     1: ['[!variavel: data_hoje]', 'Data de hoje'],
-    43: ['[!variavel: tipo_de_locacao]', 'Locação residencial ou locação não residencial'],
-    49: ['[!variavel: caucao]', 'Valor do caução/depósito a ser pago'],
-    50: ['[!variavel: caucao_por_extenso]', 'Valor do caução/depósito a ser pago por extenso'],
+    43: ['[!variavel: tipo_de_locacao]', 'Locação residencial ou locação comercial/industrial'],
+    49: ['[!variavel: caucao]', 'Valor da caução/depósito a ser pago'],
+    50: ['[!variavel: caucao_por_extenso]', 'Valor da caução/depósito a ser pago por extenso'],
 
     2: ['[!variavel: locador_nome_completo]', 'Nome completo do locador do imóvel deste contrato'],
     3: ['[!variavel: locador_nacionalidade]', 'Nacionalidade do locador do imóvel deste contrato'],
@@ -390,7 +390,7 @@ modelo_variaveis = {
     6: ['[!variavel: locador_rg]', 'Documento número de RG do locador do imóvel deste contrato'],
     7: ['[!variavel: locador_cpf]', 'Documento número de CPF do locador do imóvel deste contrato'],
     8: ['[!variavel: locador_endereco_completo]', 'Endereço completo do locador do imóvel deste contrato'],
-    47: ['[!variavel: locador_email]', 'Endereço de email do locador do imóvel deste contrato'],
+    47: ['[!variavel: locador_email]', 'Endereço de e-mail do locador do imóvel deste contrato'],
     32: ['[!variavel: locador_pagamento_1]', 'Informações de pagamento 1 do locador do imóvel deste contrato'],
     33: ['[!variavel: locador_pagamento_2]', 'Informações de pagamento 2 do locador do imóvel deste contrato'],
 
@@ -408,11 +408,12 @@ modelo_variaveis = {
     17: ['[!variavel: locatario_nacionalidade]', 'Nacionalidade do locatário do imóvel deste contrato'],
     18: ['[!variavel: locatario_estado_civil]', 'Estado civil do locatário do imóvel deste contrato'],
     19: ['[!variavel: locatario_ocupacao]', 'Ocupação trabalhista do locatário do imóvel deste contrato'],
+    52: ['[!variavel: locatario_endereco_completo]', 'Endereço completo do locatário do imóvel deste contrato'],
     20: ['[!variavel: locatario_celular_1]', 'Número de celular 1 do locatário do imóvel deste contrato'],
     21: ['[!variavel: locatario_celular_2]', 'Número de celular 2 do locatário do imóvel deste contrato'],
-    42: ['[!variavel: locatario_email]', 'Endereço de email do locatário do imóvel deste contrato'],
+    42: ['[!variavel: locatario_email]', 'Endereço de e-mail do locatário do imóvel deste contrato'],
 
-    36: ['[!variavel: fiador_nome]', 'Nome completo do fiador do imóvel deste contrato'],
+    36: ['[!variavel: fiador_nome_completo]', 'Nome completo do fiador do imóvel deste contrato'],
     37: ['[!variavel: fiador_rg]', 'Documento número de RG do fiador do imóvel deste contrato'],
     38: ['[!variavel: fiador_cpf]', 'Documento número de CPF do fiador do imóvel deste contrato'],
     51: ['[!variavel: fiador_endereco_completo]', 'Endereço completo do fiador do imóvel deste contrato'],
@@ -438,11 +439,62 @@ modelo_variaveis = {
          'Data de entrada do locatário no imóvel no contrato anterior'],
     31: ['[!variavel: contrato_anterior-data_saida]', 'Data de saída do locatário no imóvel no contrato anterior']}
 
+modelo_condicoes = {
+    0: ['[!condicao: fiador_existe]', 'Mostrar trecho caso exista dados do fiador'],
+    1: ['[!condicao: fiador_nao_existe]', 'Mostrar trecho caso não exista dados do fiador'],
+    2: ['[!condicao: tipo_residencial]', 'Mostrar trecho caso o tipo de contrato é residencial'],
+    3: ['[!condicao: tipo_nao_residencial]', 'Mostrar trecho caso o tipo de contrato é comercial/industrial'],
+}
+
 
 def gerar_contrato_pdf(dados):
-    # print('gerar modelo em pdf e salvar em media/contrato_docs para ser carregado pela view')
+    # Gerar modelo em pdf e salvar em media/contrato_docs para ser carregado pela view'
     modelo_corpo = dados['modelo'].corpo
     local = f'{settings.MEDIA_ROOT}contrato_docs/contrato_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
+
+    # Capturar trechos de cada condição registrada em modelo_condicoes
+    for i, j in modelo_condicoes.items():
+        # Aqui colocaremos no objeto posições cada trecho do item atual de modelo_condicoes
+        comando_inicio = j[0]
+        comando_fim = f'{comando_inicio[:comando_inicio.find("]")]}_fim{comando_inicio[comando_inicio.find("]"):]}'
+        indice = 0
+        posicoes = []
+
+        while indice < len(modelo_corpo):
+            indice = modelo_corpo.find(j[0], indice)
+            if indice == -1:
+                break
+            posicoes.append(indice)
+            pos_fim = modelo_corpo[indice:].find(comando_fim)
+            trecho = modelo_corpo[indice:indice+pos_fim+len(comando_fim)]
+            trecho_sem_comandos = trecho[len(comando_inicio):-len(comando_fim)]
+
+            # Funções das condições:
+            if comando_inicio == '[!condicao: fiador_existe]':
+                if '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]' in dados['fiador_nome_completo']:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_sem_comandos)
+
+            if comando_inicio == '[!condicao: fiador_nao_existe]':
+                if '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]' in dados['fiador_nome_completo']:
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_sem_comandos)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: tipo_residencial]':
+                if dados['tipo_de_locacao'] == 'residencial':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_sem_comandos)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: tipo_nao_residencial]':
+                if dados['tipo_de_locacao'] == 'não residencial':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_sem_comandos)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+            # Fim das funções das condições
+            indice += 1
 
     # Aplicar Variaveis \/
     for i, j in modelo_variaveis.items():

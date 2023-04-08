@@ -13,7 +13,7 @@ from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
-from home.funcoes_proprias import modelo_variaveis
+from home.funcoes_proprias import modelo_variaveis, modelo_condicoes
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 estados_civis = (
@@ -104,6 +104,7 @@ class Locatario(models.Model):
     CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números',
                            validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
+    endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
     telefone1 = models.CharField(max_length=11, blank=False, verbose_name='Telefone 1',
                                  help_text='Celular/Digite apenas números',
                                  validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
@@ -363,6 +364,7 @@ class ContratoModelo(models.Model):
     corpo = RichTextField(null=True, blank=True, verbose_name='')
     data_criacao = models.DateTimeField(auto_now_add=True)
     variaveis = models.JSONField(null=True, blank=True)
+    condicoes = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.titulo}'
@@ -373,6 +375,13 @@ class ContratoModelo(models.Model):
             if variavel in modelo_variaveis:
                 variaveis.append([modelo_variaveis[variavel][0], modelo_variaveis[variavel][1]])
         return variaveis
+
+    def display_condicoes(self):
+        condicoes = []
+        for condicao in list(self.condicoes):
+            if condicao in modelo_condicoes:
+                condicoes.append([modelo_condicoes[condicao][0], modelo_condicoes[condicao][1]])
+        return condicoes
 
 
 tipos_de_locacao = (

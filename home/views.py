@@ -21,7 +21,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
-    modelo_variaveis, valor_por_extenso
+    modelo_variaveis, modelo_condicoes, valor_por_extenso
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
@@ -850,7 +850,7 @@ def gerar_contrato(request, pk):
 
                  'semana_extenso_hoje': f'{data_ptbr(data, "l, d")} de {data_ptbr(data, "F")}  de {data_ptbr(data, "Y")}',
                  'data_hoje': str(data.strftime('%d/%m/%Y')),
-                 'tipo_de_locacao': erro1 if contr_doc_configs.tipo_de_locacao is None else \
+                 'tipo_de_locacao': erro7 if contr_doc_configs.tipo_de_locacao is None else \
                      contr_doc_configs.get_tipo_de_locacao_display(),
                  'caucao': caucao or erro7,
                  'caucao_por_extenso': caucao_por_extenso or erro7,
@@ -893,7 +893,7 @@ def gerar_contrato(request, pk):
                  'imovel_estado': imovel.get_estado_display() or erro4,
                  'imovel_grupo': str(getattr(imovel, 'grupo') or erro4),
 
-                 'fiador_nome': getattr(contr_doc_configs, 'fiador_nome') or erro5,
+                 'fiador_nome_completo': getattr(contr_doc_configs, 'fiador_nome') or erro5,
                  'fiador_cpf': contr_doc_configs.f_cpf() or erro5,
                  'fiador_rg': getattr(contr_doc_configs, 'fiador_RG') or erro5,
                  'fiador_nacionalidade': getattr(contr_doc_configs, 'fiador_nacionalidade') or erro5,
@@ -907,8 +907,9 @@ def gerar_contrato(request, pk):
                  'locatario_nacionalidade': getattr(locatario, 'nacionalidade') or erro6,
                  'locatario_estado_civil': locatario.get_estadocivil_display() or erro6,
                  'locatario_ocupacao': getattr(locatario, 'ocupacao') or erro6,
+                 'locatario_endereco_completo': getattr(locatario, 'endereco_completo') or erro6,
                  'locatario_celular_1': locatario.f_tel1() or erro6,
-                 'locatario_celular_2': locatario.f_tel1() or erro6,
+                 'locatario_celular_2': locatario.f_tel2() or erro6,
                  'locatario_email': getattr(locatario, 'email') or erro6,
                  }
 
@@ -946,7 +947,15 @@ def criar_modelo(request):
                 if j[0] in modelo.corpo:
                     variaveis.append(i)
             variaveis = list(dict.fromkeys(variaveis))
+
+            condicoes = []
+            for i, j in modelo_condicoes.items():
+                if j[0] in modelo.corpo:
+                    condicoes.append(i)
+            condicoes = list(dict.fromkeys(condicoes))
+
             modelo.variaveis = variaveis
+            modelo.condicoes = condicoes
             modelo.save()
 
             return redirect(f'modelos/{request.user.pk}')
@@ -954,6 +963,7 @@ def criar_modelo(request):
     context['form'] = form
     context['SITE_NAME'] = settings.SITE_NAME
     context['variaveis'] = modelo_variaveis
+    context['condicoes'] = modelo_condicoes
     return render(request, 'criar_modelo.html', context)
 
 
@@ -991,6 +1001,7 @@ class EditarModelo(LoginRequiredMixin, UpdateView):
         context = super(EditarModelo, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         context['variaveis'] = modelo_variaveis
+        context['condicoes'] = modelo_condicoes
         return context
 
     def form_valid(self, form):
@@ -1002,7 +1013,15 @@ class EditarModelo(LoginRequiredMixin, UpdateView):
                 variaveis.append(i)
         variaveis = list(dict.fromkeys(variaveis))
         self.object.variaveis = variaveis
-        self.object.save(update_fields=['variaveis'])
+
+        condicoes = []
+        for i, j in modelo_condicoes.items():
+            if j[0] in self.object.corpo:
+                condicoes.append(i)
+        condicoes = list(dict.fromkeys(condicoes))
+        self.object.condicoes = condicoes
+
+        self.object.save(update_fields=['variaveis', 'condicoes'])
 
         return super().form_valid(form)
 
@@ -1203,8 +1222,17 @@ class EditarLocat(LoginRequiredMixin, UpdateView):
         return self.object
 
     def get_form(self, form_class=None):
-        form = FormLocatario(usuario=self.request.user)
-        return form
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(**self.get_form_kwargs(), usuario=self.request.user)
+
+    def get_initial(self):
+        return {'nome': self.object.nome, 'RG': self.object.RG, 'CPF': self.object.CPF,
+                'ocupacao': self.object.ocupacao,
+                'endereco_completo': self.object.endereco_completo,
+                'telefone1': self.object.telefone1, 'telefone2': self.object.telefone2,
+                'estadocivil': self.object.estadocivil,
+                'nacionalidade': self.object.nacionalidade, 'email': self.object.email}
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(EditarLocat, self).get_context_data(**kwargs)
@@ -1544,6 +1572,7 @@ def botaoteste(request):
             locatario.RG = aleatorio.get('RG')
             locatario.CPF = aleatorio.get('CPF')
             locatario.ocupacao = aleatorio.get('ocupacao')
+            locatario.endereco_completo = aleatorio.get('endereco_completo')
             locatario.telefone1 = aleatorio.get('telefone1')
             locatario.telefone2 = aleatorio.get('telefone2')
             locatario.email = aleatorio.get('email')

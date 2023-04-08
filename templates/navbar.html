@@ -11,6 +11,7 @@ ion-icon {
 ion-icon {
     pointer-events: none;
 }
+
 </style>
 {% endblock %}
 
@@ -119,9 +120,11 @@ ion-icon {
                     Gerar PDF
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'home:Recibos PDF' request.user.pk %}">de Recibos 🧾</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Recibos PDF' request.user.pk %}">de Recibos 🧾</a>
+                    </li>
                     <li><a class="dropdown-item" href="{% url 'home:Tabela PDF' request.user.pk %}">de Tabela 📑</a></li>
-                    <li><a class="dropdown-item" href="{% url 'home:Contrato PDF' request.user.pk %}">de Contrato 📃</a></li>
+                    <li><a class="dropdown-item" href="{% url 'home:Contrato PDF' request.user.pk %}">de Contrato 📃</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -225,7 +228,17 @@ ion-icon {
                     <form action="{% url 'home:Registrar Gasto' %}" method="POST" enctype="multipart/form-data"
                           class="mask-x_form ps-5 pe-5">
                         {% csrf_token %}
-                        {{ form_gasto|crispy }}
+                        {{ form_gasto.do_imovel|as_crispy_field }}
+                        <div class="row">
+                            <div class="col">
+                                {{ form_gasto.valor|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_gasto.data|as_crispy_field }}
+                            </div>
+                        </div>
+                        {{ form_gasto.observacoes|as_crispy_field }}
+                        {{ form_gasto.comprovante|as_crispy_field }}
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                             </button>
@@ -262,6 +275,7 @@ ion-icon {
                             </div>
                         </div>
                         {{ form_locatario.ocupacao|as_crispy_field }}
+                        {{ form_locatario.endereco_completo|as_crispy_field }}
                         <div class="row">
                             <div class="col">
                                 {{ form_locatario.telefone1|as_crispy_field }}
