@@ -1,4 +1,4 @@
-import io
+import io, os
 from math import ceil
 from textwrap import wrap
 
@@ -449,6 +449,12 @@ modelo_condicoes = {
 
 def gerar_contrato_pdf(dados):
     # Gerar modelo em pdf e salvar em media/contrato_docs para ser carregado pela view'
+    # Criar a pasta contrato_docs se não existe
+    pasta = rf'{settings.MEDIA_ROOT}/contrato_docs/'
+    se_existe = os.path.exists(pasta)
+    if not se_existe:
+        os.makedirs(pasta)
+
     modelo_corpo = dados['modelo'].corpo
     local = f'{settings.MEDIA_ROOT}contrato_docs/contrato_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
 
