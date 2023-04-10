@@ -28,6 +28,7 @@ Criação de Grupos / {{ SITE_NAME }}
                         <tr>
                             <th scope="col">Nº</th>
                             <th scope="col">Nome</th>
+                            <th scope="col">Tipo</th>
                             <th scope="col">Editar</th>
                             <th scope="col">Apagar</th>
                         </tr>
@@ -39,6 +40,7 @@ Criação de Grupos / {{ SITE_NAME }}
                         <tr>
                             <th scope="col">{{ forloop.counter }}</th>
                             <th scope="col">{{ grupo.nome }}</th>
+                            <th scope="col">{{ grupo.get_tipo_display }}</th>
                             <th scope="col"><a class="link-primary"
                                                href="{% url 'home:Editar Grupo Imóveis' grupo.pk %}">Editar</a>
                             </th>

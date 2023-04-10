@@ -6,7 +6,7 @@ import os, environ, dj_database_url
 
 SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
-USAR_DB = 2
+USAR_DB = 1
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar o form inválida da navbar das sessions (segundos)
@@ -14,7 +14,7 @@ TEMPO_SESSION_FORM = 30
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-contrato = 5
+contrato = 4
 FICT_QTD = {'locatario': 5, 'imovel_g': 2, 'imovel': 5, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 3,
             'nota': 3, 'user': 5}
 
@@ -218,7 +218,7 @@ CKEDITOR_CONFIGS = {
             {'name': 'insert',
              'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
             {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+            {'name': 'tools', 'items': ['Maximize']},
             '/',
             {'name': 'basicstyles',
              'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},

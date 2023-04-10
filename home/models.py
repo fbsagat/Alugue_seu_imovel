@@ -80,7 +80,12 @@ class Usuario(AbstractUser):
         return f'{nome[0]} {nome[len(nome) - 1]}'
 
     def f_cpf(self):
-        return cpf_format(self.CPF)
+        if self.CPF:
+            return cpf_format(self.CPF)
+
+    def f_tel(self):
+        if self.telefone:
+            return cel_format(self.telefone)
 
 
 class LocatariosManager(models.Manager):
@@ -136,26 +141,37 @@ class Locatario(models.Model):
         return x
 
     def f_cpf(self):
-        return cpf_format(self.CPF)
+        if self.CPF:
+            return cpf_format(self.CPF)
 
     def f_tel1(self):
-        return cel_format(self.telefone1)
+        if self.telefone1:
+            return cel_format(self.telefone1)
 
     def f_tel2(self):
         if self.telefone2:
             return cel_format(self.telefone2)
-        else:
-            return ''
+        # else:
+        #     return ''
 
     def contratos_qtd(self):
         return Contrato.objects.filter(do_locatario=self).count()
 
 
-class ImovGrupo(models.Model):
-    do_usuario = models.ForeignKey('Usuario', null=True, blank=True,
-                                   on_delete=models.CASCADE)
+tipos_de_imovel = (
+    (0, 'Casa'),
+    (1, 'Apartamento'),
+    (2, 'Kitnet'),
+    (3, 'Box/Loja'),
+    (4, 'Escritório'),
+    (5, 'Depósito/Armazém'),
+    (6, 'Galpão'))
 
+
+class ImovGrupo(models.Model):
+    do_usuario = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
     nome = models.CharField(max_length=35, blank=False, verbose_name='Criar Grupo')
+    tipo = models.IntegerField(null=True, blank=True, choices=tipos_de_imovel, verbose_name='Tipo de Imóvel')
     imoveis = models.ManyToManyField('Imovei', blank=True)
 
     def get_absolute_url(self):
@@ -343,6 +359,9 @@ class Contrato(models.Model):
         return True if self.data_entrada <= datetime.today().date() <= self.data_saida() and self.em_posse is True \
                        and self.rescindido is False and self.vencido is False else False
 
+    def ativo_futuramente(self):
+        return True if self.data_entrada >= datetime.today().date() and self.rescindido is False else False
+
     def pagamento_total(self):
         pagamentos = Pagamento.objects.filter(ao_contrato=self.pk).values('valor_pago')
         valor_tt = 0
@@ -480,7 +499,8 @@ class Pagamento(models.Model):
 
 class Gasto(models.Model):
     do_locador = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
-    do_imovel = models.ForeignKey('Imovei', blank=False, on_delete=models.CASCADE)
+    do_imovel = models.ForeignKey('Imovei', blank=True, null=True, on_delete=models.CASCADE,
+                                  help_text='Deixe em branco para registrar um gasto geral')
 
     valor = models.CharField(max_length=9, verbose_name='Valor Gasto (R$) ', blank=False, validators=[apenas_numeros])
     data = models.DateTimeField(blank=False)

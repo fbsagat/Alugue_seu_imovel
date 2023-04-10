@@ -36,12 +36,20 @@ Gastos / {{ SITE_NAME }}
 
             <tr>
                 <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
+                {% if gasto.do_imovel %}
                 <th scope="col" style="cursor:default;">{{ gasto.do_imovel }}</th>
+                {% else %}
+                <th scope="col" style="cursor:default;">Geral</th>
+                {% endif %}
                 <th scope="col" style="cursor:default;">{{ gasto.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ gasto.data|date:"d/m/Y" }}</th>
-                <th scope="col" style="cursor:default;" title="{{ gasto.observacoes }}">
-                    {{ gasto.observacoes|truncatechars:100 }}
+                {% if gasto.observacoes %}
+                <th scope="col" style="cursor:default;" title="Clique para ver mais" data-bs-toggle="modal"
+                    data-bs-target="#Modal{{ gasto.pk }}">{{ gasto.observacoes|truncatechars:100 }}
                 </th>
+                {% else %}
+                <th scope="col" style="cursor:default;">---</th>
+                {% endif %}
                 {% if gasto.comprovante %}
                 <th scope="col">
                     <a href="{{ gasto.comprovante.url }}" class="link-primary" target="_blank"
@@ -80,13 +88,21 @@ Gastos / {{ SITE_NAME }}
 
             <tbody>
             <tr>
-                <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
+                <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
+                {% if gasto.do_imovel %}
                 <th scope="col" style="cursor:default;">{{ gasto.do_imovel }}</th>
+                {% else %}
+                <th scope="col" style="cursor:default;">Geral</th>
+                {% endif %}
                 <th scope="col" style="cursor:default;">{{ gasto.valor_format }}</th>
                 <th scope="col" style="cursor:default;">{{ gasto.data|date:"d/m/Y" }}</th>
-                <th scope="col" style="cursor:default;" title="{{ gasto.observacoes }}">
-                    {{ gasto.observacoes|truncatechars:100 }}
+                {% if gasto.observacoes %}
+                <th scope="col" style="cursor:default;" title="Clique para ver mais" data-bs-toggle="modal"
+                    data-bs-target="#Modal{{ gasto.pk }}">{{ gasto.observacoes|truncatechars:100 }}
                 </th>
+                {% else %}
+                <th scope="col" style="cursor:default;">---</th>
+                {% endif %}
                 {% if gasto.comprovante %}
                 <th scope="col">
                     <a href="{{ gasto.comprovante.url }}" class="link-primary" target="_blank"
@@ -107,6 +123,29 @@ Gastos / {{ SITE_NAME }}
     </div>
 
 </container>
+
+<!-- Modal -->
+{% for gasto in gastos %}
+<div class="modal fade modal-lg" id="Modal{{ gasto.pk }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark border border-white text-white">
+            <div class="modal-header">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">{{ page_obj.start_index|add:forloop.counter0 }}.
+                    {{ gasto.do_imovel }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ gasto.observacoes }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 {% else %}
 <container class="container-fluid text-center text-justify">

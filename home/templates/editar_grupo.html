@@ -20,6 +20,7 @@ Editar Grupo / {{ SITE_NAME }}
                 {% csrf_token %}
                 Editar grupo*
                 {{ form.nome|as_crispy_field }}
+                {{ form.tipo|as_crispy_field }}
                 <div class="justify-center items-center">
                     <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" type="button"
                             onClick="history.go(-1)">Voltar

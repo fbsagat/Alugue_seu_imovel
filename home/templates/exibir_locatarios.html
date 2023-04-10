@@ -40,7 +40,11 @@ Locatários / {{ SITE_NAME }}
         <tr>
             <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.nome }}</th>
+            {% if locatario.RG %}
             <th scope="col" style="cursor:default;">{{ locatario.RG }}</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">---</th>
+            {% endif %}
             <th scope="col" style="cursor:default;">{{ locatario.f_cpf }}</th>
             <th scope="col" style="cursor:default;" title="{{ locatario.ocupacao }}">
                 {{ locatario.ocupacao|truncatechars:25 }}
@@ -50,13 +54,19 @@ Locatários / {{ SITE_NAME }}
                 {{ locatario.endereco_completo|truncatechars:25 }}
             </th>
             {% else %}
-            <th scope="col" style="cursor:default;">
-                ---
-            </th>
+            <th scope="col" style="cursor:default;">---</th>
             {% endif %}
             <th scope="col" style="cursor:default;">{{ locatario.f_tel1 }}</th>
+            {% if locatario.f_tel2 %}
             <th scope="col" style="cursor:default;">{{ locatario.f_tel2 }}</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">---</th>
+            {% endif %}
+            {% if locatario.email %}
             <th scope="col" style="cursor:default;">{{ locatario.email }}</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">---</th>
+            {% endif %}
             <th scope="col" style="cursor:default;">{{ locatario.nacionalidade }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.get_estadocivil_display }}</th>
 

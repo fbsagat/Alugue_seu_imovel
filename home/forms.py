@@ -258,6 +258,19 @@ class FormContratoDocConfig(forms.ModelForm):
         self.fields['fiador_CPF'].widget.attrs['id'] = 'id_CPF'
         self.fields['tipo_de_locacao'].choices = ((None, '-----------'), (1, 'Residencial'), (2, 'Não residencial'))
 
+    def clean(self):
+        msg = 'Para fiador este campo deve ser preenchido'
+        cleaned_data = super(FormContratoDocConfig, self).clean()
+        fiador_nome = cleaned_data.get("fiador_nome")
+        fiador_cpf = cleaned_data.get("fiador_CPF")
+
+        if fiador_nome and fiador_cpf is None:
+            self.add_error('fiador_CPF', msg)
+
+        elif fiador_cpf and fiador_nome is None:
+            self.add_error('fiador_nome', msg)
+        return cleaned_data
+
 
 class FormContratoModelo(forms.ModelForm):
     class Meta:

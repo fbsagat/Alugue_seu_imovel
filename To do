@@ -28,6 +28,9 @@ OK. Arrumar tabela onde contratos mantém 'O Pagam. VENCEU' até mesmo qdo venci
         quando algum contrato existia e foi apagado antes do novo ser criado.
 OK. Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
 OK. (e ainda consertei varios bugs no caminho) Criar formulario de locatario: endereço, para contratos não residenciais.
+OK. Adiconar possibilidade de criar um gasto geral, não exclusivo de algum imóvel.
+OK. Arrumar CLÁUSULA DÉCIMA PRIMEIRA do contrato, opção casa ou prédio.
+OK. Algmas listas devem mostrar apenas os contratos ativos, não tudo.
 
 Fazer:
 Criar a função comunidade no editor de modelos.
@@ -36,12 +39,11 @@ Implementar filtros nas paginas do botão histórico.
 Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
         com sistema de votação.
 Algun itens no urls.py não precisam enviar o pk, arrumar
-Adiconar possibilidade de criar um gasto geral, não exclusivo de algum imóvel.
 Aplicar o cursor pointer em alguns itens nos templates. (copia logo pae: style="cursor:pointer;")
-Arrumar CLÁUSULA DÉCIMA PRIMEIRA do contrato, opção casa ou prédio.
+
 Implementar data especifica nas configurações do gerador de contrato pdf.
-Quando gerar contratos fakes, limitar estes ao número disponível de imóveis.
-Criar o sistema de peimeira inicialização do app, criar pastas, gerar os constratos padrões e etc...
+Criar o sistema de peimeira inicialização do app, criar pastas, preencher base de dados com os
+        dado padrões (ex: modelos de constratos) e etc...
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
@@ -49,6 +51,7 @@ pk do usuario deve ser aleatorio e grande, não sequencial desde o 1, arrumar
 Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir também nas forms.
 
 Melhorias futuras:
+Aplicar o https://datatables.net/, tabelas mais inteligentes.
 Criar o help (sistema de dicas e recomendações espalhados por to_do o site, referentes ao manuseio do mesmo e a regras
         e dicas de locação)
 Confirmação de email e celular.

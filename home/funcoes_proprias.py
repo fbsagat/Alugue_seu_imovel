@@ -378,7 +378,8 @@ def gerar_tabela_pdf(dados):
 # 102: -----------------------------------------------
 modelo_variaveis = {
     0: ['[!variavel: semana_extenso_hoje]', 'Dia da semana hoje escrito por extenso'],
-    1: ['[!variavel: data_hoje]', 'Data de hoje'],
+    64: ['[!variavel: data_extenso_hoje]', 'Dia, mês e ano de hoje escritos por extenso'],
+    1: ['[!variavel: data_hoje]', 'Data abreviada de hoje'],
     43: ['[!variavel: tipo_de_locacao]', 'Locação residencial ou locação comercial/industrial'],
     49: ['[!variavel: caucao]', 'Valor da caução/depósito a ser pago'],
     50: ['[!variavel: caucao_por_extenso]', 'Valor da caução/depósito a ser pago por extenso'],
@@ -389,6 +390,7 @@ modelo_variaveis = {
     5: ['[!variavel: locador_ocupacao]', 'Ocupação trabalhista do locador do imóvel deste contrato'],
     6: ['[!variavel: locador_rg]', 'Documento número de RG do locador do imóvel deste contrato'],
     7: ['[!variavel: locador_cpf]', 'Documento número de CPF do locador do imóvel deste contrato'],
+    63: ['[!variavel: locador_telefone]', 'Número do telefone celular do locador do imóvel deste contrato'],
     8: ['[!variavel: locador_endereco_completo]', 'Endereço completo do locador do imóvel deste contrato'],
     47: ['[!variavel: locador_email]', 'Endereço de e-mail do locador do imóvel deste contrato'],
     32: ['[!variavel: locador_pagamento_1]', 'Informações de pagamento 1 do locador do imóvel deste contrato'],
@@ -400,7 +402,9 @@ modelo_variaveis = {
     11: ['[!variavel: imovel_uc_sanemameto]', 'Unidade consumidora de saneamento do imóvel deste contrato'],
     12: ['[!variavel: imovel_cidade]', 'Cidade onde se localiza o imóvel deste contrato'],
     48: ['[!variavel: imovel_estado]', 'Estado onde se localiza o imóvel deste contrato'],
+    62: ['[!variavel: imovel_bairro]', 'Bairro onde se localiza o imóvel deste contrato'],
     13: ['[!variavel: imovel_endereco_completo]', 'Endereço completo do imóvel deste contrato'],
+    61: ['[!variavel: imovel_grupo_tipo]', 'Tipo de grupo no qual o imóvel deste contrato está inserido'],
 
     14: ['[!variavel: locatario_nome_completo]', 'Nome completo do locatário do imóvel deste contrato'],
     15: ['[!variavel: locatario_cpf]', 'Documento número de CPF do locatário do imóvel deste contrato'],
@@ -424,8 +428,9 @@ modelo_variaveis = {
     22: ['[!variavel: contrato_data_entrada]', 'Data de entrada do locatário no imóvel'],
     23: ['[!variavel: contrato_data_saida]', 'Data de saída do locatário no imóvel'],
     24: ['[!variavel: contrato_codigo]', 'Código do contrato'],
-    25: ['[!variavel: contrato_periodo]', 'Período, em meses, de validade do contrato'],
-    26: ['[!variavel: contrato_periodo_por_extenso]', 'Período, em meses, de validade do contrato, por extenso'],
+    25: ['[!variavel: contrato_periodo]', 'Período de validade, em meses, de validade do contrato'],
+    26: ['[!variavel: contrato_periodo_por_extenso]',
+         'Período de validade, em meses, de validade do contrato, por extenso'],
     27: ['[!variavel: contrato_parcela_valor]', 'Valor da mensalidade do aluguel'],
     28: ['[!variavel: contrato_parcela_valor_por_extenso]', 'Valor da mensalidade do aluguel, por extenso'],
     45: ['[!variavel: contrato_valor_total]', 'Valor total do contrato, todas as parcelas juntas'],
@@ -434,16 +439,48 @@ modelo_variaveis = {
     35: ['[!variavel: contrato_vencimento_por_extenso]',
          'Dia de vencimento do pagamento da mensalidade do aluguel, por extenso'],
 
-    29: ['[!variavel: contrato_anterior-codigo]', 'Código do contrato anterior deste locatário, neste imóvel'],
+    29: ['[!variavel: contrato_anterior-codigo]',
+         'Código do contrato anterior deste locatário, neste imóvel'],
     30: ['[!variavel: contrato_anterior-data_entrada]',
-         'Data de entrada do locatário no imóvel no contrato anterior'],
-    31: ['[!variavel: contrato_anterior-data_saida]', 'Data de saída do locatário no imóvel no contrato anterior']}
+         'Data de entrada do locatário do imóvel do contrato anterior'],
+    31: ['[!variavel: contrato_anterior-data_saida]',
+         'Data de saída do locatário do imóvel do contrato anterior'],
+    53: ['[!variavel: contrato_anterior-parcela_valor]',
+         'Valor da mensalidade do aluguel do contrato anterior'],
+    54: ['[!variavel: contrato_anterior-parcela_valor_por_extenso]',
+         'Valor da mensalidade do aluguel do contrato anterior, por extenso'],
+    55: ['[!variavel: contrato_anterior_valor_total]',
+         'Valor total do contrato anterior, todas as parcelas juntas'],
+    56: ['[!variavel: contrato_anterior_valor_total_por_extenso]',
+         'Valor total do contrato anterior, por extenso'],
+    57: ['[!variavel: contrato_anterior_vencimento]',
+         'Dia de vencimento do pagamento da mensalidade do aluguel do contrato anterior'],
+    58: ['[!variavel: contrato_anterior_vencimento_por_extenso]',
+         'Dia de vencimento do pagamento da mensalidade do aluguel do contrato anterior, por extenso'],
+    59: ['[!variavel: contrato_anterior-periodo]',
+         'Período de validade, em meses, de validade do contrato anterior'],
+    60: ['[!variavel: contrato_anterior-periodo_por_extenso]',
+         'Período de validade, em meses, de validade do contrato anterior, por extenso'],
+}
 
 modelo_condicoes = {
     0: ['[!condicao: fiador_existe]', 'Mostrar trecho caso exista dados do fiador'],
     1: ['[!condicao: fiador_nao_existe]', 'Mostrar trecho caso não exista dados do fiador'],
     2: ['[!condicao: tipo_residencial]', 'Mostrar trecho caso o tipo de contrato é residencial'],
     3: ['[!condicao: tipo_nao_residencial]', 'Mostrar trecho caso o tipo de contrato é comercial/industrial'],
+    4: ['[!condicao: imovel_grupo_Casa]', 'Mostrar trecho caso o imóvel pertença à um grupo do tipo Casa'],
+    5: ['[!condicao: imovel_grupo_Apartamento]',
+        'Mostrar trecho caso o imóvel pertença à um grupo do tipo Apartamento'],
+    6: ['[!condicao: imovel_grupo_Kitnet]', 'Mostrar trecho caso o imóvel pertença à um grupo do tipo Kitnet'],
+    7: ['[!condicao: imovel_grupo_Box/Loja]', 'Mostrar trecho caso o imóvel pertença à um grupo do tipo Box/Loja'],
+    8: ['[!condicao: imovel_grupo_Escritório]', 'Mostrar trecho caso o imóvel pertença à um grupo do tipo Escritório'],
+    9: ['[!condicao: imovel_grupo_Depósito/Armazém]',
+        'Mostrar trecho caso o imóvel pertença à um grupo do tipo Depósito/Armazém'],
+    10: ['[!condicao: imovel_grupo_Galpão]', 'Mostrar trecho caso o imóvel pertença à um grupo do tipo Galpão'],
+    11: ['[!condicao: contrato_anterior_existe]',
+         'Mostrar trecho caso exista um contrato anterior à este com este locador neste imóvel'],
+    12: ['[!condicao: contrato_anterior_nao_existe]',
+         'Mostrar trecho caso não exista um contrato anterior à este com este locador neste imóvel'],
 }
 
 
@@ -464,41 +501,96 @@ def gerar_contrato_pdf(dados):
         comando_inicio = j[0]
         comando_fim = f'{comando_inicio[:comando_inicio.find("]")]}_fim{comando_inicio[comando_inicio.find("]"):]}'
         indice = 0
-        posicoes = []
 
         while indice < len(modelo_corpo):
             indice = modelo_corpo.find(j[0], indice)
             if indice == -1:
                 break
-            posicoes.append(indice)
             pos_fim = modelo_corpo[indice:].find(comando_fim)
-            trecho = modelo_corpo[indice:indice+pos_fim+len(comando_fim)]
-            trecho_sem_comandos = trecho[len(comando_inicio):-len(comando_fim)]
+            trecho = modelo_corpo[indice:indice + pos_fim + len(comando_fim)]
+            tem_comando_fim = True if comando_fim in trecho else False
+            trecho_final = trecho[len(comando_inicio):-len(comando_fim)]
 
             # Funções das condições:
-            if comando_inicio == '[!condicao: fiador_existe]':
+            # Economizar processamento, se necessário: Evitar essa busca de texto, e sim, enviar um parâmetro \/
+            if comando_inicio == '[!condicao: fiador_existe]' and tem_comando_fim:
                 if '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]' in dados['fiador_nome_completo']:
                     modelo_corpo = modelo_corpo.replace(trecho, '')
                 else:
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_sem_comandos)
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
 
-            if comando_inicio == '[!condicao: fiador_nao_existe]':
+            if comando_inicio == '[!condicao: fiador_nao_existe]' and tem_comando_fim:
                 if '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]' in dados['fiador_nome_completo']:
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_sem_comandos)
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
                 else:
                     modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: tipo_residencial]':
+            if comando_inicio == '[!condicao: tipo_residencial]' and tem_comando_fim:
                 if dados['tipo_de_locacao'] == 'residencial':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_sem_comandos)
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
                 else:
                     modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: tipo_nao_residencial]':
+            if comando_inicio == '[!condicao: tipo_nao_residencial]' and tem_comando_fim:
                 if dados['tipo_de_locacao'] == 'não residencial':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_sem_comandos)
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
                 else:
                     modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: imovel_grupo_Casa]' and tem_comando_fim:
+                if dados['imovel_grupo_tipo'] == 'Casa':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: imovel_grupo_Apartamento]' and tem_comando_fim:
+                if dados['imovel_grupo_tipo'] == 'Apartamento':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: imovel_grupo_Kitnet]' and tem_comando_fim:
+                if dados['imovel_grupo_tipo'] == 'Kitnet':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: imovel_grupo_Box/Loja]' and tem_comando_fim:
+                if dados['imovel_grupo_tipo'] == 'Box/Loja':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: imovel_grupo_Escritório]' and tem_comando_fim:
+                if dados['imovel_grupo_tipo'] == 'Escritório':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: imovel_grupo_Depósito/Armazém]' and tem_comando_fim:
+                if dados['imovel_grupo_tipo'] == 'Depósito/Armazém':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: imovel_grupo_Galpão]' and tem_comando_fim:
+                if dados['imovel_grupo_tipo'] == 'Galpão':
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
+            if comando_inicio == '[!condicao: contrato_anterior_existe]' and tem_comando_fim:
+                if '[NÃO EXISTE CONTRATO ANTERIOR A ESTE]' in dados['contrato_anterior-codigo']:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+
+            if comando_inicio == '[!condicao: contrato_anterior_nao_existe]' and tem_comando_fim:
+                if '[NÃO EXISTE CONTRATO ANTERIOR A ESTE]' in dados['contrato_anterior-codigo']:
+                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                else:
+                    modelo_corpo = modelo_corpo.replace(trecho, '')
+
             # Fim das funções das condições
             indice += 1
 

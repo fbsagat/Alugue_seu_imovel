@@ -62,7 +62,7 @@ def locatarios_ficticios():
     rg = randrange(1000000, 9999999)
     cpf = randrange(10000000000, 99999999999)
     ocupacao = fake.catch_phrase()
-    endereco_completo = fake.street_name()
+    endereco_completo = fake.address()
     telefone1 = f'{91}98{randrange(1000000, 9999999)}'
     telefone2 = fake.msisdn()[-11::]
     email = fake.email()
@@ -82,8 +82,12 @@ def imov_grupo_fict():
     return {'nome': nome}
 
 
-def imoveis_ficticios():
-    nome = fake.neighborhood()
+def imoveis_ficticios(usuario):
+    names = Imovei.objects.filter(do_locador=usuario).values_list('nome', flat=True)
+    while True:
+        nome = fake.neighborhood()
+        if nome not in names:
+            break
     cep = randrange(10000000, 99999999)
     endereco = fake.street_name()
     numero = fake.building_number()

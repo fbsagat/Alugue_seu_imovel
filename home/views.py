@@ -451,7 +451,9 @@ def registrar_anotacao(request):
             tarefa.texto = mensagem
             tarefa.dados = {'afazer_concluida': 1}
             tarefa.save()
-        messages.success(request, "Anotação resgistrada com sucesso!")
+            messages.success(request, "Tarefa resgistrada com sucesso!")
+        else:
+            messages.success(request, "Anotação resgistrada com sucesso!")
         if 'form7' in request.session:
             del request.session['form7']
         return redirect(request.META['HTTP_REFERER'])
@@ -464,14 +466,20 @@ def registrar_anotacao(request):
 # -=-=-=-=-=-=-=-= BOTÃO GERAR -=-=-=-=-=-=-=-=
 @login_required
 def recibos(request, pk):
+    contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
+    contratos_ativos_pks = []
+    for contrato in contratos:
+        if contrato.ativo_hoje() or contrato.ativo_futuramente():
+            contratos_ativos_pks.append(contrato.pk)
+    contratos_ativos = Contrato.objects.filter(id__in=contratos_ativos_pks)
+
     form = FormRecibos()
-    form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
-                                                               vencido=False).order_by('-data_entrada')
+    form.fields['contrato'].queryset = contratos_ativos
     context = {}
 
     # Indica se o usuario tem contrato para o template e ja pega o primeiro para carregar\/
     usuario = Usuario.objects.get(pk=request.user.pk)
-    tem_contratos = Contrato.objects.filter(do_locador=request.user.pk).order_by('-data_entrada').first()
+    tem_contratos = contratos_ativos.first()
 
     if tem_contratos:
         contrato = tem_contratos
@@ -488,14 +496,12 @@ def recibos(request, pk):
             if usuario.recibo_ultimo and usuario.recibo_preenchimento:
                 form = FormRecibos(
                     initial={'contrato': usuario.recibo_ultimo, 'data_preenchimento': usuario.recibo_preenchimento})
-                form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
-                                                                           vencido=False).order_by('-data_entrada')
+                form.fields['contrato'].queryset = contratos_ativos
 
             # Se for um post, salvar o novo contrato no campo 'ultimo recibo salvo' do usuario e etc...\/
             if request.method == 'POST':
                 form = FormRecibos(request.POST)
-                form.fields['contrato'].queryset = Contrato.objects.filter(do_locador=request.user, rescindido=False,
-                                                                           vencido=False).order_by('-data_entrada')
+                form.fields['contrato'].queryset = contratos_ativos
                 if form.is_valid():
                     contrato = Contrato.objects.get(pk=form.cleaned_data['contrato'].pk)
                     usuario.recibo_preenchimento = form.cleaned_data['data_preenchimento']
@@ -746,15 +752,19 @@ def gerar_contrato(request, pk):
     qs1 = ContratoModelo.objects.filter(autor=request.user)
     qs2 = ContratoModelo.objects.filter(autor=admins)
     form2.fields['do_modelo'].queryset = qs1.union(qs2).order_by('-data_criacao')
-    contratos = Contrato.objects.filter(do_locador=request.user, rescindido=False,
-                                        vencido=False).order_by('-data_entrada')
+    contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
+    contratos_ativos_pks = []
+    for contrato in contratos:
+        if contrato.ativo_hoje() or contrato.ativo_futuramente():
+            contratos_ativos_pks.append(contrato.pk)
+    contratos_ativos = Contrato.objects.filter(id__in=contratos_ativos_pks)
 
     # Se for POST
     if request.method == 'POST':
         # Se for um POST do primeiro form
         if 'contrato' in request.POST:
             form = FormContratoDoc(request.POST)
-            form.fields['contrato'].queryset = contratos
+            form.fields['contrato'].queryset = contratos_ativos
             if form.is_valid():
                 # Se o form for valido atualiza o campo contrato_ultimo do usuario
                 usuario.contrato_ultimo = form.cleaned_data['contrato']
@@ -788,6 +798,9 @@ def gerar_contrato(request, pk):
                     # ContratoDocConfig para o contrato selecionado.
                     configs.save()
                 return redirect(f'/contrato_PDF/{request.user.pk}')
+            else:
+                context['form2'] = form2
+                context['contrato_ultimo_nome'] = contrato_ultimo
 
         elif request.POST.get("mod", ""):
             form2 = FormContratoDocConfig(
@@ -803,11 +816,12 @@ def gerar_contrato(request, pk):
                          'fiador_estadocivil': contr_doc_configs.fiador_estadocivil})
             contr_doc_configs = None
 
-    form.fields['contrato'].queryset = contratos
+    form.fields['contrato'].queryset = contratos_ativos
     context['form'] = form
 
     if contr_doc_configs and contr_doc_configs.do_modelo:
         imovel = contrato_ultimo.do_imovel
+        imov_grupo = contrato_ultimo.do_imovel.grupo
         contrato = contrato_ultimo
         locatario = contrato_ultimo.do_locatario
         try:
@@ -848,7 +862,8 @@ def gerar_contrato(request, pk):
                  # A variavel no documento: [!variavel: locador_pagamento_2]
                  # logo o nome deve ser: locador_pagamento_2
 
-                 'semana_extenso_hoje': f'{data_ptbr(data, "l, d")} de {data_ptbr(data, "F")}  de {data_ptbr(data, "Y")}',
+                 'semana_extenso_hoje': f'{data_ptbr(data, "l")}',
+                 'data_extenso_hoje': f'{data_ptbr(data, "d")} de {data_ptbr(data, "F")}  de {data_ptbr(data, "Y")}',
                  'data_hoje': str(data.strftime('%d/%m/%Y')),
                  'tipo_de_locacao': erro7 if contr_doc_configs.tipo_de_locacao is None else \
                      contr_doc_configs.get_tipo_de_locacao_display(),
@@ -861,6 +876,7 @@ def gerar_contrato(request, pk):
                  'locador_ocupacao': getattr(usuario, 'ocupacao') or erro1,
                  'locador_rg': str(getattr(usuario, 'RG') or erro1),
                  'locador_cpf': usuario.f_cpf() or erro1,
+                 'locador_telefone': usuario.f_tel() or erro1,
                  'locador_endereco_completo': getattr(usuario, 'endereco_completo') or erro1,
                  'locador_email': getattr(usuario, 'email') or erro1,
                  'locador_pagamento_1': getattr(usuario, 'dados_pagamento1') or erro1,
@@ -877,13 +893,29 @@ def gerar_contrato(request, pk):
                  'contrato_valor_total_por_extenso': str(contrato.valor_do_contrato_por_extenso() or erro2),
                  'contrato_vencimento': str(getattr(contrato, 'dia_vencimento') or erro2),
                  'contrato_vencimento_por_extenso': contrato.dia_vencimento_por_extenso() or erro2,
-                 'contrato_anterior-codigo': getattr(contrato_anterior,
-                                                     'codigo') or erro2 if contrato_anterior else erro3,
-                 'contrato_anterior-parcela_valor': contrato_anterior.valor_format() or erro2 if contrato_anterior else \
-                     erro3, 'contrato_anterior-data_entrada': str(
-                contrato_anterior.data_entrada.strftime('%d/%m/%Y') or erro2) if contrato_anterior else erro3,
-                 'contrato_anterior-data_saida': str(
-                     contrato_anterior.data_saida().strftime('%d/%m/%Y') or erro2) if contrato_anterior else erro3,
+
+                 'contrato_anterior-codigo':
+                     getattr(contrato_anterior, 'codigo') or erro2 if contrato_anterior else erro3,
+                 'contrato_anterior-parcela_valor':
+                     contrato_anterior.valor_format() or erro2 if contrato_anterior else erro3,
+                 'contrato_anterior-parcela_valor_por_extenso':
+                     contrato_anterior.valor_por_extenso() or erro2 if contrato_anterior else erro3,
+                 'contrato_anterior_valor_total':
+                     contrato_anterior.valor_do_contrato() or erro2 if contrato_anterior else erro3,
+                 'contrato_anterior_valor_total_por_extenso':
+                     str(contrato_anterior.valor_do_contrato_por_extenso() or erro2) if contrato_anterior else erro3,
+                 'contrato_anterior_vencimento':
+                     str(getattr(contrato_anterior, 'dia_vencimento') or erro2) if contrato_anterior else erro3,
+                 'contrato_anterior_vencimento_por_extenso':
+                     contrato_anterior.dia_vencimento_por_extenso() or erro2 if contrato_anterior else erro3,
+                 'contrato_anterior-data_entrada':
+                     str(contrato_anterior.data_entrada.strftime('%d/%m/%Y') or erro2) if contrato_anterior else erro3,
+                 'contrato_anterior-data_saida':
+                     str(contrato_anterior.data_saida().strftime('%d/%m/%Y') or erro2) if contrato_anterior else erro3,
+                 'contrato_anterior-periodo':
+                     str(getattr(contrato_anterior, 'duracao') or erro2) if contrato_anterior else erro3,
+                 'contrato_anterior-periodo_por_extenso':
+                     str(contrato_anterior.duracao_por_extenso() or erro2) if contrato_anterior else erro3,
 
                  'imovel_rotulo': getattr(imovel, 'nome') or erro4,
                  'imovel_uc_energia': getattr(imovel, 'uc_energia') or erro4,
@@ -891,7 +923,9 @@ def gerar_contrato(request, pk):
                  'imovel_endereco_completo': imovel.endereco_completo() or erro4,
                  'imovel_cidade': getattr(imovel, 'cidade') or erro4,
                  'imovel_estado': imovel.get_estado_display() or erro4,
+                 'imovel_bairro': imovel.bairro or erro4,
                  'imovel_grupo': str(getattr(imovel, 'grupo') or erro4),
+                 'imovel_grupo_tipo': imov_grupo.get_tipo_display() or erro4,
 
                  'fiador_nome_completo': getattr(contr_doc_configs, 'fiador_nome') or erro5,
                  'fiador_cpf': contr_doc_configs.f_cpf() or erro5,
@@ -926,7 +960,7 @@ def gerar_contrato(request, pk):
             context['contrato_ultimo_nome'] = contrato_ultimo
 
     context['SITE_NAME'] = settings.SITE_NAME
-    context['tem_contratos'] = True if contratos else False
+    context['tem_contratos'] = True if contratos_ativos else False
     context['contrato_ultimo'] = True if contrato_ultimo is not None else False
     return render(request, 'gerar_contrato.html', context)
 
@@ -1599,7 +1633,7 @@ def botaoteste(request):
             count = 0
             for x in range(fict_multi * fict_qtd['imovel']):
                 count += 1
-                aleatorio = imoveis_ficticios()
+                aleatorio = imoveis_ficticios(usuario)
                 form = FormImovel(usuario)
                 imovel = form.save(commit=False)
                 imovel.do_locador = usuario
