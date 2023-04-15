@@ -13,7 +13,6 @@
     height: 30px !important;
     opacity: 1 !important;
 }
-
 </style>
 
 {% endblock %}
@@ -40,11 +39,11 @@
 
     <ul class="flex justify-between items-center">
 
-        <li>&copy; 2022 - 2023</li>
-        <li> Versão 1.4.2</li>
+        <li><a href="{% url 'home:Sugestões' %}" class="link-primary">Sugestões</a></li>
         {% if user.is_authenticated %}
-        <a href="" data-bs-toggle="modal" data-bs-target="#modal1">Fale com o Desenvolvedor</a>
+        <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal1">Fale com o Desenvolvedor</a>
         {% endif %}
+        <li>&copy; 2022 - {{ ano_atual }}</li>
 
         {% if user.is_superuser %}
         <li>
@@ -76,8 +75,9 @@
                     <p class="text-start ps-5 pe-5">
                         Elogios, reclamaçoes, dúvidas, sujestões e report de bugs são bem vindos! Exagere nos elogios,
                         manere nos xingamentos, e as dúvidas serão respondidas o mais breve possível. Em caso de
-                        sujestão, por favor, descreva com o máximo de detalhes possível. Envie uma imagem se quiser,
-                        principalmente no report de bugs, obrigado!
+                        sujestão, por favor, entre no mini-fórum clicando
+                        <a href="{% url 'home:Sugestões' %}" class="link-primary">AQUI</a>.
+                        Envie uma imagem se quiser, principalmente no report de bugs, obrigado!
                     </p>
                     <br>
                     <form action="{% url 'home:Mensagem pro Desenvolvedor' %}" method="POST"

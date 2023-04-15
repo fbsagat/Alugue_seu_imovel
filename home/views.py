@@ -9,7 +9,7 @@ from num2words import num2words
 from django.core.files import File
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect, render, reverse, get_object_or_404, Http404
+from django.shortcuts import redirect, render, reverse, get_object_or_404, Http404, HttpResponseRedirect
 from django.utils import timezone, dateformat
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
@@ -26,10 +26,10 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
-    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario
+    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugetao
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
-    ContratoDocConfig, ContratoModelo
+    ContratoDocConfig, ContratoModelo, Sugestao
 
 
 # -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
@@ -797,7 +797,7 @@ def gerar_contrato(request, pk):
                     # Se o form for válido e não houver configs para o contrato selecionado, cria uma instância do
                     # ContratoDocConfig para o contrato selecionado.
                     configs.save()
-                return redirect(f'/contrato_PDF/{request.user.pk}')
+                return redirect(reverse('home:Contrato PDF', args={request.user.pk}))
             else:
                 context['form2'] = form2
                 context['contrato_ultimo_nome'] = contrato_ultimo
@@ -1424,7 +1424,7 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
 
 
 # -=-=-=-=-=-=-=-= TAREFAS -=-=-=-=-=-=-=-=
-
+@login_required
 def recibo_entregue(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = True
@@ -1438,6 +1438,7 @@ def recibo_entregue(request, pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
+@login_required
 def recibo_nao_entregue(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = False
@@ -1451,6 +1452,7 @@ def recibo_nao_entregue(request, pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
+@login_required
 def afazer_concluida(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = True
@@ -1464,6 +1466,7 @@ def afazer_concluida(request, pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
+@login_required
 def afazer_nao_concluida(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = False
@@ -1547,7 +1550,7 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         return reverse("home:DashBoard", kwargs={"pk": self.request.user.pk})
 
 
-class ApagarConta(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
     template_name = 'excluir_conta.html'
     model = Usuario
     success_message = 'Conta apagada'
@@ -1577,6 +1580,83 @@ def mensagem_desenvolvedor(request):
         request.session['form2'] = request.POST
         messages.error(request, "Formulário inválido.")
         return redirect(request.META['HTTP_REFERER'])
+
+
+@login_required
+def forum_sugestoes(request):
+    if request.user.is_superuser:
+        sugestoes = Sugestao.objects.filter(implementada=False).order_by('-data_registro')
+        sugestoes_implementadas = Sugestao.objects.filter(implementada=True).order_by('-data_implementada')
+    else:
+        sugestoes = Sugestao.objects.filter(implementada=False, aprovada=True).order_by('-data_registro')[:15]
+        sugestoes_implementadas = Sugestao.objects.filter(implementada=True, aprovada=True).order_by(
+            '-data_implementada')[:10]
+
+    usuario = request.user
+    sugestoes_curtidas = Sugestao.objects.filter(likes=usuario)
+    form = FormSugetao()
+    context = {}
+    if request.method == 'POST':
+        form = FormSugetao(request.POST, request.FILES)
+        if form.is_valid():
+            sugestao = form.save(commit=False)
+            sugestao.do_usuario = usuario
+            sugestao.save()
+            messages.success(request, f"Sua sugestão foi enviada para análise, se aprovada será listada em breve")
+            return redirect(reverse('home:Sugestões'))
+
+    context['SITE_NAME'] = settings.SITE_NAME
+    context['sugestoes'] = sugestoes
+    context['sugestoes_curtidas'] = sugestoes_curtidas
+    context['sugestoes_implementadas'] = sugestoes_implementadas
+    context['usuario'] = usuario
+    context['form'] = form
+    return render(request, 'forum_sugestoes.html', context)
+
+
+@login_required
+def like_de_sugestoes(request, pk):
+    sugestao = get_object_or_404(Sugestao, pk=pk)
+    if sugestao.implementada is False and sugestao.aprovada is True:
+        if sugestao.likes.filter(id=request.user.pk).exists():
+            sugestao.likes.remove(request.user)
+        else:
+            sugestao.likes.add(request.user)
+    return HttpResponseRedirect(reverse('home:Sugestões', args=[]))
+
+
+@login_required
+def apagar_sugestao(request, pk):
+    sugestao = get_object_or_404(Sugestao, pk=pk)
+    if request.user.is_superuser or request.user == sugestao.do_usuario:
+        sugestao.delete()
+    return HttpResponseRedirect(reverse('home:Sugestões', args=[]))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def implementar_sugestao(request, pk):
+    sugestao = get_object_or_404(Sugestao, pk=pk)
+    if sugestao.implementada is False:
+        sugestao.implementada = True
+        sugestao.data_implementada = datetime.now()
+    else:
+        sugestao.implementada = False
+        sugestao.data_implementada = None
+    sugestao.save(update_fields=['implementada', 'data_implementada'])
+    return HttpResponseRedirect(reverse('home:Sugestões', args=[]))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def aprovar_sugestao(request, pk):
+    sugestao = get_object_or_404(Sugestao, pk=pk)
+    if sugestao.aprovada is False:
+        sugestao.aprovada = True
+    else:
+        sugestao.aprovada = False
+    sugestao.save(update_fields=['aprovada'])
+    return HttpResponseRedirect(reverse('home:Sugestões', args=[]))
 
 
 @login_required

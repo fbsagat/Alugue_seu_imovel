@@ -12,9 +12,10 @@ from home.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, Fo
 
 def titulo_pag(request):
     titulo = resolve(request.path_info).url_name
+    ano_atual = datetime.date.today().year
     if settings.DEBUG:
         debug = resolve(request.path_info)
-        return {'block_titulo': titulo, 'pageinfo': debug}
+        return {'block_titulo': titulo, 'pageinfo': debug, 'ano_atual': ano_atual}
     return {'block_titulo': titulo}
 
 

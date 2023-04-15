@@ -10,9 +10,8 @@ from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
 
-from home.models import Usuario, DevMensagen
-from home.models import Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo, ContratoDocConfig, \
-    ContratoModelo
+from home.models import Usuario, DevMensagen, Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo, \
+    ContratoDocConfig, ContratoModelo, Sugestao
 
 
 class Textarea(forms.Textarea):
@@ -101,6 +100,18 @@ class FormMensagem(forms.ModelForm):
         exclude = ['do_usuario', 'data_criacao']
         widgets = {
             'mensagem': Textarea(),
+        }
+
+
+class FormSugetao(forms.ModelForm):
+    class Meta:
+        model = Sugestao
+        fields = '__all__'
+        exclude = ['do_usuario', 'data_registro', 'implementada', 'likes']
+
+        widgets = {
+            'corpo': Textarea(attrs={'cols': 500, 'rows': 22}),
+
         }
 
 
@@ -334,15 +345,6 @@ class FormImovel(forms.ModelForm):
             raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Energia.")
         else:
             return uc_agua
-
-    # forma clean do campo total,depois retira o campo unico
-    # def clean_(self):
-    #     uc_agua = self.cleaned_data['uc_agua']
-    #     uc_agua_dos_imoveis_deste_user = Imovei.objects.filter(do_locador=self.user).values_list('uc_agua', flat=True)
-    #     if uc_agua in uc_agua_dos_imoveis_deste_user:
-    #         raise forms.ValidationError("Já existe um Imóvel registrado com esta matrícula de Saneamento.")
-    #     else:
-    #         return uc_agua
 
 
 class FormAnotacoes(forms.ModelForm):

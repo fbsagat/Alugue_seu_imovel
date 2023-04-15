@@ -6,7 +6,7 @@ from num2words import num2words
 
 from django.db.models.aggregates import Sum
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator, MinValueValidator, \
-    MaxValueValidator
+    MaxValueValidator, FileExtensionValidator
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
@@ -103,7 +103,7 @@ class Locatario(models.Model):
 
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
     docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', blank=True,
-                             verbose_name='Documentos', validators=[tratar_imagem])
+                             verbose_name='Documentos', validators=[tratar_imagem, FileExtensionValidator])
     RG = models.CharField(max_length=9, null=False, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
     CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números',
@@ -506,7 +506,7 @@ class Gasto(models.Model):
     data = models.DateTimeField(blank=False)
     observacoes = models.TextField(max_length=500, blank=True, verbose_name='Observações')
     comprovante = ResizedImageField(size=[1280, None], upload_to='gastos_comprovantes/%Y/%m/', blank=True,
-                                    verbose_name='Comporvante', validators=[tratar_imagem])
+                                    verbose_name='Comporvante', validators=[tratar_imagem, FileExtensionValidator])
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def get_alsolute_url(self):
@@ -601,23 +601,43 @@ lista_mensagem = (
     (1, 'Elogio'),
     (2, 'Reclamação'),
     (3, 'Dúvida'),
-    (4, 'Sujestão'),
-    (5, 'Report de bug'))
+    (4, 'Report de bug'))
 
 
 class DevMensagen(models.Model):
-    do_usuario = models.ForeignKey('Usuario', null=True, blank=True,
-                                   on_delete=models.CASCADE)
+    do_usuario = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
 
     data_registro = models.DateTimeField(auto_now=True)
     titulo = models.CharField(blank=False, max_length=100)
     mensagem = models.TextField(blank=False)
     tipo_msg = models.IntegerField(blank=False, choices=lista_mensagem)
     imagem = ResizedImageField(size=[1280, None], upload_to='mensagens_ao_dev/%Y/%m/', blank=True,
-                               validators=[tratar_imagem])
+                               validators=[tratar_imagem, FileExtensionValidator])
 
     def get_absolute_url(self):
         return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])
 
     def __str__(self):
         return f'{self.do_usuario} - {self.titulo} - {self.data_registro}'
+
+
+class Sugestao(models.Model):
+    do_usuario = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
+
+    data_registro = models.DateTimeField(auto_now=True)
+    corpo = models.TextField(max_length=1500, blank=False, null=False, verbose_name='')
+    imagem = ResizedImageField(size=[1280, None], upload_to='sugestoes_docs/%Y/%m/', blank=True,
+                               validators=[tratar_imagem, FileExtensionValidator], verbose_name='Imagem(opcional)')
+    likes = models.ManyToManyField('Usuario', related_name='Likes', blank=True)
+    implementada = models.BooleanField(default=False)
+    aprovada = models.BooleanField(default=False)
+    data_implementada = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Sugestões'
+
+    def numero_de_likes(self):
+        return self.likes.count()
+
+    def __str__(self):
+        return f'{self.do_usuario} - {self.corpo[:30]} - {self.data_registro}'

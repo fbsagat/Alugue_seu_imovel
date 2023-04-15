@@ -1,16 +1,7 @@
 from django.contrib import admin
 from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, DevMensagen, ImovGrupo, Parcela, \
-    Tarefa, ContratoDocConfig, ContratoModelo
-from django.contrib.auth.admin import UserAdmin
+    Tarefa, ContratoDocConfig, ContratoModelo, Sugestao
 
-
-# class LocatarioAdmin(admin.ModelAdmin):
-#     form = Mascara
-#
-#
-# campos = list(UserAdmin.fieldsets)
-# UserAdmin.fieldsets = tuple(campos)
-# admin.site.register(Usuario, UserAdmin)
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
@@ -103,6 +94,13 @@ class MensagemDevAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'do_usuario', 'data_registro', 'imagem')
     list_filter = ('tipo_msg',)
     search_fields = ('titulo',)
+
+
+@admin.register(Sugestao)
+class MensagemDevAdmin(admin.ModelAdmin):
+    list_display = ('do_usuario', 'data_registro', 'imagem', 'implementada', 'aprovada')
+    list_filter = ('implementada', 'aprovada')
+    search_fields = ('corpo',)
 
 
 @admin.register(Tarefa)

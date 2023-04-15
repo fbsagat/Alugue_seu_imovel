@@ -120,7 +120,7 @@ def usuario_fez_logout(sender, user, **kwargs):
     file1 = rf'{settings.MEDIA_ROOT}/tabela_docs/tabela_{user.uuid}_{user}.pdf'
     if os.path.exists(file1):
         os.remove(file1)
-    file2 = rf'{settings.MEDIA_ROOT}/contrato_docs/tabela_{user.uuid}_{user}.pdf'
+    file2 = rf'{settings.MEDIA_ROOT}/contrato_docs/contrato_{user.uuid}_{user}.pdf'
     if os.path.exists(file2):
         os.remove(file2)
 
