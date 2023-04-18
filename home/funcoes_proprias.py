@@ -349,7 +349,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
 
 def gerar_tabela_pdf(dados):
     # Preparando o PDF:
-    local = f'{settings.MEDIA_ROOT}tabela_docs/tabela_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
+    local = f'{settings.MEDIA_ROOT}/tabela_docs/tabela_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
     a4h = (297 * mm, 210 * mm)
     pdf = canvas.Canvas(local, pagesize=a4h)
 
@@ -493,7 +493,7 @@ def gerar_contrato_pdf(dados):
         os.makedirs(pasta)
 
     modelo_corpo = dados['modelo'].corpo
-    local = f'{settings.MEDIA_ROOT}contrato_docs/contrato_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
+    local = f'{settings.MEDIA_ROOT}/contrato_docs/contrato_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
 
     # Capturar trechos de cada condição registrada em modelo_condicoes
     for i, j in modelo_condicoes.items():
