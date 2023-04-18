@@ -9,6 +9,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
+from ckeditor.widgets import CKEditorWidget
 
 from home.models import Usuario, DevMensagen, Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo, \
     ContratoDocConfig, ContratoModelo, Sugestao
