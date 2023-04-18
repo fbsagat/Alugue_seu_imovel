@@ -16,7 +16,7 @@ def titulo_pag(request):
     if settings.DEBUG:
         debug = resolve(request.path_info)
         return {'block_titulo': titulo, 'pageinfo': debug, 'ano_atual': ano_atual}
-    return {'block_titulo': titulo}
+    return {'block_titulo': titulo, 'ano_atual': ano_atual}
 
 
 def forms_da_navbar(request):
