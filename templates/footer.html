@@ -13,6 +13,10 @@
     height: 30px !important;
     opacity: 1 !important;
 }
+
+
+
+
 </style>
 
 {% endblock %}
@@ -37,14 +41,12 @@
 
 <footer class=" px-10 py-2">
 
+    {% if user.is_authenticated %}
     <ul class="flex justify-between items-center">
-
         <li><a href="{% url 'home:Sugestões' %}" class="link-primary">Sugestões</a></li>
-        {% if user.is_authenticated %}
-        <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal1">Fale com o Desenvolvedor</a>
-        {% endif %}
-        <li>&copy; 2022 - {{ ano_atual }}</li>
-
+        <li>© 2022 - {{ ano_atual }}</li>
+        <li><a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal1">Fale com o Desenvolvedor</a>
+        </li>
         {% if user.is_superuser %}
         <li>
             <form method="POST" action="{% url 'home:botaoteste' %}">
@@ -54,7 +56,13 @@
             </form>
         </li>
         {% endif %}
+
+        {% else %}
+        <ul class="flex justify-center items-center">
+        <li>© 2022 - {{ ano_atual }}</li>
     </ul>
+    {% endif %}
+
 </footer>
 
 {% endif %}

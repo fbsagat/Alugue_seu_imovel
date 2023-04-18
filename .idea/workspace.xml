@@ -5,26 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Várias melhorias e correções de bugs da função gerador de contrato pdf.&#10;&#10;adicionado tipos no grupos de imoveis.&#10;Melhorada a exibição de alguns templates.&#10;Corrigido bug no gerador de fakes imoveis_ficticios.&#10;Validação do fiador adicionada: 'Para fiador este campo deve ser preenchido'&#10;Adiconadas várias novas funções para o cliente no gerador de contrato pdf.&#10;Atualizados vários apps.&#10;Gerador de recibos de de contratos agora mostra apenas contratos ativos a serem carregados, não todos.">
-      <change afterPath="$PROJECT_DIR$/db_admlco32_ - Copy - Copy.sqlite3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0002_alter_devmensagen_tipo_msg_sujestao.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0003_sugestao_delete_sujestao.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0004_sugestao_implementada.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0005_alter_sugestao_corpo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0006_sugestao_data_implementada_alter_sugestao_corpo_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0007_sugestao_aprovada.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/staticfiles/css/xhtml2pdf_default.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/administrador_de_locacao.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/administrador_de_locacao.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/MakeM___Migrate___superUser___Runserver.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/MakeM___Migrate___superUser___Runserver.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/makemigrations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/makemigrations.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/migrate.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/migrate.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/runserver.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/runserver.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/superUser.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/superUser.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/To do" beforeDir="false" afterPath="$PROJECT_DIR$/To do" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,8 +61,9 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/Documentos/Dev Projects/Alugue_seu_imovel/home/templates&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.project&quot;
   }
 }</component>
   <component name="Push.Settings">

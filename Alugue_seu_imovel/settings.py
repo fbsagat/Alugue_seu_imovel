@@ -9,7 +9,7 @@ SITE_URL = 'https://alugueseuimovel.up.railway.app'
 USAR_DB = 1
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
-# tempo para apagar o form inválida da navbar das sessions (segundos)
+# tempo para apagar o form inválido da navbar das sessions (segundos)
 TEMPO_SESSION_FORM = 30
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
@@ -46,29 +46,28 @@ ALLOWED_HOSTS = [SITE_URL.split('//')[1], 'localhost', '127.0.0.1']
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
-
 # Application definition
 
-INSTALLED_APPS = [
+DEFAULT_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
-    'django_cleanup.apps.CleanupConfig',
-
+]
+LOCAL_APPS = [
     'home',
-
+]
+THIRD_PARTY_APSS = [
+    'django_cleanup.apps.CleanupConfig',
     'crispy_forms',
     'crispy_bootstrap5',
     'ckeditor',
-
+    'social_django',
 ]
+
+INSTALLED_APPS = DEFAULT_APPS + LOCAL_APPS + THIRD_PARTY_APSS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -79,8 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'Alugue_seu_imovel.urls'
@@ -97,12 +95,22 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 'home.new_context.titulo_pag',
                 'home.new_context.forms_da_navbar',
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.google.GoogleOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
@@ -178,8 +186,19 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'home:Login'
+LOGOUT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
+
+# configurações do social auth
+SOCIAL_AUTH_FACEBOOK_KEY = '252312777236603'
+SOCIAL_AUTH_FACEBOOK_SECRET = '2fc955e7c8f42861e4eaeab48f5d3473'
+
+SOCIAL_AUTH_TWITTER_KEY = 'wOlGa8oHbwoRjIFuf0Pg937hH'
+SOCIAL_AUTH_TWITTER_SECRET = '10RoxIENW7xvNB47xpI5SkPPgv4cjpFQQb2KRQ4lGi6Mzc5uce'
+
+SOCIAL_AUTH_GOOGLE_KEY = '252312777236603'
+SOCIAL_AUTH_GOOGLE_SECRET = '2fc955e7c8f42861e4eaeab48f5d3473'
 
 # Configurações do cryspy-forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'

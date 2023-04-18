@@ -11,7 +11,6 @@ django-environ==0.10.0
 django-localflavor==3.1
 django-model-utils==4.3.1
 django-resized==1.0.2
-django_debug_toolbar==4.0.0
 docopt==0.6.2
 fabio==2023.4.0
 Faker==18.4.0

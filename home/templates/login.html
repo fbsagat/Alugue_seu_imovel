@@ -8,6 +8,14 @@ Login / {{ SITE_NAME }}
 {% endblock %}
 
 {% block head %}
+<style>
+    ion-icon {
+    pointer-events: none;
+}
+
+
+
+</style>
 {% endblock %}
 
 {% block content %}
@@ -32,6 +40,30 @@ Login / {{ SITE_NAME }}
                     </button>
                 </div>
             </form>
+            <br>
+            <p><strong>Ou faça Login com:</strong></p>
+            <br>
+            <div class="flex items-center">
+                <div class="mx-5">
+                    <a href="{% url 'social:begin' 'facebook' %}">
+                        <ion-icon size="large" name="logo-facebook"></ion-icon>
+                        <h1>Facebook</h1>
+                    </a>
+                </div>
+                <div class="mx-5">
+                    <a href="{% url 'social:begin' 'twitter' %}">
+                        <ion-icon size="large" name="logo-twitter"></ion-icon>
+                        <h1>Twitter</h1>
+                    </a>
+                </div>
+                <div class="mx-5">
+                    <a href="{% url 'social:begin' 'google' %}">
+                        <ion-icon size="large" name="logo-google"></ion-icon>
+                        <h1>Google</h1>
+                    </a>
+                </div>
+            </div>
+            <br>
             <small>
                 Não tem uma conta ainda? <p><a href="{% url 'home:Criar Conta' %}">Clique aqui para criar uma conta</a>
             </p>
