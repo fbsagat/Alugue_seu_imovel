@@ -44,8 +44,6 @@ Criar um botão de painel com configurações diversas e botão de backup de tod
 Implementar filtros nas paginas do botão histórico.
 Alguns itens no urls.py não precisam enviar o pk, arrumar
 Aplicar o cursor pointer em alguns itens nos templates. (copia logo pae: style="cursor:pointer;")
-
-Implementar data especifica nas configurações do gerador de contrato pdf.
 Criar o sistema de peimeira inicialização do app, criar pastas, preencher base de dados com os
         dado padrões (ex: modelos de constratos) e etc...
 

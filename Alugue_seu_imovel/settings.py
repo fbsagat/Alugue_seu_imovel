@@ -6,7 +6,7 @@ import os, environ, dj_database_url
 
 SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
-USAR_DB = 1
+USAR_DB = 2
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar o form inválido da navbar das sessions (segundos)
@@ -40,7 +40,7 @@ else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [SITE_URL.split('//')[1], 'localhost', '127.0.0.1']
 
@@ -133,9 +133,9 @@ elif USAR_DB == 2:
         DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
                                  'NAME': 'railway',
                                  'USER': 'postgres',
-                                 'PASSWORD': 'q9GwWuTimXPfxcPHUqX3',
-                                 'HOST': 'containers-us-west-58.railway.app',
-                                 'PORT': '7877',
+                                 'PASSWORD': 'lesWVCMCwjX66bEBOfQb',
+                                 'HOST': 'containers-us-west-194.railway.app',
+                                 'PORT': '7958',
                                  }
                      }
 elif USAR_DB == 3:
@@ -191,14 +191,14 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
 # configurações do social auth
-SOCIAL_AUTH_FACEBOOK_KEY = '252312777236603'
-SOCIAL_AUTH_FACEBOOK_SECRET = '2fc955e7c8f42861e4eaeab48f5d3473'
+SOCIAL_AUTH_FACEBOOK_KEY = ''
+SOCIAL_AUTH_FACEBOOK_SECRET = ''
 
-SOCIAL_AUTH_TWITTER_KEY = 'wOlGa8oHbwoRjIFuf0Pg937hH'
-SOCIAL_AUTH_TWITTER_SECRET = '10RoxIENW7xvNB47xpI5SkPPgv4cjpFQQb2KRQ4lGi6Mzc5uce'
+SOCIAL_AUTH_TWITTER_KEY = ''
+SOCIAL_AUTH_TWITTER_SECRET = ''
 
-SOCIAL_AUTH_GOOGLE_KEY = '252312777236603'
-SOCIAL_AUTH_GOOGLE_SECRET = '2fc955e7c8f42861e4eaeab48f5d3473'
+SOCIAL_AUTH_GOOGLE_KEY = ''
+SOCIAL_AUTH_GOOGLE_SECRET = ''
 
 # Configurações do cryspy-forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
