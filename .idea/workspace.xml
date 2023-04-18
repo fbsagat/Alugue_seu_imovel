@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Várias melhorias e correções de bugs.">
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment=".Preparando para o servidor localhost.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +63,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver">
+  <component name="RunManager" selected="Python.runserver">
     <list>
       <item itemvalue="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver" />
       <item itemvalue="Python.makemigrations" />
@@ -79,20 +80,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1678467679553</updated>
-    </task>
-    <task id="LOCAL-00026" summary="Melhorias e correções">
-      <created>1678484927184</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1678484927184</updated>
-    </task>
-    <task id="LOCAL-00027" summary="Melhorias e correções">
-      <created>1678485873475</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1678485873475</updated>
     </task>
     <task id="LOCAL-00028" summary="Melhorias e correções">
       <created>1678486064176</created>
@@ -423,7 +410,21 @@
       <option name="project" value="LOCAL" />
       <updated>1681804220664</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="Preparação para testes no servidor, sem debug.">
+      <created>1681828717336</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1681828717336</updated>
+    </task>
+    <task id="LOCAL-00076" summary=".Preparando para o servidor localhost.">
+      <created>1681828754628</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1681828754628</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -464,6 +465,8 @@
     <MESSAGE value="Melhorias e correções de bugs da função gerador de contrato pdf." />
     <MESSAGE value="Várias melhorias e correções de bugs da função gerador de contrato pdf.&#10;&#10;adicionado tipos no grupos de imoveis.&#10;Melhorada a exibição de alguns templates.&#10;Corrigido bug no gerador de fakes imoveis_ficticios.&#10;Validação do fiador adicionada: 'Para fiador este campo deve ser preenchido'&#10;Adiconadas várias novas funções para o cliente no gerador de contrato pdf.&#10;Atualizados vários apps.&#10;Gerador de recibos de de contratos agora mostra apenas contratos ativos a serem carregados, não todos." />
     <MESSAGE value="Várias melhorias e correções de bugs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Várias melhorias e correções de bugs." />
+    <MESSAGE value="Preparação para testes no servidor, sem debug." />
+    <MESSAGE value=".Preparando para o servidor localhost." />
+    <option name="LAST_COMMIT_MESSAGE" value=".Preparando para o servidor localhost." />
   </component>
 </project>
