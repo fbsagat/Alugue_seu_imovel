@@ -175,7 +175,7 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
-if USAR_DB == 3:
+if USAR_DB == 3 or 2:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static').replace('\\', '/'), ]
 
