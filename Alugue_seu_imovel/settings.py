@@ -1,4 +1,6 @@
 from pathlib import Path
+
+import django
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 
@@ -6,7 +8,7 @@ import os, environ, dj_database_url
 
 SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
-USAR_DB = 1
+USAR_DB = 2
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar o form inválido da navbar das sessions (segundos)
