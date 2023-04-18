@@ -1,3 +1,4 @@
+{% load static %}
 {% block head %}
 
 {% load crispy_forms_tags %}
@@ -13,10 +14,6 @@
     height: 30px !important;
     opacity: 1 !important;
 }
-
-
-
-
 </style>
 
 {% endblock %}
@@ -26,14 +23,44 @@
 <section class='flex flex-col md:flex-row items-center border-gray-900 border-b-8' style="min-height: 70vh;">
     <div class="md:w-1/2 flex flex-col justify-center text-center md:text-left p-5 md:p-10 ">
         <h2 class="md:text-5xl text-4xl font-semibold mb-4">
-            Enjoy on your TV.
+            Gere recibos em PDF para impressão.
         </h2>
         <h5 class="md:text-xl text-lg">
-            Watch on Smart TVs, Playstation, Xbox, Chromecast, Apple TV, Blu-ray players, and more.
+            O gerador de recibos em PDF preenche tudo para você. É só gerar e imprimir.
         </h5>
     </div>
     <div class='md:w-1/2 flex justify-center items-center'>
-        <img src="" class="w-8/12" alt="">
+        <img src="{% static 'images/ex_home_001.jpg' %}" class="w-11/12" alt="">
+    </div>
+</section>
+
+<section class='flex flex-col md:flex-row items-center border-gray-900 border-b-8' style="min-height: 70vh;">
+    <div class="md:w-1/2 flex flex-col justify-center text-center md:text-left p-5 md:p-10 ">
+        <h2 class="md:text-5xl text-4xl font-semibold mb-4">
+            Gere tabelas em PDF para impressão.
+        </h2>
+        <h5 class="md:text-xl text-lg">
+            A tabela organiza seus imóveis como em uma agenda, ela é ótima para visualizar as locações dos seus imóveis
+            no tempo.
+        </h5>
+    </div>
+    <div class='md:w-1/2 flex justify-center items-center'>
+        <img src="{% static 'images/ex_home_002.jpg' %}" class="w-11/12" alt="">
+    </div>
+</section>
+
+<section class='flex flex-col md:flex-row items-center border-gray-900 border-b-8' style="min-height: 70vh;">
+    <div class="md:w-1/2 flex flex-col justify-center text-center md:text-left p-5 md:p-10 ">
+        <h2 class="md:text-5xl text-4xl font-semibold mb-4">
+            Gere contratos em PDF para impressão.
+        </h2>
+        <h5 class="md:text-xl text-lg">
+            Gerar contratos para impressão nunca foi tão fácil, eles são preenchidos automaticamente e você conta com um
+            editor para criar seus próprios modelos.
+        </h5>
+    </div>
+    <div class='md:w-1/2 flex justify-center items-center'>
+        <img src="{% static 'images/ex_home_003.jpg' %}" class="w-11/12" alt="">
     </div>
 </section>
 
@@ -59,9 +86,9 @@
 
         {% else %}
         <ul class="flex justify-center items-center">
-        <li>© 2022 - {{ ano_atual }}</li>
-    </ul>
-    {% endif %}
+            <li>© 2022 - {{ ano_atual }}</li>
+        </ul>
+        {% endif %}
 
 </footer>
 

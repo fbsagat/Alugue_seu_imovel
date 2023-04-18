@@ -40,7 +40,7 @@ Sujestões / {{ SITE_NAME }}
             </nav>
 
             <!-- Conteúdo Sugestões Enviadas início -->
-            <div class="tab-content" id="nav-tabContent">
+            <div class="tab-content w-100" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
                      tabindex="0">
 
@@ -50,7 +50,7 @@ Sujestões / {{ SITE_NAME }}
                         {% if sugestoes %}
                         {% for sugestao in sugestoes %}
                         <div class="col mt-1">
-                            <div class="card bg-black bg-opacity-50 border-secondary h-100">
+                            <div class="card bg-black bg-opacity-50 border-secondary">
 
                                 <!-- Card header inicio -->
                                 <div class="card-header">
@@ -58,7 +58,7 @@ Sujestões / {{ SITE_NAME }}
 
                                         <div>
                                             Enviada por: {{ sugestao.do_usuario.primeiro_ultimo_nome }}
-                                            ({{ usuario.username }})
+                                            ({{ sugestao.do_usuario.username }})
                                         </div>
 
                                         <!-- Botões do superuser inicio -->
@@ -71,6 +71,7 @@ Sujestões / {{ SITE_NAME }}
                                                     </button>
                                                 </a>
                                             </div>
+                                            {% if sugestao.aprovada %}
                                             <div>
                                                 <a href="{% url 'home:Implementar Sugestão' sugestao.pk %}">
                                                     <button type="button" class="btn btn-sm btn-outline-success">
@@ -78,7 +79,6 @@ Sujestões / {{ SITE_NAME }}
                                                     </button>
                                                 </a>
                                             </div>
-                                            {% if sugestao.aprovada %}
                                             <div>
                                                 <a href="{% url 'home:Aprovar Sugestão' sugestao.pk %}">
                                                     <button type="button" class="btn btn-sm btn-outline-warning"
@@ -88,6 +88,11 @@ Sujestões / {{ SITE_NAME }}
                                                 </a>
                                             </div>
                                             {% else %}
+                                            <div>
+                                                <button type="button" class="btn btn-sm btn-outline-success"
+                                                        disabled>Implementar
+                                                </button>
+                                            </div>
                                             <div>
                                                 <a href="{% url 'home:Aprovar Sugestão' sugestao.pk %}">
                                                     <button type="button" class="btn btn-sm btn-outline-success"
@@ -151,6 +156,9 @@ Sujestões / {{ SITE_NAME }}
                                 <div class="card-footer text-muted">
                                     {% if sugestao.imagem %}
                                     <div class="d-flex justify-content-between">
+                                        {% if sugestao.aprovada == False %}
+                                        <small>Ps: Aguardando aprovação do administrador</small>
+                                        {% endif %}
                                         <div>
                                             <a href="{{ sugestao.imagem.url }}" class="link-primary"
                                                target="_blank"
@@ -161,7 +169,10 @@ Sujestões / {{ SITE_NAME }}
                                         </div>
                                     </div>
                                     {% else %}
-                                    <div class="d-flex justify-content-end">
+                                    <div class="d-flex justify-content-between">
+                                        {% if sugestao.aprovada == False %}
+                                        <small>Ps: Aguardando aprovação do administrador</small>
+                                        {% endif %}
                                         <div>
                                             {{ sugestao.data_registro }}
                                         </div>
@@ -174,7 +185,9 @@ Sujestões / {{ SITE_NAME }}
                         {% endfor %}
 
                         {% else %}
-                        {% include 'nenhum_registrado.html' %}
+                        <div class="container text-center">
+                            {% include 'nenhum_registrado.html' %}
+                        </div>
                         {% endif %}
 
                         <br>
@@ -194,7 +207,7 @@ Sujestões / {{ SITE_NAME }}
             <!-- Conteúdo Sugestões Enviadas fim -->
 
             <!-- Conteúdo Sugestões implementadas início -->
-            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"
+            <div class="tab-pane fade w-100" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"
                  tabindex="0">
 
 
@@ -204,7 +217,7 @@ Sujestões / {{ SITE_NAME }}
                     {% if sugestoes_implementadas %}
                     {% for sugestao in sugestoes_implementadas %}
                     <div class="col mt-1">
-                        <div class="card bg-black bg-opacity-50 border-secondary h-100">
+                        <div class="card bg-black bg-opacity-50 border-secondary">
 
                             <!-- Card header inicio -->
                             <div class="card-header">
@@ -212,7 +225,7 @@ Sujestões / {{ SITE_NAME }}
 
                                     <div>
                                         Enviada por: {{ sugestao.do_usuario.primeiro_ultimo_nome }}
-                                        ({{ usuario.username }})
+                                        ({{ sugestao.do_usuario.username }})
                                     </div>
 
                                     <!-- Botões do superuser inicio -->
@@ -229,7 +242,7 @@ Sujestões / {{ SITE_NAME }}
                                             <a href="{% url 'home:Implementar Sugestão' sugestao.pk %}">
                                                 <button type="button" class="btn btn-sm btn-outline-warning"
                                                         title="Desfazer implementação">
-                                                    Implementar
+                                                    Retroagir
                                                 </button>
                                             </a>
                                         </div>
@@ -295,6 +308,9 @@ Sujestões / {{ SITE_NAME }}
                             <div class="card-footer text-muted">
                                 {% if sugestao.imagem %}
                                 <div class="d-flex justify-content-between">
+                                    {% if sugestao.aprovada == False %}
+                                    <small>Ps: Aguardando aprovação do administrador</small>
+                                    {% endif %}
                                     <div>
                                         <a href="{{ sugestao.imagem.url }}" class="link-primary"
                                            target="_blank"
@@ -305,7 +321,10 @@ Sujestões / {{ SITE_NAME }}
                                     </div>
                                 </div>
                                 {% else %}
-                                <div class="d-flex justify-content-end">
+                                <div class="d-flex justify-content-between">
+                                    {% if sugestao.aprovada == False %}
+                                    <small>Ps: Aguardando aprovação do administrador</small>
+                                    {% endif %}
                                     <div>
                                         {{ sugestao.data_registro }}
                                     </div>
@@ -318,7 +337,9 @@ Sujestões / {{ SITE_NAME }}
                     {% endfor %}
 
                     {% else %}
-                    {% include 'nenhum_registrado.html' %}
+                    <div class="container text-center">
+                        {% include 'nenhum_registrado.html' %}
+                    </div>
                     {% endif %}
 
                 </div>

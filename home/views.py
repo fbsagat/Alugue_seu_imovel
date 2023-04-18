@@ -23,10 +23,10 @@ from django.template.defaultfilters import date as data_ptbr
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
     modelo_variaveis, modelo_condicoes, valor_por_extenso
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
-    pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios
+    pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
-    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugetao
+    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
     ContratoDocConfig, ContratoModelo, Sugestao
@@ -439,18 +439,19 @@ def registrar_anotacao(request):
     if form.is_valid():
         nota = form.save(commit=False)
         nota.do_usuario = request.user
-        nota.feito = 2
         nota.save()
+
+        texto = f': {nota.texto}'
+        mensagem = f'{nota.titulo}{texto}'
+        tarefa = Tarefa()
+        tarefa.autor_id = nota.pk
+        tarefa.do_usuario = nota.do_usuario
+        tarefa.autor_tipo = 2
+        tarefa.texto = mensagem
+        tarefa.dados = {'afazer_concluida': 1}
+        tarefa.save()
+
         if form.cleaned_data['tarefa']:
-            texto = f': {nota.texto}'
-            mensagem = f'{nota.titulo}{texto}'
-            tarefa = Tarefa()
-            tarefa.autor_id = nota.pk
-            tarefa.do_usuario = nota.do_usuario
-            tarefa.autor_tipo = 2
-            tarefa.texto = mensagem
-            tarefa.dados = {'afazer_concluida': 1}
-            tarefa.save()
             messages.success(request, "Tarefa resgistrada com sucesso!")
         else:
             messages.success(request, "Anotação resgistrada com sucesso!")
@@ -1461,7 +1462,7 @@ def afazer_concluida(request, pk):
     tarefa.save()
 
     nota = Anotacoe.objects.get(pk=tarefa.autor_id)
-    nota.feito = 3
+    nota.feito = True
     nota.save()
     return redirect(request.META['HTTP_REFERER'])
 
@@ -1475,7 +1476,7 @@ def afazer_nao_concluida(request, pk):
     tarefa.save()
 
     nota = Anotacoe.objects.get(pk=tarefa.autor_id)
-    nota.feito = 2
+    nota.feito = False
     nota.save()
     return redirect(request.META['HTTP_REFERER'])
 
@@ -1588,21 +1589,28 @@ def forum_sugestoes(request):
         sugestoes = Sugestao.objects.filter(implementada=False).order_by('-data_registro')
         sugestoes_implementadas = Sugestao.objects.filter(implementada=True).order_by('-data_implementada')
     else:
-        sugestoes = Sugestao.objects.filter(implementada=False, aprovada=True).order_by('-data_registro')[:15]
-        sugestoes_implementadas = Sugestao.objects.filter(implementada=True, aprovada=True).order_by(
+        sugestoes_geral = Sugestao.objects.filter(implementada=False, aprovada=True)
+        sugestoes_implementadas_geral = Sugestao.objects.filter(implementada=True, aprovada=True)
+
+        sugestoes_usuario = Sugestao.objects.filter(implementada=False, aprovada=False, do_usuario=request.user.pk)
+        sugestoes_implementadas_usuario = Sugestao.objects.filter(implementada=True, aprovada=False,
+                                                                  do_usuario=request.user.pk)
+
+        sugestoes = sugestoes_geral.union(sugestoes_usuario).order_by('-data_registro')[:15]
+        sugestoes_implementadas = sugestoes_implementadas_geral.union(sugestoes_implementadas_usuario).order_by(
             '-data_implementada')[:10]
 
     usuario = request.user
     sugestoes_curtidas = Sugestao.objects.filter(likes=usuario)
-    form = FormSugetao()
+    form = FormSugestao()
     context = {}
     if request.method == 'POST':
-        form = FormSugetao(request.POST, request.FILES)
+        form = FormSugestao(request.POST, request.FILES)
         if form.is_valid():
             sugestao = form.save(commit=False)
             sugestao.do_usuario = usuario
             sugestao.save()
-            messages.success(request, f"Sua sugestão foi enviada para análise, se aprovada será listada em breve")
+            messages.success(request, f"Sugestão criada com sucesso!")
             return redirect(reverse('home:Sugestões'))
 
     context['SITE_NAME'] = settings.SITE_NAME
@@ -1808,8 +1816,27 @@ def botaoteste(request):
             nota.titulo = aleatorio.get('titulo')
             nota.data_registro = aleatorio.get('data_registro')
             nota.texto = aleatorio.get('texto')
+            nota.tarefa = aleatorio.get('tarefa')
+            nota.feito = aleatorio.get('feito')
             nota.save()
         messages.success(request, f"Criadas {count} anotações")
+
+    if executar == 7 or executar == 100:
+        count = 0
+        for x in range(fict_multi * fict_qtd['sugestoes']):
+            count += 1
+            aleatorio = sugestoes_ficticias()
+            form = FormSugestao()
+            sugestao = form.save(commit=False)
+            sugestao.do_usuario = aleatorio.get('do_usuario')
+            sugestao.corpo = aleatorio.get('corpo')
+            sugestao.aprovada = aleatorio.get('aprovada')
+            sugestao.implementada = aleatorio.get('implementada')
+            sugestao.data_implementada = aleatorio.get('data_implementada')
+            sugestao.save()
+            for usuario in aleatorio.get('likes'):
+                sugestao.likes.add(usuario)
+        messages.success(request, f"Criadas {count} sugestões")
 
     if executar == 150:
         count = 0

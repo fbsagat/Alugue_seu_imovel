@@ -103,7 +103,7 @@ class FormMensagem(forms.ModelForm):
         }
 
 
-class FormSugetao(forms.ModelForm):
+class FormSugestao(forms.ModelForm):
     class Meta:
         model = Sugestao
         fields = '__all__'
@@ -348,9 +348,6 @@ class FormImovel(forms.ModelForm):
 
 
 class FormAnotacoes(forms.ModelForm):
-    tarefa = forms.BooleanField(required=False,
-                                help_text='Marque para adicionar este registro na sua lista de tarefas.',
-                                widget=forms.CheckboxInput())
 
     class Meta:
         model = Anotacoe
@@ -392,6 +389,7 @@ class FormAdmin(forms.Form):
         ('4', f'Criar {settings.FICT_QTD["pagamento"]} Pagamentos'),
         ('5', f'Criar {settings.FICT_QTD["gasto"]} Gastos'),
         ('6', f'Criar {settings.FICT_QTD["nota"]} Anotações'),
+        ('7', f'Criar {settings.FICT_QTD["sugestoes"]} Sugestões'),
         ('1000', '-------------'),
         ('100', f'Criar todos acima'),
         ('1000', '-------------'),

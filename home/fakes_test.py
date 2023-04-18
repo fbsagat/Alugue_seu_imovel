@@ -2,9 +2,9 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from faker import Faker
-from random import randrange, choice
+from random import randrange, choice, sample
 
-from home.models import ImovGrupo, Locatario, Imovei, Contrato, estados
+from home.models import ImovGrupo, Locatario, Imovei, Contrato, Usuario, estados
 
 locales = 'pt_BR'
 fake = Faker(locales)
@@ -20,7 +20,7 @@ def contratos_ficticios(request, locador):
     while True:
         dias = randrange(1, 100)
         entrada1 = fake.date_between(datetime.now().date() + timedelta(days=-dias * 2),
-                                     datetime.now().date() + timedelta(days=-(dias)))
+                                     datetime.now().date() + timedelta(days=-dias))
         dias2 = randrange(1, 30)
         entrada2 = fake.date_between(datetime.now().date() + timedelta(days=-dias2 - 5),
                                      datetime.now().date() + timedelta(days=-dias2))
@@ -47,10 +47,12 @@ def contratos_ficticios(request, locador):
             data_entrada = entrada
             break
 
-    centavos = ['00', '00', randrange(10, 99)]
+    zero_a_cem = randrange(0, 100)
+    probabilidade_percentual = 75
+    centavos = 0 if zero_a_cem <= probabilidade_percentual else randrange(10, 90, step=10)
     reais = [randrange(500, 1200, step=150), randrange(700, 3400, step=180), randrange(700, 3400, step=130),
              randrange(3400, 32000, step=1500)]
-    valor_mensal = f'{choice(reais)}{choice(centavos)}'
+    valor_mensal = f'{choice(reais)}{centavos}'
     dia_vencimento = randrange(1, 28)
 
     return {'do_locatario': do_locatario, 'do_imovel': do_imovel, 'data_entrada': data_entrada,
@@ -114,7 +116,9 @@ def pagamentos_ficticios():
     ao_contrato = contrato_escolhido
     valor_mensal = int(contrato_escolhido.valor_mensal)
     chance_aleatoria = randrange(valor_mensal // 3, valor_mensal)
-    valor_pago = choice([valor_mensal, valor_mensal, chance_aleatoria])
+    zero_a_cem = randrange(0, 100)
+    probabilidade_percentual = 75
+    valor_pago = valor_mensal if zero_a_cem <= probabilidade_percentual else chance_aleatoria
 
     entrada = contrato_escolhido.data_entrada
     data_pagamento = fake.date_between(entrada, datetime.today())
@@ -143,8 +147,46 @@ def anotacoes_ficticias():
     titulo = fake.paragraph(nb_sentences=1)
     data_registro = fake.date_between(datetime.today() + timedelta(days=-80), datetime.today())
     texto = fake.paragraph(nb_sentences=randrange(6, 7))
+    zero_a_cem = randrange(0, 100)
+    probabilidade_percentual = 25
+    tarefa = True if zero_a_cem <= probabilidade_percentual else False
+    feito = False
+    if tarefa:
+        probabilidade_percentual = 65
+        feito = True if zero_a_cem <= probabilidade_percentual else False
 
-    return {'titulo': titulo, 'data_registro': data_registro, 'texto': texto}
+    return {'titulo': titulo, 'data_registro': data_registro, 'texto': texto, 'tarefa': tarefa, 'feito': feito}
+
+
+def sugestoes_ficticias():
+    usuarios = Usuario.objects.all()
+    do_usuario = choice(usuarios)
+    corpo = fake.paragraph(nb_sentences=randrange(6, 7))
+
+    alguns_usuarios = []
+    count = 0
+    valor = randrange(0, len(usuarios))
+    while True:
+        alguns_usuarios.append(choice(usuarios))
+        if count == valor:
+            break
+        count += 1
+    likes = alguns_usuarios
+
+    zero_a_cem = randrange(0, 100)
+    probabilidade_percentual = 75
+    aprovada = True if zero_a_cem <= probabilidade_percentual else False
+    implementada = False
+    if aprovada:
+        probabilidade_percentual = 45
+        implementada = True if zero_a_cem <= probabilidade_percentual else False
+
+    dias = randrange(1, 100)
+    data_implementada = fake.date_between(datetime.now().date() + timedelta(days=-dias * 2),
+                                          datetime.now().date() + timedelta(days=-dias))
+
+    return {'do_usuario': do_usuario, 'corpo': corpo, 'likes': likes, 'aprovada': aprovada,
+            'implementada': implementada, 'data_implementada': data_implementada}
 
 
 def usuarios_ficticios():

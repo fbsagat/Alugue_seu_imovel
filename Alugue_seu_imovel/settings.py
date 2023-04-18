@@ -16,7 +16,7 @@ TEMPO_SESSION_FORM = 30
 # Total a ser criado para cada item \/
 contrato = 4
 FICT_QTD = {'locatario': 5, 'imovel_g': 2, 'imovel': 5, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 3,
-            'nota': 3, 'user': 5}
+            'nota': 3, 'sugestoes': 3, 'user': 5}
 
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
 TAMANHO_DAS_IMAGENS_Mb = 4

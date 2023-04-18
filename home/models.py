@@ -45,7 +45,7 @@ class Usuario(AbstractUser):
     endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
     dados_pagamento1 = models.CharField(null=True, blank=True, max_length=90,
                                         verbose_name='Informações de pagamentos 1',
-                                        help_text='Sua conta PIX ou dado bancário ou carteira crypto, etc...')
+                                        help_text='Sua conta PIX ou dados bancários ou carteira crypto, etc...')
     dados_pagamento2 = models.CharField(null=True, blank=True, max_length=90,
                                         verbose_name='Informações de pagamentos 2')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
@@ -525,22 +525,23 @@ class Anotacoe(models.Model):
     titulo = models.CharField(blank=False, max_length=100, verbose_name='Título')
     data_registro = models.DateTimeField(blank=True)
     texto = models.TextField(blank=True, null=True)
-    tarefa = models.BooleanField(default=False)
-    feito = models.IntegerField(choices=[(1, 'Anotação'), (2, 'Tarefa'), (3, 'Tarefa Concluida')], default=1)
+    tarefa = models.BooleanField(default=False, help_text='Marque para adicionar este registro na sua lista de tarefas.')
+    feito = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         return reverse('home:Anotações', args=[(str(self.pk)), ])
 
+    def tipo(self):
+        if self.tarefa:
+            if self.feito:
+                return 'Tarefa concluída'
+            else:
+                return 'Tarefa pendente'
+        else:
+            return 'Anotação'
+
     def __str__(self):
         return f'{self.titulo} - {self.data_registro.strftime("%d/%m/%Y")}'
-
-    def tarefa_afazer_concluida(self):
-        if self.feito == 1:
-            return 'Anotação'
-        elif self.feito == 2:
-            return 'Tarefa(Pendente)'
-        else:
-            return 'Tarefa(Concluida)'
 
     def texto_pequeno(self):
         tamanho = 50

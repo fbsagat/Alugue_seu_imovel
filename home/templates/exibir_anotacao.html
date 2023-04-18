@@ -44,7 +44,7 @@ Anotações / {{ SITE_NAME }}
                 </th>
                 {% endif %}
                 <th scope="col" style="cursor:default;">{{ anotacao.data_registro|date:"d/m/Y" }}</th>
-                <th scope="col" style="cursor:default;">{{ anotacao.tarefa_afazer_concluida }}</th>
+                <th scope="col" style="cursor:default;">{{ anotacao.tipo }}</th>
                 <th scope="col"><a class="link-primary" href="{% url 'home:Editar Anotação' anotacao.pk %}"
                                    title="Editar">✒️</a></th>
                 <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Anotação' anotacao.pk %}"
