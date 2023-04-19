@@ -4,11 +4,13 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from num2words import num2words
 
+from Alugue_seu_imovel import settings
 from django.db.models.aggregates import Sum
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator, MinValueValidator, \
     MaxValueValidator, FileExtensionValidator
 from django.db import models
 from django.urls import reverse
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
@@ -332,9 +334,16 @@ class Contrato(models.Model):
         return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
 
     def total_quitado(self):
-        valor = Parcela.objects.filter(do_contrato=self, tt_pago=self.valor_mensal).values_list('tt_pago').aggregate(
-            Sum('tt_pago'))
-        return valor['tt_pago__sum']
+        valor = Parcela.objects.filter(do_contrato=self, tt_pago=self.valor_mensal).values_list('tt_pago')
+        if settings.USAR_DB == 1:
+            valor = valor.aggregate(Sum('tt_pago'))
+            return valor['tt_pago__sum']
+        elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
+            array = valor.aggregate(arr=ArrayAgg('tt_pago'))
+            t = 0
+            for _ in array['arr']:
+                t += int(_)
+            return t
 
     def total_pg_format(self):
         if self.total_quitado() is None:
