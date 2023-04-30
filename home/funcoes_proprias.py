@@ -64,6 +64,43 @@ def valor_por_extenso(valor):
     else:
         return None
 
+# 007: -----------------------------------------------
+
+
+def validar_cpf(cpf):
+    # Remove todos os caracteres não numéricos
+    cpf = ''.join(filter(str.isdigit, cpf))
+
+    # Verifica se o CPF tem 11 dígitos
+    if len(cpf) != 11:
+        return False
+
+    # Calcula o primeiro dígito verificador
+    soma = 0
+    for i in range(9):
+        soma += int(cpf[i]) * (10 - i)
+    resto = soma % 11
+    if resto < 2:
+        digito1 = 0
+    else:
+        digito1 = 11 - resto
+
+    # Calcula o segundo dígito verificador
+    soma = 0
+    for i in range(10):
+        soma += int(cpf[i]) * (11 - i)
+    resto = soma % 11
+    if resto < 2:
+        digito2 = 0
+    else:
+        digito2 = 11 - resto
+
+    # Verifica se os dígitos verificadores estão corretos
+    if int(cpf[9]) == digito1 and int(cpf[10]) == digito2:
+        return True
+    else:
+        return False
+
 
 # 100: -----------------------------------------------
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
