@@ -7,6 +7,7 @@ from Alugue_seu_imovel import settings
 from num2words import num2words
 
 from django.core.files import File
+from django.http import FileResponse
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect, render, reverse, get_object_or_404, Http404, HttpResponseRedirect
@@ -780,15 +781,17 @@ def gerar_contrato(request, pk):
             form2 = FormContratoDocConfig(request.POST)
             if form2.is_valid():
                 configs = form2.save(commit=False)
-                configs.do_modelo = form2.cleaned_data['do_modelo']
-                configs.tipo_de_locacao = form2.cleaned_data['tipo_de_locacao']
-                configs.fiador_nome = form2.cleaned_data['fiador_nome']
-                configs.fiador_RG = form2.cleaned_data['fiador_RG']
-                configs.fiador_CPF = form2.cleaned_data['fiador_CPF']
-                configs.fiador_ocupacao = form2.cleaned_data['fiador_ocupacao']
-                configs.fiador_nacionalidade = form2.cleaned_data['fiador_nacionalidade']
-                configs.fiador_estadocivil = form2.cleaned_data['fiador_estadocivil']
                 configs.do_contrato = contrato_ultimo
+                if form2.cleaned_data['fiador_nome'] and form2.cleaned_data['fiador_CPF']:
+                    pass
+                else:
+                    configs.fiador_RG = None
+                    configs.fiador_CPF = None
+                    configs.fiador_ocupacao = None
+                    configs.fiador_nacionalidade = None
+                    configs.fiador_estadocivil = None
+                    configs.fiador_endereco_completo = None
+
                 if contr_doc_configs:
                     # Se o form for válido e houver configs para o contrato selecionado, atualiza a instância do
                     # ContratoDocConfig deste contrato.
@@ -1565,6 +1568,20 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
         context['SITE_NAME'] = settings.SITE_NAME
         return context
 
+
+# -=-=-=-=-=-=-=-= SERVIDORES DE ARQUIVOS -=-=-=-=-=-=-=-=
+
+
+# TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE
+
+@login_required
+def arquivos_sugestoes_docs(request, arquivo):
+    print(arquivo)
+    sugestao = get_object_or_404(Sugestao, imagem='seguro/'+arquivo)
+    path, file_name = os.path.split(arquivo)
+    print(sugestao.imagem)
+    response = FileResponse(sugestao.imagem)
+    return response
 
 # -=-=-=-=-=-=-=-= OUTROS -=-=-=-=-=-=-=-=
 

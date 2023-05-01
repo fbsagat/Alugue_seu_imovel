@@ -2,14 +2,13 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
-from home.funcoes_proprias import valor_format
+from home.funcoes_proprias import valor_format, validar_cpf
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from crispy_forms.bootstrap import InlineCheckboxes
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
-from ckeditor.widgets import CKEditorWidget
 
 from home.models import Usuario, DevMensagen, Pagamento, Gasto, Locatario, Contrato, Imovei, Anotacoe, ImovGrupo, \
     ContratoDocConfig, ContratoModelo, Sugestao
@@ -47,6 +46,13 @@ class FormUsuario(UserChangeForm):
         super(FormUsuario, self).__init__(*args, **kwargs)
         self.fields['dados_pagamento1'].widget.attrs['class'] = 'form-control-sm'
         self.fields['dados_pagamento2'].widget.attrs['class'] = 'form-control-sm'
+
+    def clean_CPF(self):
+        cpf = self.cleaned_data['CPF']
+        if validar_cpf(cpf):
+            return cpf
+        else:
+            raise forms.ValidationError("Número de CPF inválido")
 
 
 class FormEventos(forms.Form):
@@ -195,6 +201,8 @@ class FormLocatario(forms.ModelForm):
             pk=self.instance.pk).values_list('CPF', flat=True)
         if cpf in cpfs_dos_locat_deste_user:
             raise forms.ValidationError("Já existe um locatário registrado com este CPF.")
+        elif validar_cpf(cpf) is False:
+            raise forms.ValidationError("Número de CPF inválido")
         else:
             return cpf
 
@@ -272,15 +280,17 @@ class FormContratoDocConfig(forms.ModelForm):
 
     def clean(self):
         msg = 'Para fiador este campo deve ser preenchido'
+        msg2 = 'Número de CPF inválido'
         cleaned_data = super(FormContratoDocConfig, self).clean()
         fiador_nome = cleaned_data.get("fiador_nome")
         fiador_cpf = cleaned_data.get("fiador_CPF")
 
         if fiador_nome and fiador_cpf is None:
             self.add_error('fiador_CPF', msg)
-
         elif fiador_cpf and fiador_nome is None:
             self.add_error('fiador_nome', msg)
+        if fiador_cpf and validar_cpf(fiador_cpf) is False:
+            self.add_error('fiador_CPF', msg2)
         return cleaned_data
 
 

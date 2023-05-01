@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import django
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 
@@ -42,34 +41,34 @@ else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+ALL_HOSTS = True
 
-ALLOWED_HOSTS = [SITE_URL.split('//')[1], 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [SITE_URL.split('//')[1]]
+if ALL_HOSTS:
+    ALLOWED_HOSTS += ['*', ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Application definition
 
-DEFAULT_APPS = [
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
-LOCAL_APPS = [
-    'home',
-]
-THIRD_PARTY_APSS = [
+    'whitenoise.runserver_nostatic',
+
     'django_cleanup.apps.CleanupConfig',
     'crispy_forms',
     'crispy_bootstrap5',
     'ckeditor',
     'social_django',
-]
 
-INSTALLED_APPS = DEFAULT_APPS + LOCAL_APPS + THIRD_PARTY_APSS
+    'home',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -177,12 +176,12 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
-if USAR_DB == 3 or 2:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static').replace('\\', '/'), ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+# STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
