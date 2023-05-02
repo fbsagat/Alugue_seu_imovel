@@ -30,17 +30,17 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
-    ContratoDocConfig, ContratoModelo, Sugestao
+    ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen
 
 
-# -=-=-=-=-=-=-=-= BOTÃO DASHBOARD -=-=-=-=-=-=-=-=
+# -=-=-=-=-=-=-=-= BOTÃO VISÃO GERAL -=-=-=-=-=-=-=-=
 
-class Dashboard(LoginRequiredMixin, TemplateView):
-    template_name = 'exibir_dashboard.html'
+class VisaoGeral(LoginRequiredMixin, TemplateView):
+    template_name = 'exibir_visao_geral.html'
     model = Locatario
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Dashboard, self).get_context_data(**kwargs)
+        context = super(VisaoGeral, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
 
@@ -714,6 +714,7 @@ def tabela(request, pk):
              'imov_qtd': imov_qtd,
              'parcelas': lista_parcelas_compl,
              'sinais': lista_parcsinais_compl,
+             'session_key': request.session.session_key,
              }
 
     # Finalizando para envio ao template
@@ -732,7 +733,7 @@ def tabela(request, pk):
         # Gerar a tabela com os dados
         gerar_tabela_pdf(dados)
     # Link da tabela
-    link = rf'/media/tabela_docs/tabela_{dados["usuario_uuid"]}_{usuario}.pdf'
+    link = rf'/media/tabela_docs/tabela_{request.session.session_key}_{usuario}.pdf'
 
     # Preparar o context
     context['tabela'] = link
@@ -858,8 +859,8 @@ def gerar_contrato(request, pk):
             caucao_por_extenso = valor_por_extenso(str(contr_doc_configs.caucao * int(contrato.valor_mensal)))
 
         dados = {'modelo': contr_doc_configs.do_modelo,
-                 'usuario_uuid': usuario.uuid,
                  'usuario': usuario.username,
+                 'session_key': request.session.session_key,
 
                  # A partir deste ponto, variaveis do contrato \/
                  # Regra:
@@ -893,7 +894,7 @@ def gerar_contrato(request, pk):
                  'contrato_periodo_por_extenso': contrato.duracao_por_extenso() or erro2,
                  'contrato_parcela_valor': contrato.valor_format() or erro2,
                  'contrato_parcela_valor_por_extenso': contrato.valor_por_extenso() or erro2,
-                 'contrato_valor_total': contrato.valor_do_contrato() or erro2,
+                 'contrato_valor_total': contrato.valor_do_contrato_format() or erro2,
                  'contrato_valor_total_por_extenso': str(contrato.valor_do_contrato_por_extenso() or erro2),
                  'contrato_vencimento': str(getattr(contrato, 'dia_vencimento') or erro2),
                  'contrato_vencimento_por_extenso': contrato.dia_vencimento_por_extenso() or erro2,
@@ -905,7 +906,7 @@ def gerar_contrato(request, pk):
                  'contrato_anterior-parcela_valor_por_extenso':
                      contrato_anterior.valor_por_extenso() or erro2 if contrato_anterior else erro3,
                  'contrato_anterior_valor_total':
-                     contrato_anterior.valor_do_contrato() or erro2 if contrato_anterior else erro3,
+                     contrato_anterior.valor_do_contrato_format() or erro2 if contrato_anterior else erro3,
                  'contrato_anterior_valor_total_por_extenso':
                      str(contrato_anterior.valor_do_contrato_por_extenso() or erro2) if contrato_anterior else erro3,
                  'contrato_anterior_vencimento':
@@ -953,7 +954,7 @@ def gerar_contrato(request, pk):
 
         gerar_contrato_pdf(dados=dados)
         # Link do contrato_doc
-        link = rf'/media/contrato_docs/contrato_{dados["usuario_uuid"]}_{dados["usuario"]}.pdf'
+        link = rf'/media/contrato_docs/contrato_{dados["session_key"]}_{dados["usuario"]}.pdf'
         # Preparar o context
         context['contrato_doc'] = link
     else:
@@ -1432,6 +1433,7 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
 def recibo_entregue(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = True
+    tarefa.data_lida = datetime.now()
     dados = tarefa.dados
     dados['recibo_entregue'] = True
     tarefa.save()
@@ -1460,6 +1462,7 @@ def recibo_nao_entregue(request, pk):
 def afazer_concluida(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = True
+    tarefa.data_lida = datetime.now()
     dados = tarefa.dados
     dados['afazer_concluida'] = True
     tarefa.save()
@@ -1492,7 +1495,7 @@ class Homepage(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(f'dashboard/{request.user.pk}')
+            return redirect(f'visao/{request.user.pk}')
         else:
             return super().get(request, *args, **kwargs)
 
@@ -1551,7 +1554,7 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         return success_message
 
     def get_success_url(self):
-        return reverse("home:DashBoard", kwargs={"pk": self.request.user.pk})
+        return reverse("home:Visão Geral", kwargs={"pk": self.request.user.pk})
 
 
 class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
@@ -1572,16 +1575,52 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
 # -=-=-=-=-=-=-=-= SERVIDORES DE ARQUIVOS -=-=-=-=-=-=-=-=
 
 
-# TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE
+@login_required
+def arquivos_sugestoes_docs(request, year, month, file):
+    link = str(f'sugestoes_docs/{year}/{month}/{file}')
+    sugestao = get_object_or_404(Sugestao, imagem=link)
+    if sugestao.aprovada or request.user.is_superuser:
+        response = FileResponse(sugestao.imagem)
+        return response
 
 @login_required
-def arquivos_sugestoes_docs(request, arquivo):
-    print(arquivo)
-    sugestao = get_object_or_404(Sugestao, imagem='seguro/'+arquivo)
-    path, file_name = os.path.split(arquivo)
-    print(sugestao.imagem)
-    response = FileResponse(sugestao.imagem)
-    return response
+def arquivos_locatarios_docs(request, year, month, file):
+    link = str(f'locatarios_docs/{year}/{month}/{file}')
+    documentos = get_object_or_404(Locatario, docs=link)
+    if documentos.do_locador == request.user or request.user.is_superuser:
+        response = FileResponse(documentos.docs)
+        return response
+
+@login_required
+def arquivos_recibos_docs(request, year, month, file):
+    link = str(f'recibos_docs/{year}/{month}/{file}')
+    documentos = get_object_or_404(Contrato, recibos_pdf=link)
+    if documentos.do_locador == request.user or request.user.is_superuser:
+        response = FileResponse(documentos.recibos_pdf)
+        return response
+
+@login_required
+def arquivos_tabela_docs(request, file):
+    link = str(f'/tabela_docs/{file}')
+    if request.user.uuid in file or request.user.is_superuser:
+        response = FileResponse(open(f'{settings.MEDIA_ROOT+link}', 'rb'), content_type='application/pdf')
+        return response
+
+@login_required
+def arquivos_contrato_docs(request, file):
+    link = str(f'/contrato_docs/{file}')
+    if request.user.uuid in file or request.user.is_superuser:
+        response = FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
+        return response
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def arquivos_mensagens_ao_dev(request, year, month, file):
+    link = str(f'mensagens_ao_dev/{year}/{month}/{file}')
+    documentos = get_object_or_404(DevMensagen, imagem=link)
+    if documentos.do_usuario == request.user:
+        response = FileResponse(documentos.imagem)
+        return response
 
 # -=-=-=-=-=-=-=-= OUTROS -=-=-=-=-=-=-=-=
 

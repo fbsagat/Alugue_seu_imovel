@@ -20,16 +20,33 @@ Itens Ativos / {{ SITE_NAME }}
             {% for imovel in imoveis %}
             <div class="col">
                 <div class="card bg-black bg-opacity-75 border-secondary h-100">
-                    <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
+                    <div class="card-header text-decoration-underline fs-5">{{ page_obj.start_index|add:forloop.counter0 }}.
                         {{ imovel.nome }} - {{ imovel.grupo }}
                     </div>
                     <div class="card-body">
-                        <p class="card-text">END.: {{ imovel.endereco_completo }}</p>
-                        <p class="card-text">MATRICULA DE ENERGIA: {{ imovel.uc_energia }}</p>
-                        <p class="card-text">MATRICULA DE SANEAMENTO: {{ imovel.uc_agua }}</p>
-                        <p class="card-text">REGISTRADO EM: {{ imovel.data_registro }}</p>
-                        <p class="card-text">COM: {{ imovel.com_locatario }}</p>
-                        <p class="card-text">VALOR DO ALUGUEL: {{ imovel.contrato_atual.valor_format }} </p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">END.:
+                        </span> {{ imovel.endereco_completo }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">MATRICULA DE ENERGIA:
+                        </span> {{ imovel.uc_energia }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">MATRICULA DE SANEAMENTO:
+                        </span> {{ imovel.uc_agua }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">REGISTRADO EM:
+                        </span> {{ imovel.data_registro }}</p>
+                        <p class="card-text" title="Toda a receita desde o cadastro">
+                            <span class="fw-bold text-primary text-opacity-75">RECEITA ACUMULADA:</span>
+                            {{ imovel.receita_acumulada }} </p>
+                        <br>
+                        <hr>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">COM:</span>
+                            {{ imovel.com_locatario }}</p>
+                        <p><span class="fw-bold text-primary text-opacity-75">CONTRATO:
+                        </span> {{ imovel.contrato_atual }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">DE:</span>
+                            {{ imovel.contrato_atual.data_entrada }}
+                            <span class="fw-bold text-primary text-opacity-75">ATÉ</span>
+                            {{ imovel.contrato_atual.data_saida }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">VALOR DO ALUGUEL:</span>
+                            {{ imovel.contrato_atual.valor_format }} </p>
                     </div>
                 </div>
             </div>
@@ -50,22 +67,35 @@ Itens Ativos / {{ SITE_NAME }}
             {% for locatario in locatarios %}
             <div class="col">
                 <div class="card bg-black bg-opacity-75 border-secondary h-100">
-                    <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
+                    <div class="card-header text-decoration-underline fs-5">{{ page_obj.start_index|add:forloop.counter0 }}.
                         {{ locatario.nome }}
                     </div>
                     <div class="card-body">
-                        <p class="card-text">OCUPAÇÃO: {{ locatario.ocupacao }}</p>
-                        <p class="card-text">RG: {{ locatario.RG }} / CPF: {{ locatario.f_cpf }}</p>
-                        <p class="card-text">TELEFONE 1: {{ locatario.f_tel1 }}</p>
-                        <p class="card-text">TELEFONE 2: {{ locatario.f_tel2 }}</p>
-                        <p class="card-text">EMAIL: {{ locatario.email }}</p>
-                        <p class="card-text">NACIONALID.: {{ locatario.nacionalidade }} / EST. CIVIL:
-                            {{locatario.get_estadocivil_display }}
-                            {% for imovel in locatario.com_imoveis.all %}
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">
+                            OCUPAÇÃO:</span> {{ locatario.ocupacao }}</p>
+                        <p class="card-text">
+                            <span class="fw-bold text-primary text-opacity-75">RG:</span>
+                            {{ locatario.RG }} <span class="fw-bold text-primary text-opacity-75">CPF:</span>
+                            {{ locatario.f_cpf }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">TELEFONE 1:</span>
+                            {{ locatario.f_tel1 }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">TELEFONE 2:</span>
+                            {{ locatario.f_tel2 }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">EMAIL:</span>
+                            {{ locatario.email }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">NACIONALID.:</span>
+                            {{ locatario.nacionalidade }} <span class="fw-bold text-primary text-opacity-75">
+                                EST. CIVIL:</span> {{locatario.get_estadocivil_display }}</p>
+                        <br>
+                        <hr>
+                        {% for imovel in locatario.com_imoveis.all %}
                         {% if forloop.counter0 < 4 %}
-                        <p class="card-text">COM: {{ imovel }} </p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">COM:</span>
+                            {{ imovel }}
+                        </p>
                         {% elif forloop.counter0 == 4 %}
-                        <p class="card-text">Com: mais {{ locatario.contratos_qtd|add:-4 }} contrato(s).</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">Com:</span>
+                            mais {{ locatario.contratos_qtd|add:-4 }} contrato(s).</p>
                         {% else %}
                         {% endif %}
                         {% endfor %}
@@ -91,21 +121,31 @@ Itens Ativos / {{ SITE_NAME }}
             <div class="col">
                 <div class="card bg-black bg-opacity-75 border-secondary h-100">
 
-                    <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
+                    <div class="card-header text-decoration-underline fs-5">{{ page_obj.start_index|add:forloop.counter0 }}.
                         {{ contrato }}
                     </div>
                     <div class="card-body">
-                        <p class="card-text">DO IMOVEL: {{contrato.do_imovel.nome }} - ({{contrato.do_imovel.grupo }}) -
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">DO IMOVEL:</span>
+                            {{contrato.do_imovel.nome }} - ({{contrato.do_imovel.grupo }}) -
                             End.: {{contrato.do_imovel.endereco_base }}</p>
-                        <p class="card-text">DE: {{ contrato.data_entrada|date:"d/m/Y" }} ATÉ:
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">DE:</span>
+                            {{ contrato.data_entrada|date:"d/m/Y" }}
+                            <span class="fw-bold text-primary text-opacity-75">ATÉ:</span>
                             {{ contrato.data_saida|date:"d/m/Y" }} ({{ contrato.duracao }} meses)</p>
-                        <p class="card-text">MENSALIDAE: {{ contrato.valor_format }} / VENCIMENTO DIA:
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">MENSALIDADE:</span>
+                            {{ contrato.valor_format }}
+                            <span class="fw-bold text-primary text-opacity-75">VENCIMENTO DIA:</span>
                             {{contrato.dia_vencimento }}</p>
-                        <p class="card-text">VALOR DO CONTRATO: {{ contrato.valor_do_contrato }}</p>
-                        <p class="card-text">TOTAL PG: {{ contrato.total_pg_format }} / FALTA:
-                            {{ contrato.falta_pg_format }}</p>
+                        <p class="card-text">
+                            <span class="fw-bold text-primary text-opacity-75">VALOR DO CONTRATO:</span>
+                            {{ contrato.valor_do_contrato_format }}</p>
+                        <p class="card-text">
+                            <span class="fw-bold text-primary text-opacity-75">TOTAL PG:</span>
+                            {{ contrato.total_pg_format }} <span class="fw-bold text-primary text-opacity-75">FALTA:
+                            </span> {{ contrato.falta_pg_format }}</p>
                         <p class="card-text"></p>
-                        <p class="card-text">CÓDIGO: {{ contrato.codigo }}</p>
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">CÓDIGO:</span>
+                            {{ contrato.codigo }}</p>
                     </div>
                 </div>
             </div>

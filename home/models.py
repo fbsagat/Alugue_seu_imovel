@@ -72,7 +72,7 @@ class Usuario(AbstractUser):
                                         on_delete=models.SET_NULL)
 
     def get_absolute_url(self):
-        return reverse('home:DashBoard', args=[str(self.pk, )])
+        return reverse('home:Visão Geral', args=[str(self.pk, )])
 
     def nome_completo(self):
         return f'{str(self.first_name)} {str(self.last_name)}'
@@ -253,8 +253,15 @@ class Imovei(models.Model):
     def endereco_completo(self):
         return f'{self.endereco_base()} - {self.cidade}/{self.estado}, {self.f_cep()}'
 
+    def receita_acumulada(self):
+        parcelas = Parcela.objects.filter(do_imovel=self)
+        total = 0
+        for parcela in parcelas:
+            total += int(parcela.tt_pago)
+        return valor_format(str(total))
 
-# Gerar o codigo para o contrato:
+
+# Gerar o código para o contrato:
 def gerar_codigo_contrato():
     codigos_existentes = list(Contrato.objects.all().values("codigo").values_list('codigo', flat=True))
     while True:
@@ -324,7 +331,10 @@ class Contrato(models.Model):
         return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
 
     def valor_do_contrato(self):
-        return valor_format(str(int(self.valor_mensal) * int(self.duracao)))
+        return str(int(self.valor_mensal) * int(self.duracao))
+
+    def valor_do_contrato_format(self):
+        return valor_format(self.valor_do_contrato())
 
     def valor_do_contrato_por_extenso(self):
         valor = str(int(self.valor_mensal) * int(self.duracao))
@@ -353,7 +363,7 @@ class Contrato(models.Model):
 
     def falta_pg_format(self):
         if self.total_quitado() is None:
-            return self.valor_do_contrato()
+            return self.valor_do_contrato_format()
         else:
             return valor_format(str((int(self.valor_mensal) * int(self.duracao)) - self.total_quitado()))
 
@@ -574,6 +584,7 @@ class Tarefa(models.Model):
     lida = models.BooleanField(default=False)
     apagada = models.BooleanField(default=False)
     dados = models.JSONField(null=True, blank=True)
+    data_lida = models.DateTimeField(null=True)
 
     def __str__(self):
         return f'{self.pk} - {self.texto[:15]}'

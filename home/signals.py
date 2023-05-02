@@ -117,12 +117,18 @@ def usuario_fez_login(sender, user, **kwargs):
 
 @receiver(user_logged_out)
 def usuario_fez_logout(sender, user, **kwargs):
-    file1 = rf'{settings.MEDIA_ROOT}/tabela_docs/tabela_{user.uuid}_{user}.pdf'
-    if os.path.exists(file1):
-        os.remove(file1)
-    file2 = rf'{settings.MEDIA_ROOT}/contrato_docs/contrato_{user.uuid}_{user}.pdf'
-    if os.path.exists(file2):
-        os.remove(file2)
+    # Apagar arquivos temporários da sessão do usuário
+    # 1. tabela_docs
+    diretorio = f'{settings.MEDIA_ROOT}/tabela_docs'
+    for file in os.listdir(diretorio):
+        if file.endswith(f"{user}.pdf"):
+            os.remove(os.path.join(diretorio, file))
+
+    # 2. contrato_docs
+    diretorio = f'{settings.MEDIA_ROOT}/contrato_docs'
+    for file in os.listdir(diretorio):
+        if file.endswith(f"{user}.pdf"):
+            os.remove(os.path.join(diretorio, file))
 
 
 @receiver(pre_save, sender=Usuario)
@@ -258,6 +264,7 @@ def anotacao_save(sender, instance, **kwargs):
             # Apaga a tarefa referente à anotação se o usuário ao editar a anotação, desmarcar o botão tarefa.
             tarefa = Tarefa.objects.filter(autor_tipo=2, autor_id=instance.pk).first()
             if tarefa:
+                instance.feito = False
                 tarefa.definir_apagada()
 
         elif instance.tarefa is True and ante.tarefa != instance.tarefa:
