@@ -34,17 +34,16 @@ OK. Algmas listas devem mostrar apenas os contratos ativos, não tudo.
 OK. (Falta configurar, no fim do projeto) Aplicar o django allauth https://www.youtube.com/watch?v=Q4Q3S7HLp4w
 OK. Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
         com sistema de votação.
+Ok. Proteger os arquivos dos usuarios, todos da pasta media, para que não sejam acessados por outros usuario que não os
+ criadores ou pela internet por qualquer um.
+OK. Aplicar o cursor pointer em alguns itens nos templates. (copia logo pae: style="cursor:pointer;")
 
 
 Fazer:
-Proteger os arquivos dos usuarios, todos da pasta media, para que não sejam acessados por outros usuario que não os
- criadores ou pela internet por qualquer um.
 Criar a função comunidade no editor de modelos.
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados.
 Implementar filtros nas paginas do botão histórico.
-Alguns itens no urls.py não precisam enviar o pk, arrumar
-Aplicar o cursor pointer em alguns itens nos templates. (copia logo pae: style="cursor:pointer;")
-Criar o sistema de peimeira inicialização do app, criar pastas, preencher base de dados com os
+Criar o sistema de primeira inicialização do app, criar pastas, preencher base de dados com os
         dado padrões (ex: modelos de constratos) e etc...
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:

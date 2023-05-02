@@ -2,7 +2,7 @@ from django.urls import path, re_path
 from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_view
 
-from home.views import Dashboard, Locatarios, Imoveis, Contratos, \
+from home.views import VisaoGeral, Locatarios, Imoveis, Contratos, \
     registrar_pagamento, registrar_imovel, registrar_anotacao, registrar_contrato, registrar_locat, EditarLocat, \
     ExcluirLocat, registrar_gasto, Pagamentos, Gastos, Notas, EditarGrup, ExcluirGrupo, EditarImov, \
     ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, entregar_recibo, ExcluirPagm, EditarContrato, \
@@ -10,7 +10,9 @@ from home.views import Dashboard, Locatarios, Imoveis, Contratos, \
     CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
     LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, recibo_nao_entregue, afazer_concluida, \
     afazer_nao_concluida, gerar_contrato, criar_modelo, EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, \
-    like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao
+    like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, \
+    arquivos_locatarios_docs, arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, \
+    arquivos_contrato_docs
 
 from Alugue_seu_imovel import settings
 
@@ -18,7 +20,7 @@ app_name = 'home'
 
 urlpatterns = [
     # BOTÕES PRINCIPAIS -------------------
-    path('dashboard/<int:pk>', Dashboard.as_view(), name='DashBoard'),
+    path('visao/<int:pk>', VisaoGeral.as_view(), name='Visão Geral'),
     path('eventos/<int:pk>', eventos, name='Eventos'),
     path('check_imoveis/<int:pk>', ImoveisAtivos.as_view(), name='Check Imóveis'),
     path('check_locatarios/<int:pk>', LocatariosAtivos.as_view(), name='Check Locatários'),
@@ -107,4 +109,12 @@ urlpatterns = [
     path('sugestao_implementar/<int:pk>', implementar_sugestao, name='Implementar Sugestão'),
     path('sugestao_aprovar/<int:pk>', aprovar_sugestao, name='Aprovar Sugestão'),
     path('botao/', botaoteste, name='botaoteste'),
+
+    # SERVIDORES DE ARQUIVOS -------------------
+    path('media/sugestoes_docs/<str:year>/<str:month>/<str:file>', arquivos_sugestoes_docs),
+    path('media/locatarios_docs/<str:year>/<str:month>/<str:file>', arquivos_locatarios_docs),
+    path('media/mensagens_ao_dev/<str:year>/<str:month>/<str:file>', arquivos_mensagens_ao_dev),
+    path('media/recibos_docs/<str:year>/<str:month>/<str:file>', arquivos_recibos_docs),
+    path('media/tabela_docs/<str:file>', arquivos_tabela_docs),
+    path('media/contrato_docs/<str:file>', arquivos_contrato_docs),
 ]

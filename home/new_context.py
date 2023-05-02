@@ -8,6 +8,7 @@ from django.urls import resolve
 from home.models import Tarefa
 from home.forms import FormMensagem, FormAdmin
 from home.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, FormImovel, FormAnotacoes
+from home.models import Contrato
 
 
 def titulo_pag(request):
@@ -22,17 +23,28 @@ def titulo_pag(request):
 def forms_da_navbar(request):
     if request.user.is_authenticated:
 
+        # Apenas contratos ativos hoje ou futuramente para os forms
+        contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
+        contratos_ativos_pks = []
+        for contrato in contratos:
+            if contrato.ativo_hoje() or contrato.ativo_futuramente():
+                contratos_ativos_pks.append(contrato.pk)
+        contratos_ativos = Contrato.objects.filter(id__in=contratos_ativos_pks)
+
         if request.session.get('form1'):
             tempo_form = datetime.datetime.strptime(request.session.get('form1')[1], '%H:%M:%S')
             tempo_agora = datetime.datetime.strptime(datetime.datetime.now().time().strftime('%H:%M:%S'), '%H:%M:%S')
 
             if tempo_form + timedelta(seconds=settings.TEMPO_SESSION_FORM) > tempo_agora:
                 form1 = FormPagamento(request.user, request.session.get('form1')[0])
+                form1.fields['ao_contrato'].queryset = contratos_ativos
             else:
                 form1 = FormPagamento(request.user, initial={'data_pagamento': datetime.date.today().strftime('%Y-%m-%d')})
+                form1.fields['ao_contrato'].queryset = contratos_ativos
                 request.session.pop('form1')
         else:
             form1 = FormPagamento(request.user, initial={'data_pagamento': datetime.date.today().strftime('%Y-%m-%d')})
+            form1.fields['ao_contrato'].queryset = contratos_ativos
 
         if request.session.get('form2'):
             tempo_form = datetime.datetime.strptime(request.session.get('form2')[1], '%H:%M:%S')
@@ -112,7 +124,7 @@ def forms_da_navbar(request):
             form8 = ''
 
         tarefas = Tarefa.objects.filter(do_usuario=request.user, lida=False, apagada=False)[:60]
-        tarefas_hist = Tarefa.objects.filter(do_usuario=request.user, lida=True, apagada=False)[:30]
+        tarefas_hist = Tarefa.objects.filter(do_usuario=request.user, lida=True, apagada=False).order_by('-data_lida')[:30]
 
         context = {'form_pagamento': form1, 'form_mensagem': form2, 'form_gasto': form3, 'form_locatario': form4,
                    'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8,

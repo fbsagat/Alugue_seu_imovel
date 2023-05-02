@@ -41,7 +41,7 @@ else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALL_HOSTS = True
 
 ALLOWED_HOSTS = [SITE_URL.split('//')[1]]
