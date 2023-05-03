@@ -1,5 +1,5 @@
 import random, string
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dateutil.relativedelta import relativedelta
 from num2words import num2words
@@ -380,6 +380,9 @@ class Contrato(models.Model):
 
     def ativo_futuramente(self):
         return True if self.data_entrada >= datetime.today().date() and self.rescindido is False else False
+
+    def ativo_45_dias_atras(self):
+        return True if self.data_saida() >= datetime.today().date() + timedelta(days=-45) else False
 
     def pagamento_total(self):
         pagamentos = Pagamento.objects.filter(ao_contrato=self.pk).values('valor_pago')
