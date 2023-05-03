@@ -162,7 +162,7 @@ class FormPagamento(forms.ModelForm):
 
     def __init__(self, user, *args, **kwargs):
         super(FormPagamento, self).__init__(*args, **kwargs)
-        self.fields['ao_contrato'].queryset = Contrato.objects.none()
+        self.fields['ao_contrato'].queryset = Contrato.objects.filter(do_locador=user)
         self.fields['valor_pago'].widget.attrs.update({'class': 'mask-valor'})
 
 

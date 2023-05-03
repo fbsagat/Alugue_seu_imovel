@@ -14,8 +14,9 @@ from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario
 
 
 def gerenciar_parcelas(instance_contrato):
-    # Fazer algumas coisas se tiver parcelas anteriormente(acontece qdo o usuario modifica o período do contrato)
+    # Fazer algumas coisas se tiver parcelas anteriormente(acontece qdo o usuário modifica o período do contrato)
     parcelas_anter = Parcela.objects.filter(do_contrato=instance_contrato).values()[:]
+    parc_ant_pks = list(parcelas_anter.values_list('id', flat=True)[:])
 
     if parcelas_anter:
         Parcela.objects.filter(do_contrato=instance_contrato.pk).delete()
@@ -54,10 +55,9 @@ def gerenciar_parcelas(instance_contrato):
                 parcela.save(update_fields=['codigo'])
 
         # "Apagar" tarefas antigas deste contrato
-        tarefas_user = Tarefa.objects.filter(do_usuario=instance_contrato.do_locador, apagada=False)
-        parcelas_pks = Parcela.objects.filter(do_contrato=instance_contrato).values_list('pk', flat=True)
-        for tarefa in tarefas_user:
-            if tarefa.autor_id not in parcelas_pks:
+        tarefas = Tarefa.objects.filter(do_usuario=instance_contrato.do_locador)
+        for tarefa in tarefas:
+            if tarefa.autor_id in parc_ant_pks[:]:
                 tarefa.definir_apagada()
 
 
@@ -85,7 +85,7 @@ def tratar_pagamentos(instance_contrato, delete=False):
             # parcela.recibo_entregue = False
         parcela.save(update_fields=['tt_pago', 'recibo_entregue'])
 
-    # Notificação
+    # Tarefa
     # Listar autor_id de cada notificação do usuario
     if delete is False:
         tarefa_exist = Tarefa.objects.filter(do_usuario=parcelas[0].do_usuario).values_list('autor_id')
@@ -231,11 +231,11 @@ def contrato_delete(sender, instance, **kwards):
 def pagamento_delete(sender, instance, **kwards):
     # Após apagar um pagamento:
     # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
-    # Enviar as notificações relacionadas
+    # Enviar as tarefas relacionadas
     # com a função: tratar_pagamentos
     tratar_pagamentos(instance_contrato=instance.ao_contrato, delete=True)
 
-    # "Apagar" notificações de recibos que se referem a parcelas não kitadas (apenas ao deletar pagamentos)
+    # "Apagar" tarefas de recibos que se referem a parcelas não kitadas (apenas ao deletar pagamentos)
     tarefa_user = Tarefa.objects.filter(do_usuario=instance.ao_locador)
     parcelas_pks = Parcela.objects.filter(do_contrato=instance.ao_contrato,
                                           tt_pago__lt=instance.ao_contrato.valor_mensal).values_list('pk', flat=True)
