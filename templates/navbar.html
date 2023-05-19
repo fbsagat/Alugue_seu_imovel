@@ -150,7 +150,7 @@ ion-icon {
     </div>
 
     <!-- TAREFAS -->
-    {% if tarefas.count == 0 %}
+    {% if tarefas|length == 0 %}
     <button class="position-relative" title="Tarefas" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
         <ion-icon size="large" name="reader-outline"></ion-icon>
@@ -160,7 +160,7 @@ ion-icon {
             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
         <ion-icon size="large" name="reader-outline"></ion-icon>
         <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
-    {{ tarefas.count }}
+    {{ tarefas|length }}
     <span class="visually-hidden">Tarefas não lidas</span></span>
     </button>
     {% endif %}
