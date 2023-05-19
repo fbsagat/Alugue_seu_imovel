@@ -54,6 +54,7 @@ pk do usuario deve ser aleatorio e grande, não sequencial desde o 1, arrumar
 Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir também nas forms.
 
 Melhorias futuras:
+Dar uma geral no painel do admin, deixar tudo bem organizado
 Aplicar o https://datatables.net/, tabelas mais inteligentes.
 Criar o help (sistema de dicas e recomendações espalhados por to_do o site, referentes ao manuseio do mesmo e a regras
         e dicas de locação)

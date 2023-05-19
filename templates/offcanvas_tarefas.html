@@ -85,7 +85,7 @@
                             <div class="col">
                                 {% if tarefa.autor_tipo == 1 %}
 
-                                {% if tarefa.recibo_entregue is True %}
+                                {% if tarefa.tarefa_nova == False %}
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
                                         href="{% url 'home:Recibo não Entregue' tarefa.pk %}">Não entregue
                                 </a></button>
@@ -103,7 +103,7 @@
 
                                 {% elif tarefa.autor_tipo == 2 %}
 
-                                {% if tarefa.afazer_concluida %}
+                                {% if tarefa.tarefa_nova %}
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
                                     À fazer
                                 </button>

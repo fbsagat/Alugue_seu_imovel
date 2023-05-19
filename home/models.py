@@ -511,7 +511,8 @@ class Parcela(models.Model):
     da_tarefa = models.OneToOneField('Tarefa', null=True, on_delete=models.SET_NULL)
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=7, unique_for_month=True,
                               default=parcela_uuid)
-    data_pagm_ref = models.DateField(null=False, blank=False)
+    data_pagm_ref = models.DateField(null=False, blank=False,
+                                     help_text='Data referente ao vencimento do pagamento desta parcela')
     tt_pago = models.CharField(max_length=9, blank=False, default=0)
     recibo_entregue = models.BooleanField(default=False)
     apagada = models.BooleanField(default=False)
@@ -645,11 +646,7 @@ class Tarefa(models.Model):
     content_object = GenericForeignKey('autor_classe', 'objeto_id')
 
     data_registro = models.DateTimeField(auto_now_add=True)
-    lida = models.BooleanField(default=False)
     apagada = models.BooleanField(default=False)
-    # \/ extinguir este campo, já que estes dados serão salvos nos objetos autores desta tarefa, não mais aqui nela
-    # agora que o acesso a elas fica fácil através dos objetos autores(one_to_one_field/content_object)
-    dados = models.JSONField(null=True, blank=True)
     data_lida = models.DateTimeField(null=True)
 
     def __str__(self):
@@ -670,12 +667,6 @@ class Tarefa(models.Model):
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return '🗒️Tarefa'
 
-    def recibo_entregue(self):
-        if self.dados['recibo_entregue']:
-            return self.dados['recibo_entregue']
-        else:
-            return False
-
     def definir_apagada(self):
         self.apagada = True
         self.save(update_fields=['apagada'])
@@ -684,14 +675,17 @@ class Tarefa(models.Model):
         self.apagada = False
         self.save(update_fields=['apagada'])
 
-    def afazer_concluida(self):
-        if self.dados['afazer_concluida']:
-            if self.dados['afazer_concluida'] == 2:
-                return True
-            elif self.dados['afazer_concluida'] == 3:
-                return False
-        else:
-            return 1
+    def tarefa_nova(self):
+        if self.autor_classe == ContentType.objects.get_for_model(Parcela):
+            try:
+                return True if self.content_object.recibo_entregue is False else False
+            except:
+                return None
+        elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
+            try:
+                return True if self.content_object.feito is False else False
+            except:
+                return None
 
     def borda(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):

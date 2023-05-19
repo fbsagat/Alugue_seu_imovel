@@ -472,9 +472,8 @@ def registrar_anotacao(request):
         if form.cleaned_data['tarefa']:
             usuario = nota.do_usuario
             tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
-            dados = {'afazer_concluida': 1}
             objeto_id = nota.pk
-            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, dados=dados)
+            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
             Anotacoe.objects.filter(pk=nota.pk).update(da_tarefa=tarefa)
 
         if form.cleaned_data['tarefa']:
@@ -1454,8 +1453,6 @@ def recibo_entregue(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = True
     tarefa.data_lida = datetime.now()
-    dados = tarefa.dados
-    dados['recibo_entregue'] = True
     tarefa.save()
 
     parcela = Parcela.objects.get(pk=tarefa.objeto_id)
@@ -1468,8 +1465,6 @@ def recibo_entregue(request, pk):
 def recibo_nao_entregue(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = False
-    dados = tarefa.dados
-    dados['recibo_entregue'] = False
     tarefa.save()
 
     parcela = Parcela.objects.get(pk=tarefa.objeto_id)
@@ -1483,8 +1478,6 @@ def afazer_concluida(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = True
     tarefa.data_lida = datetime.now()
-    dados = tarefa.dados
-    dados['afazer_concluida'] = True
     tarefa.save()
 
     nota = Anotacoe.objects.get(pk=tarefa.objeto_id)
@@ -1497,8 +1490,6 @@ def afazer_concluida(request, pk):
 def afazer_nao_concluida(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
     tarefa.lida = False
-    dados = tarefa.dados
-    dados['afazer_concluida'] = False
     tarefa.save()
 
     nota = Anotacoe.objects.get(pk=tarefa.objeto_id)

@@ -1,6 +1,5 @@
+import datetime
 import os
-import random
-import string
 from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
@@ -84,14 +83,14 @@ def tratar_pagamentos(instance_contrato):
         parcela.save(update_fields=['tt_pago'])
 
 
-def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id, dados):
+def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
     # Primeiro tenta recuperar apagada caso exista, cada ContentType tem sua regra, personalizar abaixo \/
     try:
         tarefa = Tarefa.objects.get(autor_classe=tipo_conteudo, objeto_id=objeto_id)
-        if tarefa.autor_classe is ContentType.objects.get_for_model(Parcela):
+        if tarefa.autor_classe == ContentType.objects.get_for_model(Parcela):
             if tarefa.content_object.apagada is False:
                 tarefa.restaurar()
-        elif tarefa.autor_classe is ContentType.objects.get_for_model(Anotacoe):
+        elif tarefa.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             tarefa.restaurar()
         return tarefa
     except:
@@ -100,7 +99,6 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id, dados):
         tarefa.do_usuario = usuario
         tarefa.autor_classe = tipo_conteudo
         tarefa.objeto_id = objeto_id
-        tarefa.dados = dados
         tarefa.save()
         return tarefa
 
@@ -153,15 +151,19 @@ def parcela_pre_save(sender, instance, **kwargs):
         # Parcela quitada? então criar uma tarefa para este objeto e atribuí-la à parcela
         tipo_conteudo = ContentType.objects.get_for_model(Parcela)
         objeto_id = instance.pk
-        dados = {'recibo_entregue': False}
         if instance.esta_pago():
             usuario = instance.do_contrato.do_locador
-            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, dados=dados)
+            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
             Parcela.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
         else:
             try:
                 tarefa = Tarefa.objects.get(autor_classe=tipo_conteudo, objeto_id=objeto_id)
                 tarefa.definir_apagada()
+            except:
+                pass
+        if instance.recibo_entregue:
+            try:
+                instance.da_tarefa.data_lida = datetime.date.today()
             except:
                 pass
 
@@ -234,13 +236,16 @@ def anotacao_pre_save(sender, instance, **kwargs):
                 tarefa.definir_apagada()
 
         elif instance.tarefa is True and ante.tarefa != instance.tarefa:
-            pass
             # Criar a tarefa referente à anotação se o usuário ao editar a anotação, marcando o botão tarefa.
             usuario = ante.do_usuario
             tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
             objeto_id = instance.pk
-            dados = {'afazer_concluida': 1}
-            criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, dados=dados)
+            criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+        if instance.feito:
+            try:
+                instance.da_tarefa.data_lida = datetime.date.today()
+            except:
+                pass
 
 
 # Gerenciadores de pre_delete \/  ---------------------------------------
