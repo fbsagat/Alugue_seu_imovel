@@ -10,7 +10,10 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator, Regex
     MaxValueValidator, FileExtensionValidator
 from django.db import models
 from django.urls import reverse
+from django.template.defaultfilters import date as data_ptbr
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
@@ -30,6 +33,13 @@ def user_uuid():
     con_codigo = ''.join(
         random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
     return f'{con_codigo[:10]}'
+
+
+def parcela_uuid():
+    recibo_codigo = ''.join(
+        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+        range(6))
+    return f'{recibo_codigo[:3]}-{recibo_codigo[3:]}'
 
 
 class Usuario(AbstractUser):
@@ -235,8 +245,8 @@ class Imovei(models.Model):
     def __str__(self):
         return f'{self.nome} ({self.grupo})'
 
-    def get_absolute_url(self):
-        return reverse('home:Imóveis', args=[str(self.pk), ])
+    # def get_absolute_url(self):
+    #     return reverse('home:Imóveis', args=[str(self.pk), ])
 
     def nogrupo(self):
         return '' if self.grupo is None else self.grupo
@@ -397,6 +407,39 @@ class Contrato(models.Model):
     def dia_vencimento_por_extenso(self):
         return num2words(self.dia_vencimento, lang='pt_BR')
 
+    def vencimento_atual(self):
+        parcelas = Parcela.objects.filter(do_contrato=self, tt_pago__lt=self.valor_mensal)
+        try:
+            x = parcelas[0].data_pagm_ref
+        except:
+            x = None
+        return x
+
+    def vencimento_atual_textual(self):
+        txt = ''
+        try:
+            if self.vencimento_atual() < datetime.today().date():
+                txt = f'Venceu em {self.vencimento_atual().strftime("%d/%m/%Y")}'
+            elif self.vencimento_atual() == datetime.today().date():
+                txt = 'Vence Hoje'
+            elif self.vencimento_atual() > datetime.today().date():
+                txt = f'Vencerá em {self.vencimento_atual().strftime("%d/%m/%Y")}'
+        except:
+            txt = ''
+        return txt
+
+    def divida_atual_meses(self):
+        parcelas_vencidas_n_pagas = Parcela.objects.filter(do_contrato=self, tt_pago__lt=self.valor_mensal,
+                                                           data_pagm_ref__lte=datetime.today().date())
+        return len(parcelas_vencidas_n_pagas)
+
+    def divida_atual_valor(self):
+        parcelas_vencidas_n_pagas = Parcela.objects.filter(do_contrato=self, tt_pago__lt=self.valor_mensal,
+                                                           data_pagm_ref__lte=datetime.today().date())
+        soma_tt_pg = parcelas_vencidas_n_pagas.aggregate(Sum('tt_pago'))['tt_pago__sum']
+        valor = (len(parcelas_vencidas_n_pagas) * int(self.valor_mensal)) - (int(soma_tt_pg) if soma_tt_pg else 0)
+        return valor, valor_format(str(valor))
+
 
 class ContratoModelo(models.Model):
     titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo')
@@ -465,11 +508,13 @@ class Parcela(models.Model):
     do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
     do_imovel = models.ForeignKey('Imovei', null=False, blank=False, on_delete=models.CASCADE)
     do_locatario = models.ForeignKey('Locatario', null=False, blank=False, on_delete=models.CASCADE)
-
-    codigo = models.CharField(blank=False, null=False, editable=False, max_length=11)
+    da_tarefa = models.OneToOneField('Tarefa', null=True, on_delete=models.SET_NULL)
+    codigo = models.CharField(blank=False, null=False, editable=False, max_length=7, unique_for_month=True,
+                              default=parcela_uuid)
     data_pagm_ref = models.DateField(null=False, blank=False)
     tt_pago = models.CharField(max_length=9, blank=False, default=0)
     recibo_entregue = models.BooleanField(default=False)
+    apagada = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{str(self.do_imovel)[:8]} ({self.data_pagm_ref.strftime("%B/%Y")})'
@@ -483,10 +528,26 @@ class Parcela(models.Model):
 
     def esta_pago(self):
         contrato = Contrato.objects.get(pk=self.do_contrato.pk)
-        return True if self.tt_pago == contrato.valor_mensal else False
+        return True if int(self.tt_pago) == int(contrato.valor_mensal) else False
 
     def esta_vencido(self):
         return True if datetime.today().date() > self.data_pagm_ref else False
+
+    def posicao(self):
+        try:
+            parcelas = list(Parcela.objects.filter(do_contrato=self.do_contrato).values_list('pk', flat=True))
+            parcela = self.pk
+            return parcelas.index(parcela) + 1
+        except:
+            return None
+
+    def definir_apagada(self):
+        self.apagada = True
+        self.save(update_fields=['apagada'])
+
+    def restaurar(self):
+        self.apagada = False
+        self.save(update_fields=['apagada'])
 
 
 lista_pagamentos = (
@@ -543,11 +604,13 @@ class Gasto(models.Model):
 
 class Anotacoe(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
+    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     titulo = models.CharField(blank=False, max_length=100, verbose_name='Título')
     data_registro = models.DateTimeField(blank=True)
     texto = models.TextField(blank=True, null=True)
-    tarefa = models.BooleanField(default=False, help_text='Marque para adicionar este registro na sua lista de tarefas.')
+    tarefa = models.BooleanField(default=False,
+                                 help_text='Marque para adicionar este registro na sua lista de tarefas.')
     feito = models.BooleanField(default=False)
 
     def get_absolute_url(self):
@@ -575,25 +638,37 @@ class Anotacoe(models.Model):
             return [2, f'{self.texto[:tamanho]}...']
 
 
-tipos = [(1, '🧾Recibo'), (2, '🗒️Tarefa')]
-
-
 class Tarefa(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
-    autor_id = models.IntegerField()
-    autor_tipo = models.IntegerField(choices=tipos)
-    texto = models.TextField(blank=False)
+    autor_classe = models.ForeignKey(ContentType, null=False, on_delete=models.CASCADE)
+    objeto_id = models.PositiveIntegerField(null=False)
+    content_object = GenericForeignKey('autor_classe', 'objeto_id')
+
     data_registro = models.DateTimeField(auto_now_add=True)
     lida = models.BooleanField(default=False)
     apagada = models.BooleanField(default=False)
+    # \/ extinguir este campo, já que estes dados serão salvos nos objetos autores desta tarefa, não mais aqui nela
+    # agora que o acesso a elas fica fácil através dos objetos autores(one_to_one_field/content_object)
     dados = models.JSONField(null=True, blank=True)
     data_lida = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f'{self.pk} - {self.texto[:15]}'
+        return f'Tarefa: classe:{self.autor_classe}/objeto_id:{self.objeto_id}'
 
     class Meta:
         ordering = ['-data_registro']
+
+    def autor_tipo(self):
+        if self.autor_classe == ContentType.objects.get_for_model(Parcela):
+            return 1
+        elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
+            return 2
+
+    def autor_tipo_display(self):
+        if self.autor_classe == ContentType.objects.get_for_model(Parcela):
+            return '🧾Recibo'
+        elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
+            return '🗒️Tarefa'
 
     def recibo_entregue(self):
         if self.dados['recibo_entregue']:
@@ -603,6 +678,10 @@ class Tarefa(models.Model):
 
     def definir_apagada(self):
         self.apagada = True
+        self.save(update_fields=['apagada'])
+
+    def restaurar(self):
+        self.apagada = False
         self.save(update_fields=['apagada'])
 
     def afazer_concluida(self):
@@ -615,10 +694,29 @@ class Tarefa(models.Model):
             return 1
 
     def borda(self):
-        if self.autor_tipo == 1:
+        if self.autor_classe == ContentType.objects.get_for_model(Parcela):
             return 'border-white'
-        elif self.autor_tipo == 2:
+        elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return 'border-warning'
+
+    def texto(self):
+        mensagem = ''
+        if self.autor_classe == ContentType.objects.get_for_model(Parcela):
+            try:
+                parcela = self.content_object
+                mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
+                           f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
+                           f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
+                           f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
+            except:
+                pass
+        elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
+            try:
+                nota = self.content_object
+                mensagem = f'{nota.titulo}{nota.texto}'
+            except:
+                pass
+        return mensagem
 
 
 lista_mensagem = (

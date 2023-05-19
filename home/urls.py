@@ -2,7 +2,7 @@ from django.urls import path, re_path
 from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_view
 
-from home.views import VisaoGeral, Locatarios, Imoveis, Contratos, \
+from home.views import VisaoGeral, visao_geral, Locatarios, Imoveis, Contratos, \
     registrar_pagamento, registrar_imovel, registrar_anotacao, registrar_contrato, registrar_locat, EditarLocat, \
     ExcluirLocat, registrar_gasto, Pagamentos, Gastos, Notas, EditarGrup, ExcluirGrupo, EditarImov, \
     ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, entregar_recibo, ExcluirPagm, EditarContrato, \
@@ -20,7 +20,7 @@ app_name = 'home'
 
 urlpatterns = [
     # BOTÕES PRINCIPAIS -------------------
-    path('visao/<int:pk>', VisaoGeral.as_view(), name='Visão Geral'),
+    path('visao_geral/<int:pk>', visao_geral, name='Visão Geral'),
     path('eventos/<int:pk>', eventos, name='Eventos'),
     path('check_imoveis/<int:pk>', ImoveisAtivos.as_view(), name='Check Imóveis'),
     path('check_locatarios/<int:pk>', LocatariosAtivos.as_view(), name='Check Locatários'),

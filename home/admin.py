@@ -85,7 +85,7 @@ class GastoAdmin(admin.ModelAdmin):
 
 @admin.register(Anotacoe)
 class AnotacoeAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'do_usuario', 'data_registro')
+    list_display = ('titulo', 'do_usuario', 'data_registro', 'tarefa', 'da_tarefa')
     search_fields = ('titulo',)
 
 
@@ -105,5 +105,6 @@ class MensagemDevAdmin(admin.ModelAdmin):
 
 @admin.register(Tarefa)
 class Tarefas(admin.ModelAdmin):
-    list_display = ('do_usuario', 'autor_tipo', 'data_registro')
-    list_filter = ('autor_tipo', 'lida', 'apagada')
+    list_display = ('do_usuario', 'autor_classe', 'objeto_id', 'content_object', 'data_registro')
+    readonly_fields = ['content_object']
+    list_filter = ('autor_classe', 'lida', 'apagada')

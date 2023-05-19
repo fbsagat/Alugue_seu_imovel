@@ -11,7 +11,48 @@ Visão Geral / {{ SITE_NAME }}
 
 {% block content %}
 
-{% if locatarios %}
+{% if conteudo %}
+
+<div class="container-fluid pt-1 text-center text-justify">
+
+    <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+
+        <thead>
+
+        <tr>
+            <th scope="col" style="cursor:default;">Nº</th>
+            <th scope="col" style="cursor:default;">Imóvel</th>
+            <th scope="col" style="cursor:default;">Contrato</th>
+            <th scope="col" style="cursor:default;">Vencimento</th>
+            <th scope="col" style="cursor:default;">Valor/Mês</th>
+            <th scope="col" style="cursor:default;">Divida Atrasada</th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for imovel in page_obj %}
+        <tr>
+            <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th></th>
+            <th scope="col" style="cursor:default;">{{ imovel.nome }}</th>
+            <th scope="col" style="cursor:default;">{{ imovel.contrato_atual }}</th>
+            <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.vencimento_atual_textual }}</th>
+            <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.valor_format }}</th>
+            {% if imovel.contrato_atual.divida_atual_valor.0 == 0 %}
+            <th>---</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.divida_atual_valor.1 }} /
+                {{ imovel.contrato_atual.divida_atual_meses }}
+                {% if imovel.contrato_atual.divida_atual_meses == 1 %}Mês{% else %}Meses{% endif %}</th>
+            {% endif %}
+        </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
 
 {% else %}
 {% include 'bemvindo.html' %}
@@ -19,7 +60,5 @@ Visão Geral / {{ SITE_NAME }}
 
 {% endblock %}
 
-
 {% block scripts %}
-
 {% endblock %}

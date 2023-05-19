@@ -6,10 +6,12 @@ from dateutil.relativedelta import relativedelta
 from Alugue_seu_imovel import settings
 from num2words import num2words
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files import File
 from django.http import FileResponse
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render, reverse, get_object_or_404, Http404, HttpResponseRedirect
 from django.utils import timezone, dateformat
 from django.urls import reverse_lazy
@@ -28,6 +30,7 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao
+from home.signals import criar_uma_tarefa
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
     ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen
@@ -38,11 +41,35 @@ from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGru
 class VisaoGeral(LoginRequiredMixin, TemplateView):
     template_name = 'exibir_visao_geral.html'
     model = Locatario
+    paginate_by = 30
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(VisaoGeral, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
+
+
+def visao_geral(request, pk):
+    context = {}
+    imoveis = Imovei.objects.filter(do_locador=request.user)
+    ocupados = []
+    for imovel in imoveis:
+        ocupados.append(imovel.pk) if imovel.esta_ocupado() else None
+    imoveis = Imovei.objects.filter(pk__in=ocupados).order_by('nome')
+    parametro_page = request.GET.get('page', '1')
+    parametro_limite = request.GET.get('limit', '20')
+    imovel_pagination = Paginator(imoveis, parametro_limite)
+
+    try:
+        page = imovel_pagination.page(parametro_page)
+    except (EmptyPage, PageNotAnInteger):
+        page = imovel_pagination.page(1)
+
+    context['indicies'] = {}
+    context['page_obj'] = page
+    context['SITE_NAME'] = settings.SITE_NAME
+    context['conteudo'] = True
+    return render(request, 'exibir_visao_geral.html', context)
 
 
 # -=-=-=-=-=-=-=-= BOTÃO EVENTOS -=-=-=-=-=-=-=-=
@@ -442,15 +469,13 @@ def registrar_anotacao(request):
         nota.do_usuario = request.user
         nota.save()
 
-        texto = f': {nota.texto}'
-        mensagem = f'{nota.titulo}{texto}'
-        tarefa = Tarefa()
-        tarefa.autor_id = nota.pk
-        tarefa.do_usuario = nota.do_usuario
-        tarefa.autor_tipo = 2
-        tarefa.texto = mensagem
-        tarefa.dados = {'afazer_concluida': 1}
-        tarefa.save()
+        if form.cleaned_data['tarefa']:
+            usuario = nota.do_usuario
+            tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
+            dados = {'afazer_concluida': 1}
+            objeto_id = nota.pk
+            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, dados=dados)
+            Anotacoe.objects.filter(pk=nota.pk).update(da_tarefa=tarefa)
 
         if form.cleaned_data['tarefa']:
             messages.success(request, "Tarefa resgistrada com sucesso!")
@@ -526,10 +551,11 @@ def recibos(request, pk):
                     num_ptbr_centavos = num2words(centavos, lang='pt_BR')
                     completo = f' E {num_ptbr_centavos} centavos'
                 codigos = list(
-                    Parcela.objects.filter(do_contrato=contrato.pk).values("codigo").values_list('codigo', flat=True))
+                    Parcela.objects.filter(do_contrato=contrato.pk, apagada=False).order_by('data_pagm_ref').values(
+                        "codigo").values_list('codigo', flat=True))
                 datas = list(
-                    Parcela.objects.filter(do_contrato=contrato.pk).values("data_pagm_ref").values_list('data_pagm_ref',
-                                                                                                        flat=True))
+                    Parcela.objects.filter(do_contrato=contrato.pk, apagada=False).order_by('data_pagm_ref').values(
+                        "data_pagm_ref").values_list('data_pagm_ref', flat=True))
                 datas_tratadas = list()
                 data_preenchimento = list()
                 for data in datas:
@@ -641,8 +667,8 @@ def tabela(request, pk):
         datas.append(str(data_ptbr(a_partir_de + relativedelta(months=imovel), "F/Y")).title())
 
     # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
-    parcelas = Parcela.objects.filter(do_usuario=usuario).filter(data_pagm_ref__range=[a_partir_de, ate]).order_by(
-        'do_contrato')
+    parcelas = Parcela.objects.filter(do_usuario=usuario, apagada=False,
+                                      data_pagm_ref__range=[a_partir_de, ate]).order_by('data_pagm_ref')
 
     # Nomes
     imoveis_nomes = []
@@ -1421,12 +1447,6 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
         context['SITE_NAME'] = settings.SITE_NAME
         return context
 
-    def post(self, request, *args, **kwargs):
-        tarefa = Tarefa.objects.filter(autor_tipo=2, autor_id=self.get_object().pk).first()
-        if tarefa:
-            tarefa.definir_apagada()
-        return self.delete(request, *args, **kwargs)
-
 
 # -=-=-=-=-=-=-=-= TAREFAS -=-=-=-=-=-=-=-=
 @login_required
@@ -1438,7 +1458,7 @@ def recibo_entregue(request, pk):
     dados['recibo_entregue'] = True
     tarefa.save()
 
-    parcela = Parcela.objects.get(pk=tarefa.autor_id)
+    parcela = Parcela.objects.get(pk=tarefa.objeto_id)
     parcela.recibo_entregue = True
     parcela.save()
     return redirect(request.META['HTTP_REFERER'])
@@ -1452,7 +1472,7 @@ def recibo_nao_entregue(request, pk):
     dados['recibo_entregue'] = False
     tarefa.save()
 
-    parcela = Parcela.objects.get(pk=tarefa.autor_id)
+    parcela = Parcela.objects.get(pk=tarefa.objeto_id)
     parcela.recibo_entregue = False
     parcela.save()
     return redirect(request.META['HTTP_REFERER'])
@@ -1467,7 +1487,7 @@ def afazer_concluida(request, pk):
     dados['afazer_concluida'] = True
     tarefa.save()
 
-    nota = Anotacoe.objects.get(pk=tarefa.autor_id)
+    nota = Anotacoe.objects.get(pk=tarefa.objeto_id)
     nota.feito = True
     nota.save()
     return redirect(request.META['HTTP_REFERER'])
@@ -1481,7 +1501,7 @@ def afazer_nao_concluida(request, pk):
     dados['afazer_concluida'] = False
     tarefa.save()
 
-    nota = Anotacoe.objects.get(pk=tarefa.autor_id)
+    nota = Anotacoe.objects.get(pk=tarefa.objeto_id)
     nota.feito = False
     nota.save()
     return redirect(request.META['HTTP_REFERER'])
@@ -1495,7 +1515,7 @@ class Homepage(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(f'visao/{request.user.pk}')
+            return redirect(reverse('home:Visão Geral', args=[self.request.user.pk]))
         else:
             return super().get(request, *args, **kwargs)
 
@@ -1583,6 +1603,7 @@ def arquivos_sugestoes_docs(request, year, month, file):
         response = FileResponse(sugestao.imagem)
         return response
 
+
 @login_required
 def arquivos_locatarios_docs(request, year, month, file):
     link = str(f'locatarios_docs/{year}/{month}/{file}')
@@ -1590,6 +1611,7 @@ def arquivos_locatarios_docs(request, year, month, file):
     if documentos.do_locador == request.user or request.user.is_superuser:
         response = FileResponse(documentos.docs)
         return response
+
 
 @login_required
 def arquivos_recibos_docs(request, year, month, file):
@@ -1599,12 +1621,14 @@ def arquivos_recibos_docs(request, year, month, file):
         response = FileResponse(documentos.recibos_pdf)
         return response
 
+
 @login_required
 def arquivos_tabela_docs(request, file):
     link = str(f'/tabela_docs/{file}')
     if request.user.uuid in file or request.user.is_superuser:
-        response = FileResponse(open(f'{settings.MEDIA_ROOT+link}', 'rb'), content_type='application/pdf')
+        response = FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
         return response
+
 
 @login_required
 def arquivos_contrato_docs(request, file):
@@ -1612,6 +1636,7 @@ def arquivos_contrato_docs(request, file):
     if request.user.uuid in file or request.user.is_superuser:
         response = FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
         return response
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -1621,6 +1646,7 @@ def arquivos_mensagens_ao_dev(request, year, month, file):
     if documentos.do_usuario == request.user:
         response = FileResponse(documentos.imagem)
         return response
+
 
 # -=-=-=-=-=-=-=-= OUTROS -=-=-=-=-=-=-=-=
 
@@ -1736,7 +1762,7 @@ def botaoteste(request):
 
     if executar == 170:
         # Teste de mensagens \/
-        messages.success(request, f"{'oi'}")
+        messages.success(request, 'ok')
 
     if executar == 1 or executar == 100:
         count = 0

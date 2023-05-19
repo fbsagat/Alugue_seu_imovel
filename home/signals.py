@@ -5,68 +5,67 @@ from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
 
-from django.template.defaultfilters import date as data_ptbr
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
 from django.dispatch import receiver
 
-from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, ContratoModelo
+from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe
 
 
+# FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
 def gerenciar_parcelas(instance_contrato):
-    # Fazer algumas coisas se tiver parcelas anteriormente(acontece qdo o usuário modifica o período do contrato)
-    parcelas_anter = Parcela.objects.filter(do_contrato=instance_contrato).values()[:]
-    parc_ant_pks = list(parcelas_anter.values_list('id', flat=True)[:])
+    # Criar as parcelas que não existem, definir apagadas as parcelas fora do range('data_pagm_ref')
+    # e manter as que já existem e estão no range
 
-    if parcelas_anter:
-        Parcela.objects.filter(do_contrato=instance_contrato.pk).delete()
-
-    # Criar as parcelas (acontece sempre (contrato criado e editado)):
-    for x in range(0, instance_contrato.duracao):
+    parcelas = Parcela.objects.filter(do_contrato=instance_contrato)
+    parcelas_datas = parcelas.values_list('data_pagm_ref', flat=True)
+    if parcelas:
+        # Criar as novas parcelas dentro do range, manter as existentes(dentro tbm) e
+        # 'definir apagadas' parcelas fora do range
         data_entrada = instance_contrato.data_entrada
-        data = data_entrada.replace(day=instance_contrato.dia_vencimento) + relativedelta(months=x)
 
-        codigos_existentes = list(
-            Parcela.objects.filter(do_contrato=instance_contrato).values("codigo").values_list('codigo', flat=True))
-        while True:
-            recibo_codigo = ''.join(
-                random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
-                range(6))
-            if recibo_codigo not in codigos_existentes:
+        # Apagar parcelas fora do range:
+        # Pegar datas atualizadas a partir da data de entrada e duração do contrato
+        datas = []
+        for x in range(0, instance_contrato.duracao):
+            data = data_entrada.replace(day=instance_contrato.dia_vencimento) + relativedelta(months=x)
+            datas.append(data)
+        for parcela in parcelas:
+            if parcela.data_pagm_ref not in datas:
+                parcela.definir_apagada()
+                if parcela.da_tarefa:
+                    Tarefa.objects.filter(pk=parcela.da_tarefa.pk).update(apagada=True)
+            else:
+                parcela.restaurar()
+                if parcela.da_tarefa:
+                    Tarefa.objects.filter(pk=parcela.da_tarefa.pk).update(apagada=False)
+
+        for data in datas:
+            if data not in parcelas_datas:
                 parcela = Parcela(do_usuario=instance_contrato.do_locador, do_contrato=instance_contrato,
-                                  do_imovel=instance_contrato.do_imovel, do_locatario=instance_contrato.do_locatario,
-                                  data_pagm_ref=data, codigo=f'{recibo_codigo[:3]}-{recibo_codigo[3:]}')
+                                  do_imovel=instance_contrato.do_imovel,
+                                  do_locatario=instance_contrato.do_locatario,
+                                  data_pagm_ref=data)
                 parcela.save()
-                break
-
-    if parcelas_anter:
-        # No ato de editar o período do contrato essa função irá copiar o dado(codigo)
-        # das parcelas antigas(apagadas) que possuem a mesma data para as novas parcelas.
-        parcelas_novas = Parcela.objects.filter(do_contrato=instance_contrato)
-
-        datas_do_anterior_trat = []
-        for i in parcelas_anter:
-            datas_do_anterior_trat.append(str(i['data_pagm_ref']))
-
-        for parcela in parcelas_novas:
-            if str(parcela.data_pagm_ref) in datas_do_anterior_trat:
-                index = datas_do_anterior_trat.index(str(parcela.data_pagm_ref))
-                parcela.codigo = parcelas_anter[index]['codigo']
-                parcela.save(update_fields=['codigo'])
-
-        # "Apagar" tarefas antigas deste contrato
-        tarefas = Tarefa.objects.filter(do_usuario=instance_contrato.do_locador)
-        for tarefa in tarefas:
-            if tarefa.autor_id in parc_ant_pks[:]:
-                tarefa.definir_apagada()
+    else:
+        # Criar parcelas zeradas
+        for x in range(0, instance_contrato.duracao):
+            data_entrada = instance_contrato.data_entrada
+            data = data_entrada.replace(day=instance_contrato.dia_vencimento) + relativedelta(months=x)
+            parcela = Parcela(do_usuario=instance_contrato.do_locador, do_contrato=instance_contrato,
+                              do_imovel=instance_contrato.do_imovel,
+                              do_locatario=instance_contrato.do_locatario,
+                              data_pagm_ref=data)
+            parcela.save()
 
 
-def tratar_pagamentos(instance_contrato, delete=False):
+def tratar_pagamentos(instance_contrato):
     # Pegar informações para tratamento
     contrato = Contrato.objects.get(pk=instance_contrato.pk)
-    parcelas = Parcela.objects.filter(do_contrato=contrato.pk).order_by('pk')
+    parcelas = Parcela.objects.filter(do_contrato=contrato.pk, apagada=False).order_by('data_pagm_ref')
 
-    # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
+    # Pega o total pago para este contrato e distribui para as parcelas do contrato
     pagamentos_tt = int(contrato.pagamento_total())
     valor_mensal = int(contrato.valor_mensal)
     for mes_n, parcela in enumerate(parcelas):
@@ -82,115 +81,40 @@ def tratar_pagamentos(instance_contrato, delete=False):
         else:
             # print(f'Mês {mes_n}: 0, pois o pagamento total está em {pagamentos_tt}')
             parcela.tt_pago = 0
-            # parcela.recibo_entregue = False
-        parcela.save(update_fields=['tt_pago', 'recibo_entregue'])
-
-    # Tarefa
-    # Listar autor_id de cada notificação do usuario
-    if delete is False:
-        tarefa_exist = Tarefa.objects.filter(do_usuario=parcelas[0].do_usuario).values_list('autor_id')
-        lista_autor_id = []
-        if tarefa_exist:
-            for i in tarefa_exist:
-                lista_autor_id.append(int(i[0]))
-
-        # Enviar a notificação de recibo
-        for parcela in parcelas:
-            mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()} referente à ' \
-                       f'parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()} do contrato ' \
-                       f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
-
-            if parcela.tt_pago == valor_mensal and parcela.pk not in lista_autor_id:
-                tarefa = Tarefa()
-                tarefa.autor_id = parcela.pk
-                tarefa.do_usuario = parcela.do_usuario
-                tarefa.autor_tipo = 1
-                tarefa.texto = mensagem
-                tarefa.dados = {'recibo_entregue': parcela.recibo_entregue}
-                tarefa.save()
+        parcela.save(update_fields=['tt_pago'])
 
 
-@receiver(user_logged_in)
-def usuario_fez_login(sender, user, **kwargs):
-    pass
+def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id, dados):
+    # Primeiro tenta recuperar apagada caso exista, cada ContentType tem sua regra, personalizar abaixo \/
+    try:
+        tarefa = Tarefa.objects.get(autor_classe=tipo_conteudo, objeto_id=objeto_id)
+        if tarefa.autor_classe is ContentType.objects.get_for_model(Parcela):
+            if tarefa.content_object.apagada is False:
+                tarefa.restaurar()
+        elif tarefa.autor_classe is ContentType.objects.get_for_model(Anotacoe):
+            tarefa.restaurar()
+        return tarefa
+    except:
+        # Caso não exista, criar a tarefa requisitada para o objeto
+        tarefa = Tarefa()
+        tarefa.do_usuario = usuario
+        tarefa.autor_classe = tipo_conteudo
+        tarefa.objeto_id = objeto_id
+        tarefa.dados = dados
+        tarefa.save()
+        return tarefa
 
 
-@receiver(user_logged_out)
-def usuario_fez_logout(sender, user, **kwargs):
-    # Apagar arquivos temporários da sessão do usuário
-    # 1. tabela_docs
-    diretorio = f'{settings.MEDIA_ROOT}/tabela_docs'
-    for file in os.listdir(diretorio):
-        if file.endswith(f"{user}.pdf"):
-            os.remove(os.path.join(diretorio, file))
-
-    # 2. contrato_docs
-    diretorio = f'{settings.MEDIA_ROOT}/contrato_docs'
-    for file in os.listdir(diretorio):
-        if file.endswith(f"{user}.pdf"):
-            os.remove(os.path.join(diretorio, file))
-
-
-@receiver(pre_save, sender=Usuario)
-def usuario_save(sender, instance, **kwargs):
-    if instance.pk is None:  # if Criado
-        pass
-    else:
-        # Apaga todos os recibos em pdf do usuario(para que novos possam ser criados) quando se modifica informações
-        # desta model contidas neles (RG, CPF, First Name, Last Name)
-        # Também apaga quando o usuario troca o preenchimento do campo data
-        ante = Usuario.objects.get(pk=instance.pk)
-
-        try:
-            if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.first_name != instance.first_name \
-                    or ante.last_name != instance.last_name \
-                    or ante.recibo_preenchimento != int(instance.recibo_preenchimento):
-                contratos = Contrato.objects.filter(do_locador=instance)
-                for contrato in contratos:
-                    contrato.recibos_pdf.delete()
-        except:
-            pass
-
-
-@receiver(pre_save, sender=Locatario)
-def locatario_save(sender, instance, **kwargs):
-    if instance.pk is None:  # if Criado
-        pass
-    else:
-        # Apaga todos os recibos em pdf do locatario(para que novos possam ser criados) quando se modifica
-        # informações desta model contidas neles
-        ante = Locatario.objects.get(pk=instance.pk)
-        if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.nome != instance.nome:
-            contratos = Contrato.objects.filter(do_locatario=instance)
-            for contrato in contratos:
-                contrato.recibos_pdf.delete()
-
-
-@receiver(pre_save, sender=Contrato)
-def contrato_save(sender, instance, **kwargs):
-    if instance.pk is None:  # if Criado
-        pass
-    else:
-        # Após modificar um contrato(parametros: duracao e data_entrada):
-        # Editar as parcelas quando o contrato é editado (função gerenciar_parcelas):
-        # Recalc. as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
-        # Enviar as notificações relacionadas
-        # com a função: tratar_pagamentos
-        ante = Contrato.objects.get(pk=instance.pk)
-        if ante.duracao != instance.duracao or ante.data_entrada != instance.data_entrada:
-            gerenciar_parcelas(instance_contrato=instance)
-            tratar_pagamentos(instance_contrato=instance)
-
-
+# Gerenciadores de post_save \/  ---------------------------------------
 @receiver(post_save, sender=Contrato)
-def contrato_update(sender, instance, created, **kwargs):
+def contrato_post_save(sender, instance, created, **kwargs):
     # Pega os dados para tratamento:
     contrato = Contrato.objects.get(pk=instance.pk)
     imovel = Imovei.objects.get(pk=contrato.do_imovel.pk)
 
-    # Remove locador do imovel quando um contrato fica inativo e adiciona quando fica ativo:
+    # Remove locador do imóvel quando um contrato fica inativo e adiciona quando fica ativo:
     locatario = Locatario.objects.get(pk=contrato.do_locatario.pk)
-    if contrato.em_posse is True and contrato.rescindido is False and contrato.vencido is False:
+    if contrato.em_posse is True and contrato.rescindido is False and contrato.vencido is False and contrato.ativo_hoje:
         locatario.com_imoveis.add(imovel)
         locatario.com_contratos.add(contrato)
         imovel.com_locatario = locatario
@@ -210,14 +134,124 @@ def contrato_update(sender, instance, created, **kwargs):
         gerenciar_parcelas(contrato)
 
 
+@receiver(post_save, sender=Pagamento)
+def pagamento_post_save(sender, instance, created, **kwargs):
+    # Após criar um pagamento:
+    # Com a função: tratar_pagamentos \/
+    # 1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
+    # no seu respectivo contrato
+    # 2. Enviar as tarefas relacionadas
+    tratar_pagamentos(instance_contrato=instance.ao_contrato)
+
+
+# Gerenciadores de pre_save \/  ---------------------------------------
+@receiver(pre_save, sender=Parcela)
+def parcela_pre_save(sender, instance, **kwargs):
+    if instance.pk is None:  # if criado
+        pass
+    else:
+        # Parcela quitada? então criar uma tarefa para este objeto e atribuí-la à parcela
+        tipo_conteudo = ContentType.objects.get_for_model(Parcela)
+        objeto_id = instance.pk
+        dados = {'recibo_entregue': False}
+        if instance.esta_pago():
+            usuario = instance.do_contrato.do_locador
+            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, dados=dados)
+            Parcela.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+        else:
+            try:
+                tarefa = Tarefa.objects.get(autor_classe=tipo_conteudo, objeto_id=objeto_id)
+                tarefa.definir_apagada()
+            except:
+                pass
+
+
+@receiver(pre_save, sender=Usuario)
+def usuario_pre_save(sender, instance, **kwargs):
+    if instance.pk is None:  # if criado
+        pass
+    else:
+        # Apaga todos os recibos em pdf do usuário(para que novos possam ser criados) quando se modifica informações
+        # desta model contidas neles (RG, CPF, First Name, Last Name)
+        # Também apaga quando o usuário troca o preenchimento do campo data
+        ante = Usuario.objects.get(pk=instance.pk)
+
+        try:
+            if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.first_name != instance.first_name \
+                    or ante.last_name != instance.last_name \
+                    or ante.recibo_preenchimento != int(instance.recibo_preenchimento):
+                contratos = Contrato.objects.filter(do_locador=instance)
+                for contrato in contratos:
+                    contrato.recibos_pdf.delete()
+        except:
+            pass
+
+
+@receiver(pre_save, sender=Locatario)
+def locatario_pre_save(sender, instance, **kwargs):
+    if instance.pk is None:  # if criado
+        pass
+    else:
+        # Apaga todos os recibos em pdf do locatário(para que novos possam ser criados) quando se modifica
+        # informações desta model contidas neles
+        ante = Locatario.objects.get(pk=instance.pk)
+        if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.nome != instance.nome:
+            contratos = Contrato.objects.filter(do_locatario=instance)
+            for contrato in contratos:
+                contrato.recibos_pdf.delete()
+
+
+@receiver(pre_save, sender=Contrato)
+def contrato_pre_save(sender, instance, **kwargs):
+    if instance.pk is None:  # if criado
+        pass
+    else:
+        # Após modificar um contrato(parameters: curacao e data_entrada):
+        # Editar as parcelas quando o contrato é editado (função gerenciar_parcelas):
+        # Com a função: tratar_pagamentos \/
+        # 1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
+        # no seu respectivo contrato
+        # 2. Enviar as tarefas relacionadas
+        ante = Contrato.objects.get(pk=instance.pk)
+        if ante.duracao != instance.duracao or ante.data_entrada != instance.data_entrada:
+            gerenciar_parcelas(instance_contrato=instance)
+            tratar_pagamentos(instance_contrato=instance)
+
+
+@receiver(pre_save, sender=Anotacoe)
+def anotacao_pre_save(sender, instance, **kwargs):
+    # Criar e apagar tarefa referente a anotações
+    if instance.pk is None:  # if criado
+        pass
+    else:
+        # If editado
+        ante = Anotacoe.objects.get(pk=instance.pk)
+        if instance.tarefa is False and ante.tarefa != instance.tarefa:
+            # Defini apagada a tarefa referente à anotação se o usuário ao editar a anotação, desmarcar o botão tarefa.
+            tarefa = Tarefa.objects.filter(autor_classe=ContentType.objects.get_for_model(Anotacoe),
+                                           objeto_id=instance.pk).first()
+            if tarefa:
+                tarefa.definir_apagada()
+
+        elif instance.tarefa is True and ante.tarefa != instance.tarefa:
+            pass
+            # Criar a tarefa referente à anotação se o usuário ao editar a anotação, marcando o botão tarefa.
+            usuario = ante.do_usuario
+            tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
+            objeto_id = instance.pk
+            dados = {'afazer_concluida': 1}
+            criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, dados=dados)
+
+
+# Gerenciadores de pre_delete \/  ---------------------------------------
 @receiver(pre_delete, sender=Contrato)
-def contrato_delete(sender, instance, **kwards):
+def contrato_pre_delete(sender, instance, **kwards):
     # Pega os dados para tratamento:
     contrato = Contrato.objects.get(pk=instance.pk)
     imovel = Imovei.objects.get(pk=contrato.do_imovel.pk)
     locatario = Locatario.objects.get(pk=contrato.do_locatario.pk)
 
-    # Remove locador do imovel quando deleta um contrato
+    # Remove locador do imóvel quando deleta um contrato
     if imovel.com_locatario is True:
         locatario.com_imoveis.remove(imovel)
         locatario.com_contratos.remove(contrato)
@@ -227,54 +261,49 @@ def contrato_delete(sender, instance, **kwards):
         locatario.save()
 
 
+# Apaga as tarefas dos objetos quando eles forem apagados \/
+@receiver(pre_delete, sender=Anotacoe)
+def anotacao_pre_delete(sender, instance, **kwargs):
+    # Apagar a tarefa desta anotação
+    if instance.da_tarefa:
+        instance.da_tarefa.delete()
+
+
+@receiver(pre_delete, sender=Parcela)
+def parcela_pre_delete(sender, instance, **kwargs):
+    # Apagar a tarefa desta parcela
+    if instance.da_tarefa:
+        instance.da_tarefa.delete()
+
+
+# Gerenciadores de post_delete \/  ---------------------------------------
 @receiver(post_delete, sender=Pagamento)
-def pagamento_delete(sender, instance, **kwards):
+def pagamento_post_delete(sender, instance, **kwards):
     # Após apagar um pagamento:
-    # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
-    # Enviar as tarefas relacionadas
-    # com a função: tratar_pagamentos
-    tratar_pagamentos(instance_contrato=instance.ao_contrato, delete=True)
-
-    # "Apagar" tarefas de recibos que se referem a parcelas não kitadas (apenas ao deletar pagamentos)
-    tarefa_user = Tarefa.objects.filter(do_usuario=instance.ao_locador)
-    parcelas_pks = Parcela.objects.filter(do_contrato=instance.ao_contrato,
-                                          tt_pago__lt=instance.ao_contrato.valor_mensal).values_list('pk', flat=True)
-    for tarefa in tarefa_user:
-        if tarefa.autor_id not in parcelas_pks:
-            tarefa.definir_apagada()
-
-
-@receiver(post_save, sender=Pagamento)
-def pagamento_update(sender, instance, created, **kwargs):
-    # Após criar um pagamento:
-    # Recalcular as parcelas (model Parcela) pagas a partir do tt de pagamentos armazenados no seu respectivo contrato
-    # Enviar as notificações relacionadas
-    # com a função: tratar_pagamentos
+    # Com a função: tratar_pagamentos \/
+    # 1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
+    # no seu respectivo contrato
+    # 2. Enviar as tarefas relacionadas
     tratar_pagamentos(instance_contrato=instance.ao_contrato)
 
 
-@receiver(pre_save, sender=Anotacoe)
-def anotacao_save(sender, instance, **kwargs):
-    # Criar e apagar tarefa referente a anotações
-    if instance.pk is None:  # if Criado
-        pass
-    else:
-        ante = Anotacoe.objects.get(pk=instance.pk)
-        if instance.tarefa is False and ante.tarefa != instance.tarefa:
-            # Apaga a tarefa referente à anotação se o usuário ao editar a anotação, desmarcar o botão tarefa.
-            tarefa = Tarefa.objects.filter(autor_tipo=2, autor_id=instance.pk).first()
-            if tarefa:
-                instance.feito = False
-                tarefa.definir_apagada()
+# Gerenciadores de login e logout \/  ---------------------------------------
+@receiver(user_logged_in)
+def usuario_fez_login(sender, user, **kwargs):
+    pass
 
-        elif instance.tarefa is True and ante.tarefa != instance.tarefa:
-            # Criar a tarefa referente à anotação se o usuário ao editar a anotação, marcando o botão tarefa.
-            texto = f': {ante.texto}'
-            mensagem = f'{ante.titulo}{texto}'
-            tarefa = Tarefa()
-            tarefa.autor_id = ante.pk
-            tarefa.do_usuario = ante.do_usuario
-            tarefa.autor_tipo = 2
-            tarefa.texto = mensagem
-            tarefa.dados = {'afazer_concluida': 1}
-            tarefa.save()
+
+@receiver(user_logged_out)
+def usuario_fez_logout(sender, user, **kwargs):
+    # Apagar arquivos temporários da sessão do usuário
+    # 1. tabela_docs
+    diretorio = f'{settings.MEDIA_ROOT}/tabela_docs'
+    for file in os.listdir(diretorio):
+        if file.endswith(f"{user}.pdf"):
+            os.remove(os.path.join(diretorio, file))
+
+    # 2. contrato_docs
+    diretorio = f'{settings.MEDIA_ROOT}/contrato_docs'
+    for file in os.listdir(diretorio):
+        if file.endswith(f"{user}.pdf"):
+            os.remove(os.path.join(diretorio, file))
