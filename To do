@@ -45,8 +45,10 @@ Criar um botão de painel com configurações diversas e botão de backup de tod
 Implementar filtros nas paginas do botão histórico.
 Criar o sistema de primeira inicialização do app, criar pastas, preencher base de dados com os
         dado padrões (ex: modelos de constratos) e etc...
+Adaptar o site para celulares.
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
+Tarefas apagam ou ficam bugadas quando se mexe no periodo do contrato ou se apaga algum registro de pagamento.
 signal post_delete não é chamado quando é deletado pela area admin do site
 pk do usuario deve ser aleatorio e grande, não sequencial desde o 1, arrumar
 Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir também nas forms.

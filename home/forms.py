@@ -156,7 +156,7 @@ class FormPagamento(forms.ModelForm):
                 f"Com este valor o limite total do contrato será ultrapassado. Valor máximo: "
                 f"{valor_format(str(total - pagamento_tt))}" if valor_maximo > 0 else
                 f'Impossível adicionar mais pagamentos, o contrato está quitado.'
-                f' Valor total: {valor_format(str(total))}.')
+                f' Valor do contrato: {valor_format(str(total))}.')
         else:
             return valor_pago
 
@@ -363,7 +363,7 @@ class FormAnotacoes(forms.ModelForm):
     class Meta:
         model = Anotacoe
         fields = '__all__'
-        exclude = ['do_usuario', 'feito']
+        exclude = ['do_usuario', 'feito', 'da_tarefa']
         widgets = {
             'data_registro': DateInput(attrs={'style': 'width: 140px;'}),
             'texto': Textarea(attrs={'cols': 10, 'rows': 15}),
