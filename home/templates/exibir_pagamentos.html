@@ -12,92 +12,87 @@ Pagamentos / {{ SITE_NAME }}
 {% block content %}
 
 {% if pagamentos %}
-<container class="container-fluid row">
+<div class="container-fluid pt-1 text-center text-justify">
 
-    <div class="col text-center text-justify">
-        <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
-            <thead>
-            <tr>
-                <th scope="col" style="cursor:default;"></th>
-                <th scope="col" style="cursor:default;">Contrato de Origem</th>
-                <th scope="col" style="cursor:default;">Valor</th>
-                <th scope="col" style="cursor:default;" title="Data de pagamento">Data do Pag.</th>
-                <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
-                <th scope="col" style="cursor:default;">Excluir</th>
-            </tr>
-            </thead>
+    <div class="row g-1">
 
-            {% for pagamento in pagamentos %}
-            {% if forloop.counter|divisibleby:2 %}
-            {% else %}
-            <tbody>
-            <tr>
-                <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
-                <th scope="col " style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
-                    {{ pagamento.ao_contrato.nome_curto }}
-                </th>
-                <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
-                <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
-                <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
-                <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Pagamento' pagamento.pk %}"
-                                   title="Excluir">❌</a>
-                </th>
-                {% endif %}
-                {% endfor %}
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    </div>
+        <div class="col-6 text-center text-justify">
 
-    <div class="col text-center text-justify">
-        <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
-            <thead>
-            <tr>
-                <th scope="col" style="cursor:default;"></th>
-                <th scope="col" style="cursor:default;">Contrato de Origem</th>
-                <th scope="col" style="cursor:default;">Valor</th>
-                <th scope="col" style="cursor:default;">Data do pagam.</th>
-                <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
-                <th scope="col" style="cursor:default;">Recibo</th>
-                <th scope="col" style="cursor:default;">Excluir</th>
-            </tr>
-            </thead>
+            <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+                <thead>
+                <tr>
+                    <th scope="col" style="cursor:default;"></th>
+                    <th scope="col" style="cursor:default;">Contrato de Origem</th>
+                    <th scope="col" style="cursor:default;">Valor</th>
+                    <th scope="col" style="cursor:default;" title="Data de pagamento">Data do Pag.</th>
+                    <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
+                    <th scope="col" style="cursor:default;">Excluir</th>
+                </tr>
+                </thead>
 
-            {% for pagamento in pagamentos %}
-            {% if forloop.counter|divisibleby:2 %}
-            <tbody>
-            <tr>
-                <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
-                <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
-                    {{ pagamento.ao_contrato.nome_curto }}
-                </th>
-                <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
-                <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
-                <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
-                {% if pagamento.recibo %}
-                <th scope="col"><a class="link-primary" href="{% url 'home:Recibo Entregue' pagamento.pk %}"
-                                   title="Entregue ao locatário">✅</a></th>
+                <tbody class="table-group-divider">
+                {% for pagamento in pagamentos %}
+                {% if forloop.counter|divisibleby:2 %}
                 {% else %}
-                <th scope="col"><a class="link-primary" href="{% url 'home:Recibo Entregue' pagamento.pk %}"
-                                   title="Não entregue ao locatário">️✖️</a></th>
-                {% endif %}
-                <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Pagamento' pagamento.pk %}"
-                                   title="Excluir">❌</a>
-                </th>
+                <tr>
+                    <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
+                    <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
+                        {{ pagamento.ao_contrato.nome_curto }}
+                    </th>
+                    <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
+                    <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
+                    <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
+                    <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Pagamento' pagamento.pk %}"
+                                       title="Excluir">❌</a>
+                    </th>
+                </tr>
                 {% endif %}
                 {% endfor %}
-            </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-6 text-center text-justify">
+            <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+                <thead>
+                <tr>
+                    <th scope="col" style="cursor:default;"></th>
+                    <th scope="col" style="cursor:default;">Contrato de Origem</th>
+                    <th scope="col" style="cursor:default;">Valor</th>
+                    <th scope="col" style="cursor:default;" title="Data de pagamento">Data do Pag.</th>
+                    <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
+                    <th scope="col" style="cursor:default;">Excluir</th>
+                </tr>
+                </thead>
+
+                <tbody class="table-group-divider">
+                {% for pagamento in pagamentos %}
+                {% if forloop.counter|divisibleby:2 %}
+                <tr>
+                    <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
+                    <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
+                        {{ pagamento.ao_contrato.nome_curto }}
+                    </th>
+                    <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
+                    <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
+                    <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
+                    <th scope="col"><a class="link-danger" href="{% url 'home:Excluir Pagamento' pagamento.pk %}"
+                                       title="Excluir">❌</a>
+                    </th>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-</container>
+</div>
 
 {% else %}
-<container class="container-fluid text-center text-justify">
+<div class="container-fluid text-center text-justify">
     {% include 'nenhum_registrado.html' %}
-</container>
+</div>
 {% endif %}
 
 {% endblock %}

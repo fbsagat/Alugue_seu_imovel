@@ -99,6 +99,39 @@ class Usuario(AbstractUser):
         if self.telefone:
             return cel_format(self.telefone)
 
+    def arrecadacao_total(self):
+        try:
+            total = 0
+            pagamentos = Pagamento.objects.filter(ao_locador=self).values_list('valor_pago')
+            for pagamento in pagamentos:
+                total += int(pagamento[0])
+            return valor_format(str(total))
+        except:
+            return None
+
+    def arrecadacao_mensal(self):
+        try:
+            hoje = datetime.today().date()
+            contratos_user = Contrato.objects.filter(do_locador=self, data_entrada__lte=hoje)
+            arrecadacao_mensal = 0
+            for contrato in contratos_user:
+                if contrato.ativo_hoje() is True:
+                    arrecadacao_mensal += int(contrato.valor_mensal)
+            return valor_format(str(arrecadacao_mensal))
+        except:
+            return None
+
+    def valor_total_contratos_ativos(self):
+        try:
+            contratos_user = Contrato.objects.filter(do_locador=self)
+            valor_total_contratos_ativos = 0
+            for contrato in contratos_user:
+                if contrato.ativo_hoje() is True:
+                    valor_total_contratos_ativos += int(contrato.valor_do_contrato())
+            return valor_format(str(valor_total_contratos_ativos))
+        except:
+            return None
+
 
 class LocatariosManager(models.Manager):
     def com_imoveis(self):
@@ -144,6 +177,9 @@ class Locatario(models.Model):
 
     def __str__(self):
         return f'{self.nome}'
+
+    class Meta:
+        verbose_name_plural = 'Locatários'
 
     def primeiro_ultimo_nome(self):
         return f'{self.nome.split()[:1][0]} {self.nome.split()[len(self.nome.split()) - 1:][0]}'
@@ -191,6 +227,9 @@ class ImovGrupo(models.Model):
 
     def __str__(self):
         return self.nome
+
+    class Meta:
+        verbose_name_plural = 'Grupos de imóveis'
 
     class Meta:
         ordering = ('nome',)
@@ -247,6 +286,9 @@ class Imovei(models.Model):
 
     # def get_absolute_url(self):
     #     return reverse('home:Imóveis', args=[str(self.pk), ])
+
+    class Meta:
+        verbose_name_plural = 'Imóveis'
 
     def nogrupo(self):
         return '' if self.grupo is None else self.grupo
@@ -324,7 +366,7 @@ class Contrato(models.Model):
                f'{self.codigo})'
 
     def __str__(self):
-        return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.do_imovel.nome} - ' \
+        return f'({self.do_locatario.primeiro_ultimo_nome()}/{self.do_imovel.nome}-' \
                f'{self.data_entrada.strftime("%d/%m/%Y")})'
 
     def nome_completo(self):
@@ -401,7 +443,27 @@ class Contrato(models.Model):
             valor_tt += int(valor['valor_pago'])
         return valor_tt
 
-    def duracao_por_extenso(self):
+    def duracao_dias(self):
+        delta = self.data_saida() - self.data_entrada
+        return delta.days
+
+    def transcorrido_dias(self):
+        delta = datetime.today().date() - self.data_entrada
+        return delta.days
+
+    def recibos_entregues_qtd(self):
+        x = Parcela.objects.filter(do_contrato=self, recibo_entregue=True).count()
+        return x
+
+    def parcelas_pagas_qtd(self):
+        parcelas = Parcela.objects.filter(do_contrato=self)
+        count = 0
+        for parcela in parcelas:
+            if parcela.esta_pago() is True:
+                count += 1
+        return count
+
+    def duracao_meses_por_extenso(self):
         return num2words(self.duracao, lang='pt_BR')
 
     def dia_vencimento_por_extenso(self):
@@ -418,12 +480,20 @@ class Contrato(models.Model):
     def vencimento_atual_textual(self):
         txt = ''
         try:
-            if self.vencimento_atual() < datetime.today().date():
-                txt = f'Venceu em {self.vencimento_atual().strftime("%d/%m/%Y")}'
-            elif self.vencimento_atual() == datetime.today().date():
-                txt = 'Vence Hoje'
-            elif self.vencimento_atual() > datetime.today().date():
-                txt = f'Vencerá em {self.vencimento_atual().strftime("%d/%m/%Y")}'
+            hoje = datetime.today().date()
+            vencim_atual = self.vencimento_atual()
+            delta = hoje - vencim_atual
+            delta2 = vencim_atual - hoje
+            if vencim_atual == hoje + relativedelta(days=-1):
+                txt = f'Venceu ontem ({vencim_atual.strftime("%d/%m/%Y")})'
+            elif vencim_atual < hoje + relativedelta(days=-1):
+                txt = f'Venceu em {vencim_atual.strftime("%d/%m/%Y")} ({delta.days} dias atrás)'
+            elif vencim_atual == hoje:
+                txt = f'Vence hoje ({vencim_atual.strftime("%d/%m/%Y")})'
+            elif vencim_atual == hoje + relativedelta(days=+1):
+                txt = f'Vencerá amanhã ({vencim_atual.strftime("%d/%m/%Y")})'
+            elif vencim_atual > hoje + relativedelta(days=+1):
+                txt = f'Vencerá em {vencim_atual.strftime("%d/%m/%Y")} (em {delta2.days} dias)'
         except:
             txt = ''
         return txt
@@ -452,6 +522,9 @@ class ContratoModelo(models.Model):
 
     def __str__(self):
         return f'{self.titulo}'
+
+    class Meta:
+        verbose_name_plural = 'Modelos de contratos'
 
     def display_variaveis(self):
         variaveis = []
@@ -498,6 +571,9 @@ class ContratoDocConfig(models.Model):
 
     def __str__(self):
         return f'{self.do_contrato} ({self.do_modelo})'
+
+    class Meta:
+        verbose_name_plural = 'Configs de contratos'
 
     def f_cpf(self):
         return cpf_format(self.fiador_CPF)
@@ -617,6 +693,9 @@ class Anotacoe(models.Model):
     def get_absolute_url(self):
         return reverse('home:Anotações', args=[(str(self.pk)), ])
 
+    class Meta:
+        verbose_name_plural = 'Anotações'
+
     def tipo(self):
         if self.tarefa:
             if self.feito:
@@ -732,6 +811,9 @@ class DevMensagen(models.Model):
 
     def get_absolute_url(self):
         return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])
+
+    class Meta:
+        verbose_name_plural = 'Mensagens ao Dev'
 
     def __str__(self):
         return f'{self.do_usuario} - {self.titulo} - {self.data_registro}'

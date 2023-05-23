@@ -67,7 +67,7 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">Recibo</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
 
         {% for pagamento in pagamentos %}
         <tr>
@@ -112,9 +112,8 @@ Eventos / {{ SITE_NAME }}
         </tr>
         </thead>
 
+        <tbody class="table-group-divider">
         {% for gasto in gastos %}
-        <tbody>
-
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
             <th scope="col" style="cursor:default;">{{ gasto.do_imovel }}</th>
@@ -170,7 +169,7 @@ Eventos / {{ SITE_NAME }}
         </tr>
         </thead>
 
-        <tbody>
+        <tbody class="table-group-divider">
         {% for locatario in locatarios %}
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
@@ -216,7 +215,7 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;" title="Contrato Ativado/Rescindido">Ativado</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
 
         {% for contrato in contratos %}
         <tr>
@@ -272,7 +271,7 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">UC Saneamento</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
 
         {% for imovel in imoveis %}
         <tr>
@@ -310,7 +309,7 @@ Eventos / {{ SITE_NAME }}
         </tr>
         </thead>
 
-        <tbody>
+        <tbody class="table-group-divider">
 
         {% for anotacao in anotacoes %}
         <tr>

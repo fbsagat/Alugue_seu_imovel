@@ -148,12 +148,12 @@ def anotacoes_ficticias():
     data_registro = fake.date_between(datetime.today() + timedelta(days=-80), datetime.today())
     texto = fake.paragraph(nb_sentences=randrange(6, 7))
     zero_a_cem = randrange(0, 100)
-    probabilidade_percentual = 25
-    tarefa = True if zero_a_cem <= probabilidade_percentual else False
+    probabilidade_percentual_tarefa = 50
+    tarefa = True if zero_a_cem <= probabilidade_percentual_tarefa else False
     feito = False
     if tarefa:
-        probabilidade_percentual = 65
-        feito = True if zero_a_cem <= probabilidade_percentual else False
+        probabilidade_percentual_feito = 25
+        feito = True if zero_a_cem <= probabilidade_percentual_feito else False
 
     return {'titulo': titulo, 'data_registro': data_registro, 'texto': texto, 'tarefa': tarefa, 'feito': feito}
 
@@ -163,11 +163,14 @@ def sugestoes_ficticias():
     do_usuario = choice(usuarios)
     corpo = fake.paragraph(nb_sentences=randrange(6, 7))
 
+    zero_a_cem = randrange(0, 100)
+    probabilidade_percentual = 75
+
     alguns_usuarios = []
     count = 0
     valor = randrange(0, len(usuarios))
     while True:
-        alguns_usuarios.append(choice(usuarios))
+        alguns_usuarios.append(choice(usuarios)) if zero_a_cem <= probabilidade_percentual else None
         if count == valor:
             break
         count += 1
