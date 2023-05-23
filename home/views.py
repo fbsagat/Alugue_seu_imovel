@@ -52,12 +52,14 @@ class VisaoGeral(LoginRequiredMixin, TemplateView):
 def visao_geral(request, pk):
     context = {}
     imoveis = Imovei.objects.filter(do_locador=request.user)
+    usuario = Usuario.objects.get(pk=request.user.pk)
+
     ocupados = []
     for imovel in imoveis:
-        ocupados.append(imovel.pk) if imovel.esta_ocupado() else None
+        ocupados.append(imovel.pk) if imovel.esta_ocupado() and imovel.contrato_atual.ativo_hoje() else None
     imoveis = Imovei.objects.filter(pk__in=ocupados).order_by('nome')
     parametro_page = request.GET.get('page', '1')
-    parametro_limite = request.GET.get('limit', '20')
+    parametro_limite = request.GET.get('limit', '30')
     imovel_pagination = Paginator(imoveis, parametro_limite)
 
     try:
@@ -65,10 +67,12 @@ def visao_geral(request, pk):
     except (EmptyPage, PageNotAnInteger):
         page = imovel_pagination.page(1)
 
-    context['indicies'] = {}
+    context['arrecadacao_total'] = usuario.arrecadacao_total()
+    context['arrecadacao_mensal'] = usuario.arrecadacao_mensal()
+    context['valor_total_contratos_ativos'] = usuario.valor_total_contratos_ativos()
     context['page_obj'] = page
     context['SITE_NAME'] = settings.SITE_NAME
-    context['conteudo'] = True
+    context['conteudo'] = True if imoveis else False
     return render(request, 'exibir_visao_geral.html', context)
 
 
@@ -468,13 +472,6 @@ def registrar_anotacao(request):
         nota = form.save(commit=False)
         nota.do_usuario = request.user
         nota.save()
-
-        if form.cleaned_data['tarefa']:
-            usuario = nota.do_usuario
-            tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
-            objeto_id = nota.pk
-            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
-            Anotacoe.objects.filter(pk=nota.pk).update(da_tarefa=tarefa)
 
         if form.cleaned_data['tarefa']:
             messages.success(request, "Tarefa resgistrada com sucesso!")

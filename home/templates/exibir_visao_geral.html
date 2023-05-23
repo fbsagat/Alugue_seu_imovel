@@ -7,6 +7,13 @@ Visão Geral / {{ SITE_NAME }}
 {% endblock %}
 
 {% block head %}
+<style>
+.table-condensed{
+  font-size: 13px;
+}
+
+
+</style>
 {% endblock %}
 
 {% block content %}
@@ -15,50 +22,133 @@ Visão Geral / {{ SITE_NAME }}
 
 <div class="container-fluid pt-1 text-center text-justify">
 
-    <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
+    <div class="row g-1">
 
-        <thead>
+        <div class="col-3">
+            <table class="table table-dark table-condensed mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary
+     table-striped">
+                <thead>
+                <tr>
+                    <th scope="col" style="cursor:default;">Nº</th>
+                    <th scope="col" style="cursor:default;">Imóvel</th>
+                    <th scope="col" style="cursor:default;">Locatário</th>
+                    <th scope="col" style="cursor:default;">Valor/Mês</th>
+                </tr>
+                </thead>
 
-        <tr>
-            <th scope="col" style="cursor:default;">Nº</th>
-            <th scope="col" style="cursor:default;">Imóvel</th>
-            <th scope="col" style="cursor:default;">Contrato</th>
-            <th scope="col" style="cursor:default;">Vencimento</th>
-            <th scope="col" style="cursor:default;">Valor/Mês</th>
-            <th scope="col" style="cursor:default;">Divida Atrasada</th>
-        </tr>
+                <tbody class="table-group-divider">
+                {% for imovel in page_obj %}
+                <tr>
+                    <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
+                    <th scope="col" style="cursor:default;" title="{{ imovel.grupo }}">{{ imovel.nome }}</th>
+                    <th scope="col" style="cursor:default;" title="{{ imovel.com_locatario.nome }}">
+                        {{ imovel.com_locatario.primeiro_ultimo_nome }}
+                    </th>
+                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.valor_format }}</th>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        </thead>
+        <div class="col-4">
+            <table class="table table-dark table-condensed mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary
+     table-striped">
+                <thead>
+                <tr>
+                    <th scope="col" style="cursor:default;">Vencimento</th>
+                    <th scope="col" style="cursor:default;">Divida Atrasada</th>
+                    <th scope="col" style="cursor:default;">Recibos Entreg.</th>
+                </tr>
+                </thead>
 
-        <tbody>
+                <tbody class="table-group-divider">
+                {% for imovel in page_obj %}
+                <tr>
+                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.vencimento_atual_textual }}</th>
 
-        {% for imovel in page_obj %}
-        <tr>
-            <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th></th>
-            <th scope="col" style="cursor:default;">{{ imovel.nome }}</th>
-            <th scope="col" style="cursor:default;">{{ imovel.contrato_atual }}</th>
-            <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.vencimento_atual_textual }}</th>
-            <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.valor_format }}</th>
-            {% if imovel.contrato_atual.divida_atual_valor.0 == 0 %}
-            <th>---</th>
-            {% else %}
-            <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.divida_atual_valor.1 }} /
-                {{ imovel.contrato_atual.divida_atual_meses }}
-                {% if imovel.contrato_atual.divida_atual_meses == 1 %}Mês{% else %}Meses{% endif %}</th>
-            {% endif %}
-        </tr>
-        {% endfor %}
+                    {% if imovel.contrato_atual.divida_atual_valor.0 == 0 %}
+                    <th>Em dia ✔️</th>
+                    {% else %}
+                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.divida_atual_valor.1 }} /
+                        {{ imovel.contrato_atual.divida_atual_meses }}
+                        {% if imovel.contrato_atual.divida_atual_meses == 1 %}Mês{% else %}Meses{% endif %} ⭕
+                    </th>
+                    {% endif %}
+                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.recibos_entregues_qtd }}
+                        de {{ imovel.contrato_atual.parcelas_pagas_qtd }}
+                        {% if imovel.contrato_atual.recibos_entregues_qtd == imovel.contrato_atual.parcelas_pagas_qtd %}
+                        ✔️
+                        {% else %}
+                        ⭕
+                        {% endif %}
+                    </th>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        </tbody>
+        <div class="col-5">
+            <table class="table table-dark table-condensed mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary
+     table-striped">
+                <thead>
+                <tr>
+                    <th scope="col" style="cursor:default;">Contrato</th>
+                    <th scope="col" style="cursor:default;">Total Pago</th>
+                    <th scope="col" style="cursor:default;">Tempo</th>
+                </tr>
+                </thead>
 
-    </table>
-</div>
+                <tbody class="table-group-divider">
+                {% for imovel in page_obj %}
+                <tr>
+                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual }}</th>
+                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.total_pg_format }}
+                        ({{ imovel.contrato_atual.parcelas_pagas_qtd }})
+                        de {{ imovel.contrato_atual.valor_do_contrato_format }} ({{ imovel.contrato_atual.duracao }})
+                    </th>
+                    {% if imovel.contrato_atual.transcorrido_dias|add:30 > imovel.contrato_atual.duracao_dias %}
+                    <th scope="col" style="cursor:default;" title="O contrato está perto do vencimento">
+                        {{ imovel.contrato_atual.transcorrido_dias }} de {{ imovel.contrato_atual.duracao_dias }} dias
+                        {% if imovel.contrato_atual.transcorrido_dias|add:30 > imovel.contrato_atual.duracao_dias %}
+                        ⚠️
+                        {% endif %}
+                        {% else %}
+                    <th scope="col" style="cursor:default;">
+                        {{ imovel.contrato_atual.transcorrido_dias }} de {{ imovel.contrato_atual.duracao_dias }} dias
+                        {% endif %}
+                    </th>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-{% else %}
-{% include 'bemvindo.html' %}
-{% endif %}
+    <div class="container text-start">
+        <div class="col mt-1">
+            <div class="card bg-black bg-opacity-75 border-secondary">
 
-{% endblock %}
+                <!-- Card header inicio -->
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <p>Arrecadação total desde o início: {{ arrecadacao_total }}</p>
+                        <p>Arrecadação mensal atual (contratos ativos): {{ arrecadacao_mensal }}</p>
+                        <p>Valor total dos contratos ativos: {{ valor_total_contratos_ativos }}</p>
 
-{% block scripts %}
-{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    {% else %}
+    {% include 'bemvindo.html' %}
+    {% endif %}
+
+    {% endblock %}
+
+    {% block scripts %}
+    {% endblock %}

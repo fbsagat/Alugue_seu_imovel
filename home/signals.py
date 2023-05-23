@@ -104,6 +104,17 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
 
 
 # Gerenciadores de post_save \/  ---------------------------------------
+@receiver(post_save, sender=Anotacoe)
+def anotacao_post_save(sender, instance, **kwargs):
+    # Criar e apagar tarefa referente a anotações
+    if instance.tarefa:
+        usuario = instance.do_usuario
+        tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
+        objeto_id = instance.pk
+        tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+        Anotacoe.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+
+
 @receiver(post_save, sender=Contrato)
 def contrato_post_save(sender, instance, created, **kwargs):
     # Pega os dados para tratamento:
