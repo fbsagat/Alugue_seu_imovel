@@ -37,19 +37,7 @@ from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGru
 
 
 # -=-=-=-=-=-=-=-= BOTÃO VISÃO GERAL -=-=-=-=-=-=-=-=
-
-class VisaoGeral(LoginRequiredMixin, TemplateView):
-    template_name = 'exibir_visao_geral.html'
-    model = Locatario
-    paginate_by = 30
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(VisaoGeral, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
-
-def visao_geral(request, pk):
+def visao_geral(request):
     context = {}
     imoveis = Imovei.objects.filter(do_locador=request.user)
     usuario = Usuario.objects.get(pk=request.user.pk)
@@ -57,7 +45,52 @@ def visao_geral(request, pk):
     ocupados = []
     for imovel in imoveis:
         ocupados.append(imovel.pk) if imovel.esta_ocupado() and imovel.contrato_atual.ativo_hoje() else None
-    imoveis = Imovei.objects.filter(pk__in=ocupados).order_by('nome')
+
+    # Sistema de ordenação \/
+    if usuario.vis_ger_ultim_order_by and request.GET.get('order_by') is None:
+        order_by = usuario.vis_ger_ultim_order_by
+    else:
+        order_by = request.GET.get('order_by')
+
+    if request.GET.get('order_by'):
+        usuario.vis_ger_ultim_order_by = request.GET.get('order_by')
+        usuario.save(update_fields=['vis_ger_ultim_order_by', ])
+
+    if order_by is None or 'com_locatario__nome' in order_by or 'nome' in order_by or 'contrato_atual__valor_mensal'\
+            in order_by or 'contrato_atual' in order_by:
+        imoveis = Imovei.objects.filter(pk__in=ocupados).order_by(order_by if order_by else 'nome')
+    elif 'vencimento_atual' in order_by:
+        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.vencimento_atual(), reverse=True)
+        imoveis = []
+        for contrato in contratos:
+            if contrato.ativo_hoje():
+                imoveis.append(contrato.do_imovel)
+    elif 'divida_atual_valor' in order_by:
+        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.divida_atual_valor()[0])
+        imoveis = []
+        for contrato in contratos:
+            if contrato.ativo_hoje():
+                imoveis.append(contrato.do_imovel)
+    elif 'recibos_entregues_qtd' in order_by:
+        contratos0 = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.recibos_entregues_qtd())
+        contratos = sorted(contratos0, key=lambda a: a.faltando_recibos_qtd())
+        imoveis = []
+        for contrato in contratos:
+            if contrato.ativo_hoje():
+                imoveis.append(contrato.do_imovel)
+    elif 'total_pg' in order_by:
+        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.total_quitado(), reverse=True)
+        imoveis = []
+        for contrato in contratos:
+            if contrato.ativo_hoje():
+                imoveis.append(contrato.do_imovel)
+    elif 'transcorrido_dias' in order_by:
+        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.transcorrido_dias())
+        imoveis = []
+        for contrato in contratos:
+            if contrato.ativo_hoje():
+                imoveis.append(contrato.do_imovel)
+
     parametro_page = request.GET.get('page', '1')
     parametro_limite = request.GET.get('limit', '30')
     imovel_pagination = Paginator(imoveis, parametro_limite)
@@ -70,6 +103,7 @@ def visao_geral(request, pk):
     context['arrecadacao_total'] = usuario.arrecadacao_total()
     context['arrecadacao_mensal'] = usuario.arrecadacao_mensal()
     context['valor_total_contratos_ativos'] = usuario.valor_total_contratos_ativos()
+    context['valor_total_contratos'] = usuario.valor_total_contratos()
     context['page_obj'] = page
     context['SITE_NAME'] = settings.SITE_NAME
     context['conteudo'] = True if imoveis else False
@@ -1503,7 +1537,7 @@ class Homepage(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(reverse('home:Visão Geral', args=[self.request.user.pk]))
+            return redirect(reverse('home:Visão Geral'))
         else:
             return super().get(request, *args, **kwargs)
 

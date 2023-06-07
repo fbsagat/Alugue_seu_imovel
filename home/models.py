@@ -61,9 +61,11 @@ class Usuario(AbstractUser):
     dados_pagamento2 = models.CharField(null=True, blank=True, max_length=90,
                                         verbose_name='Informações de pagamentos 2')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
-    # outros poderão ter acesso ao uuid por cópias digitais de pdfs que poderão ser repassadas pelo usuario
+    # Outros poderão ter acesso ao uuid por cópias digitais de pdfs que poderão ser repassadas pelo usuário
 
     locat_slots = models.IntegerField(default=2)
+
+    vis_ger_ultim_order_by = models.CharField(null=True, blank=True, max_length=60)
 
     data_eventos_i = models.DateField(blank=True, null=True)
     itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=['1', '2', '3', '4', '5', '6'])
@@ -129,6 +131,16 @@ class Usuario(AbstractUser):
                 if contrato.ativo_hoje() is True:
                     valor_total_contratos_ativos += int(contrato.valor_do_contrato())
             return valor_format(str(valor_total_contratos_ativos))
+        except:
+            return None
+
+    def valor_total_contratos(self):
+        try:
+            contratos_user = Contrato.objects.filter(do_locador=self)
+            valor_total_contratos = 0
+            for contrato in contratos_user:
+                valor_total_contratos += int(contrato.valor_do_contrato())
+            return valor_format(str(valor_total_contratos))
         except:
             return None
 
@@ -284,11 +296,9 @@ class Imovei(models.Model):
     def __str__(self):
         return f'{self.nome} ({self.grupo})'
 
-    # def get_absolute_url(self):
-    #     return reverse('home:Imóveis', args=[str(self.pk), ])
-
     class Meta:
         verbose_name_plural = 'Imóveis'
+        ordering = ['-nome']
 
     def nogrupo(self):
         return '' if self.grupo is None else self.grupo
@@ -366,8 +376,8 @@ class Contrato(models.Model):
                f'{self.codigo})'
 
     def __str__(self):
-        return f'({self.do_locatario.primeiro_ultimo_nome()}/{self.do_imovel.nome}-' \
-               f'{self.data_entrada.strftime("%d/%m/%Y")})'
+        return f'({self.do_locatario.primeiro_ultimo_nome()}-{self.do_imovel.nome}-' \
+               f'{self.data_entrada.strftime("%m/%Y")})'
 
     def nome_completo(self):
         return f'{self.do_locatario.nome} - {self.do_imovel} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
@@ -399,13 +409,13 @@ class Contrato(models.Model):
         valor = Parcela.objects.filter(do_contrato=self, tt_pago=self.valor_mensal).values_list('tt_pago')
         if settings.USAR_DB == 1:
             valor = valor.aggregate(Sum('tt_pago'))
-            return valor['tt_pago__sum']
+            return valor['tt_pago__sum'] or 0
         elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
             array = valor.aggregate(arr=ArrayAgg('tt_pago'))
             t = 0
             for _ in array['arr']:
                 t += int(_)
-            return t
+            return t or 0
 
     def total_pg_format(self):
         if self.total_quitado() is None:
@@ -451,6 +461,12 @@ class Contrato(models.Model):
         delta = datetime.today().date() - self.data_entrada
         return delta.days
 
+    def faltando_dias(self):
+        return self.duracao_dias() - self.transcorrido_dias()
+
+    def passou_do_limite(self):
+        return True if int(self.faltando_dias()) <= 30 else False
+
     def recibos_entregues_qtd(self):
         x = Parcela.objects.filter(do_contrato=self, recibo_entregue=True).count()
         return x
@@ -462,6 +478,19 @@ class Contrato(models.Model):
             if parcela.esta_pago() is True:
                 count += 1
         return count
+
+    def title_pagou_parcelas(self):
+        if self.parcelas_pagas_qtd() > 0:
+            plural = 's' if self.parcelas_pagas_qtd() > 1 else ''
+            return f'Pagou {self.parcelas_pagas_qtd()} parcela{plural} de {self.duracao}'
+        else:
+            return 'Nenhuma parcela paga ainda'
+
+    def faltando_recibos_qtd(self):
+        try:
+            return self.parcelas_pagas_qtd() - self.recibos_entregues_qtd()
+        except:
+            return None
 
     def duracao_meses_por_extenso(self):
         return num2words(self.duracao, lang='pt_BR')

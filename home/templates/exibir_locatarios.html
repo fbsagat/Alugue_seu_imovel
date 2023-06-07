@@ -12,7 +12,7 @@ Locatários / {{ SITE_NAME }}
 
 {% block content %}
 
-<container class="container-fluid pt-1 text-center text-justify">
+<div class="container-fluid pt-1 text-center text-justify">
     {% if locatarios %}
 
     <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
@@ -89,7 +89,7 @@ Locatários / {{ SITE_NAME }}
     </table>
 
 
-</container>
+</div>
 
 {% else %}
 {% include 'nenhum_registrado.html' %}
