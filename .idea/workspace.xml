@@ -4,21 +4,36 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Preparando para o servidor de testes(railway).">
-      <change afterPath="$PROJECT_DIR$/home/migrations/0003_remove_tarefa_data_historico_anotacoe_data_feito_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0004_remove_anotacoe_data_feito_and_more.py" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs gerais.&#10;Mais coisas no To do.">
+      <change afterPath="$PROJECT_DIR$/ASI Modelos/Instrumento particular de locação de imóvel.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ASI Modelos/Termo de renovação de contrato de locação de imóvel.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/To do" beforeDir="false" afterPath="$PROJECT_DIR$/To do" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0002_tarefa_data_lida.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0002_remove_tarefa_data_lida_tarefa_data_historico.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/migrations/0002_tarefa_data_lida.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/criar_conta.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/criar_conta.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/criar_grupos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/criar_grupos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_anotacao.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_anotacao.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_contrato.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_contrato.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_gasto.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_gasto.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_grupo.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_grupo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_imovel.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_imovel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_locatario.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_locatario.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_perfil.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_perfil.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/excluir_conta.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_conta.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/excluir_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_item.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_anotacao.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_anotacao.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_imoveis.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_imoveis.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_locatarios.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_locatarios.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/gerar_recibos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/gerar_recibos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/gerar_tabela.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/gerar_tabela.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/offcanvas_tarefas.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/offcanvas_tarefas.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +90,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver">
+  <component name="RunManager" selected="Python.runserver">
     <list>
       <item itemvalue="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver" />
       <item itemvalue="Python.makemigrations" />
@@ -92,20 +107,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1678467679553</updated>
-    </task>
-    <task id="LOCAL-00034" summary="Melhorias e correções">
-      <created>1678487706771</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1678487706771</updated>
-    </task>
-    <task id="LOCAL-00035" summary="Melhorias e correções">
-      <created>1678488096341</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1678488096341</updated>
     </task>
     <task id="LOCAL-00036" summary="Melhorias e correções">
       <created>1678488197691</created>
@@ -436,7 +437,21 @@
       <option name="project" value="LOCAL" />
       <updated>1681882354725</updated>
     </task>
-    <option name="localTasksCounter" value="83" />
+    <task id="LOCAL-00083" summary="Melhorias e correções de bugs nas tarefas: não armazena mais dados (Ex: dados = {'afazer_concluida': 1}) pois era redundante, estas informações podem ser adquiridas pelos content_object.&#10;Corrigidos uns erros de português kkk, no footer.&#10;Agora tarefas armazena data de quando foi para o histórico.">
+      <created>1684534953952</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1684534953952</updated>
+    </task>
+    <task id="LOCAL-00084" summary="Melhorias e correções de bugs gerais.&#10;Mais coisas no To do.">
+      <created>1684846537415</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1684846537415</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -480,6 +495,8 @@
     <MESSAGE value="Preparação para testes no servidor, sem debug." />
     <MESSAGE value=".Preparando para o servidor localhost." />
     <MESSAGE value="Preparando para o servidor de testes(railway)." />
-    <option name="LAST_COMMIT_MESSAGE" value="Preparando para o servidor de testes(railway)." />
+    <MESSAGE value="Melhorias e correções de bugs nas tarefas: não armazena mais dados (Ex: dados = {'afazer_concluida': 1}) pois era redundante, estas informações podem ser adquiridas pelos content_object.&#10;Corrigidos uns erros de português kkk, no footer.&#10;Agora tarefas armazena data de quando foi para o histórico." />
+    <MESSAGE value="Melhorias e correções de bugs gerais.&#10;Mais coisas no To do." />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs gerais.&#10;Mais coisas no To do." />
   </component>
 </project>

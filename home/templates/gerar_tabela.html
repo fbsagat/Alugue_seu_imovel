@@ -15,11 +15,11 @@ Gerar Tabela / {{ SITE_NAME }}
 
 {% if tem_contratos %}
 
-<container class="container pt-1 text-center text-justify justify-center">
+<div class="container pt-1 text-center text-justify justify-center">
 
     <form action="" method="POST">
         {% csrf_token %}
-        <container
+        <div
                 class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
             <div class="p-1">
                 Selecione o mês de inicio: {{ form.mes|as_crispy_field }}
@@ -34,7 +34,7 @@ Gerar Tabela / {{ SITE_NAME }}
                 <button class="bg-blue-600 py-2 px-3 text-white rounded-md form-control-sm" type="submit">Gerar
                 </button>
             </div>
-        </container>
+        </div>
     </form>
 
     {% if tem_imoveis %}
@@ -43,7 +43,7 @@ Gerar Tabela / {{ SITE_NAME }}
     {% include 'nenhum_retorno_intervalo.html' %}
     {% endif %}
 
-</container>
+</div>
 {% else %}
 {% include 'nenhum_registrado.html' %}
 {% endif %}

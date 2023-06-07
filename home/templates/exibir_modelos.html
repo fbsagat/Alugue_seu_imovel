@@ -11,8 +11,8 @@ Itens Ativos / {{ SITE_NAME }}
 
 {% if modelos %}
 
-<container class="container pt-1 text-center text-justify justify-center">
-    <container
+<div class="container pt-1 text-center text-justify justify-center">
+    <div
             class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
         <a class="py-2 px-3" href="{% url 'home:Criar Modelo' %}">
             <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
@@ -24,7 +24,7 @@ Itens Ativos / {{ SITE_NAME }}
                 Sair do editor
             </button>
         </a>
-    </container>
+    </div>
     <br>
     <div class="container-xxl">
         <div class="row row-cols-5 row-cols-md-3 g-3">
@@ -100,7 +100,7 @@ Itens Ativos / {{ SITE_NAME }}
         </div>
     </div>
     <br>
-</container>
+</div>
 
 {% else %}
 <div class="container-fluid pt-1 text-center text-justify">

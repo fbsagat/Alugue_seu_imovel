@@ -11,8 +11,6 @@ Visão Geral / {{ SITE_NAME }}
 .table-condensed{
   font-size: 13px;
 }
-
-
 </style>
 {% endblock %}
 
@@ -29,10 +27,15 @@ Visão Geral / {{ SITE_NAME }}
      table-striped">
                 <thead>
                 <tr>
+                    <td colspan="4" class="fw-bold">Imóvel</td>
+                </tr>
+                <tr>
                     <th scope="col" style="cursor:default;">Nº</th>
-                    <th scope="col" style="cursor:default;">Imóvel</th>
-                    <th scope="col" style="cursor:default;">Locatário</th>
-                    <th scope="col" style="cursor:default;">Valor/Mês</th>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=nome">Nome</a></th>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=com_locatario__nome">Com locatário</a>
+                    </th>
+                    <th scope="col" style="cursor:default;"><a
+                            href="?order_by=contrato_atual__valor_mensal">Valor/Mês</a></th>
                 </tr>
                 </thead>
 
@@ -56,9 +59,13 @@ Visão Geral / {{ SITE_NAME }}
      table-striped">
                 <thead>
                 <tr>
-                    <th scope="col" style="cursor:default;">Vencimento</th>
-                    <th scope="col" style="cursor:default;">Divida Atrasada</th>
-                    <th scope="col" style="cursor:default;">Recibos Entreg.</th>
+                    <td colspan="3" class="fw-bold">Mensalidade</td>
+                </tr>
+                <tr>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=vencimento_atual">Vencimento</a></th>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=divida_atual_valor">Pagamento</a></th>
+                    <th scope="col" style="cursor:default;" title="Recibos Entregues">
+                        <a href="?order_by=recibos_entregues_qtd">Recibos Entr.</a></th>
                 </tr>
                 </thead>
 
@@ -94,9 +101,13 @@ Visão Geral / {{ SITE_NAME }}
      table-striped">
                 <thead>
                 <tr>
-                    <th scope="col" style="cursor:default;">Contrato</th>
-                    <th scope="col" style="cursor:default;">Total Pago</th>
-                    <th scope="col" style="cursor:default;">Tempo</th>
+                    <td colspan="3" class="fw-bold">Contrato</td>
+                </tr>
+                <tr>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=contrato_atual">Nome</a></th>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=total_pg">Total Pago</a></th>
+                    <th scope="col" style="cursor:default;" title="Tempo Transcorrido">
+                        <a href="?order_by=transcorrido_dias">Tempo</a></th>
                 </tr>
                 </thead>
 
@@ -104,8 +115,8 @@ Visão Geral / {{ SITE_NAME }}
                 {% for imovel in page_obj %}
                 <tr>
                     <th scope="col" style="cursor:default;">{{ imovel.contrato_atual }}</th>
-                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.total_pg_format }}
-                        ({{ imovel.contrato_atual.parcelas_pagas_qtd }})
+                    <th scope="col" style="cursor:default;" title="{{ imovel.contrato_atual.title_pagou_parcelas }}">
+                        {{ imovel.contrato_atual.total_pg_format }} ({{ imovel.contrato_atual.parcelas_pagas_qtd }})
                         de {{ imovel.contrato_atual.valor_do_contrato_format }} ({{ imovel.contrato_atual.duracao }})
                     </th>
                     {% if imovel.contrato_atual.transcorrido_dias|add:30 > imovel.contrato_atual.duracao_dias %}
@@ -115,8 +126,15 @@ Visão Geral / {{ SITE_NAME }}
                         ⚠️
                         {% endif %}
                         {% else %}
-                    <th scope="col" style="cursor:default;">
+                        {% if imovel.contrato_atual.passou_do_limite %}
+                    <th scope="col" style="cursor:default;"
+                        title="Vence em {{ imovel.contrato_atual.faltando_dias }} dias" class="text-warning">
                         {{ imovel.contrato_atual.transcorrido_dias }} de {{ imovel.contrato_atual.duracao_dias }} dias
+                        {% else %}
+                    <th scope="col" style="cursor:default;"
+                        title="Vence em {{ imovel.contrato_atual.faltando_dias }} dias">
+                        {{ imovel.contrato_atual.transcorrido_dias }} de {{ imovel.contrato_atual.duracao_dias }} dias
+                        {% endif %}
                         {% endif %}
                     </th>
                 </tr>
@@ -134,21 +152,22 @@ Visão Geral / {{ SITE_NAME }}
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <p>Arrecadação total desde o início: {{ arrecadacao_total }}</p>
-                        <p>Arrecadação mensal atual (contratos ativos): {{ arrecadacao_mensal }}</p>
+                        <p>Arrecadação mensal dos contratos ativos: {{ arrecadacao_mensal }}</p>
                         <p>Valor total dos contratos ativos: {{ valor_total_contratos_ativos }}</p>
-
+                        <p>Valor total dos contratos: {{ valor_total_contratos }}</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <br>
+</div>
+<br>
 
-    {% else %}
-    {% include 'bemvindo.html' %}
-    {% endif %}
+{% else %}
+{% include 'bemvindo.html' %}
+{% endif %}
 
-    {% endblock %}
+{% endblock %}
 
-    {% block scripts %}
-    {% endblock %}
+{% block scripts %}
+{% endblock %}

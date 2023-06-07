@@ -11,7 +11,7 @@ Imóveis / {{ SITE_NAME }}
 
 {% block content %}
 
-<container class="container-fluid pt-1 text-center text-justify">
+<div class="container-fluid pt-1 text-center text-justify">
     {% if imoveis %}
     <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
         <thead>
@@ -62,7 +62,7 @@ Imóveis / {{ SITE_NAME }}
         </tbody>
     </table>
 
-</container>
+</div>
 
 {% else %}
 {% include 'nenhum_registrado.html' %}
