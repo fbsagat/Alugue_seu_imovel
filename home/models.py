@@ -530,7 +530,14 @@ class Contrato(models.Model):
     def divida_atual_valor(self):
         parcelas_vencidas_n_pagas = Parcela.objects.filter(do_contrato=self, tt_pago__lt=self.valor_mensal,
                                                            data_pagm_ref__lte=datetime.today().date())
-        soma_tt_pg = parcelas_vencidas_n_pagas.aggregate(Sum('tt_pago'))['tt_pago__sum']
+        soma_tt_pg = int()
+        if settings.USAR_DB == 1:
+            soma_tt_pg = parcelas_vencidas_n_pagas.aggregate(Sum('tt_pago'))['tt_pago__sum']
+        elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
+            array = parcelas_vencidas_n_pagas.aggregate(arr=ArrayAgg('tt_pago'))
+            soma_tt_pg = 0
+            for _ in array['arr']:
+                soma_tt_pg += int(_)
         valor = (len(parcelas_vencidas_n_pagas) * int(self.valor_mensal)) - (int(soma_tt_pg) if soma_tt_pg else 0)
         return valor, valor_format(str(valor))
 
