@@ -21,10 +21,10 @@ app_name = 'home'
 urlpatterns = [
     # BOTÕES PRINCIPAIS -------------------
     path('visao_geral/', visao_geral, name='Visão Geral'),
-    path('eventos/<int:pk>', eventos, name='Eventos'),
-    path('check_imoveis/<int:pk>', ImoveisAtivos.as_view(), name='Check Imóveis'),
-    path('check_locatarios/<int:pk>', LocatariosAtivos.as_view(), name='Check Locatários'),
-    path('checkc_ontratos/<int:pk>', ContratosAtivos.as_view(), name='Check Contratos'),
+    path('eventos/', eventos, name='Eventos'),
+    path('imoveis_ativos/', ImoveisAtivos.as_view(), name='Imóveis Ativos'),
+    path('locatarios_ativos/', LocatariosAtivos.as_view(), name='Locatários Ativos'),
+    path('contratos_ativos/', ContratosAtivos.as_view(), name='Contratos Ativos'),
 
     # ABA REGISTRAR -------------------
 
@@ -66,23 +66,23 @@ urlpatterns = [
     path('excluir_anotacao/<int:pk>', ExcluirAnotacao.as_view(), name='Excluir Anotação'),
 
     # ABA GERAR -------------------
-    path('recibos_PDF/<int:pk>', recibos, name='Recibos PDF'),
-    path('tabela_PDF/<int:pk>', tabela, name='Tabela PDF'),
-    path('contrato_PDF/<int:pk>', gerar_contrato, name='Contrato PDF'),
+    path('recibos_PDF/', recibos, name='Recibos PDF'),
+    path('tabela_PDF/', tabela, name='Tabela PDF'),
+    path('contrato_PDF/', gerar_contrato, name='Contrato PDF'),
 
     # Modelo de contrato:
-    path('modelos/<int:pk>', Modelos.as_view(), name='Modelos'),
+    path('modelos/', Modelos.as_view(), name='Modelos'),
     path('criar_modelo', criar_modelo, name='Criar Modelo'),
     path('editar_modelo/<int:pk>', EditarModelo.as_view(), name='Editar Modelo'),
     path('excluir_modelo/<int:pk>', ExcluirModelo.as_view(), name='Excluir Modelo'),
 
     # ABA HISTORICO -------------------
-    path('pagamentos/<int:pk>', Pagamentos.as_view(), name='Pagamentos'),
-    path('gastos/<int:pk>', Gastos.as_view(), name='Gastos'),
-    path('locatarios/<int:pk>', Locatarios.as_view(), name='Locatários'),
-    path('imoveis/<int:pk>', Imoveis.as_view(), name='Imóveis'),
-    path('anotacoes/<int:pk>', Notas.as_view(), name='Anotações'),
-    path('contratos/<int:pk>', Contratos.as_view(), name='Contratos'),
+    path('pagamentos/', Pagamentos.as_view(), name='Pagamentos'),
+    path('gastos/', Gastos.as_view(), name='Gastos'),
+    path('locatarios/', Locatarios.as_view(), name='Locatários'),
+    path('imoveis/', Imoveis.as_view(), name='Imóveis'),
+    path('anotacoes/', Notas.as_view(), name='Anotações'),
+    path('contratos/', Contratos.as_view(), name='Contratos'),
 
     # AFAZERES -------------------
     path('recibo_entregue/<int:pk>', recibo_entregue, name='Recibo Entregue'),
