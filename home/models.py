@@ -340,6 +340,7 @@ class Contrato(models.Model):
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE,
                                      verbose_name='Locatário')
     do_imovel = models.ForeignKey('Imovei', on_delete=models.CASCADE, verbose_name='No imóvel')
+    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     data_entrada = models.DateField(blank=False, verbose_name='Data de Entrada')
     duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)',
@@ -763,12 +764,16 @@ class Tarefa(models.Model):
             return 1
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return 2
+        elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
+            return 3
 
     def autor_tipo_display(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
-            return '🧾Recibo'
+            return '🧾 Recibo'
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
-            return '🗒️Tarefa'
+            return '🗒️ Tarefa'
+        elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
+            return '📃 Contrato'
 
     def definir_apagada(self):
         self.apagada = True
@@ -779,6 +784,9 @@ class Tarefa(models.Model):
         self.save(update_fields=['apagada'])
 
     def tarefa_nova(self):
+        # Vai retornar True ou none, True se o autor desta tarefa estiver marcado como concluido(ps: concluídos em
+        # seus respectivos formatos; ex: recibo: 'recibo_entregue', ex: Anotação: 'feito', ex: contrato: 'em_posse'...)
+        # Retorna none caso o objeto não exista, (caso gere um except)
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
             try:
                 return True if self.content_object.recibo_entregue is False else False
@@ -789,12 +797,19 @@ class Tarefa(models.Model):
                 return True if self.content_object.feito is False else False
             except:
                 return None
+        elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
+            try:
+                return True if self.content_object.em_posse is False else False
+            except:
+                return None
 
     def borda(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
             return 'border-white'
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return 'border-warning'
+        elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
+            return 'border-primary'
 
     def texto(self):
         mensagem = ''
@@ -811,6 +826,17 @@ class Tarefa(models.Model):
             try:
                 nota = self.content_object
                 mensagem = f'{nota.titulo}{nota.texto}'
+            except:
+                pass
+        elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
+            try:
+                contrato = self.content_object
+                mensagem = f'''O contrato {contrato} foi criado com sucesso!<br><br>
+                Depois de:<br>
+                1. Gerar e imprimir o documento referente(Gerar PDF de Contrato), <br>
+                2. Entregar ao locatário para reconhecimento em cartório, e <br>
+                3. Recebê-lo novamente com a firma reconhecida. <br>
+                Confirme a posse de sua via no botão abaixo para ativá-lo no sistema.'''
             except:
                 pass
         return mensagem

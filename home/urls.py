@@ -90,25 +90,28 @@ urlpatterns = [
     path('afazer_concluida/<int:pk>', afazer_concluida, name='Afazer Concluida'),
     path('afazer_nao_concluida/<int:pk>', afazer_nao_concluida, name='Afazer não Concluida'),
 
-    # GERAL -------------------
-    path('', Homepage.as_view(), name='home'),
-    path('criar_conta/', CriarConta.as_view(), name='Criar Conta'),
-    path('apagar_conta/<int:pk>/', ApagarConta.as_view(), name='Apagar Conta'),
-    path('mudar_senha/', auth_view.PasswordChangeView.as_view(
-        template_name='editar_perfil.html', success_url=reverse_lazy('home:home'),
-        extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
-    path('editar_perfil/<int:pk>', EditarPerfil.as_view(), name='Editar Perfil'),
-    path('login/',
-         auth_view.LoginView.as_view(template_name='login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),
-         name='Login'),
-    path('logout/', auth_view.LogoutView.as_view(), name='Logout'),
+    # DESENVOLVIMENTO -------------------
     path('msgm/', mensagem_desenvolvedor, name='Mensagem pro Desenvolvedor'),
     path('sugestoes_docs/', forum_sugestoes, name='Sugestões'),
     path('sugestao_like/<int:pk>', like_de_sugestoes, name='like de Sugestão'),
     path('sugestao_apagar/<int:pk>', apagar_sugestao, name='Apagar Sugestão'),
     path('sugestao_implementar/<int:pk>', implementar_sugestao, name='Implementar Sugestão'),
     path('sugestao_aprovar/<int:pk>', aprovar_sugestao, name='Aprovar Sugestão'),
+
+    # GERAL -------------------
+    path('', Homepage.as_view(), name='home'),
+    path('criar_conta/', CriarConta.as_view(), name='Criar Conta'),
+    path('apagar_conta/', ApagarConta.as_view(), name='Apagar Conta'),
+    path('mudar_senha/', auth_view.PasswordChangeView.as_view(
+        template_name='editar_perfil.html', success_url=reverse_lazy('home:home'),
+        extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
+    path('editar_perfil/', EditarPerfil.as_view(), name='Editar Perfil'),
+    path('login/',
+         auth_view.LoginView.as_view(template_name='login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),
+         name='Login'),
+    path('logout/', auth_view.LogoutView.as_view(), name='Logout'),
     path('botao/', botaoteste, name='botaoteste'),
+
 
     # SERVIDORES DE ARQUIVOS -------------------
     path('media/sugestoes_docs/<str:year>/<str:month>/<str:file>', arquivos_sugestoes_docs),

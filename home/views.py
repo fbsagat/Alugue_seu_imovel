@@ -9,7 +9,7 @@ from num2words import num2words
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files import File
 from django.http import FileResponse
-from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView, TemplateView
+from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render, reverse, get_object_or_404, Http404, HttpResponseRedirect
@@ -30,7 +30,6 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao
-from home.signals import criar_uma_tarefa
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
     ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen
@@ -464,15 +463,16 @@ def rescindir_contrat(request, pk):
 
 @login_required
 def recebido_contrat(request, pk):
-    contrato = Contrato.objects.get(pk=pk)
+    tarefa = Tarefa.objects.get(pk=pk)
+    contrato = tarefa.content_object
     if contrato.do_locador == request.user:
         if contrato.em_posse is True:
             contrato.em_posse = False
-            contrato.save()
+            contrato.save(update_fields=['em_posse', ])
             return redirect(request.META['HTTP_REFERER'])
         else:
             contrato.em_posse = True
-            contrato.save()
+            contrato.save(update_fields=['em_posse', ])
             messages.success(request, f"Cópia do contrato do locador em mãos!")
         return redirect(request.META['HTTP_REFERER'])
     else:
@@ -1858,7 +1858,7 @@ def botaoteste(request):
                 form = FormContrato(usuario)
                 contrato = form.save(commit=False)
                 contrato.do_locador = usuario
-                contrato.em_posse = True
+                contrato.em_posse = aleatorio.get('em_posse')
                 contrato.do_locatario = aleatorio.get('do_locatario')
                 contrato.do_imovel = aleatorio.get('do_imovel')
                 contrato.data_entrada = aleatorio.get('data_entrada')
