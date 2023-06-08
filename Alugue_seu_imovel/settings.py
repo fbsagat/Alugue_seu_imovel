@@ -7,7 +7,7 @@ import os, environ, dj_database_url
 
 SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
-USAR_DB = 2
+USAR_DB = 1
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar o form inválido da navbar das sessions (segundos)
@@ -41,7 +41,7 @@ else:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALL_HOSTS = True
 
 ALLOWED_HOSTS = [SITE_URL.split('//')[1]]
