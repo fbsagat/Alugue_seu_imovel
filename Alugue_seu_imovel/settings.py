@@ -3,7 +3,7 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 
-# CONFIGURAÇÕES CUSTOMIZADAS DO SITE   \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 SITE_NAME = 'Alugue Seu imóvel'
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
