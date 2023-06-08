@@ -134,9 +134,9 @@ elif USAR_DB == 2:
         DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
                                  'NAME': 'railway',
                                  'USER': 'postgres',
-                                 'PASSWORD': 'lesWVCMCwjX66bEBOfQb',
-                                 'HOST': 'containers-us-west-194.railway.app',
-                                 'PORT': '7958',
+                                 'PASSWORD': 'q032LeA3QMG3zX1Jir0I',
+                                 'HOST': 'containers-us-west-28.railway.app',
+                                 'PORT': '5905',
                                  }
                      }
 elif USAR_DB == 3:

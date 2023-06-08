@@ -39,7 +39,7 @@
                 <div class="card bg-gray-900 {{ tarefa.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ tarefa.autor_tipo_display }}:</p>
-                        <p class="card-text small lh-sm">{{ tarefa.texto }}</p>
+                        <p class="card-text small lh-sm">{{ tarefa.texto|safe }}</p>
                     </div>
                     <div class="col text-muted text-end align-text-bottom">
                         <small class="me-1">{{ tarefa.data_registro }}</small>
@@ -47,17 +47,18 @@
                     <div class="card-footer">
                         <div class="row">
                             <div class="col">
-                                {% if tarefa.autor_tipo == 1 %}
 
+                                {% if tarefa.autor_tipo == 1 %}
                                 <a href="{% url 'home:Recibo Entregue' tarefa.pk %}"
                                    class="btn btn-outline-primary btn-sm small">Confirmar</a>
-
                                 {% elif tarefa.autor_tipo == 2 %}
-
                                 <a href="{% url 'home:Afazer Concluida' tarefa.pk %}"
                                    class="btn btn-outline-primary btn-sm small">Concluída</a>
-
+                                {% elif tarefa.autor_tipo == 3 %}
+                                <a href="{% url 'home:Contrato Recebido' tarefa.pk %}"
+                                   class="btn btn-outline-primary btn-sm small">Recebido</a>
                                 {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -75,7 +76,7 @@
                 <div class="card bg-dark text-secondary {{ tarefa.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ tarefa.autor_tipo_display }}:</p>
-                        <p class="card-text small lh-sm">{{ tarefa.texto }}</p>
+                        <p class="card-text small lh-sm">{{ tarefa.texto|safe }}</p>
                     </div>
                     <div class="col text-muted text-end align-text-bottom">
                         <small class="me-1">{{ tarefa.data_registro }} </small>
@@ -83,41 +84,30 @@
                     <div class="card-footer">
                         <div class="row">
                             <div class="col">
-                                {% if tarefa.autor_tipo == 1 %}
 
-                                {% if tarefa.tarefa_nova == False %}
+                                {% if tarefa.autor_tipo == 1 %}
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
                                         href="{% url 'home:Recibo não Entregue' tarefa.pk %}">Não entregue
                                 </a></button>
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
                                     Confirmar
                                 </button>
-                                {% else %}
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    Não entregue
-                                </button>
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Recibo Entregue' tarefa.pk %}">Confirmar
-                                </a></button>
-                                {% endif %}
 
                                 {% elif tarefa.autor_tipo == 2 %}
-
-                                {% if tarefa.tarefa_nova %}
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    À fazer
-                                </button>
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Afazer Concluida' tarefa.pk %}">Concluída
-                                </a></button>
-                                {% else %}
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
                                         href="{% url 'home:Afazer não Concluida' tarefa.pk %}">À fazer
                                 </a></button>
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
                                     Concluída
                                 </button>
-                                {% endif %}
+
+                                {% elif tarefa.autor_tipo == 3 %}
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
+                                        href="{% url 'home:Contrato Recebido' tarefa.pk %}">Não Recebido
+                                </a></button>
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
+                                    Recebido
+                                </button>
 
                                 {% endif %}
                             </div>

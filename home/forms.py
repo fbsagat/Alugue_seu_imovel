@@ -212,7 +212,7 @@ class FormContrato(forms.ModelForm):
         model = Contrato
         fields = '__all__'
         exclude = ['do_locador', 'em_posse', 'rescindido', 'vencido', 'codigo', 'data_de_rescisao', 'recibos_pdf',
-                   'data_registro']
+                   'data_registro', 'da_tarefa']
         widgets = {
             'data_entrada': DateInput(),
             'duracao': Numeros(),

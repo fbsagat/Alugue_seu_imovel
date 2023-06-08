@@ -53,10 +53,14 @@ def contratos_ficticios(request, locador):
     reais = [randrange(500, 1200, step=150), randrange(700, 3400, step=180), randrange(700, 3400, step=130),
              randrange(3400, 32000, step=1500)]
     valor_mensal = f'{choice(reais)}{centavos}'
+
     dia_vencimento = randrange(1, 28)
+    zero_a_cem = randrange(0, 100)
+    probabilidade_percentual = 80
+    em_posse = True if zero_a_cem <= probabilidade_percentual else False
 
     return {'do_locatario': do_locatario, 'do_imovel': do_imovel, 'data_entrada': data_entrada,
-            'duracao': duracao, 'valor_mensal': valor_mensal, 'dia_vencimento': dia_vencimento}
+            'duracao': duracao, 'valor_mensal': valor_mensal, 'dia_vencimento': dia_vencimento, 'em_posse': em_posse}
 
 
 def locatarios_ficticios():

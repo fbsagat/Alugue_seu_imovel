@@ -141,6 +141,10 @@ def contrato_post_save(sender, instance, created, **kwargs):
     if created:
         # Gera as parcelas quando o contrato é criado:
         gerenciar_parcelas(contrato)
+        # Criar tarefa 'contrato criado' com o botão 'receber contrato'
+        tipo_conteudo = ContentType.objects.get_for_model(Contrato)
+        tarefa = criar_uma_tarefa(usuario=contrato.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
+        Contrato.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
 
 
 @receiver(post_save, sender=Pagamento)
@@ -174,7 +178,7 @@ def parcela_pre_save(sender, instance, **kwargs):
                 pass
         if instance.recibo_entregue:
             try:
-                instance.da_tarefa.data_lida = datetime.date.today()
+                Tarefa.objects.filter(pk=instance.da_tarefa.pk).update(data_lida=datetime.datetime.now())
             except:
                 pass
 
@@ -229,6 +233,11 @@ def contrato_pre_save(sender, instance, **kwargs):
         if ante.duracao != instance.duracao or ante.data_entrada != instance.data_entrada:
             gerenciar_parcelas(instance_contrato=instance)
             tratar_pagamentos(instance_contrato=instance)
+    if instance.em_posse:
+        try:
+            Tarefa.objects.filter(pk=instance.da_tarefa.pk).update(data_lida=datetime.datetime.now())
+        except:
+            pass
 
 
 @receiver(pre_save, sender=Anotacoe)
@@ -254,7 +263,7 @@ def anotacao_pre_save(sender, instance, **kwargs):
             criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
         if instance.feito:
             try:
-                instance.da_tarefa.data_lida = datetime.date.today()
+                Tarefa.objects.filter(pk=instance.da_tarefa.pk).update(data_lida=datetime.datetime.now())
             except:
                 pass
 
@@ -275,6 +284,9 @@ def contrato_pre_delete(sender, instance, **kwards):
         imovel.contrato_atual = None
         imovel.save()
         locatario.save()
+    # Apagar a tarefa desta anotação
+    if instance.da_tarefa:
+        instance.da_tarefa.delete()
 
 
 # Apaga as tarefas dos objetos quando eles forem apagados \/

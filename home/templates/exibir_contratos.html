@@ -47,10 +47,10 @@ Contratos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">{{ contrato.dia_vencimento }}</th>
 
             {% if contrato.em_posse %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
+            <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.da_tarefa.pk %}"
                                title="Em mãos, clique para designar não recebido">✅️</a></th>
             {% else %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.pk %}"
+            <th scope="col"><a class="link-primary" href="{% url 'home:Contrato Recebido' contrato.da_tarefa.pk %}"
                                title="Não recebido, clique para designar recebido">✖️</a></th>
             {% endif %}
 
