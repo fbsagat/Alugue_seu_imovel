@@ -114,7 +114,7 @@ def visao_geral(request):
 
 
 @login_required
-def eventos(request, pk):
+def eventos(request):
     user = Usuario.objects.get(pk=request.user.pk)
     form = FormEventos()
     pagamentos = gastos = locatarios = contratos = imoveis = anotacoes = pg_tt = gasto_tt = contr_tt = pag_m_gast = ''
@@ -352,7 +352,7 @@ class ExcluirPagm(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Pagamentos', args=[self.request.user.pk])
+        return reverse_lazy('home:Pagamentos')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Pagamento, pk=self.kwargs['pk'], ao_locador=self.request.user)
@@ -387,7 +387,7 @@ class EditarGasto(LoginRequiredMixin, UpdateView):
         return {'data': self.object.data.strftime('%Y-%m-%d')}
 
     def get_success_url(self):
-        return reverse_lazy('home:Gastos', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Gastos')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Gasto, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -399,7 +399,7 @@ class ExcluirGasto(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Gastos', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Gastos')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Gasto, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -522,7 +522,7 @@ def registrar_anotacao(request):
 
 # -=-=-=-=-=-=-=-= BOTÃO GERAR -=-=-=-=-=-=-=-=
 @login_required
-def recibos(request, pk):
+def recibos(request):
     contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
     contratos_ativos_pks = []
     for contrato in contratos:
@@ -639,7 +639,7 @@ def recibos(request, pk):
 
 
 @login_required
-def tabela(request, pk):
+def tabela(request):
     # Criar a pasta tabela_docs se não existe
     pasta = rf'{settings.MEDIA_ROOT}/tabela_docs/'
     se_existe = os.path.exists(pasta)
@@ -799,7 +799,7 @@ def tabela(request, pk):
 
 
 @login_required
-def gerar_contrato(request, pk):
+def gerar_contrato(request):
     context = {}
     # Criando objetos para tratamentos
     usuario = Usuario.objects.get(pk=request.user.pk)
@@ -1086,7 +1086,7 @@ class EditarModelo(LoginRequiredMixin, UpdateView):
     form_class = FormContratoModelo
 
     def get_success_url(self):
-        return reverse_lazy('home:Modelos', kwargs={'pk': self.request.user.pk})
+        return reverse_lazy('home:Modelos')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(ContratoModelo, pk=self.kwargs['pk'], autor=self.request.user)
@@ -1126,7 +1126,7 @@ class ExcluirModelo(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Modelos', kwargs={'pk': self.request.user.pk})
+        return reverse_lazy('home:Modelos')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(ContratoModelo, pk=self.kwargs['pk'], autor=self.request.user)
@@ -1257,7 +1257,7 @@ class EditarImov(LoginRequiredMixin, UpdateView):
         return form_kwargs
 
     def get_success_url(self):
-        return reverse_lazy('home:Imóveis', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Imóveis')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Imovei, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -1274,7 +1274,7 @@ class ExcluirImov(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Imóveis', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Imóveis')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Imovei, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -1310,7 +1310,7 @@ class EditarLocat(LoginRequiredMixin, UpdateView):
     form_class = FormLocatario
 
     def get_success_url(self):
-        return reverse_lazy('home:Locatários', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Locatários')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Locatario, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -1341,7 +1341,7 @@ class ExcluirLocat(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Locatários', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Locatários')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Locatario, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -1388,7 +1388,7 @@ class EditarContrato(LoginRequiredMixin, UpdateView):
         contrato = Contrato.objects.get(pk=self.object.pk)
         contrato.recibos_pdf.delete()
         contrato.save()
-        return reverse_lazy('home:Contratos', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Contratos')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Contrato, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -1409,7 +1409,7 @@ class ExcluirContrato(LoginRequiredMixin, DeleteView):
         imovel = Imovei.objects.get(pk=imov_do_contrato)
         imovel.com_locatario = None
         imovel.save()
-        return reverse_lazy('home:Contratos', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Contratos')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Contrato, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -1449,7 +1449,7 @@ class EditarAnotacao(LoginRequiredMixin, UpdateView):
         return {'data_registro': self.object.data_registro.strftime('%Y-%m-%d')}
 
     def get_success_url(self):
-        return reverse_lazy('home:Anotações', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Anotações')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Anotacoe, pk=self.kwargs['pk'], do_usuario=self.request.user)
@@ -1466,7 +1466,7 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Anotações', kwargs={'pk': self.object.pk})
+        return reverse_lazy('home:Anotações')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Anotacoe, pk=self.kwargs['pk'], do_usuario=self.request.user)
@@ -1596,7 +1596,7 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         return success_message
 
     def get_success_url(self):
-        return reverse("home:Visão Geral", kwargs={"pk": self.request.user.pk})
+        return reverse("home:Visão Geral")
 
 
 class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):

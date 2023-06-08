@@ -41,11 +41,11 @@ OK. (refatorei tudo praticamente) Tarefas apagam ou ficam bugadas quando se mexe
         apaga algum registro de pagamento.
 OK. Corrigir as tabelas duplas no histórico, cor sim 'cornão'.
 OK. Implementar filtros na página 'visão geral', com cliques nos títulos das colunas.
-
+OK. Ajeitar as urls que pedem <int:pk> sem necessidade(as views nem usam).
 
 Fazer:
 Criar uma obrigação de o usuário colocar no minimo duas palavras no nome do locatário.
-Ajeitar as urls que pedem <int:pk> sem necessidade(as views nem usam).
+
 Criar o sistema de rentabilização do site.
 Lembretes: Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
  Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias).
