@@ -183,15 +183,13 @@ class Locatario(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["CPF", "do_locador"], name="cpf_locatario_por_usuario"),
         ]
-
-    def get_absolute_url(self):
-        return reverse('home:Locatários', args=[str(self.pk, )])
+        verbose_name_plural = 'Locatários'
 
     def __str__(self):
         return f'{self.nome}'
 
-    class Meta:
-        verbose_name_plural = 'Locatários'
+    # def get_absolute_url(self):
+    #     return reverse('home:Locatários', args=[str(self.pk, )])
 
     def primeiro_ultimo_nome(self):
         return f'{self.nome.split()[:1][0]} {self.nome.split()[len(self.nome.split()) - 1:][0]}'
@@ -234,17 +232,15 @@ class ImovGrupo(models.Model):
     tipo = models.IntegerField(null=True, blank=True, choices=tipos_de_imovel, verbose_name='Tipo de Imóvel')
     imoveis = models.ManyToManyField('Imovei', blank=True)
 
-    def get_absolute_url(self):
-        return reverse('home:Criar Grupo Imóveis', args=[str(self.pk, )])
+    class Meta:
+        verbose_name_plural = 'Grupos de imóveis'
+        ordering = ('nome',)
 
     def __str__(self):
         return self.nome
 
-    class Meta:
-        verbose_name_plural = 'Grupos de imóveis'
-
-    class Meta:
-        ordering = ('nome',)
+    def get_absolute_url(self):
+        return reverse('home:Criar Grupo Imóveis', args=[str(self.pk, )])
 
 
 class ImoveiManager(models.Manager):
@@ -292,13 +288,11 @@ class Imovei(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["nome", "do_locador"], name="nome_imovel_por_usuario"),
         ]
+        verbose_name_plural = 'Imóveis'
+        ordering = ['-nome']
 
     def __str__(self):
         return f'{self.nome} ({self.grupo})'
-
-    class Meta:
-        verbose_name_plural = 'Imóveis'
-        ordering = ['-nome']
 
     def nogrupo(self):
         return '' if self.grupo is None else self.grupo
@@ -365,19 +359,19 @@ class Contrato(models.Model):
     data_registro = models.DateTimeField(auto_now_add=True)
     objects = ContratoManager()
 
-    def get_absolute_url(self):
-        return reverse('home:Contratos', args=[str(self.pk), ])
-
     class Meta:
         ordering = ['-data_entrada']
-
-    def nome_curto(self):
-        return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
-               f'{self.codigo})'
 
     def __str__(self):
         return f'({self.do_locatario.primeiro_ultimo_nome()}-{self.do_imovel.nome}-' \
                f'{self.data_entrada.strftime("%m/%Y")})'
+
+    # def get_absolute_url(self):
+    #     return reverse('home:Contratos', args=[str(self.pk), ])
+
+    def nome_curto(self):
+        return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
+               f'{self.codigo})'
 
     def nome_completo(self):
         return f'{self.do_locatario.nome} - {self.do_imovel} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
@@ -549,11 +543,11 @@ class ContratoModelo(models.Model):
     variaveis = models.JSONField(null=True, blank=True)
     condicoes = models.JSONField(null=True, blank=True)
 
-    def __str__(self):
-        return f'{self.titulo}'
-
     class Meta:
         verbose_name_plural = 'Modelos de contratos'
+
+    def __str__(self):
+        return f'{self.titulo}'
 
     def display_variaveis(self):
         variaveis = []
@@ -598,11 +592,12 @@ class ContratoDocConfig(models.Model):
     fiador_nacionalidade = models.CharField(max_length=40, null=True, blank=True, verbose_name='Nacionalidade')
     fiador_estadocivil = models.IntegerField(null=True, blank=True, verbose_name='Estado Civil', choices=estados_civis)
 
-    def __str__(self):
-        return f'{self.do_contrato} ({self.do_modelo})'
 
     class Meta:
         verbose_name_plural = 'Configs de contratos'
+
+    def __str__(self):
+        return f'{self.do_contrato} ({self.do_modelo})'
 
     def f_cpf(self):
         return cpf_format(self.fiador_CPF)
@@ -719,11 +714,11 @@ class Anotacoe(models.Model):
                                  help_text='Marque para adicionar este registro na sua lista de tarefas.')
     feito = models.BooleanField(default=False)
 
-    def get_absolute_url(self):
-        return reverse('home:Anotações', args=[(str(self.pk)), ])
-
     class Meta:
         verbose_name_plural = 'Anotações'
+
+    # def get_absolute_url(self):
+    #     return reverse('home:Anotações', args=[(str(self.pk)), ])
 
     def tipo(self):
         if self.tarefa:
@@ -757,11 +752,11 @@ class Tarefa(models.Model):
     apagada = models.BooleanField(default=False)
     data_lida = models.DateTimeField(null=True)
 
-    def __str__(self):
-        return f'Tarefa: classe:{self.autor_classe}/objeto_id:{self.objeto_id}'
-
     class Meta:
         ordering = ['-data_registro']
+
+    def __str__(self):
+        return f'Tarefa: classe:{self.autor_classe}/objeto_id:{self.objeto_id}'
 
     def autor_tipo(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -838,15 +833,14 @@ class DevMensagen(models.Model):
     imagem = ResizedImageField(size=[1280, None], upload_to='mensagens_ao_dev/%Y/%m/', blank=True,
                                validators=[tratar_imagem, FileExtensionValidator])
 
-    def get_absolute_url(self):
-        return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])
-
     class Meta:
         verbose_name_plural = 'Mensagens ao Dev'
 
     def __str__(self):
         return f'{self.do_usuario} - {self.titulo} - {self.data_registro}'
 
+    # def get_absolute_url(self):
+    #     return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])
 
 class Sugestao(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
@@ -863,8 +857,8 @@ class Sugestao(models.Model):
     class Meta:
         verbose_name_plural = 'Sugestões'
 
-    def numero_de_likes(self):
-        return self.likes.count()
-
     def __str__(self):
         return f'{self.do_usuario} - {self.corpo[:30]} - {self.data_registro}'
+
+    def numero_de_likes(self):
+        return self.likes.count()

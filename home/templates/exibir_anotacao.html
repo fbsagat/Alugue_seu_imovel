@@ -36,10 +36,10 @@ Anotações / {{ SITE_NAME }}
                 <th scope="col" style="cursor:default;">{{ anotacao.titulo }}</th>
                 <th scope="col" style="cursor:default;">{{ anotacao.texto_pequeno.1 }}</th>
                 {% else %}
-                <th scope="col" style="cursor:default;" title="Clique para ver mais" data-bs-toggle="modal"
+                <th scope="col" style="cursor:pointer;" title="Clique para ver mais" data-bs-toggle="modal"
                     data-bs-target="#Modal{{ anotacao.pk }}">{{ anotacao.titulo }}
                 </th>
-                <th scope="col" style="cursor:default;" title="Clique para ver mais" data-bs-toggle="modal"
+                <th scope="col" style="cursor:pointer;" title="Clique para ver mais" data-bs-toggle="modal"
                     data-bs-target="#Modal{{ anotacao.pk }}">{{ anotacao.texto_pequeno.1 }}
                 </th>
                 {% endif %}
