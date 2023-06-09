@@ -858,7 +858,7 @@ def gerar_contrato(request):
                     # Se o form for válido e não houver configs para o contrato selecionado, cria uma instância do
                     # ContratoDocConfig para o contrato selecionado.
                     configs.save()
-                return redirect(reverse('home:Contrato PDF', args={request.user.pk}))
+                return redirect(reverse('home:Contrato PDF'))
             else:
                 context['form2'] = form2
                 context['contrato_ultimo_nome'] = contrato_ultimo
@@ -1053,7 +1053,7 @@ def criar_modelo(request):
             modelo.condicoes = condicoes
             modelo.save()
 
-            return redirect(f'modelos/{request.user.pk}')
+            return redirect(reverse('home:Modelos'))
 
     context['form'] = form
     context['SITE_NAME'] = settings.SITE_NAME
@@ -1734,7 +1734,7 @@ def like_de_sugestoes(request, pk):
             sugestao.likes.remove(request.user)
         else:
             sugestao.likes.add(request.user)
-    return HttpResponseRedirect(reverse('home:Sugestões', args=[]))
+    return HttpResponseRedirect(reverse('home:Sugestões'))
 
 
 @login_required
@@ -1742,7 +1742,7 @@ def apagar_sugestao(request, pk):
     sugestao = get_object_or_404(Sugestao, pk=pk)
     if request.user.is_superuser or request.user == sugestao.do_usuario:
         sugestao.delete()
-    return HttpResponseRedirect(reverse('home:Sugestões', args=[]))
+    return HttpResponseRedirect(reverse('home:Sugestões'))
 
 
 @login_required
@@ -1756,7 +1756,7 @@ def implementar_sugestao(request, pk):
         sugestao.implementada = False
         sugestao.data_implementada = None
     sugestao.save(update_fields=['implementada', 'data_implementada'])
-    return HttpResponseRedirect(reverse('home:Sugestões', args=[]))
+    return HttpResponseRedirect(reverse('home:Sugestões'))
 
 
 @login_required
@@ -1768,7 +1768,7 @@ def aprovar_sugestao(request, pk):
     else:
         sugestao.aprovada = False
     sugestao.save(update_fields=['aprovada'])
-    return HttpResponseRedirect(reverse('home:Sugestões', args=[]))
+    return HttpResponseRedirect(reverse('home:Sugestões'))
 
 
 @login_required
