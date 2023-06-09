@@ -325,13 +325,19 @@ def usuario_fez_login(sender, user, **kwargs):
 def usuario_fez_logout(sender, user, **kwargs):
     # Apagar arquivos temporários da sessão do usuário
     # 1. tabela_docs
-    diretorio = f'{settings.MEDIA_ROOT}/tabela_docs'
+    diretorio = rf'{settings.MEDIA_ROOT}/tabela_docs'
+    se_existe = os.path.exists(diretorio)
+    if not se_existe:
+        os.makedirs(diretorio)
     for file in os.listdir(diretorio):
         if file.endswith(f"{user}.pdf"):
             os.remove(os.path.join(diretorio, file))
 
     # 2. contrato_docs
     diretorio = f'{settings.MEDIA_ROOT}/contrato_docs'
+    se_existe = os.path.exists(diretorio)
+    if not se_existe:
+        os.makedirs(diretorio)
     for file in os.listdir(diretorio):
         if file.endswith(f"{user}.pdf"):
             os.remove(os.path.join(diretorio, file))
