@@ -947,7 +947,7 @@ def gerar_contrato(request):
                  'contrato_data_saida': str(contrato.data_saida().strftime('%d/%m/%Y') or erro2),
                  'contrato_codigo': getattr(contrato, 'codigo') or erro2,
                  'contrato_periodo': str(getattr(contrato, 'duracao') or erro2),
-                 'contrato_periodo_por_extenso': contrato.duracao_por_extenso() or erro2,
+                 'contrato_periodo_por_extenso': contrato.duracao_meses_por_extenso() or erro2,
                  'contrato_parcela_valor': contrato.valor_format() or erro2,
                  'contrato_parcela_valor_por_extenso': contrato.valor_por_extenso() or erro2,
                  'contrato_valor_total': contrato.valor_do_contrato_format() or erro2,
