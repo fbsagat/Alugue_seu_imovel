@@ -89,6 +89,8 @@ Locatários / {{ SITE_NAME }}
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                Nome completo: {{ locatario.nome }}
+                <br>
                 Ocupação: {{ locatario.ocupacao }}
                 {% if locatario.endereco_completo %}
                 <br>

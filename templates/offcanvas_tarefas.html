@@ -29,7 +29,7 @@
     <!-- Exibir conteúdo dos botões -->
     <div class="tab-content" style="height:100%; overflow-y:scroll; width:100%;" id="myTabContent">
 
-        <!-- Primeiro conteúdo -->
+        <!-- TAREFAS NOVAS -->
         <div class="tab-pane fade show active" id="home-tab-pane"
              role="tabpanel" aria-labelledby="home-tab"
              tabindex="0">
@@ -57,6 +57,9 @@
                                 {% elif tarefa.autor_tipo == 3 %}
                                 <a href="{% url 'home:Contrato Recebido' tarefa.pk %}"
                                    class="btn btn-outline-primary btn-sm small">Recebido</a>
+                                {% elif tarefa.autor_tipo == 4 %}
+                                <a href="{% url 'home:Aviso Lido' tarefa.pk %}"
+                                   class="btn btn-outline-primary btn-sm small">Lido</a>
                                 {% endif %}
 
                             </div>
@@ -67,9 +70,9 @@
                 {% endfor %}
             </div>
         </div>
-        <!-- Fim do Primeiro conteúdo -->
+        <!-- Fim do TAREFAS NOVAS -->
 
-        <!-- Segundo conteúdo -->
+        <!-- HISTÓRICO DE TAREFAS -->
         <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
                 {% for tarefa in tarefas_hist %}
@@ -87,7 +90,7 @@
 
                                 {% if tarefa.autor_tipo == 1 %}
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Recibo não Entregue' tarefa.pk %}">Não entregue
+                                        href="{% url 'home:Recibo Entregue' tarefa.pk %}">Não entregue
                                 </a></button>
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
                                     Confirmar
@@ -95,7 +98,7 @@
 
                                 {% elif tarefa.autor_tipo == 2 %}
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Afazer não Concluida' tarefa.pk %}">À fazer
+                                        href="{% url 'home:Afazer Concluida' tarefa.pk %}">À fazer
                                 </a></button>
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
                                     Concluída
@@ -109,6 +112,14 @@
                                     Recebido
                                 </button>
 
+                                {% elif tarefa.autor_tipo == 4 %}
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
+                                        href="{% url 'home:Aviso Lido' tarefa.pk %}">Não Lido
+                                </a></button>
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
+                                    Lido
+                                </button>
+
                                 {% endif %}
                             </div>
                         </div>
@@ -117,10 +128,10 @@
                 {% endfor %}
             </div>
         </div>
-        <!-- Fim do Segundo conteúdo -->
+        <!-- Fim do HISTÓRICO DE TAREFAS -->
 
     </div>
     <!--Fim do Exibir conteúdo dos botões -->
 
 </div>
-<!-- Fim do offcanvas -->
+<!-- Fim do off-canvas -->

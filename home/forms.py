@@ -206,6 +206,13 @@ class FormLocatario(forms.ModelForm):
         else:
             return cpf
 
+    def clean_nome(self):
+        nome = self.cleaned_data['nome']
+        if " " not in nome:
+            raise forms.ValidationError("Digite o nome completo do locatário")
+        else:
+            return nome
+
 
 class FormContrato(forms.ModelForm):
     class Meta:

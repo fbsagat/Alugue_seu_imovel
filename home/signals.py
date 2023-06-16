@@ -7,9 +7,10 @@ from Alugue_seu_imovel import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
+from django.db import transaction
 from django.dispatch import receiver
 
-from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe
+from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao
 
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
@@ -92,6 +93,8 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
                 tarefa.restaurar()
         elif tarefa.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             tarefa.restaurar()
+        elif tarefa.autor_classe == ContentType.objects.get_for_model(Sugestao):
+            tarefa.restaurar()
         return tarefa
     except:
         # Caso não exista, criar a tarefa requisitada para o objeto
@@ -115,6 +118,7 @@ def anotacao_post_save(sender, instance, **kwargs):
         Anotacoe.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
 
 
+@transaction.atomic
 @receiver(post_save, sender=Contrato)
 def contrato_post_save(sender, instance, created, **kwargs):
     # Pega os dados para tratamento:
@@ -268,7 +272,23 @@ def anotacao_pre_save(sender, instance, **kwargs):
                 pass
 
 
+@receiver(pre_save, sender=Sugestao)
+def sugestao_pre_save(sender, instance, **kwargs):
+    if instance.pk is None:  # if criado
+        pass
+    else:
+        if instance.aprovada is True:
+            usuario = instance.do_usuario
+            tipo_conteudo = ContentType.objects.get_for_model(Sugestao)
+            objeto_id = instance.pk
+            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+            Sugestao.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+        else:
+            if instance.da_tarefa:
+                instance.da_tarefa.definir_apagada()
+
 # Gerenciadores de pre_delete \/  ---------------------------------------
+@transaction.atomic
 @receiver(pre_delete, sender=Contrato)
 def contrato_pre_delete(sender, instance, **kwards):
     # Pega os dados para tratamento:

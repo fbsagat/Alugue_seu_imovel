@@ -37,7 +37,8 @@ Contratos / {{ SITE_NAME }}
         <tr>
             <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.codigo }}</th>
-            <th scope="col" style="cursor:default;">{{ contrato.do_locatario }}</th>
+            <th scope="col" style="cursor:default;" title="{{ contrato.do_locatario.nome }}">
+                {{ contrato.do_locatario.primeiro_ultimo_nome }}</th>
             <th scope="col" style="cursor:default;" title="{{ contrato.do_imovel.endereco_completo }}">
                 {{ contrato.do_imovel|truncatechars:106 }}
             </th>

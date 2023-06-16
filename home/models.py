@@ -757,6 +757,7 @@ class Tarefa(models.Model):
     content_object = GenericForeignKey('autor_classe', 'objeto_id')
 
     data_registro = models.DateTimeField(auto_now_add=True)
+    lida = models.BooleanField(null=True)
     apagada = models.BooleanField(default=False)
     data_lida = models.DateTimeField(null=True)
 
@@ -773,6 +774,8 @@ class Tarefa(models.Model):
             return 2
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
             return 3
+        elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
+            return 4
 
     def autor_tipo_display(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -781,18 +784,13 @@ class Tarefa(models.Model):
             return '🗒️ Tarefa'
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
             return '📃 Contrato'
-
-    def definir_apagada(self):
-        self.apagada = True
-        self.save(update_fields=['apagada'])
-
-    def restaurar(self):
-        self.apagada = False
-        self.save(update_fields=['apagada'])
+        elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
+            return '⚠️ Aviso'
 
     def tarefa_nova(self):
         # Vai retornar True ou none, True se o autor desta tarefa estiver marcado como concluido(ps: concluídos em
-        # seus respectivos formatos; ex: recibo: 'recibo_entregue', ex: Anotação: 'feito', ex: contrato: 'em_posse'...)
+        # seus respectivos formatos; ex: recibo: 'recibo_entregue', ex: Anotação: 'feito', ex: contrato: 'em_posse',
+        # ex: sugestao: 'neste caso utiliza o próprio parâmetro 'lida' desta model.'...)
         # Retorna none caso o objeto não exista, (caso gere um except)
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
             try:
@@ -809,6 +807,11 @@ class Tarefa(models.Model):
                 return True if self.content_object.em_posse is False else False
             except:
                 return None
+        elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
+            try:
+                return False if self.lida else True
+            except:
+                return None
 
     def borda(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -817,6 +820,8 @@ class Tarefa(models.Model):
             return 'border-warning'
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
             return 'border-primary'
+        elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
+            return 'border-success'
 
     def texto(self):
         mensagem = ''
@@ -831,8 +836,10 @@ class Tarefa(models.Model):
                 pass
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             try:
+                tamanho_max_txt = 200
                 nota = self.content_object
-                mensagem = f'{nota.titulo}{nota.texto}'
+                cortado = f'{nota.texto[:tamanho_max_txt]}...'
+                mensagem = f'''{nota.titulo}<br>{nota.texto if len(nota.texto) <= tamanho_max_txt else cortado}'''
             except:
                 pass
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
@@ -846,7 +853,24 @@ class Tarefa(models.Model):
                 Confirme a posse de sua via no botão abaixo para ativá-lo no sistema.'''
             except:
                 pass
+        elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
+            try:
+                tamanho_max_txt = 200
+                sugestao = self.content_object
+                cortado = f'{sugestao.corpo[:tamanho_max_txt]}...'
+                mensagem = f'''Sua sugestão foi aprovada e está disponível para votação:<br>
+                "{sugestao.corpo if len(sugestao.corpo) <= tamanho_max_txt else cortado}"'''
+            except:
+                pass
         return mensagem
+
+    def definir_apagada(self):
+        self.apagada = True
+        self.save(update_fields=['apagada'])
+
+    def restaurar(self):
+        self.apagada = False
+        self.save(update_fields=['apagada'])
 
 
 lista_mensagem = (
@@ -875,8 +899,10 @@ class DevMensagen(models.Model):
     # def get_absolute_url(self):
     #     return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])
 
+
 class Sugestao(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
+    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     data_registro = models.DateTimeField(auto_now=True)
     corpo = models.TextField(max_length=1500, blank=False, null=False, verbose_name='')

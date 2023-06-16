@@ -1,3 +1,5 @@
+_-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
+
 Feitos:
 OK. Organizar os imoveis ativos por ordem de registro do contrato atual deles.
 OK. (só mudei a cor da borda) Colocar um deseninho nas card dos ativos (emoji talvez).
@@ -42,40 +44,65 @@ OK. (refatorei tudo praticamente) Tarefas apagam ou ficam bugadas quando se mexe
 OK. Corrigir as tabelas duplas no histórico, cor sim 'cornão'.
 OK. Implementar filtros na página 'visão geral', com cliques nos títulos das colunas.
 OK. Ajeitar as urls que pedem <int:pk> sem necessidade(as views nem usam).
+OK. Criar uma obrigação de o usuário colocar no minimo duas palavras no nome do locatário.
+OK. Aplicar atomicidade no gerencimanto do banco de dados: https://www.youtube.com/watch?v=50N400-3MTI
+
+_-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-Criar uma obrigação de o usuário colocar no minimo duas palavras no nome do locatário.
-
 Criar o sistema de rentabilização do site.
+
 Lembretes: Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
- Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias).
+Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias).
 Criar a função comunidade no editor de modelos.
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados, bem como, botão de restaurar.
+Criar o sistema de importação dos dados em um clique da planilha do prédio para o site.
 Implementar filtros/buscas nas paginas do botão histórico.
 Criar o sistema de primeira inicialização do app, criar pastas, preencher base de dados com os
-        dado padrões (ex: modelos de constratos) e etc...
+        dado padrões (ex: modelos de contratos) e etc...
 Adaptar o site para celulares.
-Arrumar e organizar, deixar otimizado o painel administrativo completo.
 Criar um link, chamado link de requisição, próprio de cada usuário, que ele envia para o locatário, para que o
         locatário, através dele, possa cadastrar suas informações para o preenchimento do contrato. Quando cadastrado,
         o usuário recebe uma notificação de aviso para dar procedimento, criando o contrato para este locatário.
 Mostrar no visão geral o total por grupo de imóveis e por tipo.
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
+_-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
 signal post_delete não é chamado quando é deletado pela area admin do site
-pk do usuario deve ser aleatorio e grande, não sequencial desde o 1, arrumar
 Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir também nas forms.
 
-Melhorias futuras:
-Dar uma geral no painel do admin, deixar tudo bem organizado
-Aplicar o https://datatables.net/, tabelas mais inteligentes.
+_-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
+
+Melhorias muito futuras:
+Arrumar e organizar, deixar otimizado o painel administrativo(django admin) completo.
 Criar o help (sistema de dicas e recomendações espalhados por to_do o site, referentes ao manuseio do mesmo e a regras
         e dicas de locação)
 Confirmação de email e celular.
-Criptografar informações sensíveis no banco de dados(ex: cpf dos locatarios)
+Criptografar informações sensíveis no banco de dados(ex: cpf dos locatários)
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
 aplicar ajax um dia: https://www.youtube.com/watch?v=hISSGMafzvU / https://www.youtube.com/watch?v=QDdLvImfq_g
-aplicar atomicidade no gerencimanto do banco de dados: https://www.youtube.com/watch?v=50N400-3MTI
 Aplicar o celery.
+
+_-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
+
+Regras do programador:
+
+Passos para criação de uma tarefa para uma model:
+1. A classe da model autora recebe este parâmetro:
+da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+
+2. Criar o signal que vai criar a tarefa de acordo com o momento desejado(na criação do objeto, na modificação de
+        algum parâmetro, gatilho temporal(celery), etc...)
+3. Configurar a nova tarefa na classe Tarefa em models, nos seguintes métodos:
+	a. autor_tipo = Adicionar o numero referente ao novo autor da tarefa (usada pelo template).
+	b. autor_tipo_display = Adicionar o display para esta tarefa (usada pelo template).
+	c. tarefa_nova = Verifica se a tarefa aparecerá em 'tarefas novas' ou em 'histórico de tarefas' (cada autor tem a
+	        sua regra).
+	d. borda = Retorna a classe(html) que gerencia a cor da borda do card da tarefa em questão(usada pelo template).
+	e. texto = Retorna o texto a ser exibido na aba de tarefas(cada autor tem seu texto).
+4. Adicionar a exibição da tarefa nova e as urls(criar elas tbm, em urls.py) necessárias para as modificações do estado
+        do autor e/ou tarefa no template (offcanvas_tarefas.html).
+5. Modificar a função criar_uma_tarefa em signals.py adicionando a forma/regra de recuperação(desfazer exclusão) da
+        tarefa especifica desta model autora.

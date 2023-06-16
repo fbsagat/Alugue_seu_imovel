@@ -11,7 +11,6 @@ from django.core.files import File
 from django.http import FileResponse
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render, reverse, get_object_or_404, Http404, HttpResponseRedirect
 from django.utils import timezone, dateformat
 from django.urls import reverse_lazy
@@ -20,6 +19,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
+from django.db import transaction
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 
@@ -1482,50 +1482,41 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
 @login_required
 def recibo_entregue(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
-    tarefa.lida = True
-    tarefa.data_lida = datetime.now()
-    tarefa.save()
-
     parcela = Parcela.objects.get(pk=tarefa.objeto_id)
-    parcela.recibo_entregue = True
-    parcela.save()
-    return redirect(request.META['HTTP_REFERER'])
-
-
-@login_required
-def recibo_nao_entregue(request, pk):
-    tarefa = Tarefa.objects.get(pk=pk)
-    tarefa.lida = False
-    tarefa.save()
-
-    parcela = Parcela.objects.get(pk=tarefa.objeto_id)
-    parcela.recibo_entregue = False
-    parcela.save()
+    if parcela.recibo_entregue is True:
+        parcela.recibo_entregue = False
+    else:
+        parcela.recibo_entregue = True
+        tarefa.data_lida = datetime.now()
+        tarefa.save(update_fields=['data_lida', ])
+    parcela.save(update_fields=['recibo_entregue', ])
     return redirect(request.META['HTTP_REFERER'])
 
 
 @login_required
 def afazer_concluida(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
-    tarefa.lida = True
-    tarefa.data_lida = datetime.now()
-    tarefa.save()
-
     nota = Anotacoe.objects.get(pk=tarefa.objeto_id)
-    nota.feito = True
-    nota.save()
+    if nota.feito is True:
+        nota.feito = False
+    else:
+        nota.feito = True
+        tarefa.data_lida = datetime.now()
+        tarefa.save(update_fields=['data_lida', ])
+    nota.save(update_fields=['feito', ])
     return redirect(request.META['HTTP_REFERER'])
 
 
 @login_required
-def afazer_nao_concluida(request, pk):
+def aviso_lido(request, pk):
     tarefa = Tarefa.objects.get(pk=pk)
-    tarefa.lida = False
-    tarefa.save()
-
-    nota = Anotacoe.objects.get(pk=tarefa.objeto_id)
-    nota.feito = False
-    nota.save()
+    if tarefa.lida is False or tarefa.lida is None:
+        tarefa.lida = True
+        tarefa.data_lida = datetime.now()
+        tarefa.save(update_fields=['lida', 'data_lida', ])
+    else:
+        tarefa.lida = False
+        tarefa.save(update_fields=['lida', ])
     return redirect(request.META['HTTP_REFERER'])
 
 

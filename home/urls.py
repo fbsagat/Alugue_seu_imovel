@@ -8,11 +8,11 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, \
     ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, entregar_recibo, ExcluirPagm, EditarContrato, \
     ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, ApagarConta, Homepage, \
     CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
-    LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, recibo_nao_entregue, afazer_concluida, \
-    afazer_nao_concluida, gerar_contrato, criar_modelo, EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, \
+    LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, afazer_concluida, gerar_contrato, \
+    criar_modelo, EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, \
     like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, \
     arquivos_locatarios_docs, arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, \
-    arquivos_contrato_docs
+    arquivos_contrato_docs, aviso_lido
 
 from Alugue_seu_imovel import settings
 
@@ -86,9 +86,7 @@ urlpatterns = [
 
     # AFAZERES -------------------
     path('recibo_entregue/<int:pk>', recibo_entregue, name='Recibo Entregue'),
-    path('recibo_nao_entregue/<int:pk>', recibo_nao_entregue, name='Recibo não Entregue'),
     path('afazer_concluida/<int:pk>', afazer_concluida, name='Afazer Concluida'),
-    path('afazer_nao_concluida/<int:pk>', afazer_nao_concluida, name='Afazer não Concluida'),
 
     # DESENVOLVIMENTO -------------------
     path('msgm/', mensagem_desenvolvedor, name='Mensagem pro Desenvolvedor'),
@@ -97,6 +95,9 @@ urlpatterns = [
     path('sugestao_apagar/<int:pk>', apagar_sugestao, name='Apagar Sugestão'),
     path('sugestao_implementar/<int:pk>', implementar_sugestao, name='Implementar Sugestão'),
     path('sugestao_aprovar/<int:pk>', aprovar_sugestao, name='Aprovar Sugestão'),
+
+    # AVISOS -------------------
+    path('aviso_lido/<int:pk>', aviso_lido, name='Aviso Lido'),
 
     # GERAL -------------------
     path('', Homepage.as_view(), name='home'),
