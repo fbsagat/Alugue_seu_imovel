@@ -11,6 +11,9 @@ ion-icon {
 }
 </style>
 {% endblock %}
+{% block scripts %}
+<script src="{% static 'js/copiador.js' %}"></script>
+{% endblock scripts %}
 
 <nav style="z-index: 20;" class="navbar w-full items-center align-middle py-1 px-1 fixed border-b-2 bg-dark">
 
@@ -253,7 +256,34 @@ ion-icon {
     <div class="modal-dialog  modal-scrollable">
         <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="MODAL5_LOCATARIO">Registrar Locatário</h1>
+                <div class="col">
+                    <p class="modal-title fs-5" id="MODAL5_LOCATARIO">Registrar Locatário</p>
+                </div>
+                <div class="col text-center">
+                    <div class="row mb-1">
+                        <p class="fs-6 fw-light fst-italic lh-1 text-wrap" style="width: 40rem;">*Você pode enviar o
+                            link abaixo para o locatário para que ele mesmo se registre (você receberá uma notificação
+                            quando isto acontecer)</p>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-10">
+                            <input class="form-control form-control-sm input-group text-center" type="text"
+                                   value="{{ request.get_host }}{{ request.user.locat_auto_registro_link }}"
+                                   aria-label="readonly input example" readonly>
+                            <input type="hidden" id="45731925345676"
+                                   value="{{ request.get_host }}{{ request.user.locat_auto_registro_link }}">
+                        </div>
+                        <div class="col-2">
+                            <button type="button" title="Copiar link" class="btn btn-outline-primary btn-sm"
+                                    onclick="CopyText(45731925345676)">Copiar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <p class="fs-6 fw-light fst-italic lh-1 text-wrap" style="width: 40rem;">Ou registre-o com o
+                            formulário abaixo</p>
+                    </div>
+                </div>
             </div>
             <div class="">
                 <div class="modal-body">

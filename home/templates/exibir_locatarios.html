@@ -12,9 +12,9 @@ Locatários / {{ SITE_NAME }}
 
 {% block content %}
 
-<div class="container-fluid pt-1 text-center text-justify">
-    {% if locatarios %}
+{% if locatarios %}
 
+<div class="container-fluid pt-1 text-center text-justify">
     <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
         <thead>
         <tr>
@@ -107,10 +107,13 @@ Locatários / {{ SITE_NAME }}
         </div>
     </div>
 </div>
+
 {% endfor %}
 
 {% else %}
-{% include 'nenhum_registrado.html' %}
+<div class="container-fluid text-center text-justify">
+    {% include 'nenhum_registrado.html' %}
+</div>
 {% endif %}
 
 {% endblock %}

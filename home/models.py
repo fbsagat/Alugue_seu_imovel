@@ -83,8 +83,8 @@ class Usuario(AbstractUser):
     contrato_ultimo = models.ForeignKey('Contrato', null=True, blank=True, related_name='usuario_contrato_set',
                                         on_delete=models.SET_NULL)
 
-    def get_absolute_url(self):
-        return reverse('home:Visão Geral', args=[str(self.pk, )])
+    def locat_auto_registro_link(self):
+        return reverse('home:Locatario Auto-Registro', args=[self.username, self.uuid])
 
     def nome_completo(self):
         return f'{str(self.first_name)} {str(self.last_name)}'
@@ -152,11 +152,15 @@ class LocatariosManager(models.Manager):
     def sem_imoveis(self):
         return self.exclude(com_imoveis__isnull=False)
 
+    def nao_temporarios(self):
+        return self.exclude(temporario=True)
+
 
 class Locatario(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
     com_imoveis = models.ManyToManyField('Imovei', blank=True)
     com_contratos = models.ManyToManyField('Contrato', blank=True)
+    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
     docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', blank=True,
@@ -177,6 +181,7 @@ class Locatario(models.Model):
     nacionalidade = models.CharField(max_length=40, blank=False, default='Brasileiro(a)')
     estadocivil = models.IntegerField(blank=False, verbose_name='Estado Civil', choices=estados_civis)
     data_registro = models.DateTimeField(auto_now_add=True)
+    temporario = models.BooleanField(null=True)
     objects = LocatariosManager()
 
     class Meta:
@@ -187,9 +192,7 @@ class Locatario(models.Model):
 
     def __str__(self):
         return f'{self.nome}'
-
-    # def get_absolute_url(self):
-    #     return reverse('home:Locatários', args=[str(self.pk, )])
+        return f'{self.nome}'
 
     def primeiro_ultimo_nome(self):
         return f'{self.nome.split()[:1][0]} {self.nome.split()[len(self.nome.split()) - 1:][0]}'
@@ -366,9 +369,6 @@ class Contrato(models.Model):
     def __str__(self):
         return f'({self.do_locatario.primeiro_ultimo_nome()}-{self.do_imovel.nome}-' \
                f'{self.data_entrada.strftime("%m/%Y")})'
-
-    # def get_absolute_url(self):
-    #     return reverse('home:Contratos', args=[str(self.pk), ])
 
     def nome_curto(self):
         return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
@@ -725,9 +725,6 @@ class Anotacoe(models.Model):
     class Meta:
         verbose_name_plural = 'Anotações'
 
-    # def get_absolute_url(self):
-    #     return reverse('home:Anotações', args=[(str(self.pk)), ])
-
     def tipo(self):
         if self.tarefa:
             if self.feito:
@@ -776,6 +773,8 @@ class Tarefa(models.Model):
             return 3
         elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
             return 4
+        elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
+            return 5
 
     def autor_tipo_display(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -786,6 +785,8 @@ class Tarefa(models.Model):
             return '📃 Contrato'
         elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
             return '⚠️ Aviso'
+        elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
+            return '👨‍💼 Locatário'
 
     def tarefa_nova(self):
         # Vai retornar True ou none, True se o autor desta tarefa estiver marcado como concluido(ps: concluídos em
@@ -812,6 +813,11 @@ class Tarefa(models.Model):
                 return False if self.lida else True
             except:
                 return None
+        elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
+            try:
+                return True if self.content_object.temporario is True else False
+            except:
+                return None
 
     def borda(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -822,6 +828,8 @@ class Tarefa(models.Model):
             return 'border-primary'
         elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
             return 'border-success'
+        elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
+            return 'border-secondary'
 
     def texto(self):
         mensagem = ''
@@ -862,6 +870,15 @@ class Tarefa(models.Model):
                 "{sugestao.corpo if len(sugestao.corpo) <= tamanho_max_txt else cortado}"'''
             except:
                 pass
+        elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
+            try:
+                locatario = self.content_object
+                mensagem = f'''Um novo locatário se registrou:<br>
+                            Nome: {locatario.nome}<br>
+                            Telefone: {cel_format(locatario.telefone1)}<br>
+                            Email: {locatario.email}'''
+            except:
+                pass
         return mensagem
 
     def definir_apagada(self):
@@ -895,9 +912,6 @@ class DevMensagen(models.Model):
 
     def __str__(self):
         return f'{self.do_usuario} - {self.titulo} - {self.data_registro}'
-
-    # def get_absolute_url(self):
-    #     return reverse('home:Mensagem pro Desenvolvedor', args=[(str(self.pk)), ])
 
 
 class Sugestao(models.Model):

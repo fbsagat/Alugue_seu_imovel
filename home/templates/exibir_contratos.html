@@ -11,8 +11,8 @@ Contratos / {{ SITE_NAME }}
 
 {% block content %}
 
+{% if contratos %}
 <div class="container-fluid pt-1 text-center text-justify">
-    {% if contratos %}
 
     <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark">
         <thead>
@@ -38,7 +38,8 @@ Contratos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
             <th scope="col" style="cursor:default;">{{ contrato.codigo }}</th>
             <th scope="col" style="cursor:default;" title="{{ contrato.do_locatario.nome }}">
-                {{ contrato.do_locatario.primeiro_ultimo_nome }}</th>
+                {{ contrato.do_locatario.primeiro_ultimo_nome }}
+            </th>
             <th scope="col" style="cursor:default;" title="{{ contrato.do_imovel.endereco_completo }}">
                 {{ contrato.do_imovel|truncatechars:106 }}
             </th>
@@ -85,7 +86,9 @@ Contratos / {{ SITE_NAME }}
 </div>
 
 {% else %}
-{% include 'nenhum_registrado.html' %}
+<div class="container-fluid text-center text-justify">
+    {% include 'nenhum_registrado.html' %}
+</div>
 {% endif %}
 
 {% endblock %}

@@ -186,7 +186,7 @@ class FormLocatario(forms.ModelForm):
     class Meta:
         model = Locatario
         fields = '__all__'
-        exclude = ['do_locador', 'com_imoveis', 'com_contratos', 'data_registro']
+        exclude = ['do_locador', 'com_imoveis', 'com_contratos', 'data_registro', 'temporario', 'da_tarefa']
 
     def __init__(self, *args, usuario, **kwargs):
         super(FormLocatario, self).__init__(*args, **kwargs)
@@ -197,7 +197,7 @@ class FormLocatario(forms.ModelForm):
 
     def clean_CPF(self):
         cpf = self.cleaned_data['CPF']
-        cpfs_dos_locat_deste_user = Locatario.objects.filter(do_locador=self.locador_pk).exclude(
+        cpfs_dos_locat_deste_user = Locatario.objects.nao_temporarios().filter(do_locador=self.locador_pk).exclude(
             pk=self.instance.pk).values_list('CPF', flat=True)
         if cpf in cpfs_dos_locat_deste_user:
             raise forms.ValidationError("Já existe um locatário registrado com este CPF.")

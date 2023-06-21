@@ -25,8 +25,8 @@
 {% if user.is_authenticated %}
 {% include 'navbar.html' %}
 <br><br>
-{% include 'mensagens.html' %}
 {% endif %}
+{% include 'mensagens.html' %}
 
 {% if request.resolver_match.url_name == 'home' %}
 <header class="min-h-screen bg-black bg-opacity-50 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat"

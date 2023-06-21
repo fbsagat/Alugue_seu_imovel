@@ -1,17 +1,3 @@
-{% block scripts %}
-<script>
-  function CopyText(num) {
-  var text = document.getElementById(num)
-  text.select();
-  navigator.clipboard.writeText(text.value);
-}
-
-
-
-</script>
-</script>
-{% endblock scripts %}
-
 <div class="offcanvas offcanvas-top bg-dark text-white" tabindex="-1" id="offcanvasVariaveis"
      aria-labelledby="offcanvasRightLabel">
 
@@ -40,29 +26,30 @@
         <br>
 
         <div class="offcanvas-body text-center">
-        <h1>Condições são códigos que definem a aparição ou não de determinado trecho, no momento da geração de cada
-            documento. Para usar, clique em copiar e cole no corpo do modelo no trecho desejado. Não esqueça de
-            finalizar a marcação do trecho com o código de finalização. Exemplo: [!condicao: fiador_existe] "Trecho a
-            ser exibido caso o campo fiador esteja preenchido" [!condicao: fiador_existe_fim]</h1>
-        <hr>
-        <br>
-        <div class="row row-cols-md-4 g-1">
-            {% for key, value in condicoes.items %}
-            <div class="col">
-                <div class="card bg-black border-secondary" title="{{ value.1 }}">
-                    <div class="card-head align-items-center d-flex justify-content-between">
-                        <input type="hidden" id="100{{ forloop.counter0 }}" value="{{ value.0 }}">
-                        <h1 class="flex-grow-1" value="">{{ value.0 }}</h1>
-                        <button type="button" title="Copiar varável" class="btn btn-outline-primary btn-sm"
-                                onclick="CopyText(100{{ forloop.counter0 }})">Copiar
-                        </button>
+            <h1>Condições são códigos que definem a aparição ou não de determinado trecho, no momento da geração de cada
+                documento. Para usar, clique em copiar e cole no corpo do modelo no trecho desejado. Não esqueça de
+                finalizar a marcação do trecho com o código de finalização. Exemplo: [!condicao: fiador_existe] "Trecho
+                a
+                ser exibido caso o campo fiador esteja preenchido" [!condicao: fiador_existe_fim]</h1>
+            <hr>
+            <br>
+            <div class="row row-cols-md-4 g-1">
+                {% for key, value in condicoes.items %}
+                <div class="col">
+                    <div class="card bg-black border-secondary" title="{{ value.1 }}">
+                        <div class="card-head align-items-center d-flex justify-content-between">
+                            <input type="hidden" id="100{{ forloop.counter0 }}" value="{{ value.0 }}">
+                            <h1 class="flex-grow-1" value="">{{ value.0 }}</h1>
+                            <button type="button" title="Copiar varável" class="btn btn-outline-primary btn-sm"
+                                    onclick="CopyText(100{{ forloop.counter0 }})">Copiar
+                            </button>
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-    </div>
 
+    </div>
 </div>
 <!-- Fim do Offcanvas body -->
-

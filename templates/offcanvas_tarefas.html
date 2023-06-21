@@ -60,6 +60,15 @@
                                 {% elif tarefa.autor_tipo == 4 %}
                                 <a href="{% url 'home:Aviso Lido' tarefa.pk %}"
                                    class="btn btn-outline-primary btn-sm small">Lido</a>
+                                {% elif tarefa.autor_tipo == 5 %}
+                                <a href="{% url 'home:Revisar Locatário' tarefa.pk %}"
+                                   class="btn btn-outline-primary btn-sm small">Revisar</a>
+                                <a href="{% url 'home:Excluir Locatario' tarefa.content_object.pk %}">
+                                    <button class="btn btn-outline-danger btn-sm small">
+                                        <ion-icon size="small" name="trash-outline"></ion-icon>
+                                        Excluir
+                                    </button>
+                                </a>
                                 {% endif %}
 
                             </div>
@@ -118,6 +127,11 @@
                                 </a></button>
                                 <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
                                     Lido
+                                </button>
+
+                                {% elif tarefa.autor_tipo == 5 %}
+                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
+                                    Aprovado
                                 </button>
 
                                 {% endif %}

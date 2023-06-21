@@ -12,7 +12,7 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, \
     criar_modelo, EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, \
     like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, \
     arquivos_locatarios_docs, arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, \
-    arquivos_contrato_docs, aviso_lido
+    arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat
 
 from Alugue_seu_imovel import settings
 
@@ -42,6 +42,10 @@ urlpatterns = [
     path('registro_de_locatario', registrar_locat, name='Registrar Locatario'),
     path('editar_registro_de_locatario/<int:pk>', EditarLocat.as_view(), name='Editar Locatario'),
     path('excluir_registro_de_locatario/<int:pk>', ExcluirLocat.as_view(), name='Excluir Locatario'),
+
+    # LOCATARIO Auto-registro -------------------
+    path('locatario_auto_registro/<username>/<str:uuid>', locat_auto_registro, name='Locatario Auto-Registro'),
+    path('revisar_registro_de_locatario/<int:pk>', RevisarLocat.as_view(), name='Revisar Locatário'),
 
     # CONTRATO -------------------
     path('registrar_contrato', registrar_contrato, name='Registrar Contrato'),
@@ -112,7 +116,6 @@ urlpatterns = [
          name='Login'),
     path('logout/', auth_view.LogoutView.as_view(), name='Logout'),
     path('botao/', botaoteste, name='botaoteste'),
-
 
     # SERVIDORES DE ARQUIVOS -------------------
     path('media/sugestoes_docs/<str:year>/<str:month>/<str:file>', arquivos_sugestoes_docs),

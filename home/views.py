@@ -55,11 +55,12 @@ def visao_geral(request):
         usuario.vis_ger_ultim_order_by = request.GET.get('order_by')
         usuario.save(update_fields=['vis_ger_ultim_order_by', ])
 
-    if order_by is None or 'com_locatario__nome' in order_by or 'nome' in order_by or 'contrato_atual__valor_mensal'\
+    if order_by is None or 'com_locatario__nome' in order_by or 'nome' in order_by or 'contrato_atual__valor_mensal' \
             in order_by or 'contrato_atual' in order_by:
         imoveis = Imovei.objects.filter(pk__in=ocupados).order_by(order_by if order_by else 'nome')
     elif 'vencimento_atual' in order_by:
-        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.vencimento_atual(), reverse=True)
+        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.vencimento_atual(),
+                           reverse=True)
         imoveis = []
         for contrato in contratos:
             if contrato.ativo_hoje():
@@ -78,7 +79,8 @@ def visao_geral(request):
             if contrato.ativo_hoje():
                 imoveis.append(contrato.do_imovel)
     elif 'total_pg' in order_by:
-        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.total_quitado(), reverse=True)
+        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.total_quitado(),
+                           reverse=True)
         imoveis = []
         for contrato in contratos:
             if contrato.ativo_hoje():
@@ -196,8 +198,9 @@ def eventos(request):
     if '1' and '2' in itens_eventos and pesquisa_req and agreg_1["total"] and agreg_2["total"]:
         pag_m_gast = valor_format(str(agreg_1["total"] - agreg_2["total"]))
     if '3' in itens_eventos and pesquisa_req:
-        locatarios = Locatario.objects.filter(do_locador=request.user,
-                                              data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
+        locatarios = Locatario.objects.nao_temporarios().filter(do_locador=request.user,
+                                                                data_registro__range=[data_eventos_i,
+                                                                                      data_eventos_f]).order_by(
             f'{ordem}data_registro')[:qtd_eventos]
     if '4' in itens_eventos and pesquisa_req:
         contratos = Contrato.objects.filter(do_locador=request.user,
@@ -423,6 +426,73 @@ def registrar_locat(request):
         return redirect(request.META['HTTP_REFERER'])
 
 
+def locat_auto_registro(request, username, uuid):
+    user = get_object_or_404(Usuario, username=username, uuid=uuid)
+    context = {}
+    if request.method == 'POST':
+        form = FormLocatario(request.POST, request.FILES, usuario=request.user.pk)
+
+        if form.is_valid():
+            locatario = form.save(commit=False)
+            locatario.do_locador = user
+            locatario.temporario = True
+            locatario.save()
+            messages.success(request, "Dados enviados com sucesso! Aguarde o contato do locador.")
+            return redirect(reverse('home:Locatario Auto-Registro', args=[user.username, user.uuid]))
+        else:
+            messages.error(request, f"Formulário inválido.")
+            context['form'] = form
+            return render(request, 'locatario_auto_registro.html', context)
+    else:
+        form = FormLocatario(usuario=request.user.pk)
+
+    context['form'] = form
+    context['SITE_NAME'] = settings.SITE_NAME
+    return render(request, 'locatario_auto_registro.html', context)
+
+
+class RevisarLocat(LoginRequiredMixin, UpdateView):
+    model = Locatario
+    template_name = 'revisar_locatario.html'
+    form_class = FormLocatario
+
+    def get_success_url(self):
+        return reverse_lazy('home:Locatários')
+
+    def get_object(self, queryset=None):
+        tarefa = get_object_or_404(Tarefa, pk=self.kwargs.get('pk'), do_usuario=self.request.user)
+        self.object = get_object_or_404(Locatario, pk=tarefa.content_object.pk, do_locador=self.request.user,
+                                        temporario=True)
+        return self.object
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(**self.get_form_kwargs(), usuario=self.request.user)
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.temporario = None
+        tarefa = get_object_or_404(Tarefa, pk=self.kwargs.get('pk'), do_usuario=self.request.user)
+        tarefa.data_lida = datetime.now()
+        tarefa.save(update_fields=['data_lida', ])
+        return super().form_valid(form)
+
+    def get_initial(self):
+        return {'nome': self.object.nome, 'RG': self.object.RG, 'CPF': self.object.CPF,
+                'ocupacao': self.object.ocupacao,
+                'endereco_completo': self.object.endereco_completo,
+                'telefone1': self.object.telefone1, 'telefone2': self.object.telefone2,
+                'estadocivil': self.object.estadocivil,
+                'nacionalidade': self.object.nacionalidade, 'email': self.object.email}
+
+    def get_context_data(self, *, object_list=True, **kwargs):
+        context = super(RevisarLocat, self).get_context_data(**kwargs)
+        context['SITE_NAME'] = settings.SITE_NAME
+        context['form'] = self.get_form()
+        return context
+
+
 # CONTRATO ---------------------------------------
 @login_required
 def registrar_contrato(request):
@@ -444,7 +514,7 @@ def registrar_contrato(request):
 
 @login_required
 def rescindir_contrat(request, pk):
-    contrato = Contrato.objects.get(pk=pk)
+    contrato = get_object_or_404(Contrato, pk=pk, do_locador=request.user)
     if contrato.do_locador == request.user:
         if contrato.rescindido is True:
             contrato.rescindido = False
@@ -463,7 +533,7 @@ def rescindir_contrat(request, pk):
 
 @login_required
 def recebido_contrat(request, pk):
-    tarefa = Tarefa.objects.get(pk=pk)
+    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
     contrato = tarefa.content_object
     if contrato.do_locador == request.user:
         if contrato.em_posse is True:
@@ -1294,7 +1364,8 @@ class Locatarios(LoginRequiredMixin, ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        self.object_list = Locatario.objects.filter(do_locador=self.request.user).order_by('-data_registro').annotate(
+        self.object_list = Locatario.objects.nao_temporarios().filter(do_locador=self.request.user).order_by(
+            '-data_registro').annotate(
             Count('do_locador'))
         return self.object_list
 
@@ -1481,7 +1552,7 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
 # -=-=-=-=-=-=-=-= TAREFAS -=-=-=-=-=-=-=-=
 @login_required
 def recibo_entregue(request, pk):
-    tarefa = Tarefa.objects.get(pk=pk)
+    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
     parcela = Parcela.objects.get(pk=tarefa.objeto_id)
     if parcela.recibo_entregue is True:
         parcela.recibo_entregue = False
@@ -1495,7 +1566,7 @@ def recibo_entregue(request, pk):
 
 @login_required
 def afazer_concluida(request, pk):
-    tarefa = Tarefa.objects.get(pk=pk)
+    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
     nota = Anotacoe.objects.get(pk=tarefa.objeto_id)
     if nota.feito is True:
         nota.feito = False
@@ -1509,7 +1580,7 @@ def afazer_concluida(request, pk):
 
 @login_required
 def aviso_lido(request, pk):
-    tarefa = Tarefa.objects.get(pk=pk)
+    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
     if tarefa.lida is False or tarefa.lida is None:
         tarefa.lida = True
         tarefa.data_lida = datetime.now()
@@ -1839,7 +1910,7 @@ def botaoteste(request):
 
     if executar == 3 or executar == 100:
         imo = Imovei.objects.filter(do_locador=usuario).count()
-        loc = Locatario.objects.filter(do_locador=usuario).count()
+        loc = Locatario.objects.nao_temporarios().filter(do_locador=usuario).count()
         contr = Contrato.objects.filter(do_locador=usuario).count()
         if imo > contr and loc > contr:
             count = 0

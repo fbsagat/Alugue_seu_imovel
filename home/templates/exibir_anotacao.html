@@ -11,9 +11,8 @@ Anotações / {{ SITE_NAME }}
 
 {% block content %}
 
+{% if anotacoes %}
 <div class="container-fluid pt-1 d-flex justify-content-center">
-    {% if anotacoes %}
-
     <div class="col ms-1">
         <table class="table mx-1 my-1 align-middle table-sm table-hover table-bordered border-secondary table-striped table-dark text-center text-justify">
             <thead>
@@ -79,7 +78,9 @@ Anotações / {{ SITE_NAME }}
 {% endfor %}
 
 {% else %}
-{% include 'nenhum_registrado.html' %}
+<div class="container-fluid text-center text-justify">
+    {% include 'nenhum_registrado.html' %}
+</div>
 {% endif %}
 
 {% endblock %}

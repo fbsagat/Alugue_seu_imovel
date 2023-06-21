@@ -119,6 +119,16 @@ def anotacao_post_save(sender, instance, **kwargs):
 
 
 @transaction.atomic
+@receiver(post_save, sender=Locatario)
+def locatario_post_save(sender, instance, **kwargs):
+    if instance.temporario is True:
+        tipo_conteudo = ContentType.objects.get_for_model(Locatario)
+        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
+        instance.da_tarefa = tarefa
+        Locatario.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+
+
+@transaction.atomic
 @receiver(post_save, sender=Contrato)
 def contrato_post_save(sender, instance, created, **kwargs):
     # Pega os dados para tratamento:
@@ -210,7 +220,7 @@ def usuario_pre_save(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Locatario)
 def locatario_pre_save(sender, instance, **kwargs):
-    if instance.pk is None:  # if criado
+    if instance.pk is None:  # Se criado
         pass
     else:
         # Apaga todos os recibos em pdf do locatário(para que novos possam ser criados) quando se modifica
@@ -287,6 +297,7 @@ def sugestao_pre_save(sender, instance, **kwargs):
             if instance.da_tarefa:
                 instance.da_tarefa.definir_apagada()
 
+
 # Gerenciadores de pre_delete \/  ---------------------------------------
 @transaction.atomic
 @receiver(pre_delete, sender=Contrato)
@@ -314,14 +325,28 @@ def contrato_pre_delete(sender, instance, **kwards):
 def anotacao_pre_delete(sender, instance, **kwargs):
     # Apagar a tarefa desta anotação
     if instance.da_tarefa:
-        instance.da_tarefa.delete()
+        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
+
+
+@receiver(pre_delete, sender=Sugestao)
+def sugestao_pre_delete(sender, instance, **kwargs):
+    # Apagar a tarefa desta anotação
+    if instance.da_tarefa:
+        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
+
+
+@receiver(pre_delete, sender=Locatario)
+def locatario_pre_delete(sender, instance, **kwargs):
+    # Apagar a tarefa deste locatário
+    if instance.da_tarefa:
+        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
 
 
 @receiver(pre_delete, sender=Parcela)
 def parcela_pre_delete(sender, instance, **kwargs):
     # Apagar a tarefa desta parcela
     if instance.da_tarefa:
-        instance.da_tarefa.delete()
+        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
 
 
 # Gerenciadores de post_delete \/  ---------------------------------------
