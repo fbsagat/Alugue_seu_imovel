@@ -19,7 +19,7 @@ Itens Ativos / {{ SITE_NAME }}
                 Criar novo modelo
             </button>
         </a>
-        <a class="py-2 px-3" href="{% url '</div>' %}">
+        <a class="py-2 px-3" href="{% url 'home:Contrato PDF' %}">
             <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
                 Sair do editor
             </button>
@@ -56,7 +56,7 @@ Itens Ativos / {{ SITE_NAME }}
                         {% endif %}
                     </div>
                     <div class="card-footer">
-                        {% if modelo.display_variaveis %}
+                        {% if modelo.display_variaveis is not False %}
                         <small>Variáveis neste modelo:</small>
                         <div class="row row-cols-md-1 g-1">
                             {% for variavel in modelo.display_variaveis %}
@@ -73,7 +73,7 @@ Itens Ativos / {{ SITE_NAME }}
                         <small>Variáveis neste modelo: Nenhuma</small>
                         {% endif %}
 
-                        {% if modelo.display_condicoes %}
+                        {% if modelo.display_condicoes is not False %}
                         <small>Condições neste modelo:</small>
                         <div class="row row-cols-md-1 g-1">
                             {% for condicao in modelo.display_condicoes %}

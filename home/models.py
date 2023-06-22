@@ -562,14 +562,14 @@ class ContratoModelo(models.Model):
         for variavel in list(self.variaveis):
             if variavel in modelo_variaveis:
                 variaveis.append([modelo_variaveis[variavel][0], modelo_variaveis[variavel][1]])
-        return variaveis
+        return variaveis if len(variaveis) > 0 else False
 
     def display_condicoes(self):
         condicoes = []
         for condicao in list(self.condicoes):
             if condicao in modelo_condicoes:
                 condicoes.append([modelo_condicoes[condicao][0], modelo_condicoes[condicao][1]])
-        return condicoes
+        return condicoes if len(condicoes) > 0 else False
 
 
 tipos_de_locacao = (

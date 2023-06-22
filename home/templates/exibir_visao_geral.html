@@ -85,7 +85,8 @@ Visão Geral / {{ SITE_NAME }}
                         de {{ imovel.contrato_atual.valor_do_contrato_format }} ({{ imovel.contrato_atual.duracao }})
                     </th>
                     {% if imovel.contrato_atual.transcorrido_dias|add:30 > imovel.contrato_atual.duracao_dias %}
-                    <th scope="col" style="cursor:default;" title="O contrato está perto do vencimento">
+                    <th scope="col" style="cursor:default;"
+                        title="O contrato está perto do vencimento. Vence em {{ imovel.contrato_atual.faltando_dias }} dias">
                         {{ imovel.contrato_atual.transcorrido_dias }} de {{ imovel.contrato_atual.duracao_dias }} dias
                         {% if imovel.contrato_atual.transcorrido_dias|add:30 > imovel.contrato_atual.duracao_dias %}
                         ⚠️

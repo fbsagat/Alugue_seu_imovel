@@ -49,14 +49,13 @@ OK. Aplicar atomicidade no gerencimanto do banco de dados: https://www.youtube.c
 OK. Criar um link, chamado link de requisição, próprio de cada usuário, que ele envia para o locatário, para que o
         locatário, através dele, possa cadastrar suas informações para o preenchimento do contrato. Quando cadastrado,
         o usuário recebe uma notificação de aviso para dar procedimento, criando o contrato para este locatário.
+OK. Na primeira inicialização do sistema:
+        1. Importar os modelos de contratos padrões do txt na pasta deles para a tabela.
+        2. Criar as pastas de midia.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-Na primeira inicialização do sistema:
-        1. Importar os modelos de contratos padrões do txt na pasta deles para a tabela.
-        2. Criar as pastas de midia.
-
 Criar o sistema de rentabilização do site.
 Renomear tarefas para notificações de novo :/
 Lembretes: Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
