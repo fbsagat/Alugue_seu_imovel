@@ -37,7 +37,7 @@ Pagamentos / {{ SITE_NAME }}
                 <tr>
                     <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
                     <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
-                        {{ pagamento.ao_contrato.nome_curto }}
+                        {{ pagamento.ao_contrato }}
                     </th>
                     <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
                     <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
@@ -71,7 +71,7 @@ Pagamentos / {{ SITE_NAME }}
                 <tr>
                     <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
                     <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
-                        {{ pagamento.ao_contrato.nome_curto }}
+                        {{ pagamento.ao_contrato }}
                     </th>
                     <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
                     <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>

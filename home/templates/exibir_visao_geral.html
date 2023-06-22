@@ -40,7 +40,7 @@ Visão Geral / {{ SITE_NAME }}
                     <th scope="col" style="cursor:default;"><a
                             href="?order_by=contrato_atual__valor_mensal">Valor/Mês</a></th>
                     <th scope="col" style="cursor:default;"><a href="?order_by=vencimento_atual">Vencimento</a></th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by=divida_atual_valor">Pagamento</a></th>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=divida_atual_valor">Atraso</a></th>
                     <th scope="col" style="cursor:default;" title="Recibos Entregues">
                         <a href="?order_by=recibos_entregues_qtd">Recibos Entr.</a></th>
                     <th scope="col" style="cursor:default;"><a href="?order_by=contrato_atual">Nome</a></th>
@@ -79,7 +79,8 @@ Visão Geral / {{ SITE_NAME }}
                         ⭕
                         {% endif %}
                     </th>
-                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual }}</th>
+                    <th scope="col" style="cursor:default;" title="{{ imovel.contrato_atual.nome_completo }}">
+                        {{ imovel.contrato_atual }}</th>
                     <th scope="col" style="cursor:default;" title="{{ imovel.contrato_atual.title_pagou_parcelas }}">
                         {{ imovel.contrato_atual.total_pg_format }} ({{ imovel.contrato_atual.parcelas_pagas_qtd }})
                         de {{ imovel.contrato_atual.valor_do_contrato_format }} ({{ imovel.contrato_atual.duracao }})

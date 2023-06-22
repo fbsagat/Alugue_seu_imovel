@@ -370,9 +370,9 @@ class Contrato(models.Model):
         return f'({self.do_locatario.primeiro_ultimo_nome()}-{self.do_imovel.nome}-' \
                f'{self.data_entrada.strftime("%m/%Y")})'
 
-    def nome_curto(self):
-        return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
-               f'{self.codigo})'
+    # def nome_curto(self):
+    #     return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
+    #            f'{self.codigo})'
 
     def nome_completo(self):
         return f'{self.do_locatario.nome} - {self.do_imovel} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
@@ -401,7 +401,7 @@ class Contrato(models.Model):
         return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
 
     def total_quitado(self):
-        valor = Parcela.objects.filter(do_contrato=self, tt_pago=self.valor_mensal).values_list('tt_pago')
+        valor = Parcela.objects.filter(do_contrato=self).values_list('tt_pago')
         if settings.USAR_DB == 1:
             valor = valor.aggregate(Sum('tt_pago'))
             return valor['tt_pago__sum'] or 0
@@ -418,11 +418,14 @@ class Contrato(models.Model):
         else:
             return valor_format(str(self.total_quitado()))
 
-    def falta_pg_format(self):
+    def falta_pg(self):
         if self.total_quitado() is None:
             return self.valor_do_contrato_format()
         else:
-            return valor_format(str((int(self.valor_mensal) * int(self.duracao)) - self.total_quitado()))
+            return str((int(self.valor_mensal) * int(self.duracao)) - self.total_quitado())
+
+    def falta_pg_format(self):
+        return valor_format(self.falta_pg())
 
     def em_maos(self):
         return 'Sim' if self.em_posse else 'Não'
@@ -474,12 +477,15 @@ class Contrato(models.Model):
                 count += 1
         return count
 
+    def quitado(self):
+        return True if self.total_quitado() == int(self.valor_do_contrato()) else False
+
     def title_pagou_parcelas(self):
         if self.parcelas_pagas_qtd() > 0:
             plural = 's' if self.parcelas_pagas_qtd() > 1 else ''
             return f'Pagou {self.parcelas_pagas_qtd()} parcela{plural} de {self.duracao}'
         else:
-            return 'Nenhuma parcela paga ainda'
+            return 'Nenhuma parcela quitada ainda'
 
     def faltando_recibos_qtd(self):
         try:
@@ -494,16 +500,13 @@ class Contrato(models.Model):
         return num2words(self.dia_vencimento, lang='pt_BR')
 
     def vencimento_atual(self):
-        parcelas = Parcela.objects.filter(do_contrato=self, tt_pago__lt=self.valor_mensal)
-        try:
-            x = parcelas[0].data_pagm_ref
-        except:
-            x = None
-        return x
+        parcela_n_kit = Parcela.objects.filter(do_contrato=self,
+                                                     tt_pago__lt=self.valor_mensal).first()
+        return parcela_n_kit.data_pagm_ref if parcela_n_kit else None
 
     def vencimento_atual_textual(self):
-        txt = ''
-        try:
+        txt = '---'
+        if self.vencimento_atual() is not None:
             hoje = datetime.today().date()
             vencim_atual = self.vencimento_atual()
             delta = hoje - vencim_atual
@@ -518,27 +521,24 @@ class Contrato(models.Model):
                 txt = f'Vencerá amanhã ({vencim_atual.strftime("%d/%m/%Y")})'
             elif vencim_atual > hoje + relativedelta(days=+1):
                 txt = f'Vencerá em {vencim_atual.strftime("%d/%m/%Y")} (em {delta2.days} dias)'
-        except:
-            txt = ''
         return txt
 
     def divida_atual_meses(self):
-        parcelas_vencidas_n_pagas = Parcela.objects.filter(do_contrato=self, tt_pago__lt=self.valor_mensal,
-                                                           data_pagm_ref__lte=datetime.today().date())
-        return len(parcelas_vencidas_n_pagas)
+        parcelas = Parcela.objects.filter(do_contrato=self, data_pagm_ref__lte=datetime.today().date())
+        parcelas_vencidas_n_quitadas = 0
+        for parcela in parcelas:
+            if int(parcela.tt_pago) < int(self.valor_mensal):
+                parcelas_vencidas_n_quitadas += 1
+        return parcelas_vencidas_n_quitadas
 
     def divida_atual_valor(self):
-        parcelas_vencidas_n_pagas = Parcela.objects.filter(do_contrato=self, tt_pago__lt=self.valor_mensal,
-                                                           data_pagm_ref__lte=datetime.today().date())
-        soma_tt_pg = int()
-        if settings.USAR_DB == 1:
-            soma_tt_pg = parcelas_vencidas_n_pagas.aggregate(Sum('tt_pago'))['tt_pago__sum']
-        elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
-            array = parcelas_vencidas_n_pagas.aggregate(arr=ArrayAgg('tt_pago'))
-            soma_tt_pg = 0
-            for _ in array['arr']:
-                soma_tt_pg += int(_)
-        valor = (len(parcelas_vencidas_n_pagas) * int(self.valor_mensal)) - (int(soma_tt_pg) if soma_tt_pg else 0)
+        parcelas = Parcela.objects.filter(do_contrato=self, data_pagm_ref__lte=datetime.today().date())
+        parcelas_vencidas_n_quitadas = []
+        for parcela in parcelas:
+            if int(parcela.tt_pago) < int(self.valor_mensal):
+                parcelas_vencidas_n_quitadas.append(int(parcela.tt_pago))
+        soma_tt_pg = sum([i for i in parcelas_vencidas_n_quitadas])
+        valor = (len(parcelas_vencidas_n_quitadas) * int(self.valor_mensal)) - (int(soma_tt_pg) if soma_tt_pg else 0)
         return valor, valor_format(str(valor))
 
 
@@ -599,7 +599,6 @@ class ContratoDocConfig(models.Model):
     fiador_endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
     fiador_nacionalidade = models.CharField(max_length=40, null=True, blank=True, verbose_name='Nacionalidade')
     fiador_estadocivil = models.IntegerField(null=True, blank=True, verbose_name='Estado Civil', choices=estados_civis)
-
 
     class Meta:
         verbose_name_plural = 'Configs de contratos'

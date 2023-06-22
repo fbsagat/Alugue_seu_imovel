@@ -11,6 +11,7 @@ fake = Faker(locales)
 
 
 def contratos_ficticios(request, locador):
+    # ESTA FUNÇÃO ESTÁ GERANDO CONTRATOS NO MESMO PERÍODO, ARRUMAR
     todos_locatarios = Locatario.objects.sem_imoveis().filter(do_locador=locador)
     do_locatario = choice(todos_locatarios)
 
@@ -114,24 +115,34 @@ def imoveis_ficticios(usuario):
 
 
 def pagamentos_ficticios():
-    contratos = Contrato.objects.all()
-    contrato_escolhido = choice(contratos)
+    x = Contrato.objects.all()
+    contratos = []
+    for contrato in x:
+        if contrato.quitado() is False:
+            contratos.append(contrato)
 
-    ao_contrato = contrato_escolhido
-    valor_mensal = int(contrato_escolhido.valor_mensal)
-    chance_aleatoria = randrange(valor_mensal // 3, valor_mensal)
-    zero_a_cem = randrange(0, 100)
-    probabilidade_percentual = 75
-    valor_pago = valor_mensal if zero_a_cem <= probabilidade_percentual else chance_aleatoria
+    if len(contratos) > 0:
+        contrato_escolhido = choice(contratos)
+        ao_contrato = contrato_escolhido
+        valor_mensal = int(contrato_escolhido.valor_mensal)
+        chance_aleatoria = randrange(valor_mensal // 3, valor_mensal)
+        zero_a_cem = randrange(0, 100)
+        probabilidade_percentual = 75
+        valor_sorteado = valor_mensal if zero_a_cem <= probabilidade_percentual else chance_aleatoria
 
-    entrada = contrato_escolhido.data_entrada
-    data_pagamento = fake.date_between(entrada, datetime.today())
+        valor_pago = str(valor_sorteado if valor_sorteado < int(contrato_escolhido.falta_pg()) else int(
+            contrato_escolhido.falta_pg()))
 
-    pix_vista = randrange(0, 1)
-    todas = randrange(0, 4)
+        entrada = contrato_escolhido.data_entrada
+        data_pagamento = fake.date_between(entrada, datetime.today())
 
-    forma = choice([pix_vista, pix_vista, todas])
-    recibo = choice([True, False])
+        pix_vista = randrange(0, 1)
+        todas = randrange(0, 4)
+
+        forma = choice([pix_vista, pix_vista, todas])
+        recibo = choice([True, False])
+    else:
+        return None
 
     return {'ao_contrato': ao_contrato, 'valor_pago': valor_pago, 'data_pagamento': data_pagamento, 'forma': forma,
             'recibo': recibo}

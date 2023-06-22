@@ -36,12 +36,16 @@ from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGru
 
 
 # -=-=-=-=-=-=-=-= BOTÃO VISÃO GERAL -=-=-=-=-=-=-=-=
+@login_required
 def visao_geral(request):
     context = {}
     imoveis = Imovei.objects.filter(do_locador=request.user)
     usuario = Usuario.objects.get(pk=request.user.pk)
 
     ocupados = []
+
+    # ISSO AQUI DEVE SER MUDADO DE IMOVEIS PRA CONTRATOS(VERIFICAR SE REALMENTE É NECESSÁRIO) \/
+
     for imovel in imoveis:
         ocupados.append(imovel.pk) if imovel.esta_ocupado() and imovel.contrato_atual.ativo_hoje() else None
 
@@ -59,7 +63,8 @@ def visao_geral(request):
             in order_by or 'contrato_atual' in order_by:
         imoveis = Imovei.objects.filter(pk__in=ocupados).order_by(order_by if order_by else 'nome')
     elif 'vencimento_atual' in order_by:
-        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.vencimento_atual(),
+        contratos = sorted(Contrato.objects.filter(do_locador=request.user),
+                           key=lambda a: a.vencimento_atual() or datetime.now().date() + relativedelta(years=+100),
                            reverse=True)
         imoveis = []
         for contrato in contratos:
@@ -1933,25 +1938,28 @@ def botaoteste(request):
             messages.error(request, "Primeiro crie imóveis e locatários")
 
     if executar == 4 or executar == 100:
-        if Contrato.objects.filter(do_locador=usuario).count() > 0:
-            count = 0
-            for x in range(fict_multi * fict_qtd['pagamento']):
-                count += 1
-                aleatorio = pagamentos_ficticios()
-                form = FormPagamento(usuario)
-                pagamento = form.save(commit=False)
-                locatario = Contrato.objects.get(pk=aleatorio.get('ao_contrato').pk).do_locatario
-                pagamento.ao_locador = usuario
-                pagamento.do_locatario = locatario
-                pagamento.ao_contrato = aleatorio.get('ao_contrato')
-                pagamento.valor_pago = aleatorio.get('valor_pago')
-                pagamento.data_pagamento = aleatorio.get('data_pagamento')
-                pagamento.forma = aleatorio.get('forma')
-                pagamento.recibo = aleatorio.get('recibo')
-                pagamento.save()
-            messages.success(request, f"Criados {count} pagamentos")
+        if pagamentos_ficticios() is not None:
+            if Contrato.objects.filter(do_locador=usuario).count() > 0:
+                count = 0
+                for x in range(fict_multi * fict_qtd['pagamento']):
+                    count += 1
+                    aleatorio = pagamentos_ficticios()
+                    form = FormPagamento(usuario)
+                    pagamento = form.save(commit=False)
+                    locatario = Contrato.objects.get(pk=aleatorio.get('ao_contrato').pk).do_locatario
+                    pagamento.ao_locador = usuario
+                    pagamento.do_locatario = locatario
+                    pagamento.ao_contrato = aleatorio.get('ao_contrato')
+                    pagamento.valor_pago = aleatorio.get('valor_pago')
+                    pagamento.data_pagamento = aleatorio.get('data_pagamento')
+                    pagamento.forma = aleatorio.get('forma')
+                    pagamento.recibo = aleatorio.get('recibo')
+                    pagamento.save()
+                messages.success(request, f"Criados {count} pagamentos")
+            else:
+                messages.error(request, "Primeiro crie contratos")
         else:
-            messages.error(request, "Primeiro crie contratos")
+            messages.error(request, "Todos os contratos já estão 100% pagos")
 
     if executar == 5 or executar == 100:
         if Imovei.objects.filter(do_locador=usuario).count() > 0:
