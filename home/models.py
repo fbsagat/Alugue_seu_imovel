@@ -117,7 +117,7 @@ class Usuario(AbstractUser):
             contratos_user = Contrato.objects.filter(do_locador=self, data_entrada__lte=hoje)
             arrecadacao_mensal = 0
             for contrato in contratos_user:
-                if contrato.ativo_hoje() is True:
+                if contrato.periodo_ativo_hoje() is True:
                     arrecadacao_mensal += int(contrato.valor_mensal)
             return valor_format(str(arrecadacao_mensal))
         except:
@@ -128,7 +128,7 @@ class Usuario(AbstractUser):
             contratos_user = Contrato.objects.filter(do_locador=self)
             valor_total_contratos_ativos = 0
             for contrato in contratos_user:
-                if contrato.ativo_hoje() is True:
+                if contrato.periodo_ativo_hoje() is True:
                     valor_total_contratos_ativos += int(contrato.valor_do_contrato())
             return valor_format(str(valor_total_contratos_ativos))
         except:
@@ -332,10 +332,16 @@ def gerar_codigo_contrato():
 
 class ContratoManager(models.Manager):
     def ativos(self):
-        return self.filter(em_posse=True, rescindido=False, vencido=False)
+        contratos_qs = self.filter(em_posse=True, rescindido=False)
+        lista = []
+        for contrato in contratos_qs:
+            if contrato.periodo_ativo_hoje() is True:
+                lista.append(contrato.pk)
+        contratos_ativos = Contrato.objects.filter(pk__in=lista)
+        return contratos_ativos
 
     def inativos(self):
-        return self.exclude(em_posse=True, rescindido=False, vencido=False)
+        pass
 
 
 class Contrato(models.Model):
@@ -356,7 +362,6 @@ class Contrato(models.Model):
     em_posse = models.BooleanField(default=False, null=False,
                                    help_text='Marque quando receber a sua via assinada e registrada em cartório')
     rescindido = models.BooleanField(default=False, null=False, help_text='Marque caso haja rescisão do contrato')
-    vencido = models.BooleanField(default=False, null=False)
     codigo = models.CharField(null=False, editable=False, max_length=11, default=gerar_codigo_contrato)
     data_de_rescisao = models.DateField(blank=True, verbose_name='Data da rescisão', null=True)
     recibos_pdf = models.FileField(upload_to='recibos_docs/%Y/%m/', blank=True, verbose_name='Recibos')
@@ -434,14 +439,17 @@ class Contrato(models.Model):
         data = self.data_entrada + relativedelta(months=self.duracao)
         return data
 
-    def ativo_hoje(self):
-        return True if self.data_entrada <= datetime.today().date() <= self.data_saida() and self.em_posse is True \
-                       and self.rescindido is False and self.vencido is False else False
+    def periodo_vencido(self):
+        return True if self.data_saida() > datetime.today() else False
 
-    def ativo_futuramente(self):
-        return True if self.data_entrada >= datetime.today().date() and self.rescindido is False else False
+    def periodo_ativo_hoje(self):
+        hoje = datetime.today().date()
+        return True if self.data_entrada <= hoje <= self.data_saida() else False
 
-    def ativo_45_dias_atras(self):
+    def periodo_ativo_futuramente(self):
+        return True if self.data_entrada >= datetime.today().date() else False
+
+    def periodo_ativo_45_dias_atras(self):
         return True if self.data_saida() >= datetime.today().date() + timedelta(days=-45) else False
 
     def pagamento_total(self):
@@ -500,9 +508,12 @@ class Contrato(models.Model):
         return num2words(self.dia_vencimento, lang='pt_BR')
 
     def vencimento_atual(self):
-        parcela_n_kit = Parcela.objects.filter(do_contrato=self,
-                                                     tt_pago__lt=self.valor_mensal).first()
-        return parcela_n_kit.data_pagm_ref if parcela_n_kit else None
+        parcela_n_kit = Parcela.objects.filter(do_contrato=self).order_by('data_pagm_ref')
+        parcelas = []
+        for parcela in parcela_n_kit:
+            if int(parcela.tt_pago) < int(self.valor_mensal) or int(parcela.tt_pago) == 0:
+                parcelas.append(parcela)
+        return parcelas[0].data_pagm_ref if parcelas else None
 
     def vencimento_atual_textual(self):
         txt = '---'

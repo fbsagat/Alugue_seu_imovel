@@ -137,7 +137,12 @@ def contrato_post_save(sender, instance, created, **kwargs):
 
     # Remove locador do imóvel quando um contrato fica inativo e adiciona quando fica ativo:
     locatario = Locatario.objects.get(pk=contrato.do_locatario.pk)
-    if contrato.em_posse is True and contrato.rescindido is False and contrato.vencido is False and contrato.ativo_hoje:
+
+
+
+    # FALTA VERIFICAR SE O CONTRATO ESTA VENCIDO(CRIAR O METODO POIS APAGUEI O PARAMETRO(ABAIXO E NA MODEL))
+
+    if contrato.em_posse is True and contrato.rescindido is False and contrato.periodo_ativo_hoje() is True:
         locatario.com_imoveis.add(imovel)
         locatario.com_contratos.add(contrato)
         imovel.com_locatario = locatario

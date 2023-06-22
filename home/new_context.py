@@ -27,7 +27,7 @@ def forms_da_navbar(request):
         contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
         contratos_ativos_pks = []
         for contrato in contratos:
-            if contrato.ativo_hoje() or contrato.ativo_futuramente() or contrato.ativo_45_dias_atras():
+            if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente() or contrato.periodo_ativo_45_dias_atras():
                 contratos_ativos_pks.append(contrato.pk)
         contratos_exibir = Contrato.objects.filter(id__in=contratos_ativos_pks)
 

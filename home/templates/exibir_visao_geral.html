@@ -73,7 +73,7 @@ Visão Geral / {{ SITE_NAME }}
                     {% endif %}
                     <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.recibos_entregues_qtd }}
                         de {{ imovel.contrato_atual.parcelas_pagas_qtd }}
-                        {% if imovel.contrato_atual.recibos_entregues_qtd == imovel.contrato_atual.parcelas_pagas_qtd %}
+                        {% if imovel.contrato_atual.recibos_entregues_qtd >= imovel.contrato_atual.parcelas_pagas_qtd %}
                         ✔️
                         {% else %}
                         ⭕

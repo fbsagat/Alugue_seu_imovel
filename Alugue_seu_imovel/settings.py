@@ -15,8 +15,8 @@ TEMPO_SESSION_FORM = 30
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item \/
-contrato = 5
-FICT_QTD = {'locatario': 6, 'imovel_g': 3, 'imovel': 6, 'contrato': contrato, 'pagamento': 1, 'gasto': 4,
+contrato = 4
+FICT_QTD = {'locatario': 6, 'imovel_g': 3, 'imovel': 6, 'contrato': contrato, 'pagamento': contrato * 2, 'gasto': 4,
             'nota': 3, 'sugestoes': 4, 'user': 5}
 
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/

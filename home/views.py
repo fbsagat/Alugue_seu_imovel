@@ -19,7 +19,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import messages
 from django.db.models.aggregates import Count, Sum
-from django.db import transaction
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 
@@ -47,7 +46,7 @@ def visao_geral(request):
     # ISSO AQUI DEVE SER MUDADO DE IMOVEIS PRA CONTRATOS(VERIFICAR SE REALMENTE É NECESSÁRIO) \/
 
     for imovel in imoveis:
-        ocupados.append(imovel.pk) if imovel.esta_ocupado() and imovel.contrato_atual.ativo_hoje() else None
+        ocupados.append(imovel.pk) if imovel.esta_ocupado() and imovel.contrato_atual.periodo_ativo_hoje() else None
 
     # Sistema de ordenação \/
     if usuario.vis_ger_ultim_order_by and request.GET.get('order_by') is None:
@@ -61,41 +60,41 @@ def visao_geral(request):
 
     if order_by is None or 'com_locatario__nome' in order_by or 'nome' in order_by or 'contrato_atual__valor_mensal' \
             in order_by or 'contrato_atual' in order_by:
-        imoveis = Imovei.objects.filter(pk__in=ocupados).order_by(order_by if order_by else 'nome')
+        imoveis = Imovei.objects.order_by(order_by if order_by else 'nome')
+
     elif 'vencimento_atual' in order_by:
-        contratos = sorted(Contrato.objects.filter(do_locador=request.user),
+        contratos = sorted(Contrato.objects.ativos().filter(do_locador=request.user),
                            key=lambda a: a.vencimento_atual() or datetime.now().date() + relativedelta(years=+100),
                            reverse=True)
         imoveis = []
         for contrato in contratos:
-            if contrato.ativo_hoje():
-                imoveis.append(contrato.do_imovel)
+            imoveis.append(contrato.do_imovel)
+
     elif 'divida_atual_valor' in order_by:
-        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.divida_atual_valor()[0])
+        contratos = sorted(Contrato.objects.ativos().filter(do_locador=request.user), key=lambda a: a.divida_atual_valor()[0])
         imoveis = []
         for contrato in contratos:
-            if contrato.ativo_hoje():
                 imoveis.append(contrato.do_imovel)
+
     elif 'recibos_entregues_qtd' in order_by:
-        contratos0 = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.recibos_entregues_qtd())
+        contratos0 = sorted(Contrato.objects.ativos().filter(do_locador=request.user), key=lambda a: a.recibos_entregues_qtd())
         contratos = sorted(contratos0, key=lambda a: a.faltando_recibos_qtd())
         imoveis = []
         for contrato in contratos:
-            if contrato.ativo_hoje():
-                imoveis.append(contrato.do_imovel)
+            imoveis.append(contrato.do_imovel)
+
     elif 'total_pg' in order_by:
-        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.total_quitado(),
+        contratos = sorted(Contrato.objects.ativos().filter(do_locador=request.user), key=lambda a: a.total_quitado(),
                            reverse=True)
         imoveis = []
         for contrato in contratos:
-            if contrato.ativo_hoje():
-                imoveis.append(contrato.do_imovel)
+            imoveis.append(contrato.do_imovel)
+
     elif 'transcorrido_dias' in order_by:
-        contratos = sorted(Contrato.objects.filter(do_locador=request.user), key=lambda a: a.transcorrido_dias())
+        contratos = sorted(Contrato.objects.ativos().filter(do_locador=request.user), key=lambda a: a.transcorrido_dias())
         imoveis = []
         for contrato in contratos:
-            if contrato.ativo_hoje():
-                imoveis.append(contrato.do_imovel)
+            imoveis.append(contrato.do_imovel)
 
     parametro_page = request.GET.get('page', '1')
     parametro_limite = request.GET.get('limit', '30')
@@ -252,11 +251,10 @@ class ImoveisAtivos(LoginRequiredMixin, ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_entrada')
+        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
         ativo_tempo = []
         for obj in self.object_list:
-            if obj.ativo_hoje() is True:
-                ativo_tempo.append(obj.do_imovel)
+            ativo_tempo.append(obj.do_imovel)
         return ativo_tempo
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -273,14 +271,10 @@ class LocatariosAtivos(LoginRequiredMixin, ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_entrada')
+        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
         ativo_tempo = []
-        pks = []
         for obj in self.object_list:
-            if obj.ativo_hoje() is True:
-                if obj.do_locatario.pk not in pks:
-                    ativo_tempo.append(obj.do_locatario)
-                    pks.append(obj.do_locatario.pk)
+            ativo_tempo.append(obj.do_locatario)
         return ativo_tempo
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -297,12 +291,8 @@ class ContratosAtivos(LoginRequiredMixin, ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_entrada')
-        ativo_tempo = []
-        for obj in self.object_list:
-            if obj.ativo_hoje() is True:
-                ativo_tempo.append(obj)
-        return ativo_tempo
+        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
+        return self.object_list
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ContratosAtivos, self).get_context_data(**kwargs)
@@ -601,7 +591,7 @@ def recibos(request):
     contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
     contratos_ativos_pks = []
     for contrato in contratos:
-        if contrato.ativo_hoje() or contrato.ativo_futuramente():
+        if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente():
             contratos_ativos_pks.append(contrato.pk)
     contratos_ativos = Contrato.objects.filter(id__in=contratos_ativos_pks)
 
@@ -889,7 +879,7 @@ def gerar_contrato(request):
     contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
     contratos_ativos_pks = []
     for contrato in contratos:
-        if contrato.ativo_hoje() or contrato.ativo_futuramente():
+        if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente():
             contratos_ativos_pks.append(contrato.pk)
     contratos_ativos = Contrato.objects.filter(id__in=contratos_ativos_pks)
 

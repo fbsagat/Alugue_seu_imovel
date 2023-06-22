@@ -227,34 +227,43 @@ class FormContrato(forms.ModelForm):
             'dia_vencimento': Numeros(),
         }
 
-    # ATENÇÃO VERIFICAR SE ISSO AQUI AINDA É ÚTIL OU DEIXEI LIXO PRA TRÁS \/
-    # def __init__(self, property_id, *args, **kwargs):
-    #     self.property_id = property_id
-    #     super(FormContrato, self).__init__(*args, **kwargs)
-
     def clean_data_entrada(self):
-        entrada = self.cleaned_data['data_entrada']
+        entrada_novo = self.cleaned_data['data_entrada']
         duracao = int(self.data['duracao'])
-        saida = entrada + relativedelta(months=duracao)
+        saida_novo = entrada_novo + relativedelta(months=duracao)
         imovel = self.cleaned_data['do_imovel']
 
+        # Se existir algum contrato com datas de entrada e saida entre o período registrado no novo contrato, esta
+        # entrada não pode ser permitida \/
         contratos_deste_imovel = Contrato.objects.filter(do_imovel=imovel.pk).exclude(pk=self.instance.pk)
         permitido = True
+        # print('Contrato novo entra nesta data', entrada_novo.strftime("%d/%m/%Y"))
+        # print('Contrato nov sai nesta data', saida_novo.strftime("%d/%m/%Y"))
+        # print('-=-=-=-=-')
+        for n, contrato in enumerate(contratos_deste_imovel):
+            # print(f'Contrato {n}: entra nesta data', contrato.data_entrada.strftime("%d/%m/%Y"))
+            # print(f'Contrato {n}: sai nesta data',
+            #       (contrato.data_entrada + relativedelta(months=contrato.duracao)).strftime("%d/%m/%Y"))
+            # print('')
+            entrada_antigo = contrato.data_entrada
+            saida_antigo = contrato.data_entrada + relativedelta(months=contrato.duracao)
 
-        # Se a data de entrada(data_entrada) estiver entre as datas de
-        # entrada e de saida de cada contrato existente para este imovel, raise error
-        for contrato in contratos_deste_imovel:
-            data_in_out = {'entrada': contrato.data_entrada,
-                           'saida': contrato.data_entrada + relativedelta(months=contrato.duracao)}
-
-            if data_in_out['entrada'] <= entrada <= data_in_out['saida']:
+            if entrada_antigo <= entrada_novo <= saida_antigo:
                 permitido = False
-            if data_in_out['entrada'] <= saida <= data_in_out['saida']:
+            if entrada_antigo <= saida_novo <= saida_antigo:
+                permitido = False
+
+            if entrada_antigo >= entrada_novo >= saida_antigo:
+                permitido = False
+            if entrada_antigo >= saida_novo >= saida_antigo:
+                permitido = False
+
+            if entrada_antigo >= entrada_novo and saida_antigo <= saida_novo:
                 permitido = False
         if permitido is False:
             raise forms.ValidationError("Já existe um contrato registrado para este imóvel neste período.")
         else:
-            return entrada
+            return entrada_novo
 
     def __init__(self, user, *args, **kwargs):
         super(FormContrato, self).__init__(*args, **kwargs)

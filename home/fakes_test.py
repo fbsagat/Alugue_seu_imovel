@@ -11,42 +11,53 @@ fake = Faker(locales)
 
 
 def contratos_ficticios(request, locador):
-    # ESTA FUNÇÃO ESTÁ GERANDO CONTRATOS NO MESMO PERÍODO, ARRUMAR
     todos_locatarios = Locatario.objects.sem_imoveis().filter(do_locador=locador)
     do_locatario = choice(todos_locatarios)
 
-    todos_imoveis = Imovei.objects.disponiveis().filter(do_locador=locador)
+    todos_imoveis = Imovei.objects.filter(do_locador=locador)
     do_imovel = choice(todos_imoveis)
 
+    count = 0
     while True:
-        dias = randrange(1, 100)
+        dias = count + randrange(1, 100)
         entrada1 = fake.date_between(datetime.now().date() + timedelta(days=-dias * 2),
                                      datetime.now().date() + timedelta(days=-dias))
-        dias2 = randrange(1, 30)
+        dias2 = count + randrange(1, 30)
         entrada2 = fake.date_between(datetime.now().date() + timedelta(days=-dias2 - 5),
                                      datetime.now().date() + timedelta(days=-dias2))
 
-        entrada = choice([entrada1, entrada2])
+        entrada_novo = choice([entrada1, entrada2])
 
-        duracao = randrange(4, 18)
-        saida = entrada + relativedelta(months=duracao)
+        duracao = randrange(4, 18) - count
+        if duracao == 0:
+            duracao = 1
 
+        saida_novo = entrada_novo + relativedelta(months=duracao)
         contratos_deste_imovel = Contrato.objects.filter(do_imovel=do_imovel.pk)
         permitido = True
 
-        # Se a data de entrada(data_entrada) estiver entre as datas de
-        # entrada e de saida de cada contrato existente para este imovel, raise error
-        for contrato in contratos_deste_imovel:
-            data_in_out = {'entrada': contrato.data_entrada,
-                           'saida': contrato.data_entrada + relativedelta(months=contrato.duracao)}
+        for n, contrato in enumerate(contratos_deste_imovel):
+            entrada_antigo = contrato.data_entrada
+            saida_antigo = contrato.data_entrada + relativedelta(months=contrato.duracao)
 
-            if data_in_out['entrada'] <= entrada <= data_in_out['saida']:
+            if entrada_antigo <= entrada_novo <= saida_antigo:
                 permitido = False
-            if data_in_out['entrada'] <= saida <= data_in_out['saida']:
+            if entrada_antigo <= saida_novo <= saida_antigo:
                 permitido = False
+
+            if entrada_antigo >= entrada_novo >= saida_antigo:
+                permitido = False
+            if entrada_antigo >= saida_novo >= saida_antigo:
+                permitido = False
+
+            if entrada_antigo >= entrada_novo and saida_antigo <= saida_novo:
+                permitido = False
+
         if permitido is True:
-            data_entrada = entrada
+            data_entrada = entrada_novo
             break
+        else:
+            count += 1
 
     zero_a_cem = randrange(0, 100)
     probabilidade_percentual = 75

@@ -56,17 +56,16 @@ OK. Na primeira inicialização do sistema:
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-ARRUMAR FAKES_TESTE PAG 14
 ARRUMAR VIEWS.PY PAG 47
+Criar o sistema de importação dos dados em um clique da planilha do prédio para o site.
 
 Fazer um sistema de configurações do fake test em settings.
 Criar o sistema de rentabilização do site.
 Renomear tarefas para notificações de novo :/
 Lembretes: Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
-Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias).
+        Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias).
 Criar a função comunidade no editor de modelos.
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados, bem como, botão de restaurar.
-Criar o sistema de importação dos dados em um clique da planilha do prédio para o site.
 Implementar filtros/buscas nas paginas do botão histórico.
 Adaptar o site para celulares.
 Mostrar no visão geral o total por grupo de imóveis e por tipo.
