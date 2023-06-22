@@ -24,6 +24,8 @@
 <body class="bg-black text-gray-100 font-primary">
 {% if user.is_authenticated %}
 {% include 'navbar.html' %}
+{% else %}
+{% include 'navbar_deslogado.html' %}
 <br><br>
 {% endif %}
 {% include 'mensagens.html' %}

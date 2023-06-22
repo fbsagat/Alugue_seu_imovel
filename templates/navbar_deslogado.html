@@ -1,0 +1,42 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+<style>
+ion-icon {
+    color: white;
+}
+ion-icon {
+    pointer-events: none;
+}
+
+
+
+</style>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/copiador.js' %}"></script>
+{% endblock scripts %}
+
+<nav style="z-index: 20;" class=" navbar w-full py-1 px-1 fixed border-b-2 bg-dark">
+
+    <div class="col d-flex justify-content-center">
+
+        <!-- LOGO -->
+        <div class="row ps-1">
+            <a href="/">
+                <img width="40" height="40" class="d-inline-block" src="{% static 'images/logo.png' %}">
+            </a>
+        </div>
+
+        <!-- BEM-VINDO DISTINTIVO -->
+        <div class="row ps-1">
+            <a href="/">
+                <div class="badge bg-black text-white text-wrap border-b-2" style="width: 9rem;">
+                    -{{ SITE_NAME }}- Administrador
+                </div>
+            </a>
+        </div>
+    </div>
+
+</nav>
