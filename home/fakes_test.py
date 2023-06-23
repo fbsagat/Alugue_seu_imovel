@@ -140,16 +140,12 @@ def pagamentos_ficticios():
         zero_a_cem = randrange(0, 100)
         probabilidade_percentual = 75
         valor_sorteado = valor_mensal if zero_a_cem <= probabilidade_percentual else chance_aleatoria
-
         valor_pago = str(valor_sorteado if valor_sorteado < int(contrato_escolhido.falta_pg()) else int(
             contrato_escolhido.falta_pg()))
-
         entrada = contrato_escolhido.data_entrada
         data_pagamento = fake.date_between(entrada, datetime.today())
-
         pix_vista = randrange(0, 1)
         todas = randrange(0, 4)
-
         forma = choice([pix_vista, pix_vista, todas])
         recibo = choice([True, False])
     else:

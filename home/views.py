@@ -1916,12 +1916,13 @@ def botaoteste(request):
             messages.error(request, "Primeiro crie imóveis e locatários")
 
     if executar == 4 or executar == 100:
-        if pagamentos_ficticios() is not None:
+        pagamentos_fic = pagamentos_ficticios()
+        if pagamentos_fic is not None:
             if Contrato.objects.filter(do_locador=usuario).count() > 0:
                 count = 0
                 for x in range(fict_multi * fict_qtd['pagamento']):
                     count += 1
-                    aleatorio = pagamentos_ficticios()
+                    aleatorio = pagamentos_fic
                     form = FormPagamento(usuario)
                     pagamento = form.save(commit=False)
                     locatario = Contrato.objects.get(pk=aleatorio.get('ao_contrato').pk).do_locatario

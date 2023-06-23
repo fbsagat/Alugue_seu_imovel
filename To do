@@ -52,16 +52,15 @@ OK. Criar um link, chamado link de requisição, próprio de cada usuário, que 
 OK. Na primeira inicialização do sistema:
         1. Importar os modelos de contratos padrões do txt na pasta deles para a tabela.
         2. Criar as pastas de midia.
+Ok. (fiz só visualmente no front) Renomear tarefas para notificações de novo :/
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-ARRUMAR VIEWS.PY PAG 47
 Criar o sistema de importação dos dados em um clique da planilha do prédio para o site.
 
 Fazer um sistema de configurações do fake test em settings.
 Criar o sistema de rentabilização do site.
-Renomear tarefas para notificações de novo :/
 Lembretes: Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias).
 Criar a função comunidade no editor de modelos.

@@ -107,6 +107,7 @@ class Usuario(AbstractUser):
             pagamentos = Pagamento.objects.filter(ao_locador=self).values_list('valor_pago')
             for pagamento in pagamentos:
                 total += int(pagamento[0])
+
             return valor_format(str(total))
         except:
             return None
@@ -425,7 +426,7 @@ class Contrato(models.Model):
 
     def falta_pg(self):
         if self.total_quitado() is None:
-            return self.valor_do_contrato_format()
+            return self.valor_do_contrato()
         else:
             return str((int(self.valor_mensal) * int(self.duracao)) - self.total_quitado())
 
