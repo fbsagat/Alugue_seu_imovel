@@ -38,72 +38,61 @@ from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGru
 @login_required
 def visao_geral(request):
     context = {}
-    imoveis = Imovei.objects.filter(do_locador=request.user)
+    contratos = Contrato.objects.ativos().filter(do_locador=request.user)
     usuario = Usuario.objects.get(pk=request.user.pk)
 
-    ocupados = []
-
-    # ISSO AQUI DEVE SER MUDADO DE IMOVEIS PRA CONTRATOS(VERIFICAR SE REALMENTE É NECESSÁRIO) \/
-
-    for imovel in imoveis:
-        ocupados.append(imovel.pk) if imovel.esta_ocupado() and imovel.contrato_atual.periodo_ativo_hoje() else None
-
     # Sistema de ordenação \/
-    if usuario.vis_ger_ultim_order_by and request.GET.get('order_by') is None:
+
+    order_by = 'nome_do_locatario'
+    if usuario.vis_ger_ultim_order_by:
         order_by = usuario.vis_ger_ultim_order_by
-    else:
+    if request.GET.get('order_by'):
         order_by = request.GET.get('order_by')
 
-    if request.GET.get('order_by'):
-        usuario.vis_ger_ultim_order_by = request.GET.get('order_by')
-        usuario.save(update_fields=['vis_ger_ultim_order_by', ])
+    reverter = False
+    if 'ultima_busca' in request.session:
+        order_by = f'{"-" if request.GET.get("order_by") == request.session["ultima_busca"] else ""}{order_by}'
 
-    if order_by is None or 'com_locatario__nome' in order_by or 'nome' in order_by or 'contrato_atual__valor_mensal' \
-            in order_by or 'contrato_atual' in order_by:
-        imoveis = Imovei.objects.order_by(order_by if order_by else 'nome')
-
+    if 'nome_do_locatario' in order_by:
+        contratos = contratos.order_by(f'{"-" if "-" in order_by else ""}do_locatario__nome')
+    elif 'nome_do_imovel' in order_by:
+        contratos = contratos.order_by(f'{"-" if "-" in order_by else ""}do_imovel__nome')
+    elif 'valor_mensal' in order_by:
+        contratos = sorted(contratos,
+                           key=lambda a: int(a.valor_mensal) or datetime.now().date() + relativedelta(years=+ 100),
+                           reverse=True if '-' in order_by else False)
     elif 'vencimento_atual' in order_by:
-        contratos = sorted(Contrato.objects.ativos().filter(do_locador=request.user),
-                           key=lambda a: a.vencimento_atual() or datetime.now().date() + relativedelta(years=+100),
-                           reverse=True)
-        imoveis = []
-        for contrato in contratos:
-            imoveis.append(contrato.do_imovel)
-
+        contratos = sorted(contratos,
+                           key=lambda a: a.vencimento_atual() or datetime.now().date() + relativedelta(years=+ 100),
+                           reverse=True if '-' in order_by else False)
     elif 'divida_atual_valor' in order_by:
-        contratos = sorted(Contrato.objects.ativos().filter(do_locador=request.user), key=lambda a: a.divida_atual_valor()[0])
-        imoveis = []
-        for contrato in contratos:
-                imoveis.append(contrato.do_imovel)
+        contratos = sorted(contratos, key=lambda a: a.divida_atual_valor()[0], reverse=True if '-' in order_by else False)
+    elif 'recibos_entregues' in order_by:
+        contratos0 = sorted(contratos, key=lambda a: a.recibos_entregues_qtd(), reverse=True if '-' in order_by else False)
+        contratos = sorted(contratos0,
+                           key=lambda a: a.faltando_recibos_qtd(), reverse=True if '-' in order_by else False)
+    elif 'total_quitado' in order_by:
+        contratos = sorted(contratos,
+                           key=lambda a: a.total_quitado(), reverse=True if '-' in order_by else False)
+    elif 'dias_transcorridos' in order_by:
+        contratos = sorted(contratos,
+                           key=lambda a: a.transcorrido_dias(), reverse=True if '-' in order_by else False)
 
-    elif 'recibos_entregues_qtd' in order_by:
-        contratos0 = sorted(Contrato.objects.ativos().filter(do_locador=request.user), key=lambda a: a.recibos_entregues_qtd())
-        contratos = sorted(contratos0, key=lambda a: a.faltando_recibos_qtd())
-        imoveis = []
-        for contrato in contratos:
-            imoveis.append(contrato.do_imovel)
-
-    elif 'total_pg' in order_by:
-        contratos = sorted(Contrato.objects.ativos().filter(do_locador=request.user), key=lambda a: a.total_quitado(),
-                           reverse=True)
-        imoveis = []
-        for contrato in contratos:
-            imoveis.append(contrato.do_imovel)
-
-    elif 'transcorrido_dias' in order_by:
-        contratos = sorted(Contrato.objects.ativos().filter(do_locador=request.user), key=lambda a: a.transcorrido_dias())
-        imoveis = []
-        for contrato in contratos:
-            imoveis.append(contrato.do_imovel)
+    usuario.vis_ger_ultim_order_by = order_by
+    usuario.save(update_fields=['vis_ger_ultim_order_by', ])
+    request.session['ultima_busca'] = order_by
+    if reverter is True:
+        del request.session['ultima_busca']
+    # Sistema de ordenação fim /\
 
     parametro_page = request.GET.get('page', '1')
     parametro_limite = request.GET.get('limit', '30')
-    imovel_pagination = Paginator(imoveis, parametro_limite)
+    contrato_pagination = Paginator(contratos, parametro_limite)
 
     try:
-        page = imovel_pagination.page(parametro_page)
+        page = contrato_pagination.page(parametro_page)
     except (EmptyPage, PageNotAnInteger):
-        page = imovel_pagination.page(1)
+        page = contrato_pagination.page(1)
 
     context['arrecadacao_total'] = usuario.arrecadacao_total()
     context['arrecadacao_mensal'] = usuario.arrecadacao_mensal()
@@ -111,7 +100,6 @@ def visao_geral(request):
     context['valor_total_contratos'] = usuario.valor_total_contratos()
     context['page_obj'] = page
     context['SITE_NAME'] = settings.SITE_NAME
-    context['conteudo'] = True if imoveis else False
     return render(request, 'exibir_visao_geral.html', context)
 
 

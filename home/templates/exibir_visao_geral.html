@@ -11,13 +11,12 @@ Visão Geral / {{ SITE_NAME }}
 .table-condensed{
   font-size: 13px;
 }
-
 </style>
 {% endblock %}
 
 {% block content %}
 
-{% if conteudo %}
+{% if page_obj|length > 0 %}
 
 <div class="container-fluid pt-1 text-center text-justify">
 
@@ -34,73 +33,79 @@ Visão Geral / {{ SITE_NAME }}
                 </tr>
                 <tr>
                     <th scope="col" style="cursor:default;">Nº</th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by=nome">Nome</a></th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by=com_locatario__nome">Com locatário</a>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=nome_do_imovel">Nome</a></th>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=nome_do_locatario">Com locatário</a>
                     </th>
-                    <th scope="col" style="cursor:default;"><a
-                            href="?order_by=contrato_atual__valor_mensal">Valor/Mês</a></th>
+
+                    <th scope="col" style="cursor:default;"><a href="?order_by=valor_mensal">Valor/Mês</a></th>
+
                     <th scope="col" style="cursor:default;"><a href="?order_by=vencimento_atual">Vencimento</a></th>
                     <th scope="col" style="cursor:default;"><a href="?order_by=divida_atual_valor">Atraso</a></th>
-                    <th scope="col" style="cursor:default;" title="Recibos Entregues">
-                        <a href="?order_by=recibos_entregues_qtd">Recibos Entr.</a></th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by=contrato_atual">Nome</a></th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by=total_pg">Total Pago</a></th>
+                    <th scope="col" style="cursor:default;" title="Recibos Entregues"><a
+                            href="?order_by=recibos_entregues">Recibos Entr.</a></th>
+
+                    <th scope="col" style="cursor:default;"><a href="?order_by=nome_do_locatario">Nome</a></th>
+                    <th scope="col" style="cursor:default;"><a href="?order_by=total_quitado">Total Pago</a></th>
                     <th scope="col" style="cursor:default;" title="Tempo Transcorrido">
-                        <a href="?order_by=transcorrido_dias">Tempo</a></th>
+                        <a href="?order_by=dias_transcorridos">Tempo</a></th>
+
                 </tr>
 
 
                 </thead>
 
                 <tbody class="table-group-divider">
-                {% for imovel in page_obj %}
+                {% for contrato in page_obj %}
                 <tr>
                     <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
-                    <th scope="col" style="cursor:default;" title="{{ imovel.grupo }}">{{ imovel.nome }}</th>
-                    <th scope="col" style="cursor:default;" title="{{ imovel.com_locatario.nome }}">
-                        {{ imovel.com_locatario.primeiro_ultimo_nome }}
+                    <th scope="col" style="cursor:default;" title="No grupo: {{ contrato.fo_imovel.grupo }}">
+                        {{ contrato.do_imovel.nome }}
                     </th>
-                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.valor_format }}</th>
-                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.vencimento_atual_textual }}</th>
+                    <th scope="col" style="cursor:default;" title="{{ contrato.do_locatario.nome }}">
+                        {{ contrato.do_locatario.primeiro_ultimo_nome }}
+                    </th>
+                    <th scope="col" style="cursor:default;">{{ contrato.valor_format }}</th>
+                    <th scope="col" style="cursor:default;">{{ contrato.vencimento_atual_textual }}</th>
 
-                    {% if imovel.contrato_atual.divida_atual_valor.0 == 0 %}
+                    {% if contrato.divida_atual_valor.0 == 0 %}
                     <th>Em dia ✔️</th>
                     {% else %}
-                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.divida_atual_valor.1 }} /
-                        {{ imovel.contrato_atual.divida_atual_meses }}
-                        {% if imovel.contrato_atual.divida_atual_meses == 1 %}Mês{% else %}Meses{% endif %} ⭕
+                    <th scope="col" style="cursor:default;">{{ contrato.divida_atual_valor.1 }} /
+                        {{ contrato.divida_atual_meses }}
+                        {% if contrato.divida_atual_meses == 1 %}Mês{% else %}Meses{% endif %} ⭕
                     </th>
                     {% endif %}
-                    <th scope="col" style="cursor:default;">{{ imovel.contrato_atual.recibos_entregues_qtd }}
-                        de {{ imovel.contrato_atual.parcelas_pagas_qtd }}
-                        {% if imovel.contrato_atual.recibos_entregues_qtd >= imovel.contrato_atual.parcelas_pagas_qtd %}
+                    <th scope="col" style="cursor:default;">{{ contrato.recibos_entregues_qtd }}
+                        de {{ contrato.parcelas_pagas_qtd }}
+                        {% if contrato.recibos_entregues_qtd >= contrato.parcelas_pagas_qtd %}
                         ✔️
                         {% else %}
                         ⭕
                         {% endif %}
                     </th>
-                    <th scope="col" style="cursor:default;" title="{{ imovel.contrato_atual.nome_completo }}">
-                        {{ imovel.contrato_atual }}</th>
-                    <th scope="col" style="cursor:default;" title="{{ imovel.contrato_atual.title_pagou_parcelas }}">
-                        {{ imovel.contrato_atual.total_pg_format }} ({{ imovel.contrato_atual.parcelas_pagas_qtd }})
-                        de {{ imovel.contrato_atual.valor_do_contrato_format }} ({{ imovel.contrato_atual.duracao }})
+                    <th scope="col" style="cursor:default;" title="{{ contrato.nome_completo }}">
+                        {{ contrato }}
                     </th>
-                    {% if imovel.contrato_atual.transcorrido_dias|add:30 > imovel.contrato_atual.duracao_dias %}
+                    <th scope="col" style="cursor:default;" title="{{ contrato.title_pagou_parcelas }}">
+                        {{ contrato.total_pg_format }} ({{ contrato.parcelas_pagas_qtd }})
+                        de {{ contrato.valor_do_contrato_format }} ({{ contrato.duracao }})
+                    </th>
+                    {% if contrato.transcorrido_dias|add:30 > contrato.duracao_dias %}
                     <th scope="col" style="cursor:default;"
-                        title="O contrato está perto do vencimento. Vence em {{ imovel.contrato_atual.faltando_dias }} dias">
-                        {{ imovel.contrato_atual.transcorrido_dias }} de {{ imovel.contrato_atual.duracao_dias }} dias
-                        {% if imovel.contrato_atual.transcorrido_dias|add:30 > imovel.contrato_atual.duracao_dias %}
+                        title="O contrato está perto do vencimento. Vence em {{ contrato.faltando_dias }} dias">
+                        {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
+                        {% if contrato.transcorrido_dias|add:30 > contrato.duracao_dias %}
                         ⚠️
                         {% endif %}
                         {% else %}
-                        {% if imovel.contrato_atual.passou_do_limite %}
+                        {% if contrato.passou_do_limite %}
                     <th scope="col" style="cursor:default;"
-                        title="Vence em {{ imovel.contrato_atual.faltando_dias }} dias" class="text-warning">
-                        {{ imovel.contrato_atual.transcorrido_dias }} de {{ imovel.contrato_atual.duracao_dias }} dias
+                        title="Vence em {{ contrato.faltando_dias }} dias" class="text-warning">
+                        {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
                         {% else %}
                     <th scope="col" style="cursor:default;"
-                        title="Vence em {{ imovel.contrato_atual.faltando_dias }} dias">
-                        {{ imovel.contrato_atual.transcorrido_dias }} de {{ imovel.contrato_atual.duracao_dias }} dias
+                        title="Vence em {{ contrato.faltando_dias }} dias">
+                        {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
                         {% endif %}
                         {% endif %}
                     </th>
