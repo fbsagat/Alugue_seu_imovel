@@ -49,9 +49,9 @@ def visao_geral(request):
     if request.GET.get('order_by'):
         order_by = request.GET.get('order_by')
 
-    reverter = False
-    if 'ultima_busca' in request.session:
-        order_by = f'{"-" if request.GET.get("order_by") == request.session["ultima_busca"] else ""}{order_by}'
+    context['reverter'] = ''
+    if '-' not in order_by:
+        context['reverter'] = '-'
 
     if 'nome_do_locatario' in order_by:
         contratos = contratos.order_by(f'{"-" if "-" in order_by else ""}do_locatario__nome')
@@ -80,9 +80,6 @@ def visao_geral(request):
 
     usuario.vis_ger_ultim_order_by = order_by
     usuario.save(update_fields=['vis_ger_ultim_order_by', ])
-    request.session['ultima_busca'] = order_by
-    if reverter is True:
-        del request.session['ultima_busca']
     # Sistema de ordenação fim /\
 
     parametro_page = request.GET.get('page', '1')
