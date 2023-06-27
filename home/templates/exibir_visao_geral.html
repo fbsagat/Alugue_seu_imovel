@@ -27,26 +27,40 @@ Visão Geral / {{ SITE_NAME }}
              border-secondary table-striped">
                 <thead>
                 <tr>
-                    <td colspan="4" class="fw-bold">Imóvel</td>
-                    <td colspan="3" class="fw-bold">Mensalidade</td>
-                    <td colspan="3" class="fw-bold">Contrato</td>
+                    <td colspan="4" class="fw-bold" style="cursor:default;" title="Informações sobre o imóvel">Imóvel
+                    </td>
+                    <td colspan="3" class="fw-bold" style="cursor:default;"
+                        title="Informações sobre o pagamento mensal">Mensalidade
+                    </td>
+                    <td colspan="3" class="fw-bold" style="cursor:default;" title="Informações sobre o contrato">
+                        Contrato
+                    </td>
                 </tr>
                 <tr>
                     <th scope="col" style="cursor:default;">Nº</th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by={{ reverter }}nome_do_imovel">Nome</a></th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by={{ reverter }}nome_do_locatario">Com locatário</a>
+                    <th scope="col" style="cursor:default;" title="Nome do imóvel"><a
+                            href="?order_by={{ reverter }}nome_do_imovel">Nome</a></th>
+                    <th scope="col" style="cursor:default;" title="Locatário neste imóvel"><a
+                            href="?order_by={{ reverter }}nome_do_locatario">Com locatário</a>
                     </th>
 
-                    <th scope="col" style="cursor:default;"><a href="?order_by={{ reverter }}valor_mensal">Valor/Mês</a></th>
+                    <th scope="col" style="cursor:default;" title="Valor mensal do aluguel"><a
+                            href="?order_by={{ reverter }}valor_mensal">Valor/Mês</a></th>
 
-                    <th scope="col" style="cursor:default;"><a href="?order_by={{ reverter }}vencimento_atual">Vencimento</a></th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by={{ reverter }}divida_atual_valor">Atraso</a></th>
-                    <th scope="col" style="cursor:default;" title="Recibos Entregues"><a
+                    <th scope="col" style="cursor:default;" title="Vencimento da mensalidade"><a
+                            href="?order_by={{ reverter }}vencimento_atual">Vencimento</a></th>
+                    <th scope="col" style="cursor:default;"
+                        title="Valor atrasado até a data de hoje / Quantidade de meses não quitados"><a
+                            href="?order_by={{ reverter }}divida_atual_valor">Atraso</a></th>
+                    <th scope="col" style="cursor:default;" title="Recibos entregues do total de meses pagos"><a
                             href="?order_by={{ reverter }}recibos_entregues">Recibos Entr.</a></th>
 
-                    <th scope="col" style="cursor:default;"><a href="?order_by={{ reverter }}nome_do_locatario">Nome</a></th>
-                    <th scope="col" style="cursor:default;"><a href="?order_by={{ reverter }}total_quitado">Total Pago</a></th>
-                    <th scope="col" style="cursor:default;" title="Tempo Transcorrido">
+                    <th scope="col" style="cursor:default;" title="Nome do contrato"><a
+                            href="?order_by={{ reverter }}nome_do_locatario">Nome</a></th>
+                    <th scope="col" style="cursor:default;" title="Total pago deste contrato"><a
+                            href="?order_by={{ reverter }}total_quitado">Total
+                        Pago</a></th>
+                    <th scope="col" style="cursor:default;" title="Tempo transcorrido">
                         <a href="?order_by={{ reverter }}dias_transcorridos">Tempo</a></th>
 
                 </tr>
@@ -65,7 +79,9 @@ Visão Geral / {{ SITE_NAME }}
                         {{ contrato.do_locatario.primeiro_ultimo_nome }}
                     </th>
                     <th scope="col" style="cursor:default;">{{ contrato.valor_format }}</th>
-                    <th scope="col" style="cursor:default;">{{ contrato.vencimento_atual_textual }}</th>
+                    <th scope="col" style="cursor:default;" title="{{ contrato.vencimento_atual_textual.1 }}">
+                        {{ contrato.vencimento_atual_textual.0 }}
+                    </th>
 
                     {% if contrato.divida_atual_valor.0 == 0 %}
                     <th>Em dia ✔️</th>

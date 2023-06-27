@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from faker import Faker
-from random import randrange, choice, sample
+from random import randrange, choice
 
 from home.models import ImovGrupo, Locatario, Imovei, Contrato, Usuario, estados
 
@@ -10,8 +10,13 @@ locales = 'pt_BR'
 fake = Faker(locales)
 
 
+def porcentagem_de_chance(percentual):
+    zero_a_cem = randrange(0, 100)
+    return True if zero_a_cem <= percentual else False
+
+
 def contratos_ficticios(request, locador):
-    todos_locatarios = Locatario.objects.sem_imoveis().filter(do_locador=locador)
+    todos_locatarios = Locatario.objects.filter(do_locador=locador)
     do_locatario = choice(todos_locatarios)
 
     todos_imoveis = Imovei.objects.filter(do_locador=locador)
@@ -19,24 +24,31 @@ def contratos_ficticios(request, locador):
 
     count = 0
     while True:
-        dias = count + randrange(1, 100)
-        entrada1 = fake.date_between(datetime.now().date() + timedelta(days=-dias * 2),
-                                     datetime.now().date() + timedelta(days=-dias))
-        dias2 = count + randrange(1, 30)
-        entrada2 = fake.date_between(datetime.now().date() + timedelta(days=-dias2 - 5),
-                                     datetime.now().date() + timedelta(days=-dias2))
+        dias = count + randrange(90, 365)
+        passado = fake.date_between(datetime.now().date() - timedelta(days=dias * randrange(2, 5)),
+                                     datetime.now().date() - timedelta(days=dias))
 
-        entrada_novo = choice([entrada1, entrada2])
+        dias = count + randrange(10, 30)
+        presente = fake.date_between(datetime.now().date() - timedelta(days=dias * 2),
+                                    datetime.now().date() - timedelta(days=dias))
+        dias = count + randrange(30, 90)
+        futuro = fake.date_between(datetime.now().date() + timedelta(days=dias),
+                                    datetime.now().date() + timedelta(days=dias * 2))
 
-        duracao = randrange(4, 18) - count
-        if duracao == 0:
+        entrada_novo = presente if porcentagem_de_chance(75) else choice([passado, futuro])
+        # print(passado.strftime("%d/%m/%Y"), presente.strftime("%d/%m/%Y"), futuro.strftime("%d/%m/%Y"))
+        # print('escolhido:', entrada_novo.strftime("%d/%m/%Y"))
+        # print('')
+
+        duracao = randrange(3, 18) - count
+        if duracao <= 0:
             duracao = 1
 
         saida_novo = entrada_novo + relativedelta(months=duracao)
         contratos_deste_imovel = Contrato.objects.filter(do_imovel=do_imovel.pk)
         permitido = True
 
-        for n, contrato in enumerate(contratos_deste_imovel):
+        for contrato in contratos_deste_imovel:
             entrada_antigo = contrato.data_entrada
             saida_antigo = contrato.data_entrada + relativedelta(months=contrato.duracao)
 
@@ -59,17 +71,13 @@ def contratos_ficticios(request, locador):
         else:
             count += 1
 
-    zero_a_cem = randrange(0, 100)
-    probabilidade_percentual = 75
-    centavos = 0 if zero_a_cem <= probabilidade_percentual else randrange(10, 90, step=10)
-    reais = [randrange(500, 1200, step=150), randrange(700, 3400, step=180), randrange(700, 3400, step=130),
-             randrange(3400, 32000, step=1500)]
+    centavos = '00' if porcentagem_de_chance(70) else randrange(10, 95, step=5)
+    reais = [randrange(500, 1200, step=150), randrange(700, 3400, step=180), randrange(750, 3450, step=130),
+             randrange(3400, 12000, step=1500), randrange(520, 32460, step=100)]
     valor_mensal = f'{choice(reais)}{centavos}'
 
     dia_vencimento = randrange(1, 28)
-    zero_a_cem = randrange(0, 100)
-    probabilidade_percentual = 80
-    em_posse = True if zero_a_cem <= probabilidade_percentual else False
+    em_posse = True if porcentagem_de_chance(85) else False
 
     return {'do_locatario': do_locatario, 'do_imovel': do_imovel, 'data_entrada': data_entrada,
             'duracao': duracao, 'valor_mensal': valor_mensal, 'dia_vencimento': dia_vencimento, 'em_posse': em_posse}
@@ -96,7 +104,6 @@ def imov_grupo_fict():
     lista = ['Res.', 'Edf.', 'Conj.', 'Rua', 'Avenida', 'Bairro']
     siglas = choice(lista)
     nome = f'{siglas} {fake.bairro()}'
-
     return {'nome': nome}
 
 
@@ -137,17 +144,14 @@ def pagamentos_ficticios():
         ao_contrato = contrato_escolhido
         valor_mensal = int(contrato_escolhido.valor_mensal)
         chance_aleatoria = randrange(valor_mensal // 3, valor_mensal)
-        zero_a_cem = randrange(0, 100)
-        probabilidade_percentual = 75
-        valor_sorteado = valor_mensal if zero_a_cem <= probabilidade_percentual else chance_aleatoria
+        valor_sorteado = valor_mensal if porcentagem_de_chance(75) else chance_aleatoria
         valor_pago = str(valor_sorteado if valor_sorteado < int(contrato_escolhido.falta_pg()) else int(
             contrato_escolhido.falta_pg()))
-        entrada = contrato_escolhido.data_entrada
-        data_pagamento = fake.date_between(entrada, datetime.today())
+        data_pagamento = fake.date_between(contrato_escolhido.data_entrada, contrato_escolhido.data_saida())
         pix_vista = randrange(0, 1)
         todas = randrange(0, 4)
-        forma = choice([pix_vista, pix_vista, todas])
-        recibo = choice([True, False])
+        forma = pix_vista if porcentagem_de_chance(65) else todas
+        recibo = True if porcentagem_de_chance(60) else False
     else:
         return None
 
@@ -169,13 +173,10 @@ def anotacoes_ficticias():
     titulo = fake.paragraph(nb_sentences=1)
     data_registro = fake.date_between(datetime.today() + timedelta(days=-80), datetime.today())
     texto = fake.paragraph(nb_sentences=randrange(6, 7))
-    zero_a_cem = randrange(0, 100)
-    probabilidade_percentual_tarefa = 50
-    tarefa = True if zero_a_cem <= probabilidade_percentual_tarefa else False
+    tarefa = True if porcentagem_de_chance(50) else False
     feito = False
     if tarefa:
-        probabilidade_percentual_feito = 25
-        feito = True if zero_a_cem <= probabilidade_percentual_feito else False
+        feito = True if porcentagem_de_chance(25) else False
 
     return {'titulo': titulo, 'data_registro': data_registro, 'texto': texto, 'tarefa': tarefa, 'feito': feito}
 
@@ -198,13 +199,10 @@ def sugestoes_ficticias():
         count += 1
     likes = alguns_usuarios
 
-    zero_a_cem = randrange(0, 100)
-    probabilidade_percentual = 75
-    aprovada = True if zero_a_cem <= probabilidade_percentual else False
+    aprovada = True if porcentagem_de_chance(75) else False
     implementada = False
     if aprovada:
-        probabilidade_percentual = 45
-        implementada = True if zero_a_cem <= probabilidade_percentual else False
+        implementada = True if porcentagem_de_chance(45) else False
 
     dias = randrange(1, 100)
     data_implementada = fake.date_between(datetime.now().date() + timedelta(days=-dias * 2),

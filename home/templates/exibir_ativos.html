@@ -14,14 +14,15 @@ Itens Ativos / {{ SITE_NAME }}
 <div class="container-fluid pt-1 text-center text-justify">
     <br>
     <div class="container-xxl">
-        <p class="fs-3">Você tem {{ imoveis_qtd }} Imóve{% if imoveis_qtd < 1 %}l{% else %}is{% endif %} Ativos:</p>
+        <p class="fs-3">Você tem {{ imoveis_qtd }} Imóve{% if imoveis_qtd < 1 %}l{% else %}is{% endif %}
+            Ativo{% if imoveis_qtd > 1 %}s{% endif %}:</p>
         <br>
         <div class="row row-cols-5 row-cols-md-3 g-3">
             {% for imovel in imoveis %}
             <div class="col">
                 <div class="card bg-black bg-opacity-75 border-secondary h-100">
-                    <div class="card-header text-decoration-underline fs-5">{{ page_obj.start_index|add:forloop.counter0 }}.
-                        {{ imovel.nome }} - {{ imovel.grupo }}
+                    <div class="card-header text-decoration-underline fs-5">
+                        {{ page_obj.start_index|add:forloop.counter0 }}. {{ imovel.nome }} - {{ imovel.grupo }}
                     </div>
                     <div class="card-body">
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">END.:
@@ -61,14 +62,15 @@ Itens Ativos / {{ SITE_NAME }}
 <div class="container-fluid pt-1  text-center text-justify">
     <br>
     <div class="container-xxl">
-        <p class="fs-3">Você tem {{ locatario_qtd }} Locatário{% if locatario_qtd > 1 %}s{% endif %} Ativos:</p>
+        <p class="fs-3">Você tem {{ locatario_qtd }} Locatário{% if locatario_qtd > 1 %}s{% endif %}
+            Ativo{% if locatario_qtd > 1 %}s{% endif %}:</p>
         <br>
         <div class="row row-cols-5 row-cols-md-3 g-3">
             {% for locatario in locatarios %}
             <div class="col">
                 <div class="card bg-black bg-opacity-75 border-secondary h-100">
-                    <div class="card-header text-decoration-underline fs-5">{{ page_obj.start_index|add:forloop.counter0 }}.
-                        {{ locatario.nome }}
+                    <div class="card-header text-decoration-underline fs-5">
+                        {{ page_obj.start_index|add:forloop.counter0 }}. {{ locatario.nome }}
                     </div>
                     <div class="card-body">
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">
@@ -114,15 +116,16 @@ Itens Ativos / {{ SITE_NAME }}
 <div class="container-fluid pt-1 text-center text-justify">
     <br>
     <div class="container-xxl">
-        <p class="fs-3">Você tem {{ contrato_qtd }} Contrato{% if contrato_qtd > 1 %}s{% endif %} Ativos:</p>
+        <p class="fs-3">Você tem {{ contrato_qtd }} Contrato{% if contrato_qtd > 1 %}s{% endif %}
+            Ativo{% if contrato_qtd > 1 %}s{% endif %}:</p>
         <br>
         <div class="row row-cols-5 row-cols-md-3 g-3">
             {% for contrato in contratos %}
             <div class="col">
                 <div class="card bg-black bg-opacity-75 border-secondary h-100">
 
-                    <div class="card-header text-decoration-underline fs-5">{{ page_obj.start_index|add:forloop.counter0 }}.
-                        {{ contrato }}
+                    <div class="card-header text-decoration-underline fs-5">
+                        {{ page_obj.start_index|add:forloop.counter0 }}. {{ contrato }}
                     </div>
                     <div class="card-body">
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">DO IMOVEL:</span>
@@ -131,7 +134,8 @@ Itens Ativos / {{ SITE_NAME }}
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">DE:</span>
                             {{ contrato.data_entrada|date:"d/m/Y" }}
                             <span class="fw-bold text-primary text-opacity-75">ATÉ:</span>
-                            {{ contrato.data_saida|date:"d/m/Y" }} ({{ contrato.duracao }} meses)</p>
+                            {{ contrato.data_saida|date:"d/m/Y" }} ({{ contrato.duracao }}
+                            {% if contrato.duracao > 1 %}meses){% else %}mês){% endif %}</p>
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">MENSALIDADE:</span>
                             {{ contrato.valor_format }}
                             <span class="fw-bold text-primary text-opacity-75">VENCIMENTO DIA:</span>

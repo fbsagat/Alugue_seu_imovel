@@ -1,4 +1,4 @@
-import random, string
+import random, string, math
 from datetime import datetime, timedelta
 
 from dateutil.relativedelta import relativedelta
@@ -154,6 +154,8 @@ class LocatariosManager(models.Manager):
         return self.exclude(com_imoveis__isnull=False)
 
     def nao_temporarios(self):
+        # Locations cadastrados pelos usurious, não que se cadastraram pelo link(Portanto seus cadastros
+        # estão no modo temporário(para aprovação))
         return self.exclude(temporario=True)
 
 
@@ -314,7 +316,7 @@ class Imovei(models.Model):
         return f'{self.endereco_base()} - {self.cidade}/{self.estado}, {self.f_cep()}'
 
     def receita_acumulada(self):
-        parcelas = Parcela.objects.filter(do_imovel=self)
+        parcelas = Parcela.objects.filter(do_imovel=self, apagada=False)
         total = 0
         for parcela in parcelas:
             total += int(parcela.tt_pago)
@@ -407,16 +409,11 @@ class Contrato(models.Model):
         return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
 
     def total_quitado(self):
-        valor = Parcela.objects.filter(do_contrato=self).values_list('tt_pago')
-        if settings.USAR_DB == 1:
-            valor = valor.aggregate(Sum('tt_pago'))
-            return valor['tt_pago__sum'] or 0
-        elif settings.USAR_DB == 2 or settings.USAR_DB == 3:
-            array = valor.aggregate(arr=ArrayAgg('tt_pago'))
-            t = 0
-            for _ in array['arr']:
-                t += int(_)
-            return t or 0
+        valores = Pagamento.objects.filter(ao_contrato=self).values_list('valor_pago')
+        valor_tt = 0
+        for valor in valores:
+            valor_tt += int(valor[0])
+        return valor_tt
 
     def total_pg_format(self):
         if self.total_quitado() is None:
@@ -479,12 +476,8 @@ class Contrato(models.Model):
         return x
 
     def parcelas_pagas_qtd(self):
-        parcelas = Parcela.objects.filter(do_contrato=self)
-        count = 0
-        for parcela in parcelas:
-            if parcela.esta_pago() is True:
-                count += 1
-        return count
+        numero = self.pagamento_total() / int(self.valor_mensal)
+        return int(round(numero, 0))
 
     def quitado(self):
         return True if self.total_quitado() == int(self.valor_do_contrato()) else False
@@ -509,7 +502,7 @@ class Contrato(models.Model):
         return num2words(self.dia_vencimento, lang='pt_BR')
 
     def vencimento_atual(self):
-        parcela_n_kit = Parcela.objects.filter(do_contrato=self).order_by('data_pagm_ref')
+        parcela_n_kit = Parcela.objects.filter(do_contrato=self, apagada=False).order_by('data_pagm_ref')
         parcelas = []
         for parcela in parcela_n_kit:
             if int(parcela.tt_pago) < int(self.valor_mensal) or int(parcela.tt_pago) == 0:
@@ -517,7 +510,8 @@ class Contrato(models.Model):
         return parcelas[0].data_pagm_ref if parcelas else None
 
     def vencimento_atual_textual(self):
-        txt = '---'
+        txt = '📃✔️'
+        title = 'O contrato está quitado'
         if self.vencimento_atual() is not None:
             hoje = datetime.today().date()
             vencim_atual = self.vencimento_atual()
@@ -525,18 +519,23 @@ class Contrato(models.Model):
             delta2 = vencim_atual - hoje
             if vencim_atual == hoje + relativedelta(days=-1):
                 txt = f'Venceu ontem ({vencim_atual.strftime("%d/%m/%Y")})'
+                title = ''
             elif vencim_atual < hoje + relativedelta(days=-1):
                 txt = f'Venceu em {vencim_atual.strftime("%d/%m/%Y")} ({delta.days} dias atrás)'
+                title = ''
             elif vencim_atual == hoje:
                 txt = f'Vence hoje ({vencim_atual.strftime("%d/%m/%Y")})'
+                title = ''
             elif vencim_atual == hoje + relativedelta(days=+1):
                 txt = f'Vencerá amanhã ({vencim_atual.strftime("%d/%m/%Y")})'
+                title = ''
             elif vencim_atual > hoje + relativedelta(days=+1):
                 txt = f'Vencerá em {vencim_atual.strftime("%d/%m/%Y")} (em {delta2.days} dias)'
-        return txt
+                title = ''
+        return txt, title
 
     def divida_atual_meses(self):
-        parcelas = Parcela.objects.filter(do_contrato=self, data_pagm_ref__lte=datetime.today().date())
+        parcelas = Parcela.objects.filter(do_contrato=self, apagada=False, data_pagm_ref__lte=datetime.today().date())
         parcelas_vencidas_n_quitadas = 0
         for parcela in parcelas:
             if int(parcela.tt_pago) < int(self.valor_mensal):
@@ -544,10 +543,10 @@ class Contrato(models.Model):
         return parcelas_vencidas_n_quitadas
 
     def divida_atual_valor(self):
-        parcelas = Parcela.objects.filter(do_contrato=self, data_pagm_ref__lte=datetime.today().date())
+        parcelas = Parcela.objects.filter(do_contrato=self, apagada=False, data_pagm_ref__lte=datetime.today().date())
         parcelas_vencidas_n_quitadas = []
         for parcela in parcelas:
-            if int(parcela.tt_pago) < int(self.valor_mensal):
+            if int(parcela.tt_pago) < int(self.valor_mensal) and parcela.apagada is False:
                 parcelas_vencidas_n_quitadas.append(int(parcela.tt_pago))
         soma_tt_pg = sum([i for i in parcelas_vencidas_n_quitadas])
         valor = (len(parcelas_vencidas_n_quitadas) * int(self.valor_mensal)) - (int(soma_tt_pg) if soma_tt_pg else 0)
@@ -655,7 +654,8 @@ class Parcela(models.Model):
 
     def posicao(self):
         try:
-            parcelas = list(Parcela.objects.filter(do_contrato=self.do_contrato).values_list('pk', flat=True))
+            parcelas = list(
+                Parcela.objects.filter(do_contrato=self.do_contrato, apagada=False).values_list('pk', flat=True))
             parcela = self.pk
             return parcelas.index(parcela) + 1
         except:

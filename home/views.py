@@ -259,7 +259,8 @@ class LocatariosAtivos(LoginRequiredMixin, ListView):
         self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
         ativo_tempo = []
         for obj in self.object_list:
-            ativo_tempo.append(obj.do_locatario)
+            if obj.do_locatario not in ativo_tempo:
+                ativo_tempo.append(obj.do_locatario)
         return ativo_tempo
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -701,9 +702,9 @@ def tabela(request):
 
     # Cria os meses a partir da mes atual do usuario para escolher no form
     meses = []
-    mes_inicial = datetime.now().date().replace(day=1) - relativedelta(months=3)
+    mes_inicial = datetime.now().date().replace(day=1) - relativedelta(months=4)
 
-    for mes in range(7):
+    for mes in range(9):
         meses.append(
             (mes, str(data_ptbr(mes_inicial + relativedelta(months=mes), "F/Y"))))
 
@@ -717,7 +718,7 @@ def tabela(request):
         meses_qtd = usuario.tabela_meses_qtd
         imov_qtd = usuario.tabela_imov_qtd
     else:
-        form = FormTabela(initial={'mes': 3})
+        form = FormTabela(initial={'mes': 4})
         a_partir_de = datetime.now().date().replace(day=1)
         meses_qtd = 7
         imov_qtd = 10
@@ -730,7 +731,7 @@ def tabela(request):
             usuario.tabela_meses_qtd = int(form.cleaned_data['mostrar_qtd'])
             usuario.tabela_imov_qtd = int(form.cleaned_data['itens_qtd'])
             usuario.save(update_fields=["tabela_ultima_data_ger", 'tabela_meses_qtd', 'tabela_imov_qtd'])
-            a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=3 - int(form.cleaned_data['mes']))
+            a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=4 - int(form.cleaned_data['mes']))
             meses_qtd = int(form.cleaned_data['mostrar_qtd'])
             imov_qtd = int(form.cleaned_data['itens_qtd'])
 
@@ -745,6 +746,7 @@ def tabela(request):
     datas = []
     for imovel in range(0, meses_qtd):
         datas.append(str(data_ptbr(a_partir_de + relativedelta(months=imovel), "F/Y")).title())
+    print(datas)
 
     # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
     parcelas = Parcela.objects.filter(do_usuario=usuario, apagada=False,
@@ -1913,29 +1915,29 @@ def botaoteste(request):
             messages.error(request, "Primeiro crie imóveis e locatários")
 
     if executar == 4 or executar == 100:
-        pagamentos_fic = pagamentos_ficticios()
-        if pagamentos_fic is not None:
             if Contrato.objects.filter(do_locador=usuario).count() > 0:
                 count = 0
                 for x in range(fict_multi * fict_qtd['pagamento']):
-                    count += 1
-                    aleatorio = pagamentos_fic
-                    form = FormPagamento(usuario)
-                    pagamento = form.save(commit=False)
-                    locatario = Contrato.objects.get(pk=aleatorio.get('ao_contrato').pk).do_locatario
-                    pagamento.ao_locador = usuario
-                    pagamento.do_locatario = locatario
-                    pagamento.ao_contrato = aleatorio.get('ao_contrato')
-                    pagamento.valor_pago = aleatorio.get('valor_pago')
-                    pagamento.data_pagamento = aleatorio.get('data_pagamento')
-                    pagamento.forma = aleatorio.get('forma')
-                    pagamento.recibo = aleatorio.get('recibo')
-                    pagamento.save()
+                    pagamentos_fic = pagamentos_ficticios()
+                    if pagamentos_fic is not None:
+                        count += 1
+                        aleatorio = pagamentos_fic
+                        form = FormPagamento(usuario)
+                        pagamento = form.save(commit=False)
+                        locatario = Contrato.objects.get(pk=aleatorio.get('ao_contrato').pk).do_locatario
+                        pagamento.ao_locador = usuario
+                        pagamento.do_locatario = locatario
+                        pagamento.ao_contrato = aleatorio.get('ao_contrato')
+                        pagamento.valor_pago = aleatorio.get('valor_pago')
+                        pagamento.data_pagamento = aleatorio.get('data_pagamento')
+                        pagamento.forma = aleatorio.get('forma')
+                        pagamento.recibo = aleatorio.get('recibo')
+                        pagamento.save()
+                    else:
+                        messages.error(request, "Todos os contratos já estão 100% pagos")
                 messages.success(request, f"Criados {count} pagamentos")
             else:
                 messages.error(request, "Primeiro crie contratos")
-        else:
-            messages.error(request, "Todos os contratos já estão 100% pagos")
 
     if executar == 5 or executar == 100:
         if Imovei.objects.filter(do_locador=usuario).count() > 0:

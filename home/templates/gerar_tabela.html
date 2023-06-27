@@ -22,7 +22,13 @@ Gerar Tabela / {{ SITE_NAME }}
         <div
                 class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
             <div class="p-1">
+                Configurações da tabela:
+            </div>
+            <div class="p-1">
                 Selecione o mês de inicio: {{ form.mes|as_crispy_field }}
+            </div>
+            <div class="p-1">
+                Configurações das páginas:
             </div>
             <div class="p-1" style="cursor:default;" title="Seleciona a quantidade máxima de imóveis por página">
                 Imóv. qtd.: {{ form.itens_qtd|as_crispy_field }}

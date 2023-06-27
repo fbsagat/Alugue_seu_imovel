@@ -399,13 +399,13 @@ class FormRecibos(forms.Form):
 
 
 class FormTabela(forms.Form):
-    meses = [(0, '...'), (1, '...'), (2, '...'), (3, '...'), (4, '...'), (5, '...'), (6, '...')]
+    meses = [(0, '...'), (1, '...'), (2, '...'), (3, '...'), (4, '...'), (5, '...'), (6, '...'), (7, '...'), (8, '...')]
     mostrar = [(4, '4'), (5, '5'), (6, '6'), (7, '7')]
     itens = [(6, '6'), (7, '7'), (8, '8'), (9, '9'), (10, '10')]
 
     mes = forms.ChoiceField(label='', initial='', choices=meses, required=True)
-    mostrar_qtd = forms.ChoiceField(label='', initial=7, choices=mostrar, required=True)
     itens_qtd = forms.ChoiceField(label='', initial=10, choices=itens, required=True)
+    mostrar_qtd = forms.ChoiceField(label='', initial=7, choices=mostrar, required=True)
 
 
 class FormAdmin(forms.Form):
