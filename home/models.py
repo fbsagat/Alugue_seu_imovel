@@ -378,10 +378,6 @@ class Contrato(models.Model):
         return f'({self.do_locatario.primeiro_ultimo_nome()}-{self.do_imovel.nome}-' \
                f'{self.data_entrada.strftime("%m/%Y")})'
 
-    # def nome_curto(self):
-    #     return f'({self.do_locatario.primeiro_ultimo_nome()} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
-    #            f'{self.codigo})'
-
     def nome_completo(self):
         return f'{self.do_locatario.nome} - {self.do_imovel} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \
                f'({self.codigo})'
@@ -445,10 +441,10 @@ class Contrato(models.Model):
         return True if self.data_entrada <= hoje <= self.data_saida() else False
 
     def periodo_ativo_futuramente(self):
-        return True if self.data_entrada >= datetime.today().date() else False
+        return True if self.data_entrada > datetime.today().date() else False
 
-    def periodo_ativo_45_dias_atras(self):
-        return True if self.data_saida() >= datetime.today().date() + timedelta(days=-45) else False
+    def periodo_ativo_xx_dias_atras(self, dias=45):
+        return True if self.data_saida() >= datetime.today().date() + timedelta(days=-dias) else False
 
     def pagamento_total(self):
         pagamentos = Pagamento.objects.filter(ao_contrato=self.pk).values('valor_pago')

@@ -257,11 +257,11 @@ class LocatariosAtivos(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
-        ativo_tempo = []
+        ativo = []
         for obj in self.object_list:
-            if obj.do_locatario not in ativo_tempo:
-                ativo_tempo.append(obj.do_locatario)
-        return ativo_tempo
+            if obj.do_locatario not in ativo:
+                ativo.append(obj.do_locatario)
+        return ativo
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(LocatariosAtivos, self).get_context_data(**kwargs)
@@ -746,7 +746,6 @@ def tabela(request):
     datas = []
     for imovel in range(0, meses_qtd):
         datas.append(str(data_ptbr(a_partir_de + relativedelta(months=imovel), "F/Y")).title())
-    print(datas)
 
     # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
     parcelas = Parcela.objects.filter(do_usuario=usuario, apagada=False,
@@ -1414,7 +1413,7 @@ class Contratos(LoginRequiredMixin, ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_entrada')
+        self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_registro')
         return self.object_list
 
     def get_context_data(self, *, object_list=True, **kwargs):
