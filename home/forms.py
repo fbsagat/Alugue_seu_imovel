@@ -186,7 +186,7 @@ class FormLocatario(forms.ModelForm):
     class Meta:
         model = Locatario
         fields = '__all__'
-        exclude = ['do_locador', 'com_imoveis', 'com_contratos', 'data_registro', 'temporario', 'da_tarefa']
+        exclude = ['do_locador', 'data_registro', 'temporario', 'da_tarefa']
 
     def __init__(self, *args, usuario, **kwargs):
         super(FormLocatario, self).__init__(*args, **kwargs)
@@ -334,7 +334,7 @@ class FormImovel(forms.ModelForm):
     class Meta:
         model = Imovei
         fileds = '__all__'
-        exclude = ['do_locador', 'com_locatario', 'contrato_atual', 'data_registro']
+        exclude = ['do_locador', 'com_locatario', 'data_registro']
 
     def __init__(self, user, *args, **kwargs):
         super(FormImovel, self).__init__(*args, **kwargs)

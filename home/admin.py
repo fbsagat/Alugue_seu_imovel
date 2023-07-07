@@ -32,8 +32,7 @@ class UsuarioAdmin(admin.ModelAdmin):
 
 @admin.register(Locatario)
 class LocatarioAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'do_locador', 'telefone1', 'telefone2', 'email', 'docs',
-                    'data_registro', 'estadocivil')
+    list_display = ('nome', 'do_locador', 'telefone1', 'telefone2', 'email', 'docs', 'data_registro', 'estadocivil')
     search_fields = ('nome',)
 
 
@@ -45,7 +44,7 @@ class ImovGrupoAdmin(admin.ModelAdmin):
 
 @admin.register(Imovei)
 class ImoveisAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'do_locador', 'com_locatario', 'contrato_atual', 'grupo', 'data_registro')
+    list_display = ('nome', 'do_locador', 'grupo', 'contrato_atual', 'com_locatario', 'data_registro')
     search_fields = ('nome', 'grupo')
 
 

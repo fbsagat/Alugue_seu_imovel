@@ -154,15 +154,13 @@ class LocatariosManager(models.Manager):
         return self.exclude(com_imoveis__isnull=False)
 
     def nao_temporarios(self):
-        # Locations cadastrados pelos usurious, não que se cadastraram pelo link(Portanto seus cadastros
+        # Locations cadastrados pelos usuários, não que se cadastraram pelo link(Portanto seus cadastros
         # estão no modo temporário(para aprovação))
         return self.exclude(temporario=True)
 
 
 class Locatario(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
-    com_imoveis = models.ManyToManyField('Imovei', blank=True)
-    com_contratos = models.ManyToManyField('Contrato', blank=True)
     da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
@@ -195,7 +193,23 @@ class Locatario(models.Model):
 
     def __str__(self):
         return f'{self.nome}'
-        return f'{self.nome}'
+
+    def com_contratos(self):
+        contratos = Contrato.objects.filter(do_locador=self.do_locador, do_locatario=self)
+        return contratos or None
+
+    def com_imoveis(self):
+        contratos = self.com_contratos()
+        contratos_ativos = []
+        for contrato in contratos:
+            if contrato.periodo_ativo_hoje():
+                contratos_ativos.append(contrato)
+        if contratos_ativos:
+            imoveis_pk = [contrato.do_imovel.pk for contrato in contratos_ativos]
+            imoveis = Imovei.objects.filter(pk__in=imoveis_pk)
+            return imoveis
+        else:
+            return None
 
     def primeiro_ultimo_nome(self):
         return f'{self.nome.split()[:1][0]} {self.nome.split()[len(self.nome.split()) - 1:][0]}'
@@ -269,8 +283,6 @@ estados = (
 
 class Imovei(models.Model):
     do_locador = models.ForeignKey('Usuario', blank=False, on_delete=models.CASCADE)
-    com_locatario = models.ForeignKey('Locatario', blank=True, null=True, on_delete=models.SET_NULL)
-    contrato_atual = models.OneToOneField('Contrato', blank=True, null=True, on_delete=models.SET_NULL)
     grupo = models.ForeignKey('ImovGrupo', blank=True, null=True, on_delete=models.SET_NULL)
 
     nome = models.CharField(max_length=25, blank=False, verbose_name='Rótulo')
@@ -299,6 +311,20 @@ class Imovei(models.Model):
 
     def __str__(self):
         return f'{self.nome} ({self.grupo})'
+
+    def contrato_atual(self):
+        contratos = Contrato.objects.filter(do_locador=self.do_locador, do_imovel=self)
+        for contrato in contratos:
+            if contrato.periodo_ativo_hoje():
+                return contrato
+            else:
+                return None
+
+    def com_locatario(self):
+        if self.contrato_atual():
+            return self.contrato_atual().do_locatario
+        else:
+            return None
 
     def nogrupo(self):
         return '' if self.grupo is None else self.grupo

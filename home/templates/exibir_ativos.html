@@ -39,7 +39,7 @@ Itens Ativos / {{ SITE_NAME }}
                         <br>
                         <hr>
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">COM:</span>
-                            {{ imovel.com_locatario }}</p>
+                            {{ imovel.contrato_atual.do_locatario }}</p>
                         <p><span class="fw-bold text-primary text-opacity-75">CONTRATO:
                         </span> {{ imovel.contrato_atual }}</p>
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">DE:</span>
@@ -128,6 +128,8 @@ Itens Ativos / {{ SITE_NAME }}
                         {{ page_obj.start_index|add:forloop.counter0 }}. {{ contrato }}
                     </div>
                     <div class="card-body">
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">DO LOCATARIO:</span>
+                            {{contrato.do_locatario }}
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">DO IMOVEL:</span>
                             {{contrato.do_imovel.nome }} - ({{contrato.do_imovel.grupo }}) -
                             End.: {{contrato.do_imovel.endereco_base }}</p>

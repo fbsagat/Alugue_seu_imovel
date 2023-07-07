@@ -133,24 +133,6 @@ def locatario_post_save(sender, instance, **kwargs):
 def contrato_post_save(sender, instance, created, **kwargs):
     # Pega os dados para tratamento:
     contrato = Contrato.objects.get(pk=instance.pk)
-    imovel = Imovei.objects.get(pk=contrato.do_imovel.pk)
-
-    # Remove locador do imóvel quando um contrato fica inativo e adiciona quando fica ativo:
-    locatario = Locatario.objects.get(pk=contrato.do_locatario.pk)
-    if contrato.em_posse is True and contrato.rescindido is False and contrato.periodo_ativo_hoje() is True:
-        locatario.com_imoveis.add(imovel)
-        locatario.com_contratos.add(contrato)
-        imovel.com_locatario = locatario
-        imovel.contrato_atual = contrato
-        imovel.save()
-        locatario.save()
-    else:
-        locatario.com_imoveis.remove(imovel)
-        locatario.com_contratos.remove(contrato)
-        imovel.com_locatario = None
-        imovel.contrato_atual = None
-        imovel.save()
-        locatario.save()
 
     if created:
         # Gera as parcelas quando o contrato é criado:
@@ -302,19 +284,6 @@ def sugestao_pre_save(sender, instance, **kwargs):
 @transaction.atomic
 @receiver(pre_delete, sender=Contrato)
 def contrato_pre_delete(sender, instance, **kwards):
-    # Pega os dados para tratamento:
-    contrato = Contrato.objects.get(pk=instance.pk)
-    imovel = Imovei.objects.get(pk=contrato.do_imovel.pk)
-    locatario = Locatario.objects.get(pk=contrato.do_locatario.pk)
-
-    # Remove locador do imóvel quando deleta um contrato
-    if imovel.com_locatario is True:
-        locatario.com_imoveis.remove(imovel)
-        locatario.com_contratos.remove(contrato)
-        imovel.com_locatario = None
-        imovel.contrato_atual = None
-        imovel.save()
-        locatario.save()
     # Apagar a tarefa desta anotação
     if instance.da_tarefa:
         instance.da_tarefa.delete()

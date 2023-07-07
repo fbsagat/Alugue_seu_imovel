@@ -57,6 +57,8 @@ Ok. (fiz só visualmente no front) Renomear tarefas para notificações de novo 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
+Ja ta na hora de instalar o celery e começar a usar.
+
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados, bem como, botão de restaurar.
 Criar o sistema de importação dos dados em um clique da planilha do prédio para o site.
 
