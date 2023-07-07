@@ -1027,7 +1027,7 @@ def gerar_contrato(request):
                  'contrato_anterior-periodo':
                      str(getattr(contrato_anterior, 'duracao') or erro2) if contrato_anterior else erro3,
                  'contrato_anterior-periodo_por_extenso':
-                     str(contrato_anterior.duracao_por_extenso() or erro2) if contrato_anterior else erro3,
+                     str(contrato_anterior.duracao_meses_por_extenso() or erro2) if contrato_anterior else erro3,
 
                  'imovel_rotulo': getattr(imovel, 'nome') or erro4,
                  'imovel_uc_energia': getattr(imovel, 'uc_energia') or erro4,

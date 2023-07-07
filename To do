@@ -57,17 +57,17 @@ Ok. (fiz só visualmente no front) Renomear tarefas para notificações de novo 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-Ja ta na hora de instalar o celery e começar a usar.
-
-Criar um botão de painel com configurações diversas e botão de backup de todos os dados, bem como, botão de restaurar.
 Criar o sistema de importação dos dados em um clique da planilha do prédio para o site.
+Implementar filtros/buscas nas paginas do botão histórico.
 
-Fazer um sistema de configurações do fake test em settings.
+Ja ta na hora de instalar o celery e começar a usar.
+Criar um botão de painel com configurações diversas e botão de backup de todos os dados, bem como, botão de restaurar.
+Fazer um sistema de configurações do fake test em settings / criar o multiplicador no botão de gerar fakes, eliminando
+        o FICT_QTD em settings.
 Criar o sistema de rentabilização do site.
 Lembretes: Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias).
 Criar a função comunidade no editor de modelos.
-Implementar filtros/buscas nas paginas do botão histórico.
 Adaptar o site para celulares.
 Mostrar no visão geral o total por grupo de imóveis e por tipo.
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
