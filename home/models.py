@@ -1,17 +1,14 @@
-import random, string, math
+import random, string, secrets
 from datetime import datetime, timedelta
 
 from dateutil.relativedelta import relativedelta
 from num2words import num2words
 
-from Alugue_seu_imovel import settings
-from django.db.models.aggregates import Sum
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator, MinValueValidator, \
     MaxValueValidator, FileExtensionValidator
 from django.db import models
 from django.urls import reverse
 from django.template.defaultfilters import date as data_ptbr
-from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.auth.models import AbstractUser
@@ -31,15 +28,25 @@ estados_civis = (
 
 def user_uuid():
     con_codigo = ''.join(
-        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
+        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
     return f'{con_codigo[:10]}'
 
 
 def parcela_uuid():
     recibo_codigo = ''.join(
-        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
         range(6))
     return f'{recibo_codigo[:3]}-{recibo_codigo[3:]}'
+
+
+# Gerar o código para o contrato:
+def gerar_codigo_contrato():
+    codigos_existentes = list(Contrato.objects.all().values("codigo").values_list('codigo', flat=True))
+    while True:
+        con_codigo = ''.join(
+            secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
+        if con_codigo not in codigos_existentes:
+            return f'{con_codigo[:5]}-{con_codigo[5:]}'
 
 
 class Usuario(AbstractUser):
@@ -164,7 +171,7 @@ class Locatario(models.Model):
     da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
-    docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', blank=True,
+    docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', null=True, blank=True,
                              verbose_name='Documentos', validators=[tratar_imagem, FileExtensionValidator])
     RG = models.CharField(max_length=9, null=False, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
@@ -175,10 +182,10 @@ class Locatario(models.Model):
     telefone1 = models.CharField(max_length=11, blank=False, verbose_name='Telefone 1',
                                  help_text='Celular/Digite apenas números',
                                  validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
-    telefone2 = models.CharField(max_length=11, blank=True, verbose_name='Telefone 2',
+    telefone2 = models.CharField(max_length=11, null=True, blank=True, verbose_name='Telefone 2',
                                  help_text='Celular/Digite apenas números',
                                  validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
-    email = models.EmailField(max_length=45, blank=True)
+    email = models.EmailField(max_length=45, null=True, blank=True)
     nacionalidade = models.CharField(max_length=40, blank=False, default='Brasileiro(a)')
     estadocivil = models.IntegerField(blank=False, verbose_name='Estado Civil', choices=estados_civis)
     data_registro = models.DateTimeField(auto_now_add=True)
@@ -291,13 +298,13 @@ class Imovei(models.Model):
     endereco = models.CharField(max_length=150, blank=False, verbose_name='Endereço')
     numero = models.IntegerField(blank=False,
                                  validators=[MinValueValidator(1), MaxValueValidator(999999), apenas_numeros])
-    complemento = models.CharField(max_length=80, blank=True)
+    complemento = models.CharField(max_length=80, null=True, blank=True)
     bairro = models.CharField(max_length=30, blank=False)
     cidade = models.CharField(max_length=30, blank=False)
     estado = models.CharField(max_length=2, blank=False, choices=estados)
-    uc_energia = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Energia',
+    uc_energia = models.CharField(max_length=15, null=True, blank=True, verbose_name='Matrícula de Energia',
                                   validators=[MinLengthValidator(4), MaxLengthValidator(15)])
-    uc_agua = models.CharField(max_length=15, blank=True, verbose_name='Matrícula de Saneamento',
+    uc_agua = models.CharField(max_length=15, null=True, blank=True, verbose_name='Matrícula de Saneamento',
                                validators=[MinLengthValidator(4), MaxLengthValidator(15)])
     data_registro = models.DateTimeField(default=datetime.now)
     objects = ImoveiManager()
@@ -336,7 +343,8 @@ class Imovei(models.Model):
         return cep_format(self.cep)
 
     def endereco_base(self):
-        return f'{self.endereco}, Nº{self.numero} ({self.complemento}) - {self.bairro}'
+        complemento = f'({self.complemento})'
+        return f'{self.endereco}, Nº{self.numero}{complemento if self.complemento else ""} - {self.bairro}'
 
     def endereco_completo(self):
         return f'{self.endereco_base()} - {self.cidade}/{self.estado}, {self.f_cep()}'
@@ -347,16 +355,6 @@ class Imovei(models.Model):
         for parcela in parcelas:
             total += int(parcela.tt_pago)
         return valor_format(str(total))
-
-
-# Gerar o código para o contrato:
-def gerar_codigo_contrato():
-    codigos_existentes = list(Contrato.objects.all().values("codigo").values_list('codigo', flat=True))
-    while True:
-        con_codigo = ''.join(
-            random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
-        if con_codigo not in codigos_existentes:
-            return f'{con_codigo[:5]}-{con_codigo[5:]}'
 
 
 class ContratoManager(models.Manager):

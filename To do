@@ -60,6 +60,7 @@ Fazer:
 Criar o sistema de importação dos dados em um clique da planilha do prédio para o site.
 Implementar filtros/buscas nas paginas do botão histórico.
 
+Mostrar para o usuário o que será apagado( caso haja) caso ele exclua algum item registrado.
 Ja ta na hora de instalar o celery e começar a usar.
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados, bem como, botão de restaurar.
 Fazer um sistema de configurações do fake test em settings / criar o multiplicador no botão de gerar fakes, eliminando
