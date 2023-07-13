@@ -1,3 +1,4 @@
+ALUGUE SEU IMÓVEL ROADMAP
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Feitos:
@@ -58,22 +59,31 @@ Ok. Criar o sistema de importação dos dados em um clique da planilha do prédi
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
+Fazer um sistema de configurações do fake test em settings / criar o multiplicador no botão de gerar fakes, eliminando
+        o FICT_QTD em settings / adicionar função de criação dos itens espalhada para todos os usuários existentes.
+
+Criar o sistema de rentabilização do site.
 Implementar filtros/buscas nas paginas do botão histórico.
 
 Corrigir: Validador impede cadastro de contrato novo quando é feito em um imóvel num período onda já existe outro
         contrato rescindido cadastrado. Rescindiu, desconsidera.
+
 Mostrar para o usuário o que será apagado( caso haja) caso ele exclua algum item registrado.
+
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados, bem como, botão de restaurar.
-Fazer um sistema de configurações do fake test em settings / criar o multiplicador no botão de gerar fakes, eliminando
-        o FICT_QTD em settings.
-Criar o sistema de rentabilização do site.
+
 Lembretes: Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
+
 Criar a função comunidade no editor de modelos.
+
 Adaptar o site para celulares.
+
 Mostrar no visão geral o total por grupo de imóveis e por tipo.
+
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
+
 Ja ta na hora de instalar o celery e começar a usar.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
