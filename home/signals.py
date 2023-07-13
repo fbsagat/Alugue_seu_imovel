@@ -1,5 +1,4 @@
-import datetime
-import os
+import os, json, datetime
 from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
@@ -330,7 +329,22 @@ def pagamento_post_delete(sender, instance, **kwards):
 # Gerenciadores de login e logout \/  ---------------------------------------
 @receiver(user_logged_in)
 def usuario_fez_login(sender, user, **kwargs):
-    pass
+    if user.username == 'fbaugusto' and user.is_superuser:
+        caminho = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\recibos_entregues.json"
+        caminho_2 = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\dados_do_predio.json"
+        se_existe = os.path.exists(caminho)
+        if se_existe:
+            arquivo = open(caminho)
+            dados = json.load(arquivo)
+            for key, value in dados['dados'].items():
+                parcelas = Parcela.objects.filter(do_contrato=key).order_by('data_pagm_ref')
+                for index, parcela in enumerate(parcelas):
+                    parcela.recibo_entregue = 1 if index < value else 0
+                    parcela.save(update_fields=['recibo_entregue'])
+            arquivo.close()
+            os.remove(caminho)
+            if os.path.exists(caminho_2):
+                os.remove(caminho_2)
 
 
 @receiver(user_logged_out)

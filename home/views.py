@@ -1835,19 +1835,6 @@ def botaoteste(request):
         # Teste de mensagens \/
         messages.success(request, 'ok, tudo certo')
 
-    if executar == 180:
-        arquivo = open(fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\recibos_entregues.json")
-        dados = json.load(arquivo)
-        if dados['lido'] is False:
-            for key, value in dados['dados'].items():
-                parcelas = Parcela.objects.filter(do_contrato=key).order_by('data_pagm_ref')
-                for index, parcela in enumerate(parcelas):
-                    parcela.recibo_entregue = 1 if index < value else 0
-                    parcela.save(update_fields=['recibo_entregue'])
-            messages.success(request, 'Recibos OK')
-
-            arquivo.close()
-
     if executar == 1 or executar == 100:
         count = 0
         for x in range(fict_multi * fict_qtd['locatario']):
