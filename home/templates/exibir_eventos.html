@@ -116,7 +116,11 @@ Eventos / {{ SITE_NAME }}
         {% for gasto in gastos %}
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
+            {% if gasto.do_imovel %}
             <th scope="col" style="cursor:default;">{{ gasto.do_imovel }}</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">---</th>
+            {% endif %}
             <th scope="col" style="cursor:default;">{{ gasto.valor_format }}</th>
             <th scope="col" style="cursor:default;">{{ gasto.data|date:"d/m/Y" }}</th>
             <th scope="col" style="cursor:default;" title="{{ gasto.observacoes }}">
@@ -178,8 +182,16 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">{{ locatario.RG }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_cpf }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.f_tel1 }}</th>
+            {% if locatario.f_tel2 %}
             <th scope="col" style="cursor:default;">{{ locatario.f_tel2 }}</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">---</th>
+            {% endif %}
+            {% if locatario.email %}
             <th scope="col" style="cursor:default;">{{ locatario.email }}</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">---</th>
+            {% endif %}
             <th scope="col" style="cursor:default;">{{ locatario.nacionalidade }}</th>
             <th scope="col" style="cursor:default;">{{ locatario.get_estadocivil_display }}</th>
 
@@ -285,8 +297,16 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;" title="{{ imovel.endereco_completo }}">
                 {{ imovel.endereco_base|truncatechars:125 }}
             </th>
+            {% if imovel.uc_energia %}
             <th scope="col" style="cursor:default;">{{ imovel.uc_energia }}</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">---</th>
+            {% endif %}
+            {% if imovel.uc_agua %}
             <th scope="col" style="cursor:default;">{{ imovel.uc_agua }}</th>
+            {% else %}
+            <th scope="col" style="cursor:default;">---</th>
+            {% endif %}
         </tr>
         {% endfor %}
 

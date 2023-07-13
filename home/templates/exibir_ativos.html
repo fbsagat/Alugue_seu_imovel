@@ -30,7 +30,11 @@ Itens Ativos / {{ SITE_NAME }}
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">MATRICULA DE ENERGIA:
                         </span> {{ imovel.uc_energia }}</p>
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">MATRICULA DE SANEAMENTO:
+                            {% if imovel.uc_agua %}
                         </span> {{ imovel.uc_agua }}</p>
+                        {% else %}
+                        </span>---</p>
+                        {% endif %}
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">REGISTRADO EM:
                         </span> {{ imovel.data_registro }}</p>
                         <p class="card-text" title="Toda a receita desde o cadastro">
@@ -79,12 +83,16 @@ Itens Ativos / {{ SITE_NAME }}
                             <span class="fw-bold text-primary text-opacity-75">RG:</span>
                             {{ locatario.RG }} <span class="fw-bold text-primary text-opacity-75">CPF:</span>
                             {{ locatario.f_cpf }}</p>
+                        {% if locatario.endereco_completo %}
+                        <p class="card-text"><span class="fw-bold text-primary text-opacity-75">ENDEREÇO:</span>
+                            {{ locatario.endereco_completo }}</p>
+                        {% endif %}
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">TELEFONE 1:</span>
                             {{ locatario.f_tel1 }}</p>
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">TELEFONE 2:</span>
-                            {{ locatario.f_tel2 }}</p>
+                            {% if locatario.f_tel2 %}{{ locatario.f_tel2 }}{% else %}---{% endif %}</p>
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">EMAIL:</span>
-                            {{ locatario.email }}</p>
+                            {% if locatario.email %}{{ locatario.email }}{% else %}---{% endif %}</p>
                         <p class="card-text"><span class="fw-bold text-primary text-opacity-75">NACIONALID.:</span>
                             {{ locatario.nacionalidade }} <span class="fw-bold text-primary text-opacity-75">
                                 EST. CIVIL:</span> {{locatario.get_estadocivil_display }}</p>

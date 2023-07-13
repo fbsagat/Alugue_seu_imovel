@@ -122,22 +122,20 @@ class Usuario(AbstractUser):
     def arrecadacao_mensal(self):
         try:
             hoje = datetime.today().date()
-            contratos_user = Contrato.objects.filter(do_locador=self, data_entrada__lte=hoje)
+            contratos_user = Contrato.objects.ativos().filter(do_locador=self, data_entrada__lte=hoje)
             arrecadacao_mensal = 0
             for contrato in contratos_user:
-                if contrato.periodo_ativo_hoje() is True:
-                    arrecadacao_mensal += int(contrato.valor_mensal)
+                arrecadacao_mensal += int(contrato.valor_mensal)
             return valor_format(str(arrecadacao_mensal))
         except:
             return None
 
     def valor_total_contratos_ativos(self):
         try:
-            contratos_user = Contrato.objects.filter(do_locador=self)
+            contratos_user = Contrato.objects.ativos().filter(do_locador=self)
             valor_total_contratos_ativos = 0
             for contrato in contratos_user:
-                if contrato.periodo_ativo_hoje() is True:
-                    valor_total_contratos_ativos += int(contrato.valor_do_contrato())
+                valor_total_contratos_ativos += int(contrato.valor_do_contrato())
             return valor_format(str(valor_total_contratos_ativos))
         except:
             return None
@@ -154,12 +152,6 @@ class Usuario(AbstractUser):
 
 
 class LocatariosManager(models.Manager):
-    def com_imoveis(self):
-        return self.exclude(com_imoveis__isnull=True)
-
-    def sem_imoveis(self):
-        return self.exclude(com_imoveis__isnull=False)
-
     def nao_temporarios(self):
         # Locations cadastrados pelos usuários, não que se cadastraram pelo link(Portanto seus cadastros
         # estão no modo temporário(para aprovação))
@@ -202,15 +194,14 @@ class Locatario(models.Model):
         return f'{self.nome}'
 
     def com_contratos(self):
-        contratos = Contrato.objects.filter(do_locador=self.do_locador, do_locatario=self)
+        contratos = Contrato.objects.ativos().filter(do_locador=self.do_locador, do_locatario=self)
         return contratos or None
 
     def com_imoveis(self):
         contratos = self.com_contratos()
         contratos_ativos = []
         for contrato in contratos:
-            if contrato.periodo_ativo_hoje():
-                contratos_ativos.append(contrato)
+            contratos_ativos.append(contrato)
         if contratos_ativos:
             imoveis_pk = [contrato.do_imovel.pk for contrato in contratos_ativos]
             imoveis = Imovei.objects.filter(pk__in=imoveis_pk)
@@ -236,8 +227,8 @@ class Locatario(models.Model):
     def f_tel2(self):
         if self.telefone2:
             return cel_format(self.telefone2)
-        # else:
-        #     return ''
+        else:
+            return None
 
     def contratos_qtd(self):
         return Contrato.objects.filter(do_locatario=self).count()
@@ -271,11 +262,14 @@ class ImovGrupo(models.Model):
 
 
 class ImoveiManager(models.Manager):
-    def disponiveis(self):
-        return self.filter(com_locatario=None)
-
-    def ocupados(self):
-        return self.exclude(com_locatario__isnull=True)
+    def ativos(self):
+        imoveis_qs = self
+        lista = []
+        for imovel in imoveis_qs:
+            if imovel.esta_ocupado() is True:
+                lista.append(imovel.pk)
+        imoveis_ativos = Imovei.objects.filter(pk__in=lista)
+        return imoveis_ativos
 
 
 estados = (
@@ -320,12 +314,11 @@ class Imovei(models.Model):
         return f'{self.nome} ({self.grupo})'
 
     def contrato_atual(self):
-        contratos = Contrato.objects.filter(do_locador=self.do_locador, do_imovel=self)
-        for contrato in contratos:
-            if contrato.periodo_ativo_hoje():
-                return contrato
-            else:
-                return None
+        contratos = Contrato.objects.ativos().filter(do_locador=self.do_locador, do_imovel=self)
+        if contratos:
+            return contratos[0]
+        else:
+            return None
 
     def com_locatario(self):
         if self.contrato_atual():
@@ -778,6 +771,26 @@ class Anotacoe(models.Model):
             return [2, f'{self.texto[:tamanho]}...']
 
 
+class TarefaManager(models.Manager):
+    def tarefas_novas(self):
+        tarefas_qs = self.filter(apagada=False)
+        lista = []
+        for tarefa in tarefas_qs:
+            if tarefa.tarefa_nova() is True:
+                lista.append(tarefa.pk)
+        tarefas_novas = Tarefa.objects.filter(pk__in=lista)
+        return tarefas_novas
+
+    def tarefas_historico(self):
+        tarefas_qs = self.filter(apagada=False)
+        lista = []
+        for tarefa in tarefas_qs:
+            if tarefa.tarefa_nova() is False:
+                lista.append(tarefa.pk)
+        tarefas_novas = Tarefa.objects.filter(pk__in=lista)
+        return tarefas_novas
+
+
 class Tarefa(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
     autor_classe = models.ForeignKey(ContentType, null=False, on_delete=models.CASCADE)
@@ -788,6 +801,7 @@ class Tarefa(models.Model):
     lida = models.BooleanField(null=True)
     apagada = models.BooleanField(default=False)
     data_lida = models.DateTimeField(null=True)
+    objects = TarefaManager()
 
     class Meta:
         ordering = ['-data_registro']

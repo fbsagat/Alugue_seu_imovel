@@ -1,18 +1,19 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="makemigrations" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="Importar dados do predio" type="PythonConfigurationType" factoryName="Python">
     <module name="administrador_de_locacao" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
-    <option name="SDK_HOME" value="" />
+    <option name="SDK_HOME" value="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\venv\Scripts\python.exe" />
+    <option name="SDK_NAME" value="Python 3.9 (Alugue_seu_imovel)" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    <option name="IS_MODULE_SDK" value="true" />
+    <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <option name="SCRIPT_NAME" value="manage.py" />
-    <option name="PARAMETERS" value="makemigrations home" />
+    <option name="PARAMETERS" value="loaddata dados_do_predio.json" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

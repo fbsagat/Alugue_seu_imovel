@@ -124,21 +124,13 @@ def forms_da_navbar(request):
         else:
             form8 = ''
 
-        lista1 = Tarefa.objects.filter(do_usuario=request.user, apagada=False)[:40]
-        tarefas = []
-        for tarefa in lista1:
-            if tarefa.tarefa_nova() is True:
-                tarefas.append(tarefa)
-
-        lista2 = Tarefa.objects.filter(do_usuario=request.user, apagada=False).order_by('-data_lida')[:30]
-        tarefas_hist = []
-        for tarefa in lista2:
-            if tarefa.tarefa_nova() is False:
-                tarefas_hist.append(tarefa)
+        # TAREFAS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+        tarefas = Tarefa.objects.tarefas_novas().filter(do_usuario=request.user).order_by('-data_registro')
+        tarefas_historico = Tarefa.objects.tarefas_historico().filter(do_usuario=request.user).order_by('-data_lida')
 
         context = {'form_pagamento': form1, 'form_mensagem': form2, 'form_gasto': form3, 'form_locatario': form4,
                    'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8,
-                   'tarefas': tarefas, 'tarefas_hist': tarefas_hist}
+                   'tarefas': tarefas[:40], 'tarefas_hist': tarefas_historico[:40]}
 
         return context
     else:

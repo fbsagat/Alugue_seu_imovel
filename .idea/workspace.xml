@@ -4,36 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs gerais.&#10;Mais coisas no To do.">
-      <change afterPath="$PROJECT_DIR$/ASI Modelos/Instrumento particular de locação de imóvel.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ASI Modelos/Termo de renovação de contrato de locação de imóvel.txt" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Pequenas melhorias e correções de bugs diversos.&#10;Criado o fixtures loaddata do predio.&#10;Melhorias nas configurações e aadição de novas configurações, como adicionar o loaddata do predio.&#10;Corrigido: Agora a tabela responde as parcelas do contratos ativos corretamente.&#10;Melhorado o carregamento das tarefas no new_context, adicionei dois managers personalizados.&#10;Corrigido um erro do metodo do usuario: arrecadacao_mensal.">
+      <change afterPath="$PROJECT_DIR$/home/fixtures/dados_do_predio.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/home/fixtures/recibos_entregues.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/MakeM___Migrate___superUser___Runserver.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Execução_inicial_add_predio.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/makemigrations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Criar_dados_iniciais.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/migrate.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Importar_dados_do_predio.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/runserver.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/superUser.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Criar_SuperUser.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/To do" beforeDir="false" afterPath="$PROJECT_DIR$/To do" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0002_tarefa_data_lida.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/criar_conta.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/criar_conta.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/criar_grupos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/criar_grupos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_anotacao.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_anotacao.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_contrato.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_contrato.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_gasto.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_gasto.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_grupo.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_grupo.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_imovel.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_imovel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_locatario.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_locatario.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_perfil.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_perfil.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/excluir_conta.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_conta.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/excluir_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_item.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_anotacao.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_anotacao.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_imoveis.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_imoveis.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_locatarios.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_locatarios.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/gerar_recibos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/gerar_recibos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/gerar_tabela.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/gerar_tabela.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_ativos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_ativos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_eventos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_eventos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_gastos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_gastos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_pagamentos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_pagamentos.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,9 +39,15 @@
   </component>
   <component name="Git.Settings">
     <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Iniciando_o_visao_geral" />
+        <entry key="$PROJECT_DIR$" value="deploy_testes" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -75,28 +72,62 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Documentos/Dev Projects/Hashtag&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/fixtures&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;
   }
 }</component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
+      <force-push-target remote-path="origin" branch="deploy_testes" />
     </force-push-targets>
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures" />
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\templates" />
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\templates" />
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\home\templates" />
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.runserver">
+  <component name="RunManager" selected="Python.Execução inicial add/predio">
+    <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
+      <module name="administrador_de_locacao" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="''" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2">
+        <option name="RunConfigurationTask" enabled="false" run_configuration_name="makemigrations" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="false" run_configuration_name="migrate" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="false" run_configuration_name="superUser" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="false" run_configuration_name="Criar dados iniciais" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="true" run_configuration_name="Runserver" run_configuration_type="PythonConfigurationType" />
+      </method>
+    </configuration>
     <list>
-      <item itemvalue="Python.MakeM &gt; Migrate &gt; superUser &gt; Runserver" />
-      <item itemvalue="Python.makemigrations" />
-      <item itemvalue="Python.migrate" />
-      <item itemvalue="Python.runserver" />
-      <item itemvalue="Python.superUser" />
+      <item itemvalue="Python.Execução inicial add/predio" />
+      <item itemvalue="Python.Execução inicial s/predio" />
+      <item itemvalue="Python.Makemigrations" />
+      <item itemvalue="Python.Migrate" />
+      <item itemvalue="Python.Runserver" />
+      <item itemvalue="Python.Criar SuperUser" />
+      <item itemvalue="Python.Criar dados iniciais" />
+      <item itemvalue="Python.Importar dados do predio" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -107,118 +138,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1678467679553</updated>
-    </task>
-    <task id="LOCAL-00036" summary="Melhorias e correções">
-      <created>1678488197691</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1678488197691</updated>
-    </task>
-    <task id="LOCAL-00037" summary="Melhorias e correções">
-      <created>1678488450483</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1678488450483</updated>
-    </task>
-    <task id="LOCAL-00038" summary="Melhorias e correções">
-      <created>1678488898073</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1678488898073</updated>
-    </task>
-    <task id="LOCAL-00039" summary="Melhorias e correções">
-      <created>1678489116980</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1678489116980</updated>
-    </task>
-    <task id="LOCAL-00040" summary="Melhorias e correções">
-      <created>1678489477702</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1678489477702</updated>
-    </task>
-    <task id="LOCAL-00041" summary="Melhorias e correções">
-      <created>1678489851978</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1678489851978</updated>
-    </task>
-    <task id="LOCAL-00042" summary="Melhorias e correções">
-      <created>1678489948391</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1678489948391</updated>
-    </task>
-    <task id="LOCAL-00043" summary="Melhorias e correções">
-      <created>1678490012334</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1678490012334</updated>
-    </task>
-    <task id="LOCAL-00044" summary="Melhorias e correções">
-      <created>1678490444256</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1678490444256</updated>
-    </task>
-    <task id="LOCAL-00045" summary="Melhorias e correções">
-      <created>1678492764530</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1678492764530</updated>
-    </task>
-    <task id="LOCAL-00046" summary="Melhorias e correções">
-      <created>1678493127786</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1678493127786</updated>
-    </task>
-    <task id="LOCAL-00047" summary="Melhorias e correções">
-      <created>1678493403412</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1678493403412</updated>
-    </task>
-    <task id="LOCAL-00048" summary="Melhorias e correções">
-      <created>1678493532209</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1678493532209</updated>
-    </task>
-    <task id="LOCAL-00049" summary="Melhorias e correções">
-      <created>1678493833846</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1678493833846</updated>
-    </task>
-    <task id="LOCAL-00050" summary="Melhorias e correções">
-      <created>1678493935612</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1678493935613</updated>
-    </task>
-    <task id="LOCAL-00051" summary="Melhorias e correções">
-      <created>1678494077460</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1678494077460</updated>
     </task>
     <task id="LOCAL-00052" summary="Melhorias e correções">
       <created>1678494273647</created>
@@ -451,7 +370,119 @@
       <option name="project" value="LOCAL" />
       <updated>1684846537415</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="Corrigido aggregate do postgress pro banco do railway.">
+      <created>1686267590517</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1686267590518</updated>
+    </task>
+    <task id="LOCAL-00086" summary="Corrigido aggregate do postgress pro banco do railway.">
+      <created>1686267685345</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1686267685345</updated>
+    </task>
+    <task id="LOCAL-00087" summary="Corrigido aggregate do postgress pro banco do railway.">
+      <created>1686267940568</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1686267940568</updated>
+    </task>
+    <task id="LOCAL-00088" summary="Correção de bug pequeno.">
+      <created>1686268580500</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1686268580500</updated>
+    </task>
+    <task id="LOCAL-00089" summary="Correção de bug pequeno.">
+      <created>1686268656411</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1686268656411</updated>
+    </task>
+    <task id="LOCAL-00090" summary="Correção de bug pequeno.">
+      <created>1686269566001</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1686269566001</updated>
+    </task>
+    <task id="LOCAL-00091" summary="Correção de bug pequeno.">
+      <created>1686270181779</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1686270181779</updated>
+    </task>
+    <task id="LOCAL-00092" summary="Correção de bug pequeno.">
+      <created>1686270851839</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1686270851839</updated>
+    </task>
+    <task id="LOCAL-00093" summary="Correção de bug pequeno.">
+      <created>1686271830712</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1686271830712</updated>
+    </task>
+    <task id="LOCAL-00094" summary="Melhorias e correções de pequenos bugs.&#10;Tabela do visão geral está corrigida, agora é uma só, não três separadas.&#10;Agora o formLocatario exige pelo menos dois nomes ao usuario.&#10;Adicionada a tarefa da sugestão aprovada.&#10;Criado o tutorial das taredas no arqui txt to do.&#10;Organizado o to do.&#10;Views redundantes corrigidas, economizando linhas de codigos.">
+      <created>1686905342106</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1686905342106</updated>
+    </task>
+    <task id="LOCAL-00095" summary="Pequenas melhorias e correções de bugs.&#10;Criado o sistema de auto-registro do locatário(com notificação).">
+      <created>1687385783197</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1687385783198</updated>
+    </task>
+    <task id="LOCAL-00096" summary="Pequenas melhorias e correções de bugs.">
+      <created>1687420181710</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1687420181710</updated>
+    </task>
+    <task id="LOCAL-00097" summary="Pequenas melhorias e correções de bugs.&#10;Criado o carregamento de dados iniciais, django fixtures. Atualmente carregando os moelos de contratos.">
+      <created>1687424332920</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1687424332920</updated>
+    </task>
+    <task id="LOCAL-00098" summary="Navbar simples pro usuário deslogado.">
+      <created>1687425219586</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1687425219586</updated>
+    </task>
+    <task id="LOCAL-00099" summary="Pequenas melhorias e correções de bugs diversos.&#10;Retirado o nome_curto dos contratos pois era redundante com a função __str__.&#10;Agora os pagamentos_ficticios geram pagamentos dentro do limite do permitido para cada contrato.">
+      <created>1687442828066</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1687442828066</updated>
+    </task>
+    <task id="LOCAL-00100" summary="Pequenas melhorias e correções de bugs diversos.&#10;Corrigido o validador(em faker e forms) que verifica se o novo contrato cadastrado está em data válida, ou seja, não entra em conflito com as datas de outros contratos no mesmo imóvel.&#10;Melhorias no ContratoManager(buscar contratos ativos e inativos).">
+      <created>1687463941621</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1687463941621</updated>
+    </task>
+    <option name="localTasksCounter" value="109" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -484,9 +515,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Melhorias e correções" />
-    <MESSAGE value="Melhorias e correções na tabela, no exibir ativos, oequena modificação no exibir eventos, implementado parâmetro apagada na model Tarefa, corrigido delete de tarefas em signals, corrigido LocatariosAtivos que retornava repetidamente o mesmo quando tinha mais de um contrato." />
-    <MESSAGE value="Pequena correção." />
     <MESSAGE value="Correções e melhorias. Superuser vem com meu email. Forms de locatario e imoveis agora validam cpf de locatario e rótulo repetidos. Melhoris na tabela: textos mais adaptativos por tamanho da célula. Usuario.models: Adicionei unique=True." />
     <MESSAGE value="Correções e melhorias.&#10;Anotações mais organizado, modal pra mostrar o texto completo.&#10;Adicionados validadores de uc_energia e uc_agua no FormImovel, (agora não pode mais repetir já que são únicos).&#10;Anotacoe agora salva o boleano tarefa.&#10;TEMPO_SESSION_FORM dominuiu para 30 seg.&#10;Criado o metodo tarefa.definir_apagada(), para não apagar as tarefas." />
     <MESSAGE value="Melhorias e correções de bugs da função gerador de contrato pdf." />
@@ -497,6 +525,21 @@
     <MESSAGE value="Preparando para o servidor de testes(railway)." />
     <MESSAGE value="Melhorias e correções de bugs nas tarefas: não armazena mais dados (Ex: dados = {'afazer_concluida': 1}) pois era redundante, estas informações podem ser adquiridas pelos content_object.&#10;Corrigidos uns erros de português kkk, no footer.&#10;Agora tarefas armazena data de quando foi para o histórico." />
     <MESSAGE value="Melhorias e correções de bugs gerais.&#10;Mais coisas no To do." />
-    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs gerais.&#10;Mais coisas no To do." />
+    <MESSAGE value="Corrigido aggregate do postgress pro banco do railway." />
+    <MESSAGE value="Correção de bug pequeno." />
+    <MESSAGE value="Melhorias e correções de pequenos bugs.&#10;Tabela do visão geral está corrigida, agora é uma só, não três separadas.&#10;Agora o formLocatario exige pelo menos dois nomes ao usuario.&#10;Adicionada a tarefa da sugestão aprovada.&#10;Criado o tutorial das taredas no arqui txt to do.&#10;Organizado o to do.&#10;Views redundantes corrigidas, economizando linhas de codigos." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Criado o sistema de auto-registro do locatário(com notificação)." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Criado o carregamento de dados iniciais, django fixtures. Atualmente carregando os moelos de contratos." />
+    <MESSAGE value="Navbar simples pro usuário deslogado." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Retirado o nome_curto dos contratos pois era redundante com a função __str__.&#10;Agora os pagamentos_ficticios geram pagamentos dentro do limite do permitido para cada contrato." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Corrigido o validador(em faker e forms) que verifica se o novo contrato cadastrado está em data válida, ou seja, não entra em conflito com as datas de outros contratos no mesmo imóvel.&#10;Melhorias no ContratoManager(buscar contratos ativos e inativos)." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Corrigido e melhorado o sistema de ordenamento dos itens listados na página visão geral." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Tarefas agora se chama notificações(mudei apenas no front end)" />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Fakes_test melhorado e otimizado.&#10;Mais dois meses no formulário da tabela_PDF: FormTabela." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos" />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Atualizados várias bibliotecas.&#10;Agora as classes de locatarios e imoveis não armazenam estes dados: 'com_contratos', 'com_imoveis' e 'contrato_atual', 'com_locatario', pois estes resultados podem ser gerador por métodos, e isso foi feito. Economia de linhas em signal, que serviam para salvar estes dados antes." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos." />
+    <option name="LAST_COMMIT_MESSAGE" value="Pequenas melhorias e correções de bugs diversos." />
   </component>
 </project>

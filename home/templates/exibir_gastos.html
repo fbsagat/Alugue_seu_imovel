@@ -40,7 +40,7 @@ Gastos / {{ SITE_NAME }}
                     {% if gasto.do_imovel %}
                     <th scope="col" style="cursor:default;">{{ gasto.do_imovel }}</th>
                     {% else %}
-                    <th scope="col" style="cursor:default;">Geral</th>
+                    <th scope="col" style="cursor:default;">---</th>
                     {% endif %}
                     <th scope="col" style="cursor:default;">{{ gasto.valor_format }}</th>
                     <th scope="col" style="cursor:default;">{{ gasto.data|date:"d/m/Y" }}</th>

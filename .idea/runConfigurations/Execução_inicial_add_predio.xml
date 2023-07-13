@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="MakeM &gt; Migrate &gt; superUser &gt; Runserver" type="PythonConfigurationType" factoryName="Python" singleton="false">
+  <configuration default="false" name="Execução inicial add/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
     <module name="administrador_de_locacao" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -11,8 +11,8 @@
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
-    <option name="SCRIPT_NAME" value="manage.py" />
-    <option name="PARAMETERS" value="runserver" />
+    <option name="SCRIPT_NAME" value="''" />
+    <option name="PARAMETERS" value="" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
@@ -22,7 +22,9 @@
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="makemigrations" run_configuration_type="PythonConfigurationType" />
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="migrate" run_configuration_type="PythonConfigurationType" />
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="superUser" run_configuration_type="PythonConfigurationType" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Importar predio" run_configuration_type="PythonConfigurationType" />
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="Criar dados iniciais" run_configuration_type="PythonConfigurationType" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Runserver" run_configuration_type="PythonConfigurationType" />
     </method>
   </configuration>
 </component>

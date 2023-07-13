@@ -132,14 +132,12 @@ def locatario_post_save(sender, instance, **kwargs):
 @receiver(post_save, sender=Contrato)
 def contrato_post_save(sender, instance, created, **kwargs):
     # Pega os dados para tratamento:
-    contrato = Contrato.objects.get(pk=instance.pk)
-
     if created:
         # Gera as parcelas quando o contrato é criado:
-        gerenciar_parcelas(contrato)
+        gerenciar_parcelas(instance)
         # Criar tarefa 'contrato criado' com o botão 'receber contrato'
         tipo_conteudo = ContentType.objects.get_for_model(Contrato)
-        tarefa = criar_uma_tarefa(usuario=contrato.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
+        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
         Contrato.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
 
 
@@ -202,7 +200,7 @@ def usuario_pre_save(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Locatario)
 def locatario_pre_save(sender, instance, **kwargs):
-    if instance.pk is None:  # Se criado
+    if instance.pk is None or kwargs['raw']:  # Se criado
         pass
     else:
         # Apaga todos os recibos em pdf do locatário(para que novos possam ser criados) quando se modifica
@@ -212,34 +210,34 @@ def locatario_pre_save(sender, instance, **kwargs):
             contratos = Contrato.objects.filter(do_locatario=instance)
             for contrato in contratos:
                 contrato.recibos_pdf.delete()
+            pass
 
 
 @receiver(pre_save, sender=Contrato)
 def contrato_pre_save(sender, instance, **kwargs):
-    if instance.pk is None:  # if criado
+    if instance.pk is None or kwargs['raw']:
         pass
     else:
-        # Após modificar um contrato(parameters: curacao e data_entrada):
-        # Editar as parcelas quando o contrato é editado (função gerenciar_parcelas):
-        # Com a função: tratar_pagamentos \/
-        # 1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
-        # no seu respectivo contrato
-        # 2. Enviar as tarefas relacionadas
+        # Após modificar/editar um contrato(parameters: duracao e data_entrada):
+        # Editar as parcelas (função gerenciar_parcelas)
+        # E com a função: tratar_pagamentos \/
+        #   1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
+        #   no seu respectivo contrato.
+        #   2. Enviar as tarefas relacionadas.
+
         ante = Contrato.objects.get(pk=instance.pk)
         if ante.duracao != instance.duracao or ante.data_entrada != instance.data_entrada:
             gerenciar_parcelas(instance_contrato=instance)
             tratar_pagamentos(instance_contrato=instance)
-    if instance.em_posse:
-        try:
+
+        if instance.em_posse:
             Tarefa.objects.filter(pk=instance.da_tarefa.pk).update(data_lida=datetime.datetime.now())
-        except:
-            pass
 
 
 @receiver(pre_save, sender=Anotacoe)
 def anotacao_pre_save(sender, instance, **kwargs):
     # Criar e apagar tarefa referente a anotações
-    if instance.pk is None:  # if criado
+    if instance.pk is None or kwargs['raw']:  # if criado
         pass
     else:
         # If editado

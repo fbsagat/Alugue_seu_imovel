@@ -423,6 +423,7 @@ class FormAdmin(forms.Form):
         ('150', f'Criar {settings.FICT_QTD["user"]} Usuários'),
         ('160', f'Criar {settings.FICT_QTD["imovel_g"]} Imov_Grupos'),
         ('170', 'Teste Mensagem'),
+        ('180', 'Fixtures de recibos prédio/json'),
     )
 
     executar = forms.ChoiceField(choices=escolhas, initial='100')

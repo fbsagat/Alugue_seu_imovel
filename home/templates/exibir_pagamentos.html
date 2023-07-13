@@ -35,7 +35,7 @@ Pagamentos / {{ SITE_NAME }}
                 {% if forloop.counter|divisibleby:2 %}
                 {% else %}
                 <tr>
-                    <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
+                    <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
                     <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
                         {{ pagamento.ao_contrato }}
                     </th>
@@ -69,7 +69,7 @@ Pagamentos / {{ SITE_NAME }}
                 {% for pagamento in pagamentos %}
                 {% if forloop.counter|divisibleby:2 %}
                 <tr>
-                    <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
+                    <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
                     <th scope="col" style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
                         {{ pagamento.ao_contrato }}
                     </th>
