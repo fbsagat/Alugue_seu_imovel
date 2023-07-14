@@ -1,52 +1,52 @@
 ALUGUE SEU IMÓVEL ROADMAP
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
-Feitos:
+Concluídos:
 OK. Organizar os imoveis ativos por ordem de registro do contrato atual deles.
 OK. (só mudei a cor da borda) Colocar um deseninho nas card dos ativos (emoji talvez).
 OK. (preferi deixar como está pois iria desperdiçar muita memoria no banco de dados) salvar todas as preferencias
-            do usuario em um dicionario em uma célula da tabela dele, não em varias como atualmente.
+            do usuário em um dicionario em uma célula da tabela dele, não em varias como atualmente.
 Ok. Contrato não desativa, arrumar.
 OK. Os cards nos ativos estão retornando tudo misturado (arrumar).
-OK. O botão ir em eventos não funciona de primeira quando não existe o data_eventos_i preenchido no models do usuario.
+OK. O botão ir em eventos não funciona de primeira quando não existe o data_eventos_i preenchido no models do usuário.
 OK. (resolvido mas com uma pequena gambiarra, utilizando o campo emailed=true pra indicar recibo ok)Destivar o
             botão desnecessário(da vez) no histórico de notificações na offcanvas.
 OK. Fake está criando contratos com datas sobresalentes, arrumar.
-OK. Criar uma uuid unica para cada usuario, para proteger os arquivos dele(segurança aumentada)
-OK. (mantive só o codigo) Quando recriar as parcelas(model.parcelas) ao usuario editar o periodo do contrato, manter
+OK. Criar uma uuid única para cada usuário, para proteger os arquivos dele(segurança aumentada)
+OK. (mantive só o codigo) Quando recriar as parcelas(model.parcelas) ao usuário editar o período do contrato, manter
         recibos true p/ os meses q ja receberam recibo(não tão urgente mas bom)(ou manter todas as outras informações).
-OK. Apagar a tabela do usuario quando ele terminar a sessão.
+OK. Apagar a tabela do usuário quando ele terminar a sessão.
 OK. Colocar a opção de data preenchida nos recibos.
-OK. (fiz um pouco diferente, usei o model das anotações)Criar uma barra laterial com afazeres, dp it latter simples.
+OK. (fiz um pouco diferente, usei o model das anotações)Criar uma barra lateral com afazeres, dp it latter simples.
 OK. Ao excluir uma anotação, excluir a tarefa dela tbm.
-OK. (mantive nas sessions (pois em cookies tem limite de characteres e problemas de ms) mas com tempo limite,
+OK. (mantive nas sessions (pois em cookies tem limite de caracteres e problemas de ms) mas com tempo limite,
         configurável, em settings.py)Salvar as forms com erros em cookies, não na session, economiza memória do
         servidor e coloca tempo limite de duração.
 OK. (usei o built-in do django, jango.template.defaultfilters)Colocar em português manualmente na tabea e nos recibos
         e outros q usem.
-OK. AS vezes o recibo não obedece a form do usuario(preenchimento de data). arrumar.
+OK. AS vezes o recibo não obedece a form do usuário(preenchimento de data). arrumar.
 OK. Arrumar o UsuarioAdmin no admin.py.
 OK. Concluir total_quitado e faltando_p_quitar de contratos.
 OK. Arrumar tabela onde contratos mantém 'O Pagam. VENCEU' até mesmo qdo vencimento se encontra depois do dia atual,
         quando algum contrato existia e foi apagado antes do novo ser criado.
-OK. Validar registros dos usuario impedindo que eles cadastrem locatarios ou imoveis duplicados.
-OK. (e ainda consertei varios bugs no caminho) Criar formulario de locatario: endereço, para contratos não residenciais.
-OK. Adiconar possibilidade de criar um gasto geral, não exclusivo de algum imóvel.
+OK. Validar registros dos usuário impedindo que eles cadastrem locatários ou imoveis duplicados.
+OK. (e ainda consertei various bugs no caminho) Criar formulário de locatário: endereço, para contratos não residenciais.
+OK. Adicionar possibilidade de criar um gasto geral, não exclusivo de algum imóvel.
 OK. Arrumar CLÁUSULA DÉCIMA PRIMEIRA do contrato, opção casa ou prédio.
 OK. Algmas listas devem mostrar apenas os contratos ativos, não tudo.
 OK. (Falta configurar, no fim do projeto) Aplicar o django allauth https://www.youtube.com/watch?v=Q4Q3S7HLp4w
-OK. Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuario dão sugestões de melhorias
+OK. Melhorar o sistema de fale com o desenvolvedor, colocando um mini fórum onde os usuário dão sugestões de melhorias
         com sistema de votação.
-Ok. Proteger os arquivos dos usuarios, todos da pasta media, para que não sejam acessados por outros usuario que não os
+Ok. Proteger os arquivos dos usuarios, todos da pasta media, para que não sejam acessados por outros usuário que não os
  criadores ou pela internet por qualquer um.
 OK. Aplicar o cursor pointer em alguns itens nos templates. (copia logo pae: style="cursor:pointer;")
-OK. (refatorei tudo praticamente) Tarefas apagam ou ficam bugadas quando se mexe no periodo do contrato ou se
+OK. (refatorei tudo praticamente) Tarefas apagam ou ficam bugadas quando se mexe no período do contrato ou se
         apaga algum registro de pagamento.
 OK. Corrigir as tabelas duplas no histórico, cor sim 'cornão'.
 OK. Implementar filtros na página 'visão geral', com cliques nos títulos das colunas.
 OK. Ajeitar as urls que pedem <int:pk> sem necessidade(as views nem usam).
 OK. Criar uma obrigação de o usuário colocar no minimo duas palavras no nome do locatário.
-OK. Aplicar atomicidade no gerencimanto do banco de dados: https://www.youtube.com/watch?v=50N400-3MTI
+OK. Aplicar atomicidade no gerencimento do banco de dados: https://www.youtube.com/watch?v=50N400-3MTI
 OK. Criar um link, chamado link de requisição, próprio de cada usuário, que ele envia para o locatário, para que o
         locatário, através dele, possa cadastrar suas informações para o preenchimento do contrato. Quando cadastrado,
         o usuário recebe uma notificação de aviso para dar procedimento, criando o contrato para este locatário.
