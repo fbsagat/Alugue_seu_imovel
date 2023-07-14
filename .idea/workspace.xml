@@ -4,27 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Pequenas melhorias e correções de bugs diversos.&#10;Criado o fixtures loaddata do predio.&#10;Melhorias nas configurações e aadição de novas configurações, como adicionar o loaddata do predio.&#10;Corrigido: Agora a tabela responde as parcelas do contratos ativos corretamente.&#10;Melhorado o carregamento das tarefas no new_context, adicionei dois managers personalizados.&#10;Corrigido um erro do metodo do usuario: arrecadacao_mensal.">
-      <change afterPath="$PROJECT_DIR$/home/fixtures/dados_do_predio.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/fixtures/recibos_entregues.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/MakeM___Migrate___superUser___Runserver.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Execução_inicial_add_predio.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/makemigrations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Criar_dados_iniciais.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/migrate.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Importar_dados_do_predio.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/runserver.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/superUser.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Criar_SuperUser.xml" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Roadmap.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/To do" beforeDir="false" afterPath="$PROJECT_DIR$/To do" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_ativos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_ativos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_eventos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_eventos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_gastos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_gastos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_pagamentos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_pagamentos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +54,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/fixtures&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Documentos/Dev Projects/Planilha_to_Json/programa.py&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;
   }
 }</component>
@@ -91,7 +73,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Execução inicial add/predio">
+  <component name="RunManager" selected="Python.Runserver">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -112,19 +94,19 @@
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
       <method v="2">
-        <option name="RunConfigurationTask" enabled="false" run_configuration_name="makemigrations" run_configuration_type="PythonConfigurationType" />
-        <option name="RunConfigurationTask" enabled="false" run_configuration_name="migrate" run_configuration_type="PythonConfigurationType" />
-        <option name="RunConfigurationTask" enabled="false" run_configuration_name="superUser" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="false" run_configuration_name="Makemigrations" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="false" run_configuration_name="Migrate" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="false" run_configuration_name="Criar SuperUser" run_configuration_type="PythonConfigurationType" />
         <option name="RunConfigurationTask" enabled="false" run_configuration_name="Criar dados iniciais" run_configuration_type="PythonConfigurationType" />
-        <option name="RunConfigurationTask" enabled="true" run_configuration_name="Runserver" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="false" run_configuration_name="Runserver" run_configuration_type="PythonConfigurationType" />
       </method>
     </configuration>
     <list>
       <item itemvalue="Python.Execução inicial add/predio" />
+      <item itemvalue="Python.Runserver" />
       <item itemvalue="Python.Execução inicial s/predio" />
       <item itemvalue="Python.Makemigrations" />
       <item itemvalue="Python.Migrate" />
-      <item itemvalue="Python.Runserver" />
       <item itemvalue="Python.Criar SuperUser" />
       <item itemvalue="Python.Criar dados iniciais" />
       <item itemvalue="Python.Importar dados do predio" />
@@ -482,7 +464,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="109" />
+    <option name="localTasksCounter" value="113" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -515,9 +497,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções e melhorias. Superuser vem com meu email. Forms de locatario e imoveis agora validam cpf de locatario e rótulo repetidos. Melhoris na tabela: textos mais adaptativos por tamanho da célula. Usuario.models: Adicionei unique=True." />
-    <MESSAGE value="Correções e melhorias.&#10;Anotações mais organizado, modal pra mostrar o texto completo.&#10;Adicionados validadores de uc_energia e uc_agua no FormImovel, (agora não pode mais repetir já que são únicos).&#10;Anotacoe agora salva o boleano tarefa.&#10;TEMPO_SESSION_FORM dominuiu para 30 seg.&#10;Criado o metodo tarefa.definir_apagada(), para não apagar as tarefas." />
-    <MESSAGE value="Melhorias e correções de bugs da função gerador de contrato pdf." />
     <MESSAGE value="Várias melhorias e correções de bugs da função gerador de contrato pdf.&#10;&#10;adicionado tipos no grupos de imoveis.&#10;Melhorada a exibição de alguns templates.&#10;Corrigido bug no gerador de fakes imoveis_ficticios.&#10;Validação do fiador adicionada: 'Para fiador este campo deve ser preenchido'&#10;Adiconadas várias novas funções para o cliente no gerador de contrato pdf.&#10;Atualizados vários apps.&#10;Gerador de recibos de de contratos agora mostra apenas contratos ativos a serem carregados, não todos." />
     <MESSAGE value="Várias melhorias e correções de bugs." />
     <MESSAGE value="Preparação para testes no servidor, sem debug." />
@@ -540,6 +519,9 @@
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos" />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Atualizados várias bibliotecas.&#10;Agora as classes de locatarios e imoveis não armazenam estes dados: 'com_contratos', 'com_imoveis' e 'contrato_atual', 'com_locatario', pois estes resultados podem ser gerador por métodos, e isso foi feito. Economia de linhas em signal, que serviam para salvar estes dados antes." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos." />
-    <option name="LAST_COMMIT_MESSAGE" value="Pequenas melhorias e correções de bugs diversos." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Criado o fixtures loaddata do predio.&#10;Melhorias nas configurações e aadição de novas configurações, como adicionar o loaddata do predio.&#10;Corrigido: Agora a tabela responde as parcelas do contratos ativos corretamente.&#10;Melhorado o carregamento das tarefas no new_context, adicionei dois managers personalizados.&#10;Corrigido um erro do metodo do usuario: arrecadacao_mensal." />
+    <MESSAGE value="Agora a função pós fixture do prédio de preencher parcela.recibo_entregue com os dados do prédio é automática, fica em signal -&gt; usuario_fez_login.&#10;Também apaga os arquivos de loaddata do prédio após o primeiro login para conveniência." />
+    <MESSAGE value="Roadmap." />
+    <option name="LAST_COMMIT_MESSAGE" value="Roadmap." />
   </component>
 </project>
