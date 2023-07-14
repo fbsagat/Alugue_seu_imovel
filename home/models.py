@@ -1,4 +1,4 @@
-import random, string, secrets
+import string, secrets
 from datetime import datetime, timedelta
 
 from dateutil.relativedelta import relativedelta
@@ -356,6 +356,16 @@ class ContratoManager(models.Manager):
         lista = []
         for contrato in contratos_qs:
             if contrato.periodo_ativo_hoje() is True:
+                lista.append(contrato.pk)
+        contratos_ativos = Contrato.objects.filter(pk__in=lista)
+        return contratos_ativos
+
+    def ativos_margem(self):
+        contratos_qs = self.filter(rescindido=False)
+        lista = []
+        for contrato in contratos_qs:
+            if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente() or \
+                    contrato.periodo_ativo_xx_dias_atras():
                 lista.append(contrato.pk)
         contratos_ativos = Contrato.objects.filter(pk__in=lista)
         return contratos_ativos

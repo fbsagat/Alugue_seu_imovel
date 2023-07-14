@@ -576,12 +576,7 @@ def registrar_anotacao(request):
 # -=-=-=-=-=-=-=-= BOTÃO GERAR -=-=-=-=-=-=-=-=
 @login_required
 def recibos(request):
-    contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
-    contratos_ativos_pks = []
-    for contrato in contratos:
-        if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente():
-            contratos_ativos_pks.append(contrato.pk)
-    contratos_ativos = Contrato.objects.filter(id__in=contratos_ativos_pks)
+    contratos_ativos = Contrato.objects.ativos_margem().filter(do_locador=request.user).order_by('-data_entrada')
 
     form = FormRecibos()
     form.fields['contrato'].queryset = contratos_ativos
@@ -868,12 +863,7 @@ def gerar_contrato(request):
     qs1 = ContratoModelo.objects.filter(autor=request.user)
     qs2 = ContratoModelo.objects.filter(autor=admins)
     form2.fields['do_modelo'].queryset = qs1.union(qs2).order_by('-data_criacao')
-    contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
-    contratos_ativos_pks = []
-    for contrato in contratos:
-        if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente():
-            contratos_ativos_pks.append(contrato.pk)
-    contratos_ativos = Contrato.objects.filter(id__in=contratos_ativos_pks)
+    contratos_ativos = Contrato.objects.ativos_margem().filter(do_locador=request.user).order_by('-data_entrada')
 
     # Se for POST
     if request.method == 'POST':
