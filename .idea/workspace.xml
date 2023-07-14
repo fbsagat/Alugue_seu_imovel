@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Roadmap.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Pequenas melhorias e correções de bugs.&#10;Criado o contrato manager: ativos_margem.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +76,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver">
+  <component name="RunManager" selected="Python.Importar dados do predio">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -464,7 +467,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="113" />
+    <option name="localTasksCounter" value="115" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -497,8 +500,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Várias melhorias e correções de bugs da função gerador de contrato pdf.&#10;&#10;adicionado tipos no grupos de imoveis.&#10;Melhorada a exibição de alguns templates.&#10;Corrigido bug no gerador de fakes imoveis_ficticios.&#10;Validação do fiador adicionada: 'Para fiador este campo deve ser preenchido'&#10;Adiconadas várias novas funções para o cliente no gerador de contrato pdf.&#10;Atualizados vários apps.&#10;Gerador de recibos de de contratos agora mostra apenas contratos ativos a serem carregados, não todos." />
-    <MESSAGE value="Várias melhorias e correções de bugs." />
     <MESSAGE value="Preparação para testes no servidor, sem debug." />
     <MESSAGE value=".Preparando para o servidor localhost." />
     <MESSAGE value="Preparando para o servidor de testes(railway)." />
@@ -522,6 +523,8 @@
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Criado o fixtures loaddata do predio.&#10;Melhorias nas configurações e aadição de novas configurações, como adicionar o loaddata do predio.&#10;Corrigido: Agora a tabela responde as parcelas do contratos ativos corretamente.&#10;Melhorado o carregamento das tarefas no new_context, adicionei dois managers personalizados.&#10;Corrigido um erro do metodo do usuario: arrecadacao_mensal." />
     <MESSAGE value="Agora a função pós fixture do prédio de preencher parcela.recibo_entregue com os dados do prédio é automática, fica em signal -&gt; usuario_fez_login.&#10;Também apaga os arquivos de loaddata do prédio após o primeiro login para conveniência." />
     <MESSAGE value="Roadmap." />
-    <option name="LAST_COMMIT_MESSAGE" value="Roadmap." />
+    <MESSAGE value="Arquivos de configurações atualizados." />
+    <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Criado o contrato manager: ativos_margem." />
+    <option name="LAST_COMMIT_MESSAGE" value="Pequenas melhorias e correções de bugs.&#10;Criado o contrato manager: ativos_margem." />
   </component>
 </project>

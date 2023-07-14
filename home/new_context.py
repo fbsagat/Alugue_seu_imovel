@@ -22,14 +22,8 @@ def titulo_pag(request):
 
 def forms_da_navbar(request):
     if request.user.is_authenticated:
-
         # Apenas contratos ativos hoje ou futuramente para os forms
-        contratos = Contrato.objects.filter(do_locador=request.user).order_by('-data_entrada')
-        contratos_ativos_pks = []
-        for contrato in contratos:
-            if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente() or contrato.periodo_ativo_xx_dias_atras():
-                contratos_ativos_pks.append(contrato.pk)
-        contratos_exibir = Contrato.objects.filter(id__in=contratos_ativos_pks)
+        contratos_exibir = Contrato.objects.ativos_margem().filter(do_locador=request.user).order_by('-data_entrada')
 
         if request.session.get('form1'):
             tempo_form = datetime.datetime.strptime(request.session.get('form1')[1], '%H:%M:%S')

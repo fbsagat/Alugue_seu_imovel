@@ -726,7 +726,7 @@ class Pagamento(models.Model):
 class Gasto(models.Model):
     do_locador = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
     do_imovel = models.ForeignKey('Imovei', blank=True, null=True, on_delete=models.CASCADE,
-                                  help_text='Deixe em branco para registrar um gasto geral')
+                                  help_text='Deixe em branco para registrar um gasto avulso')
 
     valor = models.CharField(max_length=9, verbose_name='Valor Gasto (R$) ', blank=False, validators=[apenas_numeros])
     data = models.DateTimeField(blank=False)
