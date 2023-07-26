@@ -352,7 +352,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 wraped_text = "\n".join(wrap(parc, text_wrap_parc))
                 textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
                                            pag_alt - inicia_em_v - x - (espacamento_v - 3))
-                textobject.setFillColor(colors.gray)
+                textobject.setFillColor(colors.black)
                 textobject.setFont('Times-Roman', text_tam_parc)
                 textobject.setCharSpace(char_space)
                 textobject.setLeading(leading)

@@ -1686,7 +1686,7 @@ def arquivos_recibos_docs(request, year, month, file):
 @login_required
 def arquivos_tabela_docs(request, file):
     link = str(f'/tabela_docs/{file}')
-    if request.user.uuid in file or request.user.is_superuser:
+    if request.session.session_key in file:
         response = FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
         return response
 
@@ -1694,7 +1694,7 @@ def arquivos_tabela_docs(request, file):
 @login_required
 def arquivos_contrato_docs(request, file):
     link = str(f'/contrato_docs/{file}')
-    if request.user.uuid in file or request.user.is_superuser:
+    if request.session.session_key in file:
         response = FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
         return response
 

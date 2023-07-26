@@ -74,6 +74,8 @@ Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum ite
 Criar um botão de painel com configurações diversas e botão de backup de todos os dados, bem como, botão de restaurar.
 
 Lembretes:
+RESOLVER AMANHÃ: Os recibos de fbaugusto sao alterado ao 'criar todos acima'(no botão executar) para outro usuário.
+
         Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.

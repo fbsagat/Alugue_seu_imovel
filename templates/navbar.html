@@ -170,10 +170,10 @@ ion-icon {
 
     <!-- PAINEL EDITAR PERFIL SAIR -->
     <div class="flex justify-content-end">
-        <div class="btn-group ps-1">
-            <button type="button" class="dropdown-toggle bg-blue-700 text-white p-1 px-3 rounded-md"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false">
+        <div class="btn-group">
+            <button type="button"
+                    class="btn-block dropdown-toggle bg-blue-700 text-white p-1 px-3 rounded-md" style="min-width: 130px;"
+                    data-bs-toggle="dropdown" aria-expanded="false">
                 {{ request.user.username }}
             </button>
             <ul class="dropdown-menu">

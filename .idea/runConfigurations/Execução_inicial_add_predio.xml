@@ -22,8 +22,8 @@
       <option name="RunConfigurationTask" enabled="false" run_configuration_name="Makemigrations" run_configuration_type="PythonConfigurationType" />
       <option name="RunConfigurationTask" enabled="false" run_configuration_name="Migrate" run_configuration_type="PythonConfigurationType" />
       <option name="RunConfigurationTask" enabled="false" run_configuration_name="Criar SuperUser" run_configuration_type="PythonConfigurationType" />
-      <option name="RunConfigurationTask" enabled="false" run_configuration_name="Importar dados do predio" run_configuration_type="PythonConfigurationType" />
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="Criar dados iniciais" run_configuration_type="PythonConfigurationType" />
+      <option name="RunConfigurationTask" enabled="false" run_configuration_name="Importar dados do predio" run_configuration_type="PythonConfigurationType" />
       <option name="RunConfigurationTask" enabled="false" run_configuration_name="Runserver" run_configuration_type="PythonConfigurationType" />
     </method>
   </configuration>
