@@ -66,7 +66,7 @@ Corrigir: Validador impede cadastro de contrato novo quando é feito em um imóv
 Fazer um sistema de configurações do fake test em settings / criar o multiplicador no botão de gerar fakes, eliminando
         o FICT_QTD em settings / adicionar função de criação dos itens espalhada para todos os usuários existentes.
 
-Criar o sistema de rentabilização do site.
+Criar o sistema de rentabilização do site, com tickets e compra de tickets com bitcoin via lightning network.
 Implementar filtros/buscas nas paginas do botão histórico.
 
 Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado.
@@ -75,8 +75,9 @@ Criar um botão de painel com configurações diversas e botão de backup de tod
 
 Lembretes:
 RESOLVER AMANHÃ: Os recibos de fbaugusto sao alterado ao 'criar todos acima'(no botão executar) para outro usuário.
+RESOLVER AMANHÃ: Visão geral diz que pagou mais parcelas do realmente pagou(vide contrato marcio)
 
-        Tarefa receber contrato(marcar contrato como em mãos na tarefa). Quando a sugestão do usuário for aprovada.
+Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) OK. Quando a sugestão do usuário for aprovada OK.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
 
