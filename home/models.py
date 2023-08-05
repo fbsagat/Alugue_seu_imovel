@@ -1,5 +1,6 @@
 import string, secrets
 from datetime import datetime, timedelta
+from math import floor
 
 from dateutil.relativedelta import relativedelta
 from num2words import num2words
@@ -500,7 +501,7 @@ class Contrato(models.Model):
 
     def parcelas_pagas_qtd(self):
         numero = self.pagamento_total() / int(self.valor_mensal)
-        return int(round(numero, 0))
+        return int(floor(numero))
 
     def quitado(self):
         return True if self.total_quitado() == int(self.valor_do_contrato()) else False

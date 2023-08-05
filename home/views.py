@@ -1844,7 +1844,7 @@ def botaoteste(request):
             locatario.nacionalidade = aleatorio.get('nacionalidade')
             locatario.estadocivil = aleatorio.get('estadocivil')
             locatario.save()
-        messages.success(request, f"Criados {count} locatário")
+        messages.success(request, f"Criado(s) {count} locatário(s) para {usuario}")
 
     if executar == 160 or executar == 100:
         if ImovGrupo.objects.filter(do_usuario=usuario).count() < fict_qtd['imovel_g'] or executar == 160:
@@ -1857,7 +1857,7 @@ def botaoteste(request):
                 imovel_g.do_usuario = usuario
                 imovel_g.nome = aleatorio.get('nome')
                 imovel_g.save()
-            messages.success(request, f"Criados {count} grupos")
+            messages.success(request, f"Criado(s) {count} grupo(s) para {usuario}")
 
     if executar == 2 or executar == 100:
         if ImovGrupo.objects.filter(do_usuario=usuario).count() > 0:
@@ -1881,7 +1881,7 @@ def botaoteste(request):
                 imovel.uc_agua = aleatorio.get('uc_agua')
                 imovel.data_registro = aleatorio.get('data_registro')
                 imovel.save()
-            messages.success(request, f"Criados {count} imoveis")
+            messages.success(request, f"Criado(s) {count} imovei(s) para {usuario}")
         else:
             messages.error(request, "Primeiro crie grupos")
 
@@ -1905,7 +1905,7 @@ def botaoteste(request):
                 contrato.valor_mensal = aleatorio.get('valor_mensal')
                 contrato.dia_vencimento = aleatorio.get('dia_vencimento')
                 contrato.save()
-            messages.success(request, f"Criados {count} contratos")
+            messages.success(request, f"Criado(s) {count} contrato(s) para {usuario}")
         else:
             messages.error(request, "Impossível, todos os imóveis estão ocupados no momento")
 
@@ -1913,7 +1913,7 @@ def botaoteste(request):
         if Contrato.objects.filter(do_locador=usuario).count() > 0:
             count = 0
             for x in range(fict_multi * fict_qtd['pagamento']):
-                pagamentos_fic = pagamentos_ficticios()
+                pagamentos_fic = pagamentos_ficticios(usuario)
                 if pagamentos_fic is not None:
                     count += 1
                     aleatorio = pagamentos_fic
@@ -1930,7 +1930,7 @@ def botaoteste(request):
                     pagamento.save()
                 else:
                     messages.error(request, "Todos os contratos já estão 100% pagos")
-            messages.success(request, f"Criados {count} pagamentos")
+            messages.success(request, f"Criado(s) {count} pagamento(s) para {usuario}")
         else:
             messages.error(request, "Primeiro crie contratos")
 
@@ -1948,7 +1948,7 @@ def botaoteste(request):
                 gasto.data = aleatorio.get('data')
                 gasto.observacoes = aleatorio.get('observacoes')
                 gasto.save()
-            messages.success(request, f"Criados {count} gastos")
+            messages.success(request, f"Criado(s) {count} gasto(s) para {usuario}")
         else:
             messages.error(request, "Primeiro crie imóveis")
 
@@ -1966,7 +1966,7 @@ def botaoteste(request):
             nota.tarefa = aleatorio.get('tarefa')
             nota.feito = aleatorio.get('feito')
             nota.save()
-        messages.success(request, f"Criadas {count} anotações")
+        messages.success(request, f"Criada(s) {count} anotação(ões) para {usuario}")
 
     if executar == 7 or executar == 100:
         count = 0
@@ -1983,7 +1983,7 @@ def botaoteste(request):
             sugestao.save()
             for usuario in aleatorio.get('likes'):
                 sugestao.likes.add(usuario)
-        messages.success(request, f"Criadas {count} sugestões")
+        messages.success(request, f"Criada(s) {count} sugestão(ões) para {usuario}")
 
     if executar == 150:
         count = 0
@@ -2002,6 +2002,6 @@ def botaoteste(request):
                 user.RG = aleatorio.get('RG')
                 user.CPF = aleatorio.get('CPF')
                 user.save()
-        messages.success(request, f"Criadas {count} usuários")
+        messages.success(request, f"Criado(s) {count} usuário(s)")
 
     return redirect(request.META['HTTP_REFERER'])

@@ -132,8 +132,8 @@ def imoveis_ficticios(usuario):
             'data_registro': data_registro}
 
 
-def pagamentos_ficticios():
-    x = Contrato.objects.all()
+def pagamentos_ficticios(usuario):
+    x = Contrato.objects.filter(do_locador=usuario)
     contratos = []
     for contrato in x:
         if contrato.quitado() is False:
