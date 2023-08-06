@@ -61,16 +61,18 @@ Ok. Visão geral diz que pagou mais parcelas do realmente pagou(vide contrato ma
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
+Mostrar todos os contratos na tabela.pdf, não apenas os ativos, porém esbranquiçar os inativos.
+
 Corrigir: Validador impede cadastro de contrato novo quando é feito em um imóvel num período onde já existe outro
         contrato rescindido cadastrado. --> Rescindiu, desconsidera. Depois cria outra validação para caso o usuário
         retire a rescisão e já tenha outro contrato no período dele.
 
-Fazer um sistema de configurações do fake test em settings
-
 Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos
- itens espalhada para todos os usuários existentes / arrumar views.py linha 1891.
+ itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de configurações do
+  fake test em settings.
 
 Criar o sistema de rentabilização do site, com tickets e compra de tickets com bitcoin via lightning network.
+
 Implementar filtros/buscas nas paginas do botão histórico.
 
 Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado.
@@ -114,21 +116,22 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 
 Regras do programador:
 
-Passos para criação de uma tarefa para uma model:
-1. A classe da model autora recebe este parâmetro:
-da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+1. Passos para criação de uma tarefa para uma model:
+    1.1. A classe da model autora recebe este parâmetro:
+    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
-2. Criar o signal que vai criar a tarefa de acordo com o momento desejado(na criação do objeto, na modificação de
-        algum parâmetro, gatilho temporal(celery), etc...)
-3. Configurar a nova tarefa na classe Tarefa em models, nos seguintes métodos:
-	a. autor_tipo = Adicionar o numero referente ao novo autor da tarefa (usada pelo template).
-	b. autor_tipo_display = Adicionar o display para esta tarefa (usada pelo template).
-	c. tarefa_nova = Verifica se a tarefa aparecerá em 'tarefas novas' ou em 'histórico de tarefas' (cada autor tem a
-	        sua regra).
-	d. borda = Retorna a classe(html) que gerencia a cor da borda do card da tarefa em questão(usada pelo template).
-	e. texto = Retorna o texto a ser exibido na aba de tarefas(cada autor tem seu texto).
-4. Adicionar a exibição da tarefa nova e as urls(criar elas tbm, em urls.py) necessárias para as modificações do estado
-        do autor e/ou tarefa no template (offcanvas_tarefas.html).
-5. Modificar a função criar_uma_tarefa em signals.py adicionando a forma/regra de recuperação(desfazer exclusão) da
-        tarefa especifica desta model autora.
-6. Criar o signal pre delete que vai apagar a tarefa no momento em que a instancia referenciada por ela for apagada.
+    1.2. Criar o signal que vai criar a tarefa de acordo com o momento desejado(na criação do objeto, na modificação
+        de algum parâmetro, gatilho temporal(celery), etc...)
+    1.3. Configurar a nova tarefa na classe Tarefa em models, nos seguintes métodos:
+        a. autor_tipo = Adicionar o numero referente ao novo autor da tarefa (usada pelo template).
+        b. autor_tipo_display = Adicionar o display para esta tarefa (usada pelo template).
+        c. tarefa_nova = Verifica se a tarefa aparecerá em 'tarefas novas' ou em 'histórico de tarefas' (cada autor tem
+            a sua regra).
+        d. borda = Retorna a classe(html) que gerencia a cor da borda do card da tarefa em questão(usada pelo template).
+        e. texto = Retorna o texto a ser exibido na aba de tarefas(cada autor tem seu texto).
+    1.4. Adicionar a exibição da tarefa nova e as urls(criar elas tbm, em urls.py) necessárias para as modificações do
+        estado do autor e/ou tarefa no template (offcanvas_tarefas.html).
+    1.5. Modificar a função criar_uma_tarefa em signals.py adicionando a forma/regra de recuperação(desfazer exclusão)
+        da tarefa especifica desta model autora.
+    1.6. Criar o signal pre delete que vai apagar a tarefa no momento em que a instancia referenciada por ela for
+        apagada.

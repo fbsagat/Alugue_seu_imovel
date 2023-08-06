@@ -752,14 +752,14 @@ def tabela(request):
                                           data_pagm_ref__range=[a_partir_de, ate])
         parcelas_tt = parcelas_tt.union(parcelas)
 
-    # Nomes
+    # Pegando nomes dos imóveis
     imoveis_nomes = []
     for parcela in parcelas_tt:
         if parcela.do_imovel.__str__() not in imoveis_nomes:
             imoveis_nomes.append(parcela.do_imovel.__str__())
 
-    # Tratar parcelas por imovel
-    # Organizar parcelas por imovel
+    # Tratar parcelas por imóvel
+    # Organizar parcelas por imóvel
     lista_parcelas = []
 
     for imovel in imoveis_nomes:

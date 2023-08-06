@@ -416,11 +416,11 @@ class FormAdmin(forms.Form):
         ('4', f'Criar {settings.FICT_QTD["pagamento"]} Pagamentos'),
         ('5', f'Criar {settings.FICT_QTD["gasto"]} Gastos'),
         ('6', f'Criar {settings.FICT_QTD["nota"]} Anotações'),
-        ('7', f'Criar {settings.FICT_QTD["sugestoes"]} Sugestões'),
         ('1000', '-------------'),
         ('100', f'Criar todos acima'),
         ('1000', '-------------'),
         ('150', f'Criar {settings.FICT_QTD["user"]} Usuários'),
+        ('7', f'Criar {settings.FICT_QTD["sugestoes"]} Sugestões'),
         ('160', f'Criar {settings.FICT_QTD["imovel_g"]} Imov_Grupos'),
         ('170', 'Teste Mensagem'),
     )
