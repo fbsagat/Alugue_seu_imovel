@@ -741,27 +741,24 @@ def tabela(request):
 
     # Cria a lista de mes/ano para a tabela a partir da mes definida pelo usuario na variavel ('a_partir_de')
     datas = []
-    for imovel in range(0, meses_qtd):
-        datas.append(str(data_ptbr(a_partir_de + relativedelta(months=imovel), "F/Y")).title())
+    for data in range(0, meses_qtd):
+        datas.append(str(data_ptbr(a_partir_de + relativedelta(months=data), "F/Y")).title())
 
     # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
-    contratos_ativos = Contrato.objects.ativos().filter(do_locador=request.user)
+    contratos_ativos = Contrato.objects.ativos().filter(do_locador=request.user).order_by('-data_entrada')
     parcelas_tt = Parcela.objects.none()
     for contrato in contratos_ativos:
         parcelas = Parcela.objects.filter(do_contrato=contrato, apagada=False,
                                           data_pagm_ref__range=[a_partir_de, ate])
         parcelas_tt = parcelas_tt.union(parcelas)
 
-    # Pegando nomes dos imóveis
+    # Pegando nomes dos imóveis a partir da lista de parcelas acima (parcelas_tt)
     imoveis_nomes = []
-    for parcela in parcelas_tt:
-        if parcela.do_imovel.__str__() not in imoveis_nomes:
-            imoveis_nomes.append(parcela.do_imovel.__str__())
+    for contrato in contratos_ativos:
+        imoveis_nomes.append(contrato.do_imovel.__str__())
 
-    # Tratar parcelas por imóvel
-    # Organizar parcelas por imóvel
+    # Tratar/Organizar parcelas por imóvel
     lista_parcelas = []
-
     for imovel in imoveis_nomes:
         parcelas_tratadas = []
         lista_parcelas.append(parcelas_tratadas)
@@ -813,16 +810,22 @@ def tabela(request):
         if len(sinais) - meses_qtd != 0:
             del sinais[-(len(sinais) - meses_qtd):]
 
+    print(imoveis_nomes)
+    print(datas)
+    print(lista_parcelas)
+    print(lista_parcelas_compl)
+    print(lista_parcsinais_compl)
+
     dados = {'usuario': usuario,
              "usuario_uuid": usuario.uuid,
              "usuario_username": usuario.username,
              "usuario_nome_compl": usuario.nome_completo().upper(),
+             'session_key': request.session.session_key,
+             'imov_qtd': imov_qtd,
              'imoveis_nomes': imoveis_nomes,
              'datas': datas,
-             'imov_qtd': imov_qtd,
              'parcelas': lista_parcelas_compl,
              'sinais': lista_parcsinais_compl,
-             'session_key': request.session.session_key,
              }
 
     # Finalizando para envio ao template
