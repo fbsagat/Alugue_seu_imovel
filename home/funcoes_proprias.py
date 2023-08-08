@@ -336,7 +336,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 pdf.drawText(textobject)
 
             if vertical >= 0 and horizontal == 0:
-                mytext = f'{dados["imoveis_nomes"][((pag_n - 1) * dados["imov_qtd"]) + vertical]}'
+                mytext = f'{dados["imoveis"]["nomes"][((pag_n - 1) * dados["imov_qtd"]) + vertical]}'
                 wraped_text = "\n".join(wrap(mytext, text_wrap_imo))
                 textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
                                            pag_alt - inicia_em_v - x - espacamento_v)
@@ -348,11 +348,17 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 pdf.drawText(textobject)
 
             if vertical >= 0 and horizontal > 0:
-                parc = str(dados['parcelas'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
+                parc = str(dados['imoveis']['parcelas'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
                 wraped_text = "\n".join(wrap(parc, text_wrap_parc))
                 textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
                                            pag_alt - inicia_em_v - x - (espacamento_v - 3))
-                textobject.setFillColor(colors.black)
+
+                se_ativo = dados['imoveis']['parcelas_ativas'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1]
+                if se_ativo is True:
+                    textobject.setFillColor(colors.black)
+                else:
+                    textobject.setFillColor(colors.gray)
+
                 textobject.setFont('Times-Roman', text_tam_parc)
                 textobject.setCharSpace(char_space)
                 textobject.setLeading(leading)
@@ -360,7 +366,7 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                     textobject.textLine(line.rstrip())
                 pdf.drawText(textobject)
 
-                sinal = str(dados['sinais'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
+                sinal = str(dados['imoveis']['sinais'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1])
                 textobject = pdf.beginText(inicia_em_h + y + celula_largura - espacamento_h - espac_h_sinal,
                                            pag_alt - inicia_em_v - x - text_tam_parc)
                 textobject.setFillColor(colors.blue)
@@ -390,9 +396,9 @@ def gerar_tabela_pdf(dados):
     a4h = (297 * mm, 210 * mm)
     pdf = canvas.Canvas(local, pagesize=a4h)
 
-    paginas = int((len(dados['imoveis_nomes'])) / dados['imov_qtd']) if (len(dados['imoveis_nomes'])) / dados[
-        'imov_qtd'] % 2 == 1 else ceil((len(dados['imoveis_nomes'])) / dados['imov_qtd'])
-    ultima = len(dados['imoveis_nomes']) - ((paginas - 1) * dados['imov_qtd'])
+    paginas = int((len(dados['imoveis']['nomes'])) / dados['imov_qtd']) if (len(dados['imoveis']['nomes'])) / dados[
+        'imov_qtd'] % 2 == 1 else ceil((len(dados['imoveis']['nomes'])) / dados['imov_qtd'])
+    ultima = len(dados['imoveis']['nomes']) - ((paginas - 1) * dados['imov_qtd'])
     fazer = dados['imov_qtd']
 
     infos = {'celula_altura': 100}

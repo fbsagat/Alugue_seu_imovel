@@ -660,7 +660,7 @@ class Parcela(models.Model):
     apagada = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{str(self.do_imovel)[:8]} ({self.data_pagm_ref.strftime("%B/%Y")})'
+        return f'Do contrato: {str(self.do_contrato.codigo)}({self.data_pagm_ref.strftime("%B/%Y")})'
 
     def tt_pago_format(self):
         return valor_format(self.tt_pago)
@@ -692,6 +692,13 @@ class Parcela(models.Model):
     def restaurar(self):
         self.apagada = False
         self.save(update_fields=['apagada'])
+
+    def de_contrato_ativo(self):
+        if (self.do_contrato.periodo_ativo_hoje() and self.do_contrato.em_posse is True and self.do_contrato.rescindido
+                is False):
+            return True
+        else:
+            return False
 
 
 lista_pagamentos = (

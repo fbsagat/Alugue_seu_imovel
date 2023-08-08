@@ -744,91 +744,145 @@ def tabela(request):
     for data in range(0, meses_qtd):
         datas.append(str(data_ptbr(a_partir_de + relativedelta(months=data), "F/Y")).title())
 
+    def gerar_dados_de_imoveis_para_tabela_pdf(def_contratos_ativos):
+        """
+        Objetivo geral: Fazer um dicionário dos imoveis ativos contendo estas informações:
+        1. Nomes dos imoveis.
+        2. Lista com as parcelas dos imoveis entre as datas a_partir_de e até (inclusive as parcelas de outros
+                contratos inativos deste imóvel, que estejas entre as datas citadas) ou 'Sem contrato' caso não haja
+                 contrato nesta data.
+        3. Lista boolean indicando as parcelas que estão ativas(com True) dentre todas as listadas em 'parcelas'.
+        4. Lista com os sinais(texto auxiliar) para cada parcela de cada imovel. """
+
+        def_imoveis = {'nomes': [], 'parcelas': [], 'parcelas_ativas': [], 'sinais:': []}
+        def imovel_parcelas(contrato, datas):
+            """
+            Essa função deve retornar as parcelas de um imóvel a partir do parâmetro/objeto contrato, organizadas em
+             uma lista do tamanho da quantidade de meses no parâmetro datas (len(datas)). Caso haja conflito, ou seja,
+             duas parcelas referentes ao mesmo período, a do contrato ativo é priorizada, ficando assim apenas uma parcela
+              no slot. """
+            todas_parcelas = Parcela.objects.filter(do_imovel=contrato.do_imovel, apagada=False,
+                                                    data_pagm_ref__range=[a_partir_de, ate])
+            imovel_meses = {}
+            parcelas_ativas = []
+            for num, mes in enumerate(datas):
+                # 'colocar aqui a parcela do contrato ativo(na data respectiva/parametro mes do for), ou a parcela do
+                # contrato inativo (na data respectiva/parametro mes do for), ou none'.
+                imovel_mes = []
+                for parcela in todas_parcelas:
+                    if str(data_ptbr(parcela.data_pagm_ref, "F/Y").title()) == str(datas[num]):
+                        imovel_mes.append(parcela)
+                imovel_meses[datas[num]] = imovel_mes or None
+
+            for key, values in imovel_meses.items():
+                if values is not None:
+                    if len(values) > 1:
+                        for i in values:
+                            if i.de_contrato_ativo() is False:
+                                values.remove(i)
+                                parcelas_ativas.append(True)
+                            else:
+                                parcelas_ativas.append(False)
+                    else:
+                        if values[0].de_contrato_ativo() is True:
+                            parcelas_ativas.append(True)
+                        else:
+                            parcelas_ativas.append(False)
+                else:
+                    parcelas_ativas.append(False)
+            return imovel_meses, parcelas_ativas
+
+        def parcelas_formatadas(def_lista_parcelas):
+            """ Esta função tem por objetivo formatar os parcelas, de objeto, para texto, texto este que preencherá
+            os campos no arquivo PDF com dados de cada imóvel em cada mês, como em uma agenda. """
+            lista_parcelas_compl = []
+            lista_parcsinais_compl = []
+            for parcela in def_lista_parcelas:
+                parcelas = []
+                sinais = []
+                lista_parcelas_compl.append(parcelas)
+                lista_parcsinais_compl.append(sinais)
+                for mes in range(0, meses_qtd):
+                    for parc in parcela:
+                        if parc is not None:
+                            pago = parc.esta_pago()
+                            recibo = parc.recibo_entregue
+                            vencido = parc.esta_vencido()
+                            sinal = ''
+                            if pago and recibo:
+                                enviar = 'Pago! Recibo entregue'
+                                sinal += str('Ok')
+                            else:
+                                if pago:
+                                    enviar = 'Pago! Recibo não entregue'
+                                    sinal += 'Re'
+                                else:
+                                    if vencido:
+                                        enviar = f"""O Pagam. VENCEU dia {parc.do_contrato.dia_vencimento}
+                                            Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
+                                            """
+                                        sinal += 'Ve'
+                                    else:
+                                        enviar = f"""O Pagam. Vencerá dia {parc.do_contrato.dia_vencimento}
+                                            P:{parc.tt_pago_format()} F:{parc.falta_pagar_format()}
+                                            """
+                            parcelas.append(f"""Com: {parc.do_locatario.primeiro_ultimo_nome()}
+                                Con. cód.: {parc.do_contrato.codigo}
+                                Valor: {parc.do_contrato.valor_format()}
+                                {enviar}""")
+                            sinais.append(sinal)
+                        else:
+                            parcelas.append('Sem contrato')
+                            sinais.append('')
+
+                if len(parcelas) - meses_qtd != 0:
+                    del parcelas[-(len(parcelas) - meses_qtd):]
+                if len(sinais) - meses_qtd != 0:
+                    del sinais[-(len(sinais) - meses_qtd):]
+
+            return lista_parcelas_compl, lista_parcsinais_compl
+
+        imoveis_nomes = []
+        parcelas_ativas = []
+        lista_parcelas = []
+
+        for contrato in def_contratos_ativos:
+            imoveis_nomes.append(contrato.do_imovel.__str__())
+            imovel_parcelas_final = imovel_parcelas(contrato, datas)
+            lista_parcelas.append(imovel_parcelas_final[0])
+            parcelas_ativas.append(imovel_parcelas_final[1])
+
+        lista_parcelas_format = []
+        for i in lista_parcelas:
+            items = []
+            for key, value in i.items():
+                if value is not None:
+                    items.append(value[0])
+                else:
+                    items.append(None)
+            lista_parcelas_format.append(items)
+
+        parcelas_e_sinais = parcelas_formatadas(lista_parcelas_format)
+
+        def_imoveis['nomes'] = imoveis_nomes
+        def_imoveis['parcelas'] = parcelas_e_sinais[0]
+        def_imoveis['parcelas_ativas'] = parcelas_ativas
+        def_imoveis['sinais'] = parcelas_e_sinais[1]
+        return def_imoveis
+
     # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
     contratos_ativos = Contrato.objects.ativos().filter(do_locador=request.user).order_by('-data_entrada')
-    parcelas_tt = Parcela.objects.none()
-    for contrato in contratos_ativos:
-        parcelas = Parcela.objects.filter(do_contrato=contrato, apagada=False,
-                                          data_pagm_ref__range=[a_partir_de, ate])
-        parcelas_tt = parcelas_tt.union(parcelas)
-
-    # Pegando nomes dos imóveis a partir da lista de parcelas acima (parcelas_tt)
-    imoveis_nomes = []
-    for contrato in contratos_ativos:
-        imoveis_nomes.append(contrato.do_imovel.__str__())
-
-    # Tratar/Organizar parcelas por imóvel
-    lista_parcelas = []
-    for imovel in imoveis_nomes:
-        parcelas_tratadas = []
-        lista_parcelas.append(parcelas_tratadas)
-        for parcela in parcelas_tt:
-            if parcela.do_imovel.__str__() == imovel:
-                parcelas_tratadas.append(parcela)
-
-    lista_parcelas_compl = []
-    lista_parcsinais_compl = []
-    for imovel in lista_parcelas:
-        parcelas = []
-        sinais = []
-        lista_parcelas_compl.append(parcelas)
-        lista_parcsinais_compl.append(sinais)
-        for mes in range(0, meses_qtd):
-            if str(data_ptbr(imovel[0].data_pagm_ref, "F/Y").title()) == str(datas[mes]):
-                for parc in imovel:
-                    pago = parc.esta_pago()
-                    recibo = parc.recibo_entregue
-                    vencido = parc.esta_vencido()
-                    sinal = ''
-                    if pago and recibo:
-                        enviar = 'Pago! Recibo entregue'
-                        sinal += str('Ok')
-                    else:
-                        if pago:
-                            enviar = 'Pago! Recibo não entregue'
-                            sinal += 'Re'
-                        else:
-                            if vencido:
-                                enviar = f"""O Pagam. VENCEU dia {parc.do_contrato.dia_vencimento}
-                                Pg: {parc.tt_pago_format()} F: {parc.falta_pagar_format()}
-                                """
-                                sinal += 'Ve'
-                            else:
-                                enviar = f"""O Pagam. Vencerá dia {parc.do_contrato.dia_vencimento}
-                                P:{parc.tt_pago_format()} F:{parc.falta_pagar_format()}
-                                """
-                    parcelas.append(f"""Com: {parc.do_locatario.primeiro_ultimo_nome()}
-                    Con. cód.: {parc.do_contrato.codigo}
-                    Valor: {parc.do_contrato.valor_format()}
-                    {enviar}""")
-                    sinais.append(sinal)
-            else:
-                parcelas.append('Sem contrato')
-                sinais.append('')
-        if len(parcelas) - meses_qtd != 0:
-            del parcelas[-(len(parcelas) - meses_qtd):]
-        if len(sinais) - meses_qtd != 0:
-            del sinais[-(len(sinais) - meses_qtd):]
-
-    print(imoveis_nomes)
-    print(datas)
-    print(lista_parcelas)
-    print(lista_parcelas_compl)
-    print(lista_parcsinais_compl)
-
+    imoveis = gerar_dados_de_imoveis_para_tabela_pdf(contratos_ativos)
     dados = {'usuario': usuario,
              "usuario_uuid": usuario.uuid,
              "usuario_username": usuario.username,
              "usuario_nome_compl": usuario.nome_completo().upper(),
              'session_key': request.session.session_key,
              'imov_qtd': imov_qtd,
-             'imoveis_nomes': imoveis_nomes,
              'datas': datas,
-             'parcelas': lista_parcelas_compl,
-             'sinais': lista_parcsinais_compl,
-             }
+             'imoveis': imoveis}
 
-    # Finalizando para envio ao template
+    # Finalizando para envio ao template -==-==-==-==-==-
 
     # Cria o context e já adiciona o campo SITE_NAME
     context = {'SITE_NAME': settings.SITE_NAME}
@@ -837,7 +891,7 @@ def tabela(request):
     tem_contratos = True if Contrato.objects.filter(do_locador=request.user.pk).first() else False
     context['tem_contratos'] = tem_contratos
 
-    tem_imoveis = True if len(imoveis_nomes) > 0 else False
+    tem_imoveis = True if len(imoveis['nomes']) > 0 else False
     context['tem_imoveis'] = tem_imoveis
 
     if tem_contratos:
