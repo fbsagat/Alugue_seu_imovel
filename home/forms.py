@@ -235,7 +235,9 @@ class FormContrato(forms.ModelForm):
 
         # Se existir algum contrato com datas de entrada e saida entre o período registrado no novo contrato, esta
         # entrada não pode ser permitida \/
-        contratos_deste_imovel = Contrato.objects.filter(do_imovel=imovel.pk).exclude(pk=self.instance.pk)
+        # Obs: Existe uma cópia deste validador em views
+        contratos_deste_imovel = Contrato.objects.filter(do_imovel=imovel.pk, rescindido=False).exclude(
+            pk=self.instance.pk)
         permitido = True
         # print('Contrato novo entra nesta data', entrada_novo.strftime("%d/%m/%Y"))
         # print('Contrato nov sai nesta data', saida_novo.strftime("%d/%m/%Y"))
@@ -375,7 +377,6 @@ class FormImovel(forms.ModelForm):
 
 
 class FormAnotacoes(forms.ModelForm):
-
     class Meta:
         model = Anotacoe
         fields = '__all__'

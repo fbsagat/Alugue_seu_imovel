@@ -495,19 +495,57 @@ def registrar_contrato(request):
         return redirect(request.META['HTTP_REFERER'])
 
 
+def validar_contrato_no_imovel_na_data(contrato, entrada, saida):
+    """Esta função verifica se tem outro contrato ativo neste imóvel neste período.
+    # Se existir algum contrato com datas de entrada e saida entre o período registrado no contrato de
+    entrada, esta entrada é bloqueada pela função, retorna False, caso contrário retorna True.
+    # Obs: Existe uma cópia deste validador em forms. """
+
+    contratos_deste_imovel = Contrato.objects.filter(do_imovel=contrato.do_imovel, rescindido=False).exclude(
+        pk=contrato.pk)
+    entrada_novo = entrada
+    saida_novo = saida
+    permitido = True
+    for n, contrato in enumerate(contratos_deste_imovel):
+        entrada_antigo = contrato.data_entrada
+        saida_antigo = contrato.data_entrada + relativedelta(months=contrato.duracao)
+
+        if entrada_antigo <= entrada_novo <= saida_antigo:
+            permitido = False
+        if entrada_antigo <= saida_novo <= saida_antigo:
+            permitido = False
+
+        if entrada_antigo >= entrada_novo >= saida_antigo:
+            permitido = False
+        if entrada_antigo >= saida_novo >= saida_antigo:
+            permitido = False
+
+        if entrada_antigo >= entrada_novo and saida_antigo <= saida_novo:
+            permitido = False
+        return True if permitido else False
+
+
 @login_required
 def rescindir_contrat(request, pk):
     contrato = get_object_or_404(Contrato, pk=pk, do_locador=request.user)
     if contrato.do_locador == request.user:
         if contrato.rescindido is True:
-            contrato.rescindido = False
-            contrato.save()
-            return redirect(request.META['HTTP_REFERER'])
+            entrada = contrato.data_entrada
+            saida = contrato.data_saida()
+            if validar_contrato_no_imovel_na_data(contrato, entrada, saida) is False:
+                messages.warning(request, f"Já existe um contrato registrado para este imóvel neste período.")
+            else:
+                contrato.data_de_rescisao = timezone.now()
+                data = dateformat.format(timezone.now(), 'd-m-Y')
+                contrato.rescindido = False
+                contrato.save(update_fields=['rescindido', 'data_de_rescisao'])
+                messages.success(request, f"Contrato ativado com sucesso! Registro criado em {data}.")
+                return redirect(request.META['HTTP_REFERER'])
         else:
             contrato.data_de_rescisao = timezone.now()
             data = dateformat.format(timezone.now(), 'd-m-Y')
             contrato.rescindido = True
-            contrato.save()
+            contrato.save(update_fields=['rescindido', 'data_de_rescisao'])
             messages.warning(request, f"Contrato rescindido com sucesso! Registro criado em {data}.")
         return redirect(request.META['HTTP_REFERER'])
     else:
@@ -755,6 +793,7 @@ def tabela(request):
         4. Lista com os sinais(texto auxiliar) para cada parcela de cada imovel. """
 
         def_imoveis = {'nomes': [], 'parcelas': [], 'parcelas_ativas': [], 'sinais:': []}
+
         def imovel_parcelas(contrato, datas):
             """
             Essa função deve retornar as parcelas de um imóvel a partir do parâmetro/objeto contrato, organizadas em

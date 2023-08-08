@@ -57,15 +57,15 @@ Ok. (fiz só visualmente no front) Renomear tarefas para notificações de novo 
 Ok. Criar o sistema de importação dos dados em um clique da planilha do prédio para o site.
 Ok. Os recibos de fbaugusto sao alterado ao 'criar pagamentos'(no botão executar) para outro usuário.
 Ok. Visão geral diz que pagou mais parcelas do realmente pagou(vide contrato marcio).
+Ok. Mostrar todos os contratos na tabela.pdf, não apenas os ativos, porém esbranquiçar os inativos.
+Ok. Corrigir: Validador impede cadastro de contrato novo quando é feito em um imóvel num período onde já existe outro
+        contrato rescindido cadastrado. --> Rescindiu, desconsidera. Depois cria outra validação para caso o usuário
+        retire a rescisão e já tenha outro contrato no período dele.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-Mostrar todos os contratos na tabela.pdf, não apenas os ativos, porém esbranquiçar os inativos.
-
-Corrigir: Validador impede cadastro de contrato novo quando é feito em um imóvel num período onde já existe outro
-        contrato rescindido cadastrado. --> Rescindiu, desconsidera. Depois cria outra validação para caso o usuário
-        retire a rescisão e já tenha outro contrato no período dele.
+Criar prioridade de aparição dos contratos ativados sobre os rescindidos nos esbranquiçados da tabela pdf.
 
 Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos
  itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de configurações do
