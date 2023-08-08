@@ -378,6 +378,11 @@ class EditarGasto(LoginRequiredMixin, UpdateView):
         self.object = get_object_or_404(Gasto, pk=self.kwargs['pk'], do_locador=self.request.user)
         return self.object
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(EditarGasto, self).get_context_data(**kwargs)
+        context['SITE_NAME'] = settings.SITE_NAME
+        return context
+
 
 class ExcluirGasto(LoginRequiredMixin, DeleteView):
     model = Gasto

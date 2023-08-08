@@ -72,7 +72,7 @@ Eventos / {{ SITE_NAME }}
         {% for pagamento in pagamentos %}
         <tr>
             <th scope="col" style="cursor:default;">{{ forloop.counter }}</th>
-            <th scope="col " style="cursor:default;" title="{{ pagamento.ao_contrato }}">
+            <th scope="col " style="cursor:default;" title="{{ pagamento.ao_contrato.nome_completo }}">
                 {{ pagamento.ao_contrato }}
             </th>
             <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
