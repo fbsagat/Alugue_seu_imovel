@@ -61,12 +61,11 @@ Ok. Mostrar todos os contratos na tabela.pdf, não apenas os ativos, porém esbr
 Ok. Corrigir: Validador impede cadastro de contrato novo quando é feito em um imóvel num período onde já existe outro
         contrato rescindido cadastrado. --> Rescindiu, desconsidera. Depois cria outra validação para caso o usuário
         retire a rescisão e já tenha outro contrato no período dele.
+Ok. Criar prioridade de aparição dos contratos ativados sobre os rescindidos nos esbranquiçados da tabela pdf.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-Criar prioridade de aparição dos contratos ativados sobre os rescindidos nos esbranquiçados da tabela pdf.
-
 Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos
  itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de configurações do
   fake test em settings.

@@ -806,7 +806,7 @@ def tabela(request):
              duas parcelas referentes ao mesmo período, a do contrato ativo é priorizada, ficando assim apenas uma parcela
               no slot. """
             todas_parcelas = Parcela.objects.filter(do_imovel=contrato.do_imovel, apagada=False,
-                                                    data_pagm_ref__range=[a_partir_de, ate])
+                                                    data_pagm_ref__range=[a_partir_de, ate]).order_by('-do_contrato__data_entrada')
             imovel_meses = {}
             parcelas_ativas = []
             for num, mes in enumerate(datas):
@@ -821,14 +821,16 @@ def tabela(request):
             for key, values in imovel_meses.items():
                 if values is not None:
                     if len(values) > 1:
-                        for i in values:
-                            if i.de_contrato_ativo() is False:
-                                values.remove(i)
-                                parcelas_ativas.append(True)
-                            else:
-                                parcelas_ativas.append(False)
+                        count = 0
+                        while len(values) > 1:
+                            values.pop()
+                            count += 1
+                        if values[0].de_contrato_ativo():
+                            parcelas_ativas.append(True)
+                        else:
+                            parcelas_ativas.append(False)
                     else:
-                        if values[0].de_contrato_ativo() is True:
+                        if values[0].de_contrato_ativo():
                             parcelas_ativas.append(True)
                         else:
                             parcelas_ativas.append(False)
