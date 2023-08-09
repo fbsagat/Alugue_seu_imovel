@@ -70,14 +70,13 @@ Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em setting
  itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de configurações do
   fake test em settings.
 
-Criar o sistema de rentabilização do site, com tickets e compra de tickets com bitcoin via lightning network.
-
 Implementar filtros/buscas nas paginas do botão histórico.
 
 Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado.
 
-Criar um botão de painel com configurações diversas, sistema de ativação de slots com tickets, e botão de backup
-        de todos os dados, bem como, botão de restaurar(criptografados e únicos para cada usuário).
+Criar um botão de painel com configurações diversas, sistema de ativação de slots com tickets e compra de tickets
+        com bitcoin via lightning network, e botão de backup de todos os dados, bem como, botão de restaurar
+        (criptografados e únicos para cada usuário).
 
 Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) OK. Quando a sugestão do usuário for aprovada OK.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
