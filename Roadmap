@@ -67,8 +67,8 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 
 Fazer:
 Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos
- itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de configurações do
-  fake test em settings.
+        itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de
+        configurações do fake test em settings.
 
 Implementar filtros/buscas nas paginas do botão histórico.
 
@@ -84,6 +84,8 @@ Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) OK. Quando a 
 
 Criar a função comunidade no editor de modelos.
 
+Colocar a variável mobíliado no contrato pdf.
+
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
 Mostrar no visão geral o total por grupo de imóveis e por tipo.
@@ -91,6 +93,12 @@ Mostrar no visão geral o total por grupo de imóveis e por tipo.
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
 Ja ta na hora de instalar o celery e começar a usar.
+
+Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
+        tarefa. Ex: locatario.da_tarefa --> locatario.da_tarefa(filtros). Por enquanto todos os item que possuem
+        tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
+        ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
+        ficar o atributo da_tarefa?
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 

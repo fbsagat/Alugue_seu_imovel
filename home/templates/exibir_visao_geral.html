@@ -8,9 +8,9 @@ Visão Geral / {{ SITE_NAME }}
 
 {% block head %}
 <style>
-.table-condensed{
-  font-size: 13px;
-}
+    .table-condensed{
+      font-size: 13px;
+    }
 </style>
 {% endblock %}
 
@@ -131,27 +131,83 @@ Visão Geral / {{ SITE_NAME }}
             </table>
         </div>
 
-        <div class="row g-1">
+
+        <div class="row g-1 mt-1">
             <div class="container text-start">
-                <div class="col mt-1">
-                    <div class="card bg-black bg-opacity-75 border-secondary">
-                        <!-- Card header inicio -->
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between">
-                                <p>Arrecadação total desde o início: {{ arrecadacao_total }}</p>
-                                <p>Arrecadação mensal dos contratos ativos: {{ arrecadacao_mensal }}</p>
-                                <p>Valor total dos contratos ativos: {{ valor_total_contratos_ativos }}</p>
-                                <p>Valor total de todos os contratos: {{ valor_total_contratos }}</p>
+
+                <ul class="nav nav-pills mb-2" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-home"
+                                type="button" role="tab" aria-controls="pills-home" aria-selected="true">Tudo
+                        </button>
+                    </li>
+                    {% for item in grupos %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-{{ forloop.counter0 }}-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-{{ forloop.counter0 }}"
+                                type="button" role="tab" aria-controls="pills-{{ forloop.counter0 }}"
+                                aria-selected="false">
+                            {{ item }}
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="tab-content" id="pills-tabContent">
+
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                         aria-labelledby="pills-home-tab"
+                         tabindex="0">
+
+                        <div class="col mt-1">
+                            <div class="card bg-black bg-opacity-75 border-secondary">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between">
+                                        <p>{{ key }}</p>
+                                        <p>Arrecadação total desde o início: {{ arrecadacao_total }}</p>
+                                        <p>Arrecadação mensal dos contratos ativos: {{ arrecadacao_mensal }}</p>
+                                        <p>Valor total dos contratos ativos: {{ valor_total_contratos_ativos }}</p>
+                                        <p>Valor total de todos os contratos: {{ valor_total_contratos }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                     </div>
+
+                    {% for key, values in grupos.items %}
+
+                    <div class="tab-pane fade" id="pills-{{ forloop.counter0 }}" role="tabpanel"
+                         aria-labelledby="pills-{{ forloop.counter0 }}-tab"
+                         tabindex="0">
+
+                        <div class="col mt-1">
+                            <div class="card bg-black bg-opacity-75 border-secondary">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between">
+                                        <p>Arrecadação total desde o início: {{ values.0 }}</p>
+                                        <p>Arrecadação mensal dos contratos ativos: {{ values.1 }}</p>
+                                        <p>Valor total dos contratos ativos: {{ values.2 }}</p>
+                                        <p>Valor total de todos os contratos: {{ values.3 }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
                 </div>
+
             </div>
         </div>
-        <br>
+
     </div>
 </div>
 
+<br>
 <br>
 
 {% else %}

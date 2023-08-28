@@ -113,6 +113,7 @@ class Usuario(AbstractUser):
         try:
             total = 0
             pagamentos = Pagamento.objects.filter(ao_locador=self).values_list('valor_pago')
+
             for pagamento in pagamentos:
                 total += int(pagamento[0])
 
@@ -122,8 +123,7 @@ class Usuario(AbstractUser):
 
     def arrecadacao_mensal(self):
         try:
-            hoje = datetime.today().date()
-            contratos_user = Contrato.objects.ativos().filter(do_locador=self, data_entrada__lte=hoje)
+            contratos_user = Contrato.objects.ativos().filter(do_locador=self)
             arrecadacao_mensal = 0
             for contrato in contratos_user:
                 arrecadacao_mensal += int(contrato.valor_mensal)
@@ -258,8 +258,48 @@ class ImovGrupo(models.Model):
     def __str__(self):
         return self.nome
 
-    def get_absolute_url(self):
-        return reverse('home:Criar Grupo Imóveis', args=[str(self.pk, )])
+    def arrecadacao_total(self):
+        try:
+            total = 0
+            imoveis = Imovei.objects.filter(grupo=self)
+            for imovel in imoveis:
+                total += imovel.receita_acumulada()
+            return valor_format(str(total))
+        except:
+            return None
+
+    def arrecadacao_mensal(self):
+        try:
+            imoveis = Imovei.objects.filter(grupo=self)
+            contratos_user = Contrato.objects.ativos().filter(do_imovel__in=imoveis, do_locador=self.do_usuario)
+            arrecadacao_mensal = 0
+            for contrato in contratos_user:
+                arrecadacao_mensal += int(contrato.valor_mensal)
+            return valor_format(str(arrecadacao_mensal))
+        except:
+            return None
+
+    def valor_total_contratos_ativos(self):
+        try:
+            imoveis = Imovei.objects.filter(grupo=self)
+            contratos_user = Contrato.objects.ativos().filter(do_imovel__in=imoveis, do_locador=self.do_usuario)
+            valor_total_contratos_ativos = 0
+            for contrato in contratos_user:
+                valor_total_contratos_ativos += int(contrato.valor_do_contrato())
+            return valor_format(str(valor_total_contratos_ativos))
+        except:
+            return None
+
+    def valor_total_contratos(self):
+        try:
+            imoveis = Imovei.objects.filter(grupo=self)
+            contratos_user = Contrato.objects.filter(do_imovel__in=imoveis, do_locador=self.do_usuario)
+            valor_total_contratos = 0
+            for contrato in contratos_user:
+                valor_total_contratos += int(contrato.valor_do_contrato())
+            return valor_format(str(valor_total_contratos))
+        except:
+            return None
 
 
 class ImoveiManager(models.Manager):
@@ -321,6 +361,13 @@ class Imovei(models.Model):
         else:
             return None
 
+    def contrato_todos(self):
+        contratos = Contrato.objects.filter(do_locador=self.do_locador, do_imovel=self)
+        if contratos:
+            return contratos
+        else:
+            return None
+
     def com_locatario(self):
         if self.contrato_atual():
             return self.contrato_atual().do_locatario
@@ -348,12 +395,16 @@ class Imovei(models.Model):
         total = 0
         for parcela in parcelas:
             total += int(parcela.tt_pago)
-        return valor_format(str(total))
+        return total
+
+    def receita_acumulada_format(self):
+        return valor_format(str(self.receita_acumulada()))
 
 
 class ContratoManager(models.Manager):
     def ativos(self):
-        contratos_qs = self.filter(em_posse=True, rescindido=False)
+        hoje = datetime.today().date()
+        contratos_qs = self.filter(em_posse=True, rescindido=False, data_entrada__lte=hoje)
         lista = []
         for contrato in contratos_qs:
             if contrato.periodo_ativo_hoje() is True:
@@ -362,7 +413,8 @@ class ContratoManager(models.Manager):
         return contratos_ativos
 
     def ativos_margem(self):
-        contratos_qs = self.filter(rescindido=False)
+        hoje = datetime.today().date()
+        contratos_qs = self.filter(rescindido=False, data_entrada__lte=hoje)
         lista = []
         for contrato in contratos_qs:
             if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente() or \
@@ -660,7 +712,8 @@ class Parcela(models.Model):
     apagada = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Do contrato: {str(self.do_contrato.codigo)}({self.data_pagm_ref.strftime("%B/%Y")})'
+        return (f'Parcela do contr.: {str(self.do_contrato.codigo)}/{self.do_locatario.primeiro_ultimo_nome()}/'
+                f'{self.do_imovel}({self.data_pagm_ref.strftime("%B/%Y")})')
 
     def tt_pago_format(self):
         return valor_format(self.tt_pago)
@@ -720,9 +773,6 @@ class Pagamento(models.Model):
     data_de_recibo = models.DateTimeField(blank=True, verbose_name='Data em que foi marcado recibo entregue', null=True)
     forma = models.IntegerField(blank=False, choices=lista_pagamentos, verbose_name='Forma de Pagamento')
     data_criacao = models.DateTimeField(auto_now_add=True)
-
-    def get_absolute_url(self):
-        return reverse('home:Pagamentos', args=[(str(self.pk)), ])
 
     def valor_format(self):
         return valor_format(self.valor_pago)

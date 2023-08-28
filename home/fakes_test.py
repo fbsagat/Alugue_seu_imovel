@@ -104,7 +104,8 @@ def imov_grupo_fict():
     lista = ['Res.', 'Edf.', 'Conj.', 'Rua', 'Avenida', 'Bairro']
     siglas = choice(lista)
     nome = f'{siglas} {fake.bairro()}'
-    return {'nome': nome}
+    tipo = randrange(0, 7)
+    return {'nome': nome, 'tipo': tipo}
 
 
 def imoveis_ficticios(usuario):

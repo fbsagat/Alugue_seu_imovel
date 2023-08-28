@@ -93,12 +93,23 @@ def visao_geral(request):
     except (EmptyPage, PageNotAnInteger):
         page = contrato_pagination.page(1)
 
+    grupos = ImovGrupo.objects.filter(do_usuario=request.user)
+
+    context['grupos'] = {}
+    for grupo in grupos:
+        arrecadacao_total = grupo.arrecadacao_total()
+        arrecadacao_mensal = grupo.arrecadacao_mensal()
+        valor_total_contratos_ativos = grupo.valor_total_contratos_ativos()
+        valor_total_contratos = grupo.valor_total_contratos()
+        context['grupos'][f'{grupo.nome}'] = [arrecadacao_total, arrecadacao_mensal, valor_total_contratos_ativos, valor_total_contratos]
+
     context['arrecadacao_total'] = usuario.arrecadacao_total()
     context['arrecadacao_mensal'] = usuario.arrecadacao_mensal()
     context['valor_total_contratos_ativos'] = usuario.valor_total_contratos_ativos()
     context['valor_total_contratos'] = usuario.valor_total_contratos()
     context['page_obj'] = page
     context['SITE_NAME'] = settings.SITE_NAME
+
     return render(request, 'exibir_visao_geral.html', context)
 
 
@@ -806,7 +817,8 @@ def tabela(request):
              duas parcelas referentes ao mesmo período, a do contrato ativo é priorizada, ficando assim apenas uma parcela
               no slot. """
             todas_parcelas = Parcela.objects.filter(do_imovel=contrato.do_imovel, apagada=False,
-                                                    data_pagm_ref__range=[a_partir_de, ate]).order_by('-do_contrato__data_entrada')
+                                                    data_pagm_ref__range=[a_partir_de, ate]).order_by(
+                '-do_contrato__data_entrada')
             imovel_meses = {}
             parcelas_ativas = []
             for num, mes in enumerate(datas):
@@ -1338,8 +1350,9 @@ def criar_grupo(request):
         return render(request, 'criar_grupos.html', context)
     elif request.method == 'POST':
         nome = request.POST.get('nome')
+        tipo = request.POST.get('tipo')
         do_usuario = request.user
-        grupo = ImovGrupo(nome=nome, do_usuario=do_usuario)
+        grupo = ImovGrupo(nome=nome, do_usuario=do_usuario, tipo=tipo)
         grupo.save()
         return redirect(request.META['HTTP_REFERER'])
 
@@ -1959,6 +1972,7 @@ def botaoteste(request):
                 imovel_g = form.save(commit=False)
                 imovel_g.do_usuario = usuario
                 imovel_g.nome = aleatorio.get('nome')
+                imovel_g.tipo = aleatorio.get('tipo')
                 imovel_g.save()
             messages.success(request, f"Criado(s) {count} grupo(s) para {usuario}")
 
