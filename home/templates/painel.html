@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Painel / {{ SITE_NAME }}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-xxl pt-1 text-center text-justify">
+
+    <p class="text-start fw-bold">Slots:</p>
+    <div class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
+
+            <p class="text-start">
+                Cada slot abaixo permite cadastrar um imóvel. Você pode criar mais slots, que custarão um ticket por
+                mês. Você recebeu 100 tickets para usar. Para obter mais tickets clique no botão 'loja de tickets' logo
+                abaixo. Comprando tickets você ajuda a manter o site no ar e atualizado, obrigado :)
+            </p>
+
+            <div class="container g-0 mb-1">
+                <div class="d-flex justify-content-end">
+                    <span class="badge bg-secondary position-relative">
+                        <h1 class="fs-4">Tickets 🎫</h1>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <h1 class="fs-5">{{ tickets }}</h1>
+                            <span class="visually-hidden">Tickets</span>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="row g-1">
+                {% for slot in slots %}
+                <div class="card bg-black bg-opacity-100 border-secondary h-100">
+                    <div class="card-body">
+
+                        <p class="text-start">{{ forloop.counter }}.
+                            Imóvel atual: <span class="badge text-bg-primary">{{ slot.imovel }}</span>
+                            {% if slot.gratuito %}
+                            - Grátis
+                            {% else %}
+
+                            {% endif %}
+
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+            <div class="mt-2">
+                <a data-bs-toggle="modal" data-bs-target="#adicionar_slot"
+                   class="dropdown-item text-center">
+                    <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
+                        ➕ Adicionar Slot
+                    </button>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-lg fade" id="adicionar_slot" tabindex="-1" aria-labelledby="ADICIONAR_SLOT"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+
+            <div class="modal-header text-center flex items-center flex-col">
+                <h1 class="fs-3">Adicionar slot</h1>
+            </div>
+
+            <div class="modal-body">
+                <h1 class="fs-5">Isso irá consumir um ticket</h1>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
+                </button>
+                <button type="submit" class="btn btn-primary">Confirmar
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

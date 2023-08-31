@@ -69,15 +69,16 @@ class Usuario(AbstractUser):
     dados_pagamento2 = models.CharField(null=True, blank=True, max_length=90,
                                         verbose_name='Informações de pagamentos 2')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
+    tickets = models.IntegerField(default=100)
     # Outros poderão ter acesso ao uuid por cópias digitais de pdfs que poderão ser repassadas pelo usuário
 
     locat_slots = models.IntegerField(default=2)
 
-    vis_ger_ultim_order_by = models.CharField(null=True, blank=True, max_length=60)
+    vis_ger_ultim_order_by = models.CharField(default='vencimento_atual', null=True, blank=True, max_length=60)
 
     data_eventos_i = models.DateField(blank=True, null=True)
     itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=['1', '2', '3', '4', '5', '6'])
-    qtd_eventos = models.IntegerField(blank=True, null=True, default=10)
+    qtd_eventos = models.IntegerField(blank=True, null=True, default=25)
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
     recibo_ultimo = models.ForeignKey('Contrato', null=True, blank=True, related_name='usuario_recibo_set',
@@ -152,9 +153,23 @@ class Usuario(AbstractUser):
             return None
 
 
+class Slots(models.Model):
+    do_usuario = models.ForeignKey('Usuario', null=False, blank=False, on_delete=models.CASCADE)
+
+    gratuito = models.BooleanField(null=False, default=False)
+    ativado = models.BooleanField(default=True)
+    criado_em = models.DateField(auto_now_add=True)
+    tickets = models.PositiveIntegerField(default=0)
+
+    def imovel(self):
+        slots = Slots.objects.filter(do_usuario=self.do_usuario).order_by('criado_em')
+        imoveis = Imovei.objects.filter(do_locador=self.do_usuario).order_by('data_registro')
+        return imoveis[list(slots).index(self)]
+
+
 class LocatariosManager(models.Manager):
     def nao_temporarios(self):
-        # Locations cadastrados pelos usuários, não que se cadastraram pelo link(Portanto seus cadastros
+        # Locatarios cadastrados pelos usuários, não que se cadastraram pelo link(Portanto seus cadastros
         # estão no modo temporário(para aprovação))
         return self.exclude(temporario=True)
 

@@ -31,7 +31,7 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
-    ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen
+    ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slots
 
 
 # -=-=-=-=-=-=-=-= BOTÃO VISÃO GERAL -=-=-=-=-=-=-=-=
@@ -207,7 +207,7 @@ def eventos(request):
     if '4' in itens_eventos and pesquisa_req:
         contratos = Contrato.objects.filter(do_locador=request.user,
                                             data_registro__range=[data_eventos_i, data_eventos_f]).order_by(
-            f'{ordem}data_entrada')[:qtd_eventos]
+            f'{ordem}data_registro')[:qtd_eventos]
 
         if settings.USAR_DB == 1:
             # SQlite3 agregation
@@ -1767,6 +1767,18 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
         context = super(ApagarConta, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
+
+
+@login_required
+def painel(request):
+    context = {}
+
+    slots = Slots.objects.filter(do_usuario=request.user, ativado=True).order_by('criado_em')
+
+    context['SITE_NAME'] = settings.SITE_NAME
+    context['slots'] = slots
+    context['tickets'] = request.user.tickets
+    return render(request, 'painel.html', context)
 
 
 # -=-=-=-=-=-=-=-= SERVIDORES DE ARQUIVOS -=-=-=-=-=-=-=-=

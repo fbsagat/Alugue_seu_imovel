@@ -9,7 +9,7 @@ from django.db.models.signals import pre_delete, post_save, pre_save, post_delet
 from django.db import transaction
 from django.dispatch import receiver
 
-from home.models import Contrato, Imovei, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao
+from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao, Slots, Imovei
 
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
@@ -103,51 +103,6 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
         tarefa.objeto_id = objeto_id
         tarefa.save()
         return tarefa
-
-
-# Gerenciadores de post_save \/  ---------------------------------------
-@receiver(post_save, sender=Anotacoe)
-def anotacao_post_save(sender, instance, **kwargs):
-    # Criar e apagar tarefa referente a anotações
-    if instance.tarefa:
-        usuario = instance.do_usuario
-        tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
-        objeto_id = instance.pk
-        tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
-        Anotacoe.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
-
-
-@transaction.atomic
-@receiver(post_save, sender=Locatario)
-def locatario_post_save(sender, instance, **kwargs):
-    if instance.temporario is True:
-        tipo_conteudo = ContentType.objects.get_for_model(Locatario)
-        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
-        instance.da_tarefa = tarefa
-        Locatario.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
-
-
-@transaction.atomic
-@receiver(post_save, sender=Contrato)
-def contrato_post_save(sender, instance, created, **kwargs):
-    # Pega os dados para tratamento:
-    if created:
-        # Gera as parcelas quando o contrato é criado:
-        gerenciar_parcelas(instance)
-        # Criar tarefa 'contrato criado' com o botão 'receber contrato'
-        tipo_conteudo = ContentType.objects.get_for_model(Contrato)
-        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
-        Contrato.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
-
-
-@receiver(post_save, sender=Pagamento)
-def pagamento_post_save(sender, instance, created, **kwargs):
-    # Após criar um pagamento:
-    # Com a função: tratar_pagamentos \/
-    # 1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
-    # no seu respectivo contrato
-    # 2. Enviar as tarefas relacionadas
-    tratar_pagamentos(instance_contrato=instance.ao_contrato)
 
 
 # Gerenciadores de pre_save \/  ---------------------------------------
@@ -275,6 +230,58 @@ def sugestao_pre_save(sender, instance, **kwargs):
         else:
             if instance.da_tarefa:
                 instance.da_tarefa.definir_apagada()
+
+
+# Gerenciadores de post_save \/  ---------------------------------------
+@receiver(post_save, sender=Usuario)
+def usuario_post_save(sender, instance, created, **kwargs):
+    if created:
+        for _ in range(0, 3):
+            Slots.objects.create(do_usuario=instance, gratuito=True)
+
+
+@receiver(post_save, sender=Anotacoe)
+def anotacao_post_save(sender, instance, **kwargs):
+    # Criar e apagar tarefa referente a anotações
+    if instance.tarefa:
+        usuario = instance.do_usuario
+        tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
+        objeto_id = instance.pk
+        tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+        Anotacoe.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+
+
+@transaction.atomic
+@receiver(post_save, sender=Locatario)
+def locatario_post_save(sender, instance, **kwargs):
+    if instance.temporario is True:
+        tipo_conteudo = ContentType.objects.get_for_model(Locatario)
+        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
+        instance.da_tarefa = tarefa
+        Locatario.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+
+
+@transaction.atomic
+@receiver(post_save, sender=Contrato)
+def contrato_post_save(sender, instance, created, **kwargs):
+    # Pega os dados para tratamento:
+    if created:
+        # Gera as parcelas quando o contrato é criado:
+        gerenciar_parcelas(instance)
+        # Criar tarefa 'contrato criado' com o botão 'receber contrato'
+        tipo_conteudo = ContentType.objects.get_for_model(Contrato)
+        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
+        Contrato.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+
+
+@receiver(post_save, sender=Pagamento)
+def pagamento_post_save(sender, instance, created, **kwargs):
+    # Após criar um pagamento:
+    # Com a função: tratar_pagamentos \/
+    # 1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
+    # no seu respectivo contrato
+    # 2. Enviar as tarefas relacionadas
+    tratar_pagamentos(instance_contrato=instance.ao_contrato)
 
 
 # Gerenciadores de pre_delete \/  ---------------------------------------

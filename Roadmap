@@ -78,15 +78,18 @@ Criar um botão de painel com configurações diversas, sistema de ativação de
         com bitcoin via lightning network, e botão de backup de todos os dados, bem como, botão de restaurar
         (criptografados e únicos para cada usuário).
 
-Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) OK. Quando a sugestão do usuário for aprovada OK.
+Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando a sugestão do usuário for aprovada = OK.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
 
 Criar a função comunidade no editor de modelos.
 
-Colocar a variável mobíliado no contrato pdf.
+Colocar a variável mobiliado no contrato pdf.
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
+
+Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para casa tipo de utilização
+        baseados no uuid principal do usuário. Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
 
 Mostrar no visão geral o total por grupo de imóveis e por tipo.
 

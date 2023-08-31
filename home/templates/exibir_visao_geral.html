@@ -84,7 +84,7 @@ Visão Geral / {{ SITE_NAME }}
                     </th>
 
                     {% if contrato.divida_atual_valor.0 == 0 %}
-                    <th>Em dia ✔️</th>
+                    <th style="cursor:default;">Em dia ✔️</th>
                     {% else %}
                     <th scope="col" style="cursor:default;">{{ contrato.divida_atual_valor.1 }} /
                         {{ contrato.divida_atual_meses }}
