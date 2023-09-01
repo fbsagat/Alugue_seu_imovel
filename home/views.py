@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 from Alugue_seu_imovel import settings
 from num2words import num2words
 
+from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files import File
 from django.http import FileResponse
@@ -28,7 +29,7 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
-    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao
+    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
     ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slots
@@ -101,7 +102,8 @@ def visao_geral(request):
         arrecadacao_mensal = grupo.arrecadacao_mensal()
         valor_total_contratos_ativos = grupo.valor_total_contratos_ativos()
         valor_total_contratos = grupo.valor_total_contratos()
-        context['grupos'][f'{grupo.nome}'] = [arrecadacao_total, arrecadacao_mensal, valor_total_contratos_ativos, valor_total_contratos]
+        context['grupos'][f'{grupo.nome}'] = [arrecadacao_total, arrecadacao_mensal, valor_total_contratos_ativos,
+                                              valor_total_contratos]
 
     context['arrecadacao_total'] = usuario.arrecadacao_total()
     context['arrecadacao_mensal'] = usuario.arrecadacao_mensal()
@@ -592,10 +594,11 @@ def registrar_imovel(request):
     if request.method == 'POST':
         form = FormImovel(request.user, request.POST)
         if form.is_valid():
-            imovel = form.save(commit=False)
-            imovel.do_locador = request.user
-            imovel.save()
-            messages.success(request, "Imóvel resgistrado com sucesso!")
+            if request.user.tem_slot_disponivel():
+                imovel = form.save(commit=False)
+                imovel.do_locador = request.user
+                imovel.save()
+                messages.success(request, "Imóvel resgistrado com sucesso!")
             if 'form6' in request.session:
                 del request.session['form6']
             return redirect(request.META['HTTP_REFERER'])
@@ -1772,6 +1775,9 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
 @login_required
 def painel(request):
     context = {}
+    if request.method == 'GET':
+        form = FormTickets()
+        context['form'] = form
 
     slots = Slots.objects.filter(do_usuario=request.user).order_by('criado_em')
 
@@ -1782,12 +1788,67 @@ def painel(request):
 
 
 @login_required
+@transaction.atomic
 def add_slot(request):
-    context = {}
-    Slots.objects.create(do_usuario=request.user, ativado=True, gratuito=False, tickets=1)
+    Slots.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
     usuario = Usuario.objects.get(pk=request.user.pk)
     usuario.tickets -= 1
     usuario.save(update_fields=['tickets'])
+    return redirect(request.META['HTTP_REFERER'])
+
+
+@login_required
+@transaction.atomic
+def adicionar_ticket(request, pk):
+    slot = Slots.objects.get(pk=pk)
+    quantidade = 1
+    if request.method == 'POST':
+        form = FormTickets(request.POST)
+        if form.is_valid():
+            quantidade = form.cleaned_data['tickets_qtd']
+    if slot.do_usuario == request.user and slot.gratuito is False:
+        if quantidade <= request.user.tickets:
+            slot.tickets += quantidade
+            usuario = Usuario.objects.get(pk=request.user.pk)
+            usuario.tickets -= quantidade
+            usuario.save(update_fields=['tickets'])
+            slot.save(update_fields=['tickets'])
+        else:
+            messages.error(request, "Tickets insuficientes para esta operação")
+    else:
+        messages.error(request, "Ticket não foi adicionado!")
+    return redirect(request.META['HTTP_REFERER'])
+
+
+@login_required
+@transaction.atomic
+def adicionar_ticket_todos(request):
+    slots = Slots.objects.filter(do_usuario=request.user, gratuito=False)
+    quantidade = 1
+    if request.method == 'POST':
+        form = FormTickets(request.POST)
+        if form.is_valid():
+            quantidade = form.cleaned_data['tickets_qtd']
+
+    if len(slots) * quantidade <= request.user.tickets:
+        for slot in slots:
+            slot.tickets += quantidade
+            usuario = Usuario.objects.get(pk=request.user.pk)
+            usuario.tickets -= quantidade
+            usuario.save(update_fields=['tickets'])
+            slot.save(update_fields=['tickets'])
+    else:
+        messages.error(request, "Tickets insuficientes para esta operação")
+    return redirect(request.META['HTTP_REFERER'])
+
+
+@login_required
+def apagar_slot(request, pk):
+    slot = Slots.objects.get(pk=pk)
+    if slot.do_usuario == request.user and slot.imovel() is None and slot.gratuito is False:
+        slot.delete()
+    else:
+        messages.error(request, "Slot não foi apagado!")
     return redirect(request.META['HTTP_REFERER'])
 
 

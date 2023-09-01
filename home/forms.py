@@ -411,6 +411,11 @@ class FormTabela(forms.Form):
     mostrar_qtd = forms.ChoiceField(label='', initial=7, choices=mostrar, required=True)
 
 
+class FormTickets(forms.Form):
+    tickets_qtd = forms.IntegerField(label='', initial=1, min_value=1, max_value=25, required=True,
+                                     widget=forms.NumberInput())
+
+
 class FormAdmin(forms.Form):
     escolhas = (
         ('1', f'Criar {settings.FICT_QTD["locatario"]} Locatários'),

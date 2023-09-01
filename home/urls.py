@@ -12,7 +12,8 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, \
     criar_modelo, EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, \
     like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, \
     arquivos_locatarios_docs, arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, \
-    arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel, add_slot
+    arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel, add_slot, apagar_slot, \
+    adicionar_ticket, adicionar_ticket_todos
 
 from Alugue_seu_imovel import settings
 
@@ -113,6 +114,9 @@ urlpatterns = [
     path('editar_perfil/', EditarPerfil.as_view(), name='Editar Perfil'),
     path('painel/', painel, name='Painel'),
     path('adicionar_slot/', add_slot, name='Add Slot'),
+    path('apagar_slot/<int:pk>', apagar_slot, name='Apagar Slot'),
+    path('adicionar_ticket/<int:pk>', adicionar_ticket, name='Adicionar Ticket'),
+    path('adicionar_ticket_todos/', adicionar_ticket_todos, name='Adicionar Ticket Todos'),
     path('login/',
          auth_view.LoginView.as_view(template_name='login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),
          name='Login'),

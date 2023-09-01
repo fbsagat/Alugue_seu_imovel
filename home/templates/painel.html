@@ -86,8 +86,14 @@ Painel / {{ SITE_NAME }}
                                     {% endif %}
                                 </div>
                                 <div class="col-1">
-                                    <button type="button" class="btn btn-sm btn-secondary" title="Adicionar ticket">➕🎫
-                                    </button>
+
+                                    <a data-bs-toggle="modal" data-bs-target="#adicionar_tickets{{ slot.pk }}"
+                                       class="dropdown-item text-center">
+                                        <button type="button" class="btn btn-sm btn-secondary" title="Adicionar ticket">
+                                            ➕🎫
+                                        </button>
+                                    </a>
+
                                 </div>
                                 {% if slot.imovel %}
                                 <div class="col-1">
@@ -96,7 +102,14 @@ Painel / {{ SITE_NAME }}
                                 </div>
                                 {% else %}
                                 <div class="col-1">
-                                    <button type="button" class="btn btn-sm btn-secondary" title="Apagar">❌</button>
+
+                                    <a data-bs-toggle="modal" data-bs-target="#apagar_slot{{ slot.pk }}"
+                                       class="dropdown-item text-center">
+                                        <button type="button" class="btn btn-sm btn-secondary" title="Apagar">
+                                            ❌
+                                        </button>
+                                    </a>
+
                                 </div>
                                 {% endif %}
                                 {% endif %}
@@ -107,15 +120,28 @@ Painel / {{ SITE_NAME }}
 
                 {% endfor %}
 
+                <div class="d-flex items-center justify-content-between">
+                    <div class="my-3 mx-3">
+                        <a data-bs-toggle="modal" data-bs-target="#adicionar_slot"
+                           class="dropdown-item text-center">
+                            <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
+                                ➕ Adicionar Slot
+                            </button>
+                        </a>
+                    </div>
+                    <div class="my-3 mx-3">
+                        <a data-bs-toggle="modal" data-bs-target="#adicionar_tickets_todos"
+                           class="dropdown-item text-center">
+                            <button type="button" class="btn btn-sm btn-secondary"
+                                    title="Adicionar tickets em todos os slots">
+                                ➕🎫 em todos os Slots
+                            </button>
+                        </a>
+                    </div>
+                </div>
+
             </div>
-            <div class="my-3">
-                <a data-bs-toggle="modal" data-bs-target="#adicionar_slot"
-                   class="dropdown-item text-center">
-                    <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
-                        ➕ Adicionar Slot
-                    </button>
-                </a>
-            </div>
+
 
         </div>
     </div>
@@ -136,7 +162,7 @@ Painel / {{ SITE_NAME }}
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                 </button>
-                <a href="{% url 'home:Add Slot' %}" onsubmit="myButton.disabled = true;">
+                <a href="{% url 'home:Add Slot' %}">
                     <button type="button" class="btn btn-primary">Confirmar
                     </button>
                 </a>
@@ -145,5 +171,91 @@ Painel / {{ SITE_NAME }}
         </div>
     </div>
 </div>
+
+{% for slot in slots %}
+<div class="modal fade" id="apagar_slot{{ slot.pk }}" tabindex="-1" aria-labelledby="APAGAR_SLOT" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-black text-white">
+
+            <div class="modal-header text-center flex items-center flex-col">
+                <h1 class="fs-3">Apagar slot</h1>
+            </div>
+
+            <div class="modal-body text-center items-center">
+                <h1 class="fs-5">Deseja mesmo apagar este slot? Você perderá os tickets dele.</h1>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
+                </button>
+                <a href="{% url 'home:Apagar Slot' slot.pk %}">
+                    <button type="button" class="btn btn-primary">Confirmar
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<div class="modal fade" id="adicionar_tickets_todos" tabindex="-1" aria-labelledby="ADICIONAR_TICKETS_TODOS"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-black text-white">
+
+            <form method="POST" action="{% url 'home:Adicionar Ticket Todos' %}">
+                {% csrf_token %}
+
+                <div class="modal-header text-center flex items-center flex-col">
+                    <h1 class="fs-3">Adicionar tickets em todos os slots</h1>
+                </div>
+                <div class="modal-body d-flex flex-column text-center items-center">
+                    <div>
+                        <h1 class="fs-5">Quantos tickets em cada slot?</h1>
+                    </div>
+                    <div class="w-15 py-2">
+                        {{ form.tickets_qtd|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% for slot in slots %}
+<div class="modal fade" id="adicionar_tickets{{ slot.pk }}" tabindex="-1" aria-labelledby="ADICIONAR_TICKETS"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-black text-white">
+
+            <form method="POST" action="{% url 'home:Adicionar Ticket' slot.pk %}">
+                {% csrf_token %}
+
+                <div class="modal-header text-center flex items-center flex-col">
+                    <h1 class="fs-3">Adicionar tickets</h1>
+                </div>
+                <div class="modal-body d-flex flex-column text-center items-center">
+                    <div>
+                        <h1 class="fs-5">Quantos tickets neste slot?</h1>
+                    </div>
+                    <div class="w-15 py-2">
+                        {{ form.tickets_qtd|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 {% endblock %}

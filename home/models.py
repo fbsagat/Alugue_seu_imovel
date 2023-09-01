@@ -152,6 +152,33 @@ class Usuario(AbstractUser):
         except:
             return None
 
+    def tem_slot_disponivel(self):
+        slots = Slots.objects.filter(do_usuario=self)
+        for slot in slots:
+            if slot.imovel() is None:
+                return True
+        return False
+
+
+class SlotsManager(models.Manager):
+    def ativos(self):
+        slots_qs = self
+        lista = []
+        for slot in slots_qs:
+            if slot.ativado() is True:
+                lista.append(slot.pk)
+        slots_ativos = Slots.objects.filter(pk__in=lista)
+        return slots_ativos
+
+    def inativos(self):
+        slots_qs = self
+        lista = []
+        for slot in slots_qs:
+            if slot.ativado() is False:
+                lista.append(slot.pk)
+        slots_inativos = Slots.objects.filter(pk__in=lista)
+        return slots_inativos
+
 
 class Slots(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, blank=False, on_delete=models.CASCADE)
@@ -159,6 +186,7 @@ class Slots(models.Model):
     gratuito = models.BooleanField(null=False, default=False)
     criado_em = models.DateTimeField(auto_now_add=True)
     tickets = models.PositiveIntegerField(default=0)
+    objects = SlotsManager()
 
     def __str__(self):
         return f'{"Gratuito" if self.gratuito else "Pago"}/Criado: {self.criado_em}/Tickets: {self.tickets}/{self.do_usuario}'
@@ -389,7 +417,7 @@ class Imovei(models.Model):
         ordering = ['-nome']
 
     def __str__(self):
-        return f'{self.nome} ({self.grupo})'
+        return f'{self.nome} ({self.grupo if self.grupo else "Sem grupo"})'
 
     def contrato_atual(self):
         contratos = Contrato.objects.ativos().filter(do_locador=self.do_locador, do_imovel=self)
