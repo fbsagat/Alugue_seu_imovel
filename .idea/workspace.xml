@@ -4,19 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;Removido o django debug toolbar.&#10;&#10;Mais informações no visão geral: Arrecadação total desde o início, arrecadação mensal dos contratos, valor total dos contratos ativos, valor total de todos os contratos organizados por grupos de imóveis.">
-      <change afterPath="$PROJECT_DIR$/home/templates/painel.html" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;&#10;Iniciada a produção do sistema de pagamentos.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_ativos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_ativos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/navbar_deslogado.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar_deslogado.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,19 +54,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates",
-    "settings.editor.selected.configurable": "proofread"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;
   }
-}]]></component>
+}</component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
@@ -86,7 +82,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Execução inicial add/predio">
+  <component name="RunManager" selected="Python.Migrate">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -477,7 +473,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="127" />
+    <option name="localTasksCounter" value="128" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -510,7 +506,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Criado o sistema de auto-registro do locatário(com notificação)." />
     <MESSAGE value="Pequenas melhorias e correções de bugs." />
     <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Criado o carregamento de dados iniciais, django fixtures. Atualmente carregando os moelos de contratos." />
     <MESSAGE value="Navbar simples pro usuário deslogado." />
@@ -535,6 +530,7 @@
     <MESSAGE value="Correções e melhorias no código:&#10;&#10;Criado validador 'validar_contrato_no_imovel_na_data' que valida na hora de ativar algum contrato. &#10;Agora contratos rescindidos não contam como impedimento para criação ou ativação de novos contratos nos validadores referentes a isto." />
     <MESSAGE value="Correções e melhorias no código." />
     <MESSAGE value="Correções e melhorias no código.&#10;Removido o django debug toolbar.&#10;&#10;Mais informações no visão geral: Arrecadação total desde o início, arrecadação mensal dos contratos, valor total dos contratos ativos, valor total de todos os contratos organizados por grupos de imóveis." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;Removido o django debug toolbar.&#10;&#10;Mais informações no visão geral: Arrecadação total desde o início, arrecadação mensal dos contratos, valor total dos contratos ativos, valor total de todos os contratos organizados por grupos de imóveis." />
+    <MESSAGE value="Correções e melhorias no código.&#10;&#10;Iniciada a produção do sistema de pagamentos." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;&#10;Iniciada a produção do sistema de pagamentos." />
   </component>
 </project>

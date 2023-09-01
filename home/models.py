@@ -69,7 +69,7 @@ class Usuario(AbstractUser):
     dados_pagamento2 = models.CharField(null=True, blank=True, max_length=90,
                                         verbose_name='Informações de pagamentos 2')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
-    tickets = models.IntegerField(default=100)
+    tickets = models.IntegerField(default=50)
     # Outros poderão ter acesso ao uuid por cópias digitais de pdfs que poderão ser repassadas pelo usuário
 
     locat_slots = models.IntegerField(default=2)
@@ -157,14 +157,36 @@ class Slots(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, blank=False, on_delete=models.CASCADE)
 
     gratuito = models.BooleanField(null=False, default=False)
-    ativado = models.BooleanField(default=True)
-    criado_em = models.DateField(auto_now_add=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
     tickets = models.PositiveIntegerField(default=0)
 
+    def __str__(self):
+        return f'{"Gratuito" if self.gratuito else "Pago"}/Criado: {self.criado_em}/Tickets: {self.tickets}/{self.do_usuario}'
+
     def imovel(self):
-        slots = Slots.objects.filter(do_usuario=self.do_usuario).order_by('criado_em')
-        imoveis = Imovei.objects.filter(do_locador=self.do_usuario).order_by('data_registro')
-        return imoveis[list(slots).index(self)]
+        try:
+            slots = Slots.objects.filter(do_usuario=self.do_usuario).order_by('criado_em')
+            imoveis = Imovei.objects.filter(do_locador=self.do_usuario).order_by('data_registro')
+            return imoveis[list(slots).index(self)]
+        except:
+            return None
+
+    def vencimento(self):
+        # colocar pra vencer um dia após, não zero(evitar reclamações dos usuarios/não pode comer tempo deles)
+        data = self.criado_em + relativedelta(months=self.tickets, days=0)
+        return data.date()
+
+    def ativado(self):
+        if self.gratuito:
+            return True
+        else:
+            return False if datetime.today().date() >= self.vencimento() else True
+
+    def borda(self):
+        if self.gratuito:
+            return 'border-success'
+        else:
+            return 'border-secondary' if self.ativado() else 'border-warning'
 
 
 class LocatariosManager(models.Manager):

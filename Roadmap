@@ -66,6 +66,8 @@ Ok. Criar prioridade de aparição dos contratos ativados sobre os rescindidos n
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
+Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes no botão de enviar um form.
+
 Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos
         itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de
         configurações do fake test em settings.

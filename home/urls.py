@@ -12,7 +12,7 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, \
     criar_modelo, EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, \
     like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, \
     arquivos_locatarios_docs, arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, \
-    arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel
+    arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel, add_slot
 
 from Alugue_seu_imovel import settings
 
@@ -112,6 +112,7 @@ urlpatterns = [
         extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
     path('editar_perfil/', EditarPerfil.as_view(), name='Editar Perfil'),
     path('painel/', painel, name='Painel'),
+    path('adicionar_slot/', add_slot, name='Add Slot'),
     path('login/',
          auth_view.LoginView.as_view(template_name='login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),
          name='Login'),

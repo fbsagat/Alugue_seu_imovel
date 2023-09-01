@@ -759,13 +759,13 @@ def tabela(request):
         meses.append(
             (mes, str(data_ptbr(mes_inicial + relativedelta(months=mes), "F/Y"))))
 
-    # Carregar os dados de mes para o form e tabela da informação salva no perfil
+    # Carregar os dados de mes para o form e tabela a partir da informação salva no perfil
     # ou datetime.now() quando não há info salva
     if usuario.tabela_ultima_data_ger is not None and usuario.tabela_meses_qtd is not None \
             and usuario.tabela_imov_qtd is not None and request.method == 'GET':
         form = FormTabela(initial={'mes': usuario.tabela_ultima_data_ger, 'mostrar_qtd': usuario.tabela_meses_qtd,
                                    'itens_qtd': usuario.tabela_imov_qtd})
-        a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=3 - usuario.tabela_ultima_data_ger)
+        a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=4 - usuario.tabela_ultima_data_ger)
         meses_qtd = usuario.tabela_meses_qtd
         imov_qtd = usuario.tabela_imov_qtd
     else:
@@ -1773,12 +1773,22 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
 def painel(request):
     context = {}
 
-    slots = Slots.objects.filter(do_usuario=request.user, ativado=True).order_by('criado_em')
+    slots = Slots.objects.filter(do_usuario=request.user).order_by('criado_em')
 
     context['SITE_NAME'] = settings.SITE_NAME
     context['slots'] = slots
     context['tickets'] = request.user.tickets
     return render(request, 'painel.html', context)
+
+
+@login_required
+def add_slot(request):
+    context = {}
+    Slots.objects.create(do_usuario=request.user, ativado=True, gratuito=False, tickets=1)
+    usuario = Usuario.objects.get(pk=request.user.pk)
+    usuario.tickets -= 1
+    usuario.save(update_fields=['tickets'])
+    return redirect(request.META['HTTP_REFERER'])
 
 
 # -=-=-=-=-=-=-=-= SERVIDORES DE ARQUIVOS -=-=-=-=-=-=-=-=

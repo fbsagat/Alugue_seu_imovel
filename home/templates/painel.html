@@ -12,20 +12,24 @@ Painel / {{ SITE_NAME }}
 
 {% block content %}
 
-<div class="container-xxl pt-1 text-center text-justify">
+<div class="container-xxl text-center text-justify my-1">
 
     <p class="text-start fw-bold">Slots:</p>
-    <div class="p-3 bg-black bg-opacity-50 mb-2 border border-secondary rounded bg-gradient text-dark">
+    <div class="px-2 py-2 bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
         <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
 
             <p class="text-start">
                 Cada slot abaixo permite cadastrar um imóvel. Você pode criar mais slots, que custarão um ticket por
-                mês. Você recebeu 100 tickets para usar. Para obter mais tickets clique no botão 'loja de tickets' logo
-                abaixo. Comprando tickets você ajuda a manter o site no ar e atualizado, obrigado :)
+                mês cada. Você recebeu 50 tickets para usar. Para obter mais tickets clique no botão 'loja de tickets'
+                logo abaixo. Comprando tickets você ajuda a manter o site no ar, mais seguro e atualizado, obrigado :)
             </p>
 
             <div class="container g-0 mb-1">
-                <div class="d-flex justify-content-end">
+                <div class="d-flex items-center justify-content-end">
+                    <div class="mx-1">
+                        <button type="button" class="btn btn-sm btn-primary">Loja 🏬</button>
+                    </div>
+                    <div>
                     <span class="badge bg-secondary position-relative">
                         <h1 class="fs-4">Tickets 🎫</h1>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -33,29 +37,78 @@ Painel / {{ SITE_NAME }}
                             <span class="visually-hidden">Tickets</span>
                         </span>
                     </span>
+                    </div>
                 </div>
             </div>
 
             <div class="row g-1">
+
                 {% for slot in slots %}
-                <div class="card bg-black bg-opacity-100 border-secondary h-100">
+                <div class="card bg-black bg-opacity-100 {{ slot.borda }} h-100">
                     <div class="card-body">
 
-                        <p class="text-start">{{ forloop.counter }}.
-                            Imóvel atual: <span class="badge text-bg-primary">{{ slot.imovel }}</span>
-                            {% if slot.gratuito %}
-                            - Grátis
-                            {% else %}
+                        <div class="container text-center">
+                            <div class="row align-items-start">
 
-                            {% endif %}
+                                <div class="col-1">
+                                    <h1 class="text-start">{{ forloop.counter }}</h1>
+                                </div>
 
-                        </p>
+                                <div class="col-4">
+                                    {% if slot.imovel %}
+                                    {% if slot.ativado %}
+                                    Imóvel atual: <span class="badge text-bg-primary">{{ slot.imovel }}</span>
+                                    {% else %}
+                                    Imóvel atual: <span class="badge text-bg-warning">{{ slot.imovel }}</span>
+                                    {% endif %}
+                                    {% else %}
+                                    Imóvel atual: <span class="badge text-bg-info">Slot vazio</span>
+                                    {% endif %}
+                                </div>
+
+                                {% if slot.gratuito %}
+                                <div class="col-7">
+                                    Grátis
+                                </div>
+
+                                {% else %}
+                                <div class="col-1">
+                                    🎫 {{ slot.tickets }}
+                                </div>
+                                <div class="col-2">
+                                    Criado: {{ slot.criado_em|date:"d/m/Y" }}
+                                </div>
+                                <div class="col-2">
+                                    {% if slot.ativado %}
+                                    <h1>Vencim.: {{ slot.vencimento|date:"d/m/Y" }}</h1>
+                                    {% else %}
+                                    <h1 class="text-warning">Venceu em: {{ slot.vencimento|date:"d/m/Y" }}</h1>
+                                    {% endif %}
+                                </div>
+                                <div class="col-1">
+                                    <button type="button" class="btn btn-sm btn-secondary" title="Adicionar ticket">➕🎫
+                                    </button>
+                                </div>
+                                {% if slot.imovel %}
+                                <div class="col-1">
+                                    <button type="button" class="btn btn-sm btn-secondary" title="Apagar" disabled>❌
+                                    </button>
+                                </div>
+                                {% else %}
+                                <div class="col-1">
+                                    <button type="button" class="btn btn-sm btn-secondary" title="Apagar">❌</button>
+                                </div>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 {% endfor %}
 
             </div>
-            <div class="mt-2">
+            <div class="my-3">
                 <a data-bs-toggle="modal" data-bs-target="#adicionar_slot"
                    class="dropdown-item text-center">
                     <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
@@ -68,26 +121,26 @@ Painel / {{ SITE_NAME }}
     </div>
 </div>
 
-<div class="modal modal-lg fade" id="adicionar_slot" tabindex="-1" aria-labelledby="ADICIONAR_SLOT"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+<div class="modal fade" id="adicionar_slot" tabindex="-1" aria-labelledby="ADICIONAR_SLOT" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-black text-white">
 
             <div class="modal-header text-center flex items-center flex-col">
                 <h1 class="fs-3">Adicionar slot</h1>
             </div>
 
-            <div class="modal-body">
-                <h1 class="fs-5">Isso irá consumir um ticket</h1>
+            <div class="modal-body text-center items-center">
+                <h1 class="fs-5">Isso irá consumir um ticket 🎫</h1>
             </div>
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                 </button>
-                <button type="submit" class="btn btn-primary">Confirmar
-                </button>
+                <a href="{% url 'home:Add Slot' %}" onsubmit="myButton.disabled = true;">
+                    <button type="button" class="btn btn-primary">Confirmar
+                    </button>
+                </a>
             </div>
-
 
         </div>
     </div>
