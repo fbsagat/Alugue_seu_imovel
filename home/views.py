@@ -309,20 +309,28 @@ class ContratosAtivos(LoginRequiredMixin, ListView):
 def registrar_pagamento(request):
     form = FormPagamento(request.user, request.POST)
     if form.is_valid():
-        pagamento = form.save(commit=False)
-        pagamento.ao_locador = request.user
         contrato_pk = request.POST.get('ao_contrato')
-        locatario = Contrato.objects.get(pk=contrato_pk).do_locatario
-        pagamento.do_locatario = locatario
-        pagamento.save()
-        messages.success(request, f"Pagamento registrado com sucesso!")
+
+        # se o imóvel do contrato está em slot \/
+        contrato = Contrato.objects.get(pk=contrato_pk)
+        if contrato.do_imovel.em_slot():
+            pagamento = form.save(commit=False)
+            pagamento.ao_locador = request.user
+            locatario = contrato.do_locatario
+            pagamento.do_locatario = locatario
+            pagamento.save()
+            messages.success(request, f"Pagamento registrado com sucesso!")
+        else:
+            messages.error(request,
+                           f"O pagamento não foi registrado. Imóvel desabilitado. por favor, "
+                           f"habilite-o no painel.")
         if 'form1' in request.session:
             del request.session['form1']
-        return redirect(request.META['HTTP_REFERER'])
+
     else:
         request.session['form1'] = [request.POST, str(datetime.now().time().strftime('%H:%M:%S'))]
         messages.error(request, f"Formulário inválido.")
-        return redirect(request.META['HTTP_REFERER'])
+    return redirect(request.META['HTTP_REFERER'])
 
 
 @login_required
@@ -498,19 +506,25 @@ class RevisarLocat(LoginRequiredMixin, UpdateView):
 @login_required
 def registrar_contrato(request):
     form = FormContrato(request.user, request.POST)
-
     if form.is_valid():
-        contrato = form.save(commit=False)
-        contrato.do_locador = request.user
-        contrato.save()
-        messages.success(request, "Contrato resgistrado com sucesso!")
-        if 'form5' in request.session:
-            del request.session['form5']
-        return redirect(request.META['HTTP_REFERER'])
+        imovel_pk = request.POST.get('do_imovel')
+        imovel = Imovei.objects.get(pk=imovel_pk)
+        if imovel.em_slot():
+            contrato = form.save(commit=False)
+            contrato.do_locador = request.user
+            contrato.save()
+            messages.success(request, "Contrato registrado com sucesso!")
+            if 'form5' in request.session:
+                del request.session['form5']
+        else:
+            messages.error(request,
+                           f"O contrato não foi registrado. Imóvel desabilitado. por favor, "
+                           f"habilite-o no painel.")
     else:
         request.session['form5'] = [request.POST, str(datetime.now().time().strftime('%H:%M:%S'))]
         messages.error(request, "Formulário inválido.")
-        return redirect(request.META['HTTP_REFERER'])
+
+    return redirect(request.META['HTTP_REFERER'])
 
 
 def validar_contrato_no_imovel_na_data(contrato, entrada, saida):
@@ -598,7 +612,11 @@ def registrar_imovel(request):
                 imovel = form.save(commit=False)
                 imovel.do_locador = request.user
                 imovel.save()
-                messages.success(request, "Imóvel resgistrado com sucesso!")
+                messages.success(request, "Imóvel registrado com sucesso!")
+            else:
+                messages.success(request,
+                                 "Usuário não possui slot disponível para registrar um imóvel, por favor, "
+                                 "acesse o painel para habilitar.")
             if 'form6' in request.session:
                 del request.session['form6']
             return redirect(request.META['HTTP_REFERER'])

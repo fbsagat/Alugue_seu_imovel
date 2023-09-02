@@ -179,9 +179,19 @@ class SlotsManager(models.Manager):
         slots_inativos = Slots.objects.filter(pk__in=lista)
         return slots_inativos
 
+    def inativos_com_imovel(self):
+        slots_qs = self.all()
+        lista = []
+        for slot in slots_qs:
+            if slot.ativado() is False and slot.imovel() is not None:
+                lista.append(slot.pk)
+        slots_inativos = Slots.objects.filter(pk__in=lista)
+        return slots_inativos
+
 
 class Slots(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, blank=False, on_delete=models.CASCADE)
+    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     gratuito = models.BooleanField(null=False, default=False)
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -189,7 +199,8 @@ class Slots(models.Model):
     objects = SlotsManager()
 
     def __str__(self):
-        return f'{"Gratuito" if self.gratuito else "Pago"}/Criado: {self.criado_em}/Tickets: {self.tickets}/{self.do_usuario}'
+        return (f'{self.pk}: {"Gratuito" if self.gratuito else "Pago"}/Criado: {self.criado_em}'
+                f'/Tickets: {self.tickets}/{self.do_usuario}/{self.imovel()}')
 
     def imovel(self):
         try:
@@ -982,6 +993,8 @@ class Tarefa(models.Model):
             return 4
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
             return 5
+        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+            return 6
 
     def autor_tipo_display(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -994,11 +1007,13 @@ class Tarefa(models.Model):
             return '⚠️ Aviso'
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
             return '👨‍💼 Locatário'
+        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+            return '⚠️ Aviso'
 
     def tarefa_nova(self):
         # Vai retornar True ou none, True se o autor desta tarefa estiver marcado como concluido(ps: concluídos em
         # seus respectivos formatos; ex: recibo: 'recibo_entregue', ex: Anotação: 'feito', ex: contrato: 'em_posse',
-        # ex: sugestao: 'neste caso utiliza o próprio parâmetro 'lida' desta model.'...)
+        # ex: sugestão: 'neste caso utiliza o próprio parâmetro 'lida' desta model.'...)
         # Retorna none caso o objeto não exista, (caso gere um except)
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
             try:
@@ -1025,6 +1040,11 @@ class Tarefa(models.Model):
                 return True if self.content_object.temporario is True else False
             except:
                 return None
+        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+            try:
+                return False if self.lida else True
+            except:
+                return None
 
     def borda(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -1037,6 +1057,8 @@ class Tarefa(models.Model):
             return 'border-success'
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
             return 'border-secondary'
+        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+            return 'border-success'
 
     def texto(self):
         mensagem = ''
@@ -1086,6 +1108,12 @@ class Tarefa(models.Model):
                             Email: {locatario.email}'''
             except:
                 pass
+        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+            try:
+                slot = self.content_object
+                mensagem = f'''O imóvel {slot.imovel()} está desabilitado, por favor, acesse o painel para habilitá-lo.'''
+            except:
+                pass
         return mensagem
 
     def definir_apagada(self):
@@ -1095,6 +1123,11 @@ class Tarefa(models.Model):
     def restaurar(self):
         self.apagada = False
         self.save(update_fields=['apagada'])
+
+    def definir_nao_lida(self):
+        self.lida = False
+        self.data_registro = datetime.now()
+        self.save(update_fields=['lida', 'data_registro'])
 
 
 lista_mensagem = (

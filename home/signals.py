@@ -84,7 +84,8 @@ def tratar_pagamentos(instance_contrato):
 
 
 def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
-    # Primeiro tenta recuperar apagada caso exista, cada ContentType tem sua regra, personalizar abaixo \/
+    # Caso exista: Tenta recuperar apagada, desfazer lida, etc...
+    # cada ContentType tem sua regra, personalizar abaixo \/
     try:
         tarefa = Tarefa.objects.get(autor_classe=tipo_conteudo, objeto_id=objeto_id)
         if tarefa.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -94,6 +95,8 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
             tarefa.restaurar()
         elif tarefa.autor_classe == ContentType.objects.get_for_model(Sugestao):
             tarefa.restaurar()
+        elif tarefa.autor_classe == ContentType.objects.get_for_model(Slots):
+            tarefa.definir_nao_lida()
         return tarefa
     except:
         # Caso não exista, criar a tarefa requisitada para o objeto
@@ -322,6 +325,13 @@ def parcela_pre_delete(sender, instance, **kwargs):
         Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
 
 
+@receiver(pre_delete, sender=Slots)
+def slot_pre_delete(sender, instance, **kwargs):
+    # Apagar a tarefa desta parcela
+    if instance.da_tarefa:
+        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
+
+
 # Gerenciadores de post_delete \/  ---------------------------------------
 @receiver(post_delete, sender=Pagamento)
 def pagamento_post_delete(sender, instance, **kwards):
@@ -352,6 +362,14 @@ def usuario_fez_login(sender, user, **kwargs):
             os.remove(caminho)
             if os.path.exists(caminho_2):
                 os.remove(caminho_2)
+
+    # Verificar se tem algum slot vencido e enviar uma notificação avisando o usuário, caso a notificação já exista,
+    # não enviar nada.
+    inativos_com_imovel = Slots.objects.inativos_com_imovel().filter(do_usuario=user)
+    for slot in inativos_com_imovel:
+        tipo_conteudo = ContentType.objects.get_for_model(Slots)
+        tarefa = criar_uma_tarefa(usuario=user, tipo_conteudo=tipo_conteudo, objeto_id=slot.pk)
+        Slots.objects.filter(pk=slot.pk).update(da_tarefa=tarefa)
 
 
 @receiver(user_logged_out)
