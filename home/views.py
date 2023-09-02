@@ -32,7 +32,7 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
-    ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slots
+    ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot
 
 
 # -=-=-=-=-=-=-=-= BOTÃO VISÃO GERAL -=-=-=-=-=-=-=-=
@@ -1797,7 +1797,7 @@ def painel(request):
         form = FormTickets()
         context['form'] = form
 
-    slots = Slots.objects.filter(do_usuario=request.user).order_by('criado_em')
+    slots = Slot.objects.filter(do_usuario=request.user).order_by('pk')
 
     context['SITE_NAME'] = settings.SITE_NAME
     context['slots'] = slots
@@ -1808,7 +1808,7 @@ def painel(request):
 @login_required
 @transaction.atomic
 def add_slot(request):
-    Slots.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
+    Slot.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
     usuario = Usuario.objects.get(pk=request.user.pk)
     usuario.tickets -= 1
     usuario.save(update_fields=['tickets'])
@@ -1818,7 +1818,7 @@ def add_slot(request):
 @login_required
 @transaction.atomic
 def adicionar_ticket(request, pk):
-    slot = Slots.objects.get(pk=pk)
+    slot = Slot.objects.get(pk=pk)
     quantidade = 1
     if request.method == 'POST':
         form = FormTickets(request.POST)
@@ -1841,7 +1841,7 @@ def adicionar_ticket(request, pk):
 @login_required
 @transaction.atomic
 def adicionar_ticket_todos(request):
-    slots = Slots.objects.filter(do_usuario=request.user, gratuito=False)
+    slots = Slot.objects.filter(do_usuario=request.user, gratuito=False)
     quantidade = 1
     if request.method == 'POST':
         form = FormTickets(request.POST)
@@ -1862,7 +1862,7 @@ def adicionar_ticket_todos(request):
 
 @login_required
 def apagar_slot(request, pk):
-    slot = Slots.objects.get(pk=pk)
+    slot = Slot.objects.get(pk=pk)
     if slot.do_usuario == request.user and slot.imovel() is None and slot.gratuito is False:
         slot.delete()
     else:

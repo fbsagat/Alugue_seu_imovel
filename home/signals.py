@@ -9,7 +9,7 @@ from django.db.models.signals import pre_delete, post_save, pre_save, post_delet
 from django.db import transaction
 from django.dispatch import receiver
 
-from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao, Slots, Imovei
+from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao, Slot, Imovei
 
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
@@ -95,7 +95,7 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
             tarefa.restaurar()
         elif tarefa.autor_classe == ContentType.objects.get_for_model(Sugestao):
             tarefa.restaurar()
-        elif tarefa.autor_classe == ContentType.objects.get_for_model(Slots):
+        elif tarefa.autor_classe == ContentType.objects.get_for_model(Slot):
             tarefa.definir_nao_lida()
         return tarefa
     except:
@@ -240,7 +240,7 @@ def sugestao_pre_save(sender, instance, **kwargs):
 def usuario_post_save(sender, instance, created, **kwargs):
     if created:
         for _ in range(0, 3):
-            Slots.objects.create(do_usuario=instance, gratuito=True)
+            Slot.objects.create(do_usuario=instance, gratuito=True)
 
 
 @receiver(post_save, sender=Anotacoe)
@@ -325,7 +325,7 @@ def parcela_pre_delete(sender, instance, **kwargs):
         Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
 
 
-@receiver(pre_delete, sender=Slots)
+@receiver(pre_delete, sender=Slot)
 def slot_pre_delete(sender, instance, **kwargs):
     # Apagar a tarefa desta parcela
     if instance.da_tarefa:
@@ -365,11 +365,11 @@ def usuario_fez_login(sender, user, **kwargs):
 
     # Verificar se tem algum slot vencido e enviar uma notificação avisando o usuário, caso a notificação já exista,
     # não enviar nada.
-    inativos_com_imovel = Slots.objects.inativos_com_imovel().filter(do_usuario=user)
+    inativos_com_imovel = Slot.objects.inativos_com_imovel().filter(do_usuario=user)
     for slot in inativos_com_imovel:
-        tipo_conteudo = ContentType.objects.get_for_model(Slots)
+        tipo_conteudo = ContentType.objects.get_for_model(Slot)
         tarefa = criar_uma_tarefa(usuario=user, tipo_conteudo=tipo_conteudo, objeto_id=slot.pk)
-        Slots.objects.filter(pk=slot.pk).update(da_tarefa=tarefa)
+        Slot.objects.filter(pk=slot.pk).update(da_tarefa=tarefa)
 
 
 @receiver(user_logged_out)

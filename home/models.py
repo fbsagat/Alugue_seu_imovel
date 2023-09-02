@@ -153,7 +153,7 @@ class Usuario(AbstractUser):
             return None
 
     def tem_slot_disponivel(self):
-        slots = Slots.objects.filter(do_usuario=self)
+        slots = Slot.objects.filter(do_usuario=self)
         for slot in slots:
             if slot.imovel() is None:
                 return True
@@ -167,7 +167,7 @@ class SlotsManager(models.Manager):
         for slot in slots_qs:
             if slot.ativado() is True:
                 lista.append(slot.pk)
-        slots_ativos = Slots.objects.filter(pk__in=lista)
+        slots_ativos = Slot.objects.filter(pk__in=lista)
         return slots_ativos
 
     def inativos(self):
@@ -176,7 +176,7 @@ class SlotsManager(models.Manager):
         for slot in slots_qs:
             if slot.ativado() is False:
                 lista.append(slot.pk)
-        slots_inativos = Slots.objects.filter(pk__in=lista)
+        slots_inativos = Slot.objects.filter(pk__in=lista)
         return slots_inativos
 
     def inativos_com_imovel(self):
@@ -185,11 +185,11 @@ class SlotsManager(models.Manager):
         for slot in slots_qs:
             if slot.ativado() is False and slot.imovel() is not None:
                 lista.append(slot.pk)
-        slots_inativos = Slots.objects.filter(pk__in=lista)
+        slots_inativos = Slot.objects.filter(pk__in=lista)
         return slots_inativos
 
 
-class Slots(models.Model):
+class Slot(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, blank=False, on_delete=models.CASCADE)
     da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
@@ -198,13 +198,17 @@ class Slots(models.Model):
     tickets = models.PositiveIntegerField(default=0)
     objects = SlotsManager()
 
+    class Meta:
+        verbose_name_plural = 'Slots'
+        ordering = ('pk',)
+
     def __str__(self):
         return (f'{self.pk}: {"Gratuito" if self.gratuito else "Pago"}/Criado: {self.criado_em}'
                 f'/Tickets: {self.tickets}/{self.do_usuario}/{self.imovel()}')
 
     def imovel(self):
         try:
-            slots = Slots.objects.filter(do_usuario=self.do_usuario).order_by('criado_em')
+            slots = Slot.objects.filter(do_usuario=self.do_usuario).order_by('criado_em')
             imoveis = Imovei.objects.filter(do_locador=self.do_usuario).order_by('data_registro')
             return imoveis[list(slots).index(self)]
         except:
@@ -478,7 +482,7 @@ class Imovei(models.Model):
 
     def em_slot(self):
         """ retorna true se estiver em slot e false se não """
-        slots = Slots.objects.filter(do_usuario=self.do_locador)
+        slots = Slot.objects.filter(do_usuario=self.do_locador)
         imoveis_em_slot = []
         for slot in slots:
             if slot.ativado():
@@ -993,7 +997,7 @@ class Tarefa(models.Model):
             return 4
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
             return 5
-        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+        elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             return 6
 
     def autor_tipo_display(self):
@@ -1007,7 +1011,7 @@ class Tarefa(models.Model):
             return '⚠️ Aviso'
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
             return '👨‍💼 Locatário'
-        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+        elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             return '⚠️ Aviso'
 
     def tarefa_nova(self):
@@ -1040,7 +1044,7 @@ class Tarefa(models.Model):
                 return True if self.content_object.temporario is True else False
             except:
                 return None
-        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+        elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             try:
                 return False if self.lida else True
             except:
@@ -1057,7 +1061,7 @@ class Tarefa(models.Model):
             return 'border-success'
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
             return 'border-secondary'
-        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+        elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             return 'border-success'
 
     def texto(self):
@@ -1108,7 +1112,7 @@ class Tarefa(models.Model):
                             Email: {locatario.email}'''
             except:
                 pass
-        elif self.autor_classe == ContentType.objects.get_for_model(Slots):
+        elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             try:
                 slot = self.content_object
                 mensagem = f'''O imóvel {slot.imovel()} está desabilitado, por favor, acesse o painel para habilitá-lo.'''
