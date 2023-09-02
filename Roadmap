@@ -77,7 +77,7 @@ Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em setting
 
 Implementar filtros/buscas nas paginas do botão histórico.
 
-Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado.
+Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado, em imóveis e contratos.
 
 Criar um botão de painel com configurações diversas, sistema de ativação de slots com tickets e compra de tickets
         com bitcoin via lightning network, e botão de backup de todos os dados, bem como, botão de restaurar
