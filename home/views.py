@@ -618,9 +618,9 @@ def registrar_anotacao(request):
         nota.save()
 
         if form.cleaned_data['tarefa']:
-            messages.success(request, "Tarefa resgistrada com sucesso!")
+            messages.success(request, "Tarefa registrada com sucesso!")
         else:
-            messages.success(request, "Anotação resgistrada com sucesso!")
+            messages.success(request, "Anotação registrada com sucesso!")
         if 'form7' in request.session:
             del request.session['form7']
         return redirect(request.META['HTTP_REFERER'])
@@ -2022,6 +2022,8 @@ def botaoteste(request):
 
     if executar == 170:
         # Teste de mensagens \/
+        contratos = Contrato.objects.ativos_e_no_slot().filter(do_locador=request.user)
+        print(contratos)
         messages.success(request, 'ok, tudo certo')
 
     if executar == 1 or executar == 100:

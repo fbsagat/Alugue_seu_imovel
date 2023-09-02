@@ -162,7 +162,7 @@ class Usuario(AbstractUser):
 
 class SlotsManager(models.Manager):
     def ativos(self):
-        slots_qs = self
+        slots_qs = self.all()
         lista = []
         for slot in slots_qs:
             if slot.ativado() is True:
@@ -171,7 +171,7 @@ class SlotsManager(models.Manager):
         return slots_ativos
 
     def inativos(self):
-        slots_qs = self
+        slots_qs = self.all()
         lista = []
         for slot in slots_qs:
             if slot.ativado() is False:
@@ -200,7 +200,7 @@ class Slots(models.Model):
             return None
 
     def vencimento(self):
-        # colocar pra vencer um dia após, não zero(evitar reclamações dos usuarios/não pode comer tempo deles)
+        # colocar para vencer um dia após, não zero(evitar reclamações dos usuários/não pode comer tempo deles)
         data = self.criado_em + relativedelta(months=self.tickets, days=0)
         return data.date()
 
@@ -465,6 +465,15 @@ class Imovei(models.Model):
     def receita_acumulada_format(self):
         return valor_format(str(self.receita_acumulada()))
 
+    def em_slot(self):
+        """ retorna true se estiver em slot e false se não """
+        slots = Slots.objects.filter(do_usuario=self.do_locador)
+        imoveis_em_slot = []
+        for slot in slots:
+            if slot.ativado():
+                imoveis_em_slot.append(slot.imovel())
+        return True if self in imoveis_em_slot else False
+
 
 class ContratoManager(models.Manager):
     def ativos(self):
@@ -490,6 +499,26 @@ class ContratoManager(models.Manager):
 
     def inativos(self):
         pass
+
+    def ativos_e_no_slot(self):
+        hoje = datetime.today().date()
+        contratos_qs = self.filter(em_posse=True, rescindido=False, data_entrada__lte=hoje)
+        lista = []
+        for contrato in contratos_qs:
+            if contrato.periodo_ativo_hoje() is True and contrato.do_imovel.em_slot() is True:
+                lista.append(contrato.pk)
+        contratos_ativos_slot = Contrato.objects.filter(pk__in=lista)
+        return contratos_ativos_slot
+
+    def ativos_e_sem_slot(self):
+        hoje = datetime.today().date()
+        contratos_qs = self.filter(em_posse=True, rescindido=False, data_entrada__lte=hoje)
+        lista = []
+        for contrato in contratos_qs:
+            if contrato.periodo_ativo_hoje() is True and contrato.do_imovel.em_slot() is False:
+                lista.append(contrato.pk)
+        contratos_ativos_sem_slot = Contrato.objects.filter(pk__in=lista)
+        return contratos_ativos_sem_slot
 
 
 class Contrato(models.Model):

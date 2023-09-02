@@ -68,6 +68,9 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 Fazer:
 Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes no botão de enviar um form.
 
+Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
+        informações de cada usuário nas queryes, nunca a partir de todos os objetos.
+
 Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos
         itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de
         configurações do fake test em settings.
