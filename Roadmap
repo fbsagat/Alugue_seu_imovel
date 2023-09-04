@@ -63,6 +63,7 @@ Ok. Corrigir: Validador impede cadastro de contrato novo quando é feito em um i
         retire a rescisão e já tenha outro contrato no período dele.
 Ok. Criar prioridade de aparição dos contratos ativados sobre os rescindidos nos esbranquiçados da tabela pdf.
 OK. Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado, em imóveis e contratos.
+OK. Mostrar no visão geral o total por grupo de imóveis e por tipo.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -93,9 +94,7 @@ Colocar a variável mobiliado no contrato pdf.
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
 Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para casa tipo de utilização
-        baseados no uuid principal do usuário. Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
-
-Mostrar no visão geral o total por grupo de imóveis e por tipo.
+        baseados no uuid principal do usuário. É mais seguro! Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
 
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
