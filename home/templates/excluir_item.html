@@ -24,6 +24,11 @@ Excluir Item / {{ SITE_NAME }}
                         {% if object %}
                         <br><strong>{{ object }}</strong>
                         {% endif %}
+                        {% if aviso %}
+                        <br><br>
+                        <h1 class="fs-1">⚠️</h1>
+                        <h1 class="text-wrap fs-5 fst-italic" style="width: 60rem;">{{ aviso }}</h1>
+                        {% endif %}
                     </legend>
                     {{ form|crispy }}
                 </fieldset>

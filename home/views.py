@@ -398,11 +398,6 @@ class EditarGasto(LoginRequiredMixin, UpdateView):
         self.object = get_object_or_404(Gasto, pk=self.kwargs['pk'], do_locador=self.request.user)
         return self.object
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(EditarGasto, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 class ExcluirGasto(LoginRequiredMixin, DeleteView):
     model = Gasto
@@ -414,6 +409,11 @@ class ExcluirGasto(LoginRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Gasto, pk=self.kwargs['pk'], do_locador=self.request.user)
         return self.object
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ExcluirGasto, self).get_context_data(**kwargs)
+        context['SITE_NAME'] = settings.SITE_NAME
+        return context
 
 
 # LOCATARIO ---------------------------------------
@@ -1466,6 +1466,8 @@ class ExcluirImov(LoginRequiredMixin, DeleteView):
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirImov, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
+        context['aviso'] = ('Tem certeza de que deseja apagar o imóvel selecionado? Todos os contratos e seus'
+                            ' respectivos registros de pagamentos também serão removidos.')
         return context
 
 
@@ -1534,6 +1536,9 @@ class ExcluirLocat(LoginRequiredMixin, DeleteView):
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirLocat, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
+        context['aviso'] = (''
+                            'Tem certeza de que deseja apagar o locatário selecionado? Todos os seus contratos e'
+                            ' respectivos registros de pagamentos também serão removidos.')
         return context
 
 
@@ -1602,6 +1607,8 @@ class ExcluirContrato(LoginRequiredMixin, DeleteView):
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirContrato, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
+        context['aviso'] = ('Tem certeza de que deseja apagar o contrato selecionado? Todos os pagamentos referentes a'
+                            ' ele também serão removidos.')
         return context
 
 

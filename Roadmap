@@ -62,6 +62,7 @@ Ok. Corrigir: Validador impede cadastro de contrato novo quando é feito em um i
         contrato rescindido cadastrado. --> Rescindiu, desconsidera. Depois cria outra validação para caso o usuário
         retire a rescisão e já tenha outro contrato no período dele.
 Ok. Criar prioridade de aparição dos contratos ativados sobre os rescindidos nos esbranquiçados da tabela pdf.
+OK. Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado, em imóveis e contratos.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -76,8 +77,6 @@ Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em setting
         configurações do fake test em settings.
 
 Implementar filtros/buscas nas paginas do botão histórico.
-
-Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado, em imóveis e contratos.
 
 Criar um botão de painel com configurações diversas, sistema de ativação de slots com tickets e compra de tickets
         com bitcoin via lightning network, e botão de backup de todos os dados, bem como, botão de restaurar
