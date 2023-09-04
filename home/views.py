@@ -1209,6 +1209,14 @@ def gerar_contrato(request):
 
 
 @login_required
+def contratos_da_comunidade(request):
+    # exibir os modelos de contratos criados pelos usuários que estão marcados como compartilhados para a comunidade
+    context = {}
+    context['SITE_NAME'] = settings.SITE_NAME
+    return render(request, 'modelos_da_comunidade.html', context)
+
+
+@login_required
 def criar_modelo(request):
     context = {}
     form = FormContratoModelo()

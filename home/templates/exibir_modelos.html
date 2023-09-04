@@ -11,21 +11,31 @@ Itens Ativos / {{ SITE_NAME }}
 
 {% if modelos %}
 
-<div class="container pt-1 text-center text-justify justify-center">
-    <div
-            class="container-auto m-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
+<div class="container my-1 text-center text-justify justify-center">
+
+    <div class="container-auto my-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
         <a class="py-2 px-3" href="{% url 'home:Criar Modelo' %}">
-            <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+            <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
                 Criar novo modelo
             </button>
         </a>
+        <a class="py-2 px-3" href="{% url 'home:Modelos' %}">
+            <button class="btn btn-sm active btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                Meus modelos
+            </button>
+        </a>
+        <a class="py-2 px-3" href="{% url 'home:Contrato Comunidade' %}">
+            <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                Modelos da comunidade
+            </button>
+        </a>
         <a class="py-2 px-3" href="{% url 'home:Contrato PDF' %}">
-            <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+            <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
                 Sair do editor
             </button>
         </a>
     </div>
-    <br>
+
     <div class="container-xxl">
         <div class="row row-cols-5 row-cols-md-3 g-3">
             {% for modelo in modelos %}
@@ -55,45 +65,27 @@ Itens Ativos / {{ SITE_NAME }}
                         </p>
                         {% endif %}
                     </div>
+
                     <div class="card-footer">
-                        {% if modelo.display_variaveis is not False %}
-                        <small>Variáveis neste modelo:</small>
-                        <div class="row row-cols-md-1 g-1">
-                            {% for variavel in modelo.display_variaveis %}
-                            <div class="col">
-                                <div class="card bg-black border-secondary" style="cursor:default;" title="{{ variavel.1 }}">
-                                    <div class="card-head align-items-center d-flex justify-content-between">
-                                        <h1 class="flex-grow-1" value="">{{ variavel.0 }}</h1>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
+                        <div class="d-flex justify-content-around">
+                            <!-- Botão modal variáveis -->
+                            <a data-bs-toggle="modal" data-bs-target="#modal_variaveis{{ modelo.pk }}"
+                               class="dropdown-item text-center">
+                                <button type="button" class="btn btn-sm btn-secondary">
+                                    Variáveis neste modelo
+                                </button>
+                            </a>
+                            <!-- Botão modal condições -->
+                            <a data-bs-toggle="modal" data-bs-target="#modal_condicoes{{ modelo.pk }}"
+                               class="dropdown-item text-center">
+                                <button type="button" class="btn btn-sm btn-secondary"
+                                        title="Adicionar tickets em todos os slots">
+                                    Condições neste modelo
+                                </button>
+                            </a>
                         </div>
-                        {% else %}
-                        <small>Variáveis neste modelo: Nenhuma</small>
-                        {% endif %}
-
-                        {% if modelo.display_condicoes is not False %}
-                        <small>Condições neste modelo:</small>
-                        <div class="row row-cols-md-1 g-1">
-                            {% for condicao in modelo.display_condicoes %}
-                            <div class="col">
-                                <div class="card bg-black border-secondary" style="cursor:default;" title="{{ condicao.1 }}">
-                                    <div class="card-head align-items-center d-flex justify-content-between">
-                                        <h1 class="flex-grow-1" value="">{{ condicao.0 }}</h1>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% else %}
-                        <br>
-                        <small>Condições neste modelo: Nenhuma</small>
-                        {% endif %}
-
                     </div>
                 </div>
-
             </div>
             {% endfor %}
 
@@ -101,6 +93,88 @@ Itens Ativos / {{ SITE_NAME }}
     </div>
     <br>
 </div>
+
+<!--modal de Variáveis -->
+{% for modelo in modelos %}
+<div class="modal modal-lg fade" id="modal_variaveis{{ modelo.pk }}" tabindex="-1"
+     aria-labelledby="MODAL_VARIAVEIS{{ modelo.pk }}"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-black text-white">
+            <div class="col mx-1 my-1">
+                {% if modelo.display_variaveis is not False %}
+                <div class="row mb-3 text-center">
+                    <h1>Variáveis em: {{ modelo.titulo }}:</h1>
+                </div>
+                <div class="row row-cols-md-2 g-1">
+                    {% for variavel in modelo.display_variaveis %}
+                    <div class="col">
+                        <div class="card bg-black border-secondary" style="cursor:default;"
+                             title="{{ variavel.1 }}">
+                            <div class="card-head text-center align-items-center d-flex justify-content-between">
+                                <h1 class="flex-grow-1" value="">{{ variavel.0 }}</h1>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="row mb-3 text-center">
+                    <h1>Nenhuma variável em: {{ modelo.titulo }}</h1>
+                </div>
+                {% endif %}
+                <div class="row mt-3">
+                    <div class="col text-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal fim -->
+
+<!--modal de Condições -->
+<div class="modal modal-lg fade" id="modal_condicoes{{ modelo.pk }}" tabindex="-1"
+     aria-labelledby="MODAL_CONDICOES{{ modelo.pk }}"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-black text-white">
+            <div class="col mx-1 my-1">
+                {% if modelo.display_condicoes is not False %}
+                <div class="row mb-3 text-center">
+                    <h1>Condições em: {{ modelo.titulo }}:</h1>
+                </div>
+                <div class="row row-cols-md-2 g-1">
+                    {% for condicao in modelo.display_condicoes %}
+                    <div class="col">
+                        <div class="card bg-black border-secondary" style="cursor:default;"
+                             title="{{ condicao.1 }}">
+                            <div class="card-head text-center align-items-center d-flex justify-content-between">
+                                <h1 class="flex-grow-1" value="">{{ condicao.0 }}</h1>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="row mb-3 text-center">
+                    <h1>Nenhuma condição em: {{ modelo.titulo }}</h1>
+                </div>
+                {% endif %}
+                <div class="row mt-3">
+                    <div class="col text-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal fim -->
+{% endfor %}
 
 {% else %}
 <div class="container-fluid pt-1 text-center text-justify">

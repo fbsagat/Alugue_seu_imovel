@@ -13,7 +13,7 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, \
     like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, \
     arquivos_locatarios_docs, arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, \
     arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
-    adicionar_ticket, adicionar_ticket_todos, painel_configs, painel_loja
+    adicionar_ticket, adicionar_ticket_todos, painel_configs, painel_loja, contratos_da_comunidade
 
 from Alugue_seu_imovel import settings
 
@@ -75,11 +75,12 @@ urlpatterns = [
     path('tabela_PDF/', tabela, name='Tabela PDF'),
     path('contrato_PDF/', gerar_contrato, name='Contrato PDF'),
 
-    # Modelo de contrato:
+    # MODELO DE CONTRATO -------------------
     path('modelos/', Modelos.as_view(), name='Modelos'),
     path('criar_modelo', criar_modelo, name='Criar Modelo'),
     path('editar_modelo/<int:pk>', EditarModelo.as_view(), name='Editar Modelo'),
     path('excluir_modelo/<int:pk>', ExcluirModelo.as_view(), name='Excluir Modelo'),
+    path('contrato_modelos_comunidade/', contratos_da_comunidade, name='Contrato Comunidade'),
 
     # ABA HISTORICO -------------------
     path('pagamentos/', Pagamentos.as_view(), name='Pagamentos'),

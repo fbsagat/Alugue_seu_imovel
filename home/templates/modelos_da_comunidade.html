@@ -4,39 +4,36 @@
 {% load crispy_forms_tags %}
 
 {% block titulo %}
-Painel / {{ SITE_NAME }}
-{% endblock %}
-
-{% block head %}
+Itens Ativos / {{ SITE_NAME }}
 {% endblock %}
 
 {% block content %}
 
-<div class="container-xxl my-1 text-center text-justify my-1">
+<div class="container my-1 text-center text-justify justify-center">
 
     <div class="container-auto my-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
-        <a class="py-2 px-3" href="{% url 'home:Painel Configs' %}">
+        <a class="py-2 px-3" href="{% url 'home:Criar Modelo' %}">
             <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
-                Configurações
+                Criar novo modelo
             </button>
         </a>
-        <a class="py-2 px-3" href="{% url 'home:Painel Slots' %}">
+        <a class="py-2 px-3" href="{% url 'home:Modelos' %}">
             <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
-                Slots
+                Meus modelos
             </button>
         </a>
-        <a class="py-2 px-3" href="{% url 'home:Painel Loja' %}">
+        <a class="py-2 px-3" href="{% url 'home:Contrato Comunidade' %}">
             <button class="btn btn-sm active btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
-                Loja
+                Modelos da comunidade
+            </button>
+        </a>
+        <a class="py-2 px-3" href="{% url 'home:Contrato PDF' %}">
+            <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+                Sair do editor
             </button>
         </a>
     </div>
 
-    <div class="px-2 py-2 bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
-        <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
-
-
-        </div>
-    </div>
 </div>
+
 {% endblock %}
