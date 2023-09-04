@@ -670,7 +670,7 @@ class Contrato(models.Model):
     def title_pagou_parcelas(self):
         if self.parcelas_pagas_qtd() > 0:
             plural = 's' if self.parcelas_pagas_qtd() > 1 else ''
-            return f'Pagou {self.parcelas_pagas_qtd()} parcela{plural} de {self.duracao}'
+            return f'Quitou {self.parcelas_pagas_qtd()} parcela{plural} de {self.duracao}'
         else:
             return 'Nenhuma parcela quitada ainda'
 
@@ -1115,7 +1115,8 @@ class Tarefa(models.Model):
         elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             try:
                 slot = self.content_object
-                mensagem = f'''O imóvel {slot.imovel()} está desabilitado, por favor, acesse o painel para habilitá-lo.'''
+                mensagem = f'''O imóvel {slot.imovel()} está desabilitado, por favor, acesse o painel para 
+                habilitá-lo.'''
             except:
                 pass
         return mensagem
@@ -1130,6 +1131,7 @@ class Tarefa(models.Model):
 
     def definir_nao_lida(self):
         self.lida = False
+        self.data_lida = None
         self.data_registro = datetime.now()
         self.save(update_fields=['lida', 'data_registro'])
 

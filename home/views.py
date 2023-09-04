@@ -42,8 +42,7 @@ def visao_geral(request):
     contratos = Contrato.objects.ativos().filter(do_locador=request.user)
     usuario = Usuario.objects.get(pk=request.user.pk)
 
-    # Sistema de ordenação \/
-
+    # Sistema de ordenação inicio \/
     order_by = 'nome_do_locatario'
     if usuario.vis_ger_ultim_order_by:
         order_by = usuario.vis_ger_ultim_order_by
@@ -1791,7 +1790,7 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
 
 
 @login_required
-def painel(request):
+def painel_slots(request):
     context = {}
     if request.method == 'GET':
         form = FormTickets()
@@ -1802,7 +1801,19 @@ def painel(request):
     context['SITE_NAME'] = settings.SITE_NAME
     context['slots'] = slots
     context['tickets'] = request.user.tickets
-    return render(request, 'painel.html', context)
+    return render(request, 'painel_slots.html', context)
+
+
+def painel_configs(request):
+    context = {}
+    context['SITE_NAME'] = settings.SITE_NAME
+    return render(request, 'painel_configs.html', context)
+
+
+def painel_loja(request):
+    context = {}
+    context['SITE_NAME'] = settings.SITE_NAME
+    return render(request, 'painel_loja.html', context)
 
 
 @login_required

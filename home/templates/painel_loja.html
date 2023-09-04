@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Painel / {{ SITE_NAME }}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-xxl text-center text-justify my-1">
+
+    <nav class="nav nav-pills nav-justified">
+        <a class="nav-link" aria-current="page" href="{% url 'home:Painel Configs' %}">Configurações</a>
+        <a class="nav-link" href="{% url 'home:Painel Slots' %}">Slots</a>
+        <a class="nav-link active" href="{% url 'home:Painel Loja' %}">Loja</a>
+    </nav>
+
+    <br>
+    <div class="px-2 py-2 bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}

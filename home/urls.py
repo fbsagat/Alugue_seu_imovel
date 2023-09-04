@@ -12,8 +12,8 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, \
     criar_modelo, EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, \
     like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, \
     arquivos_locatarios_docs, arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, \
-    arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel, add_slot, apagar_slot, \
-    adicionar_ticket, adicionar_ticket_todos
+    arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
+    adicionar_ticket, adicionar_ticket_todos, painel_configs, painel_loja
 
 from Alugue_seu_imovel import settings
 
@@ -104,6 +104,15 @@ urlpatterns = [
     # AVISOS -------------------
     path('aviso_lido/<int:pk>', aviso_lido, name='Aviso Lido'),
 
+    # PAINEL -------------------
+    path('painel_slots/', painel_slots, name='Painel Slots'),
+    path('painel_configuracoes/', painel_configs, name='Painel Configs'),
+    path('painel_loja/', painel_loja, name='Painel Loja'),
+    path('adicionar_slot/', add_slot, name='Add Slot'),
+    path('apagar_slot/<int:pk>', apagar_slot, name='Apagar Slot'),
+    path('adicionar_ticket/<int:pk>', adicionar_ticket, name='Adicionar Ticket'),
+    path('adicionar_ticket_todos/', adicionar_ticket_todos, name='Adicionar Ticket Todos'),
+
     # GERAL -------------------
     path('', Homepage.as_view(), name='home'),
     path('criar_conta/', CriarConta.as_view(), name='Criar Conta'),
@@ -112,11 +121,6 @@ urlpatterns = [
         template_name='editar_perfil.html', success_url=reverse_lazy('home:home'),
         extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
     path('editar_perfil/', EditarPerfil.as_view(), name='Editar Perfil'),
-    path('painel/', painel, name='Painel'),
-    path('adicionar_slot/', add_slot, name='Add Slot'),
-    path('apagar_slot/<int:pk>', apagar_slot, name='Apagar Slot'),
-    path('adicionar_ticket/<int:pk>', adicionar_ticket, name='Adicionar Ticket'),
-    path('adicionar_ticket_todos/', adicionar_ticket_todos, name='Adicionar Ticket Todos'),
     path('login/',
          auth_view.LoginView.as_view(template_name='login.html', extra_context={'SITE_NAME': settings.SITE_NAME}),
          name='Login'),
