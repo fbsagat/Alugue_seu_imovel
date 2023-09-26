@@ -1,6 +1,7 @@
 import os, json
 from datetime import datetime, timedelta
 from os import path
+from math import floor
 from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
@@ -2060,48 +2061,48 @@ def aprovar_sugestao(request, pk):
     return HttpResponseRedirect(reverse('home:Sugestões'))
 
 
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def botaoteste(request):
-    form_adm = FormAdmin(request.POST, initial={'p_usuario': request.user})
-    fict_qtd = settings.FICT_QTD
-    executar = fict_multi = int
-    if form_adm.is_valid():
-        usuario = form_adm.cleaned_data['p_usuario']
-        fict_multi = int(form_adm.data['multiplicar_por'])
-        executar = int(form_adm.data['executar'])
-
-    if executar == 170:
-        # Teste de mensagens \/
-        contratos = Contrato.objects.ativos_e_no_slot().filter(do_locador=request.user)
-        print(contratos)
-        messages.success(request, 'ok, tudo certo')
-
-    if executar == 1 or executar == 100:
-        count = 0
-        for x in range(fict_multi * fict_qtd['locatario']):
-            count += 1
-            aleatorio = locatarios_ficticios()
-            form = FormLocatario(usuario=request.user.pk)
-            locatario = form.save(commit=False)
-            locatario.do_locador = usuario
-            locatario.nome = aleatorio.get('nome')
-            locatario.RG = aleatorio.get('RG')
-            locatario.CPF = aleatorio.get('CPF')
-            locatario.ocupacao = aleatorio.get('ocupacao')
-            locatario.endereco_completo = aleatorio.get('endereco_completo')
-            locatario.telefone1 = aleatorio.get('telefone1')
-            locatario.telefone2 = aleatorio.get('telefone2')
-            locatario.email = aleatorio.get('email')
-            locatario.nacionalidade = aleatorio.get('nacionalidade')
-            locatario.estadocivil = aleatorio.get('estadocivil')
-            locatario.save()
-        messages.success(request, f"Criado(s) {count} locatário(s) para {usuario}")
-
-    if executar == 160 or executar == 100:
-        if ImovGrupo.objects.filter(do_usuario=usuario).count() < fict_qtd['imovel_g'] or executar == 160:
+def criar_locatarios_ficticios(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request, f"Quantia insuficiente para distribuir 'locatários' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
             count = 0
-            for x in range(fict_multi if executar == 160 else 1 * fict_qtd['imovel_g']):
+            for x in range(range_):
+                count += 1
+                aleatorio = locatarios_ficticios()
+                form = FormLocatario(usuario=request.user.pk)
+                locatario = form.save(commit=False)
+                locatario.do_locador = usuario
+                locatario.nome = aleatorio.get('nome')
+                locatario.RG = aleatorio.get('RG')
+                locatario.CPF = aleatorio.get('CPF')
+                locatario.ocupacao = aleatorio.get('ocupacao')
+                locatario.endereco_completo = aleatorio.get('endereco_completo')
+                locatario.telefone1 = aleatorio.get('telefone1')
+                locatario.telefone2 = aleatorio.get('telefone2')
+                locatario.email = aleatorio.get('email')
+                locatario.nacionalidade = aleatorio.get('nacionalidade')
+                locatario.estadocivil = aleatorio.get('estadocivil')
+                locatario.save()
+            messages.success(request, f"Criado(s) {count} locatário(s) para {usuario}")
+
+
+def criar_imov_grupo_fict(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request,
+                       f"Quantia insuficiente para distribuir 'grupos de imóveis' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
+            count = 0
+            for x in range(range_):
                 count += 1
                 aleatorio = imov_grupo_fict()
                 form = FormimovelGrupo()
@@ -2112,10 +2113,18 @@ def botaoteste(request):
                 imovel_g.save()
             messages.success(request, f"Criado(s) {count} grupo(s) para {usuario}")
 
-    if executar == 2 or executar == 100:
-        if ImovGrupo.objects.filter(do_usuario=usuario).count() > 0:
+
+def criar_imoveis_ficticios(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request, f"Quantia insuficiente para distribuir 'imóveis' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
             count = 0
-            for x in range(fict_multi * fict_qtd['imovel']):
+            for x in range(range_):
                 count += 1
                 aleatorio = imoveis_ficticios(usuario)
                 form = FormImovel(usuario)
@@ -2135,16 +2144,19 @@ def botaoteste(request):
                 imovel.data_registro = aleatorio.get('data_registro')
                 imovel.save()
             messages.success(request, f"Criado(s) {count} imovei(s) para {usuario}")
-        else:
-            messages.error(request, "Primeiro crie grupos")
 
-    if executar == 3 or executar == 100:
-        imo = Imovei.objects.filter(do_locador=usuario).count()
-        contr = Contrato.objects.ativos().filter(do_locador=usuario).count()
-        # \/ arrumar: para criar um contrato devem haver mais imoveis inativos deste locador do que o requerido.
-        if imo > contr:
+
+def criar_contratos_ficticios(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request, f"Quantia insuficiente para distribuir 'contratos' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
             count = 0
-            for x in range(fict_multi * fict_qtd['contrato']):
+            for x in range(range_):
                 count += 1
                 aleatorio = contratos_ficticios(request, usuario)
                 form = FormContrato(usuario)
@@ -2159,38 +2171,46 @@ def botaoteste(request):
                 contrato.dia_vencimento = aleatorio.get('dia_vencimento')
                 contrato.save()
             messages.success(request, f"Criado(s) {count} contrato(s) para {usuario}")
-        else:
-            messages.error(request, "Impossível, todos os imóveis estão ocupados no momento")
 
-    if executar == 4 or executar == 100:
-        if Contrato.objects.filter(do_locador=usuario).count() > 0:
+
+def criar_pagamentos_ficticios(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request, f"Quantia insuficiente para distribuir 'pagamentos' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
             count = 0
-            for x in range(fict_multi * fict_qtd['pagamento']):
-                pagamentos_fic = pagamentos_ficticios(usuario)
-                if pagamentos_fic is not None:
-                    count += 1
-                    aleatorio = pagamentos_fic
-                    form = FormPagamento(usuario)
-                    pagamento = form.save(commit=False)
-                    locatario = Contrato.objects.get(pk=aleatorio.get('ao_contrato').pk).do_locatario
-                    pagamento.ao_locador = usuario
-                    pagamento.do_locatario = locatario
-                    pagamento.ao_contrato = aleatorio.get('ao_contrato')
-                    pagamento.valor_pago = aleatorio.get('valor_pago')
-                    pagamento.data_pagamento = aleatorio.get('data_pagamento')
-                    pagamento.forma = aleatorio.get('forma')
-                    pagamento.recibo = aleatorio.get('recibo')
-                    pagamento.save()
-                else:
-                    messages.error(request, "Todos os contratos já estão 100% pagos")
+            for x in range(range_):
+                count += 1
+                aleatorio = pagamentos_ficticios(usuario=usuario)
+                form = FormPagamento(usuario)
+                pagamento = form.save(commit=False)
+                locatario = Contrato.objects.get(pk=aleatorio.get('ao_contrato').pk).do_locatario
+                pagamento.ao_locador = usuario
+                pagamento.do_locatario = locatario
+                pagamento.ao_contrato = aleatorio.get('ao_contrato')
+                pagamento.valor_pago = aleatorio.get('valor_pago')
+                pagamento.data_pagamento = aleatorio.get('data_pagamento')
+                pagamento.forma = aleatorio.get('forma')
+                pagamento.recibo = aleatorio.get('recibo')
+                pagamento.save()
             messages.success(request, f"Criado(s) {count} pagamento(s) para {usuario}")
-        else:
-            messages.error(request, "Primeiro crie contratos")
 
-    if executar == 5 or executar == 100:
-        if Imovei.objects.filter(do_locador=usuario).count() > 0:
+
+def criar_gastos_ficticios(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request, f"Quantia insuficiente para distribuir 'gastos' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
             count = 0
-            for x in range(fict_multi * fict_qtd['gasto']):
+            for x in range(range_):
                 count += 1
                 aleatorio = gastos_ficticios()
                 form = FormGasto()
@@ -2202,47 +2222,65 @@ def botaoteste(request):
                 gasto.observacoes = aleatorio.get('observacoes')
                 gasto.save()
             messages.success(request, f"Criado(s) {count} gasto(s) para {usuario}")
-        else:
-            messages.error(request, "Primeiro crie imóveis")
 
-    if executar == 6 or executar == 100:
-        count = 0
-        for x in range(fict_multi * fict_qtd['nota']):
-            count += 1
-            aleatorio = anotacoes_ficticias()
-            form = FormAnotacoes()
-            nota = form.save(commit=False)
-            nota.do_usuario = usuario
-            nota.titulo = aleatorio.get('titulo')
-            nota.data_registro = aleatorio.get('data_registro')
-            nota.texto = aleatorio.get('texto')
-            nota.tarefa = aleatorio.get('tarefa')
-            nota.feito = aleatorio.get('feito')
-            nota.save()
-        messages.success(request, f"Criada(s) {count} anotação(ões) para {usuario}")
 
-    if executar == 7 or executar == 100:
-        count = 0
-        for x in range(fict_multi * fict_qtd['sugestoes']):
-            count += 1
-            aleatorio = sugestoes_ficticias()
-            form = FormSugestao()
-            sugestao = form.save(commit=False)
-            sugestao.do_usuario = aleatorio.get('do_usuario')
-            sugestao.corpo = aleatorio.get('corpo')
-            sugestao.aprovada = aleatorio.get('aprovada')
-            sugestao.implementada = aleatorio.get('implementada')
-            sugestao.data_implementada = aleatorio.get('data_implementada')
-            sugestao.save()
-            for usuario in aleatorio.get('likes'):
-                sugestao.likes.add(usuario)
-        messages.success(request, f"Criada(s) {count} sugestão(ões) para {usuario}")
+def criar_anotacoes_ficticias(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request, f"Quantia insuficiente para distribuir 'anotações' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
+            count = 0
+            for x in range(range_):
+                count += 1
+                aleatorio = anotacoes_ficticias()
+                form = FormAnotacoes()
+                nota = form.save(commit=False)
+                nota.do_usuario = usuario
+                nota.titulo = aleatorio.get('titulo')
+                nota.data_registro = aleatorio.get('data_registro')
+                nota.texto = aleatorio.get('texto')
+                nota.tarefa = aleatorio.get('tarefa')
+                nota.feito = aleatorio.get('feito')
+                nota.save()
+            messages.success(request, f"Criada(s) {count} anotação(ões) para {usuario}")
 
-    if executar == 150:
-        count = 0
-        for x in range(fict_multi * fict_qtd['user']):
+
+def criar_sugestoes_ficticias(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request, f"Quantia insuficiente para distribuir 'sugestões' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
+            count = 0
+            for x in range(range_):
+                count += 1
+                aleatorio = sugestoes_ficticias()
+                form = FormSugestao()
+                sugestao = form.save(commit=False)
+                sugestao.do_usuario = usuario
+                sugestao.corpo = aleatorio.get('corpo')
+                sugestao.aprovada = aleatorio.get('aprovada')
+                sugestao.implementada = aleatorio.get('implementada')
+                sugestao.data_implementada = aleatorio.get('data_implementada')
+                sugestao.save()
+                for usuario_ in aleatorio.get('likes'):
+                    sugestao.likes.add(usuario_)
+            messages.success(request, f"Criada(s) {count} sugestão(ões) para {usuario}")
+
+
+def criar_usuarios_ficticios(request, quantidade, multiplicador):
+    count = 0
+    for x in range(multiplicador * quantidade):
+        UserModel = get_user_model()
+        while True:
             aleatorio = usuarios_ficticios()
-            UserModel = get_user_model()
             if not UserModel.objects.filter(username=aleatorio.get('username')).exists():
                 count += 1
                 user = UserModel.objects.create_user(aleatorio.get('username'), password=aleatorio.get('password'))
@@ -2255,6 +2293,75 @@ def botaoteste(request):
                 user.RG = aleatorio.get('RG')
                 user.CPF = aleatorio.get('CPF')
                 user.save()
-        messages.success(request, f"Criado(s) {count} usuário(s)")
+                break
+    messages.success(request, f"Criado(s) {count} usuário(s)")
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def botaoteste(request):
+
+    # FABIO DO FUTURO: FAZER OS TESTES GERAIS NO BOTÃO TESTE
+
+    form_adm = FormAdmin(request.POST)
+
+    if form_adm.is_valid():
+        qtd_usuario = form_adm.cleaned_data['qtd_usuario']
+        qtd_locatario = form_adm.cleaned_data['qtd_locatario']
+        qtd_imovel_g = form_adm.cleaned_data['qtd_imovel_g']
+        qtd_imovel = form_adm.cleaned_data['qtd_imovel']
+        qtd_contrato = form_adm.cleaned_data['qtd_contrato']
+        qtd_pagamento = form_adm.cleaned_data['qtd_pagamento']
+        qtd_gasto = form_adm.cleaned_data['qtd_gasto']
+        qtd_nota = form_adm.cleaned_data['qtd_nota']
+        qtd_sugestao = form_adm.cleaned_data['qtd_sugestao']
+
+        fict_multi = int(form_adm.data['multiplicar_por'])
+
+        if qtd_usuario > 0 and form_adm.cleaned_data['criar_usuarios']:
+            criar_usuarios_ficticios(request, quantidade=qtd_usuario, multiplicador=fict_multi)
+
+        distribuir = False
+        usuario_s = Usuario.objects.none()
+        if form_adm.cleaned_data['criar_itens']:
+            todos_ou_cada = int(form_adm.data['todos_ou_cada'])
+            if todos_ou_cada == 0:
+                usuario_s = Usuario.objects.all()
+            elif todos_ou_cada == 1:
+                usuario_s = Usuario.objects.all().exclude(is_superuser=True)
+            elif todos_ou_cada == 2:
+                usuario_s = Usuario.objects.all()
+                distribuir = True
+            elif todos_ou_cada == 3:
+                usuario_s = Usuario.objects.all().exclude(is_superuser=True)
+                distribuir = True
+            elif todos_ou_cada == 4:
+                usuario = form_adm.cleaned_data['para_o_usuario']
+                usuario_s = Usuario.objects.filter(pk=usuario.pk)
+
+            if qtd_locatario * fict_multi > 0:
+                criar_locatarios_ficticios(request, quantidade=qtd_locatario, multiplicador=fict_multi,
+                                           usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_imovel_g * fict_multi > 0:
+                criar_imov_grupo_fict(request, quantidade=qtd_imovel_g, multiplicador=fict_multi,
+                                      usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_imovel * fict_multi > 0:
+                criar_imoveis_ficticios(request, quantidade=qtd_imovel, multiplicador=fict_multi,
+                                      usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_contrato * fict_multi > 0:
+                criar_contratos_ficticios(request, quantidade=qtd_contrato, multiplicador=fict_multi,
+                                      usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_pagamento * fict_multi > 0:
+                criar_pagamentos_ficticios(request, quantidade=qtd_pagamento, multiplicador=fict_multi,
+                                      usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_gasto * fict_multi > 0:
+                criar_gastos_ficticios(request, quantidade=qtd_gasto, multiplicador=fict_multi,
+                                      usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_nota * fict_multi > 0:
+                criar_anotacoes_ficticias(request, quantidade=qtd_nota, multiplicador=fict_multi,
+                                      usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_sugestao * fict_multi > 0:
+                criar_sugestoes_ficticias(request, quantidade=qtd_sugestao, multiplicador=fict_multi,
+                                      usuario_s=usuario_s, distribuir=distribuir)
 
     return redirect(request.META['HTTP_REFERER'])

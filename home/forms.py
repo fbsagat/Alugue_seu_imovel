@@ -417,29 +417,35 @@ class FormTickets(forms.Form):
 
 
 class FormAdmin(forms.Form):
-    escolhas = (
-        ('1', f'Criar {settings.FICT_QTD["locatario"]} Locatários'),
-        ('2', f'Criar {settings.FICT_QTD["imovel"]} Imoveis'),
-        ('3', f'Criar {settings.FICT_QTD["contrato"]} Contratos'),
-        ('4', f'Criar {settings.FICT_QTD["pagamento"]} Pagamentos'),
-        ('5', f'Criar {settings.FICT_QTD["gasto"]} Gastos'),
-        ('6', f'Criar {settings.FICT_QTD["nota"]} Anotações'),
-        ('1000', '-------------'),
-        ('100', f'Criar todos acima'),
-        ('1000', '-------------'),
-        ('150', f'Criar {settings.FICT_QTD["user"]} Usuários'),
-        ('7', f'Criar {settings.FICT_QTD["sugestoes"]} Sugestões'),
-        ('160', f'Criar {settings.FICT_QTD["imovel_g"]} Imov_Grupos'),
-        ('170', 'Teste Mensagem'),
-    )
-
-    executar = forms.ChoiceField(choices=escolhas, initial='100')
-    p_usuario = forms.ModelChoiceField(label='', queryset=Usuario.objects.all(), initial='')
-    multiplicar_por = forms.IntegerField(max_value=10, min_value=0, initial=1)
+    todos_ou_cada_opt = [(0, 'Para cada usuário (inclusive adm)'), (1, 'Para cada usuário (exceto adm)'),
+                         (2, 'Distribuir entre todos (inclusive adm)'), (3, 'Distribuir entre todos (exceto adm)'),
+                         (4, 'Para o usuário específico ------------>> ')]
+    criar_usuarios = forms.BooleanField(label='Criar usuários: ', required=False)
+    qtd_usuario = forms.IntegerField(label='Quantidade', widget=forms.NumberInput(), required=True, min_value=0,
+                                     max_value=100)
+    criar_itens = forms.BooleanField(label='Criar itens para os usuários: ', required=False, initial=True)
+    qtd_locatario = forms.IntegerField(label='Locatário(s)', widget=forms.NumberInput(), required=True, min_value=0,
+                                       max_value=100)
+    qtd_imovel_g = forms.IntegerField(label='Imóv. Grupo(s)', widget=forms.NumberInput(), required=True, min_value=0,
+                                      max_value=100)
+    qtd_imovel = forms.IntegerField(label='Imóvel(s)', widget=forms.NumberInput(), required=True, min_value=0,
+                                    max_value=100)
+    qtd_contrato = forms.IntegerField(label='Contrato(s)', widget=forms.NumberInput(), required=True, min_value=0,
+                                      max_value=100)
+    qtd_pagamento = forms.IntegerField(label='Pagamento(s)', widget=forms.NumberInput(), required=True, min_value=0,
+                                       max_value=100)
+    qtd_gasto = forms.IntegerField(label='Gasto(s)', widget=forms.NumberInput(), required=True, min_value=0,
+                                   max_value=100)
+    qtd_nota = forms.IntegerField(label='Nota(s)', widget=forms.NumberInput(), required=True, min_value=0,
+                                  max_value=100)
+    qtd_sugestao = forms.IntegerField(label='Sugestão(ões)', widget=forms.NumberInput(), required=True, min_value=0,
+                                      max_value=100)
+    para_o_usuario = forms.ModelChoiceField(label='Para o usuário', queryset=Usuario.objects.all(), initial='',
+                                            required=True)
+    multiplicar_por = forms.IntegerField(label='Multiplicar cada por', max_value=100, min_value=1, initial=1,
+                                         required=True)
+    todos_ou_cada = forms.ChoiceField(label='', choices=todos_ou_cada_opt, initial=0, required=True)
 
     def __init__(self, *args, **kwargs):
         super(FormAdmin, self).__init__(*args, **kwargs)
-        self.fields['multiplicar_por'].widget.attrs.update(style="width: 60px;")
-        self.fields['executar'].widget.attrs['class'] = 'mt-1 form-control form-control-sm'
-        self.fields['p_usuario'].widget.attrs['class'] = 'mt-1 form-control form-control-sm'
-        self.fields['multiplicar_por'].widget.attrs['class'] = 'mt-1 form-control form-control-sm'
+        self.fields['qtd_usuario'].widget.attrs.update(style="width: 75px;")

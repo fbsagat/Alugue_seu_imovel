@@ -26,14 +26,14 @@ def contratos_ficticios(request, locador):
     while True:
         dias = count + randrange(90, 365)
         passado = fake.date_between(datetime.now().date() - timedelta(days=dias * randrange(2, 5)),
-                                     datetime.now().date() - timedelta(days=dias))
+                                    datetime.now().date() - timedelta(days=dias))
 
         dias = count + randrange(10, 30)
         presente = fake.date_between(datetime.now().date() - timedelta(days=dias * 2),
-                                    datetime.now().date() - timedelta(days=dias))
+                                     datetime.now().date() - timedelta(days=dias))
         dias = count + randrange(30, 90)
         futuro = fake.date_between(datetime.now().date() + timedelta(days=dias),
-                                    datetime.now().date() + timedelta(days=dias * 2))
+                                   datetime.now().date() + timedelta(days=dias * 2))
 
         entrada_novo = presente if porcentagem_de_chance(75) else choice([passado, futuro])
         # print(passado.strftime("%d/%m/%Y"), presente.strftime("%d/%m/%Y"), futuro.strftime("%d/%m/%Y"))
@@ -123,7 +123,7 @@ def imoveis_ficticios(usuario):
     estado = estados[randrange(0, 27)][0]
     uc_energia = randrange(100000000, 999999999)
     uc_agua = randrange(100000000, 999999999)
-    grupos_disponiveis = ImovGrupo.objects.all()
+    grupos_disponiveis = ImovGrupo.objects.filter(do_usuario=usuario)
     grupo = choice(grupos_disponiveis)
     data_registro = fake.date_time_between_dates(datetime.now() + timedelta(days=-410),
                                                  datetime.now() + timedelta(days=-390))
@@ -184,7 +184,6 @@ def anotacoes_ficticias():
 
 def sugestoes_ficticias():
     usuarios = Usuario.objects.all()
-    do_usuario = choice(usuarios)
     corpo = fake.paragraph(nb_sentences=randrange(6, 7))
 
     zero_a_cem = randrange(0, 100)
@@ -209,16 +208,24 @@ def sugestoes_ficticias():
     data_implementada = fake.date_between(datetime.now().date() + timedelta(days=-dias * 2),
                                           datetime.now().date() + timedelta(days=-dias))
 
-    return {'do_usuario': do_usuario, 'corpo': corpo, 'likes': likes, 'aprovada': aprovada,
-            'implementada': implementada, 'data_implementada': data_implementada}
+    return {'corpo': corpo, 'likes': likes, 'aprovada': aprovada, 'implementada': implementada,
+            'data_implementada': data_implementada}
 
 
 def usuarios_ficticios():
-    username = fake.user_name()
+    while True:
+        username = fake.user_name()
+        existentes = Usuario.objects.filter(username=username).values_list('username', flat=True)
+        if username not in existentes:
+            break
     password = 'Fb452651'
     first_name = fake.first_name()
     last_name = fake.last_name()
-    email = fake.ascii_email()
+    while True:
+        email = fake.ascii_email()
+        existentes = Usuario.objects.filter(email=email).values_list('email', flat=True)
+        if email not in existentes:
+            break
     telefone = fake.msisdn()[-11::]
     rg = randrange(1000000, 9999999)
     cpf = randrange(10000000000, 99999999999)

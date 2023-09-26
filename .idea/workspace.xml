@@ -4,16 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/fakes_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/fakes_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +82,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver">
+  <component name="RunManager" selected="Python.Execução inicial s/predio">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -474,7 +473,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="138" />
+    <option name="localTasksCounter" value="140" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -507,8 +506,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Criado o carregamento de dados iniciais, django fixtures. Atualmente carregando os moelos de contratos." />
-    <MESSAGE value="Navbar simples pro usuário deslogado." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Retirado o nome_curto dos contratos pois era redundante com a função __str__.&#10;Agora os pagamentos_ficticios geram pagamentos dentro do limite do permitido para cada contrato." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Corrigido o validador(em faker e forms) que verifica se o novo contrato cadastrado está em data válida, ou seja, não entra em conflito com as datas de outros contratos no mesmo imóvel.&#10;Melhorias no ContratoManager(buscar contratos ativos e inativos)." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Corrigido e melhorado o sistema de ordenamento dos itens listados na página visão geral." />
@@ -532,6 +529,8 @@
     <MESSAGE value="Correções e melhorias no código.&#10;Removido o django debug toolbar.&#10;&#10;Mais informações no visão geral: Arrecadação total desde o início, arrecadação mensal dos contratos, valor total dos contratos ativos, valor total de todos os contratos organizados por grupos de imóveis." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Iniciada a produção do sistema de pagamentos." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições." />
+    <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições.&#10;Melhoris nos slots: Agora tem uma barra de progresso." />
+    <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto." />
   </component>
 </project>

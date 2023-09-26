@@ -114,7 +114,15 @@ def forms_da_navbar(request):
             form7 = FormAnotacoes(initial={'data_registro': datetime.date.today().strftime('%Y-%m-%d')})
 
         if request.user.is_superuser:
-            form8 = FormAdmin(initial={'p_usuario': request.user})
+            form8 = FormAdmin(
+                initial={'qtd_usuario': settings.FICT_QTD['qtd_usuario'],
+                         'qtd_locatario': settings.FICT_QTD['qtd_locatario'],
+                         'qtd_imovel_g': settings.FICT_QTD['qtd_imovel_g'],
+                         'qtd_imovel': settings.FICT_QTD['qtd_imovel'],
+                         'qtd_contrato': settings.FICT_QTD['qtd_contrato'],
+                         'qtd_pagamento': settings.FICT_QTD['qtd_pagamento'],
+                         'qtd_gasto': settings.FICT_QTD['qtd_gasto'], 'qtd_nota': settings.FICT_QTD['qtd_nota'],
+                         'qtd_sugestao': settings.FICT_QTD['qtd_sugestao'], 'para_o_usuario': request.user})
         else:
             form8 = ''
 
