@@ -41,32 +41,27 @@ Itens Ativos / {{ SITE_NAME }}
             {% for modelo in modelos %}
             <div class="col">
                 <div class="card bg-secondary text-white bg-opacity-50 border-white h-100">
-                    <div class="card-header text-decoration-underline">{{ page_obj.start_index|add:forloop.counter0 }}.
-                        {{ modelo.titulo }}
-                    </div>
-                    <div class="card-body">
-                        {% if request.user.is_superuser == True %}
-                        <p class="card-text">Criado por.: {{ modelo.autor }}</p>
-                        <p class="card-text">Criado em: {{ modelo.data_criacao }}</p>
-                        {% else%}
-                        {% if modelo.autor == request.user %}
-                        <p class="card-text">Criado por.: {{ modelo.autor }}</p>
-                        <p class="card-text">Criado em: {{ modelo.data_criacao }}</p>
-                        {% else %}
-                        <p class="card-text">Criado por.: {{ SITE_NAME }}</p>
-                        {% endif %}
-                        {% endif %}
-                        <br>
-                        {% if modelo.autor == request.user %}
-                        <p class="card-text"><a href="{% url 'home:Editar Modelo' modelo.pk %}" class="link-primary"
-                                                title="Editar">✒️</a>
-                            <a href="{% url 'home:Excluir Modelo' modelo.pk %}" class="link-danger"
-                               title="Excluir">❌</a>
-                        </p>
-                        {% endif %}
+
+                    <div class="card-header text-decoration-underline">
+                        <h1>{{ page_obj.start_index|add:forloop.counter0 }}. {{ modelo.titulo }}</h1>
                     </div>
 
-                    <div class="card-footer">
+                    <div class="card-body row g-3 d-flex justify-content-center">
+
+                        <div class="d-flex flex-column mb-3">
+                            <div class="p-2">
+                                <h1>Descrição: {{ modelo.descricao }}</h1>
+                            </div>
+                            <br>
+                            <div class="p-2">
+                                <h1>Criado por.: {{ modelo.autor }}</h1>
+                            </div>
+                            <br>
+                            <div class="p-2">
+                                <h1>Criado em: {{ modelo.data_criacao }}</h1>
+                            </div>
+                        </div>
+
                         <div class="d-flex justify-content-around">
                             <!-- Botão modal variáveis -->
                             <a data-bs-toggle="modal" data-bs-target="#modal_variaveis{{ modelo.pk }}"
@@ -83,6 +78,15 @@ Itens Ativos / {{ SITE_NAME }}
                                     Condições neste modelo
                                 </button>
                             </a>
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="col d-flex justify-content-around">
+                            <a href="{% url 'home:Editar Modelo' modelo.pk %}" title="Editar">✒️</a>
+                            <a href="" title="Visualizar">📑</a>
+                            <a href="{% url 'home:Excluir Modelo' modelo.pk %}" title="Excluir">❌</a>
                         </div>
                     </div>
                 </div>
@@ -104,7 +108,7 @@ Itens Ativos / {{ SITE_NAME }}
             <div class="col mx-1 my-1">
                 {% if modelo.display_variaveis is not False %}
                 <div class="row mb-3 text-center">
-                    <h1>Variáveis em: {{ modelo.titulo }}:</h1>
+                    <h1>Variáveis em: {{modelo.titulo}}:</h1>
                 </div>
                 <div class="row row-cols-md-2 g-1">
                     {% for variavel in modelo.display_variaveis %}
@@ -120,7 +124,7 @@ Itens Ativos / {{ SITE_NAME }}
                 </div>
                 {% else %}
                 <div class="row mb-3 text-center">
-                    <h1>Nenhuma variável em: {{ modelo.titulo }}</h1>
+                    <h1>Nenhuma variável em: {{modelo.titulo}}</h1>
                 </div>
                 {% endif %}
                 <div class="row mt-3">
@@ -144,7 +148,7 @@ Itens Ativos / {{ SITE_NAME }}
             <div class="col mx-1 my-1">
                 {% if modelo.display_condicoes is not False %}
                 <div class="row mb-3 text-center">
-                    <h1>Condições em: {{ modelo.titulo }}:</h1>
+                    <h1>Condições em: {{modelo.titulo}}:</h1>
                 </div>
                 <div class="row row-cols-md-2 g-1">
                     {% for condicao in modelo.display_condicoes %}
@@ -160,7 +164,7 @@ Itens Ativos / {{ SITE_NAME }}
                 </div>
                 {% else %}
                 <div class="row mb-3 text-center">
-                    <h1>Nenhuma condição em: {{ modelo.titulo }}</h1>
+                    <h1>Nenhuma condição em: {{modelo.titulo}}</h1>
                 </div>
                 {% endif %}
                 <div class="row mt-3">

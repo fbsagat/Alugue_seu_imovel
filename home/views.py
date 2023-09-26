@@ -1834,10 +1834,13 @@ def painel_loja(request):
 @login_required
 @transaction.atomic
 def add_slot(request):
-    Slot.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
-    usuario = Usuario.objects.get(pk=request.user.pk)
-    usuario.tickets -= 1
-    usuario.save(update_fields=['tickets'])
+    usuario = request.user
+    if usuario.tickets <= 0:
+        messages.error(request, "Tickets insuficientes para esta operação")
+    else:
+        Slot.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
+        usuario.tickets -= 1
+        usuario.save(update_fields=['tickets'])
     return redirect(request.META['HTTP_REFERER'])
 
 
@@ -1852,11 +1855,15 @@ def adicionar_ticket(request, pk):
             quantidade = form.cleaned_data['tickets_qtd']
     if slot.do_usuario == request.user and slot.gratuito is False:
         if quantidade <= request.user.tickets:
-            slot.tickets += quantidade
-            usuario = Usuario.objects.get(pk=request.user.pk)
+            usuario = request.user
             usuario.tickets -= quantidade
+            if slot.tickets_restando() == 0:
+                slot.criado_em = datetime.now()
+                slot.tickets = quantidade
+            else:
+                slot.tickets += quantidade
             usuario.save(update_fields=['tickets'])
-            slot.save(update_fields=['tickets'])
+            slot.save(update_fields=['tickets', 'criado_em'])
         else:
             messages.error(request, "Tickets insuficientes para esta operação")
     else:
@@ -1877,7 +1884,7 @@ def adicionar_ticket_todos(request):
     if len(slots) * quantidade <= request.user.tickets:
         for slot in slots:
             slot.tickets += quantidade
-            usuario = Usuario.objects.get(pk=request.user.pk)
+            usuario = request.user
             usuario.tickets -= quantidade
             usuario.save(update_fields=['tickets'])
             slot.save(update_fields=['tickets'])

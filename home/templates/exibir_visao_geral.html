@@ -106,11 +106,11 @@ Visão Geral / {{ SITE_NAME }}
                         {{ contrato.total_pg_format }} ({{ contrato.parcelas_pagas_qtd }})
                         de {{ contrato.valor_do_contrato_format }} ({{ contrato.duracao }})
                     </th>
-                    {% if contrato.transcorrido_dias|add:30 > contrato.duracao_dias %}
+                    {% if contrato.transcorrido_dias|add:45 > contrato.duracao_dias %}
                     <th scope="col" style="cursor:default;"
                         title="O contrato está perto do vencimento. Vence em {{ contrato.faltando_dias }} dias">
                         {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
-                        {% if contrato.transcorrido_dias|add:30 > contrato.duracao_dias %}
+                        {% if contrato.transcorrido_dias|add:45 > contrato.duracao_dias %}
                         ⚠️
                         {% endif %}
                         {% else %}

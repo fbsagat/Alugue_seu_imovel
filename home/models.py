@@ -208,7 +208,7 @@ class Slot(models.Model):
 
     def imovel(self):
         try:
-            slots = Slot.objects.filter(do_usuario=self.do_usuario).order_by('criado_em')
+            slots = Slot.objects.filter(do_usuario=self.do_usuario).order_by('pk')
             imoveis = Imovei.objects.filter(do_locador=self.do_usuario).order_by('data_registro')
             return imoveis[list(slots).index(self)]
         except:
@@ -216,8 +216,33 @@ class Slot(models.Model):
 
     def vencimento(self):
         # colocar para vencer um dia após, não zero(evitar reclamações dos usuários/não pode comer tempo deles)
-        data = self.criado_em + relativedelta(months=self.tickets, days=0)
+        data = self.criado_em + relativedelta(days=int(self.tickets)*30)
         return data.date()
+
+    def dias_ativo(self):
+        inicial = self.criado_em.date()
+        final = self.vencimento()
+        delta = final - inicial
+        return int(delta.days)
+
+    def dias_passados(self):
+        inicial = self.criado_em.date()
+        final = datetime.today().date()
+        delta = final - inicial
+        return int(delta.days)
+
+    def dias_restando(self):
+        dias_ativo = self.dias_ativo()
+        dias_pasados = self.dias_passados()
+        dias_restando = dias_ativo - dias_pasados
+        return dias_restando if dias_restando >= 0 else 0
+
+    def tickets_restando(self):
+        """Aqui deve retornar os tickets(self.tickets) menos a quantia de tickets equivalentes aos dias que já passaram
+        esde a criação do slot até hoje"""
+        tickets_passados = floor(self.dias_passados()/30)
+        tickets_restando = self.tickets - tickets_passados
+        return tickets_restando if tickets_restando >= 0 else 0
 
     def ativado(self):
         if self.gratuito:
@@ -703,19 +728,22 @@ class Contrato(models.Model):
             delta = hoje - vencim_atual
             delta2 = vencim_atual - hoje
             if vencim_atual == hoje + relativedelta(days=-1):
-                txt = f'Venceu ontem ({vencim_atual.strftime("%d/%m/%Y")})'
+                txt = f'⭕ Venceu ontem ({vencim_atual.strftime("%d/%m/%Y")})'
                 title = ''
             elif vencim_atual < hoje + relativedelta(days=-1):
-                txt = f'Venceu em {vencim_atual.strftime("%d/%m/%Y")} ({delta.days} dias atrás)'
+                txt = f'⭕ Venceu em {vencim_atual.strftime("%d/%m/%Y")} ({delta.days} dias atrás)'
                 title = ''
             elif vencim_atual == hoje:
-                txt = f'Vence hoje ({vencim_atual.strftime("%d/%m/%Y")})'
+                txt = f'🟡 Vence hoje ({vencim_atual.strftime("%d/%m/%Y")})'
                 title = ''
             elif vencim_atual == hoje + relativedelta(days=+1):
-                txt = f'Vencerá amanhã ({vencim_atual.strftime("%d/%m/%Y")})'
+                txt = f'🟡 Vencerá amanhã ({vencim_atual.strftime("%d/%m/%Y")})'
                 title = ''
             elif vencim_atual > hoje + relativedelta(days=+1):
-                txt = f'Vencerá em {vencim_atual.strftime("%d/%m/%Y")} (em {delta2.days} dias)'
+                if delta2.days <= 5:
+                    txt = f'🟡 Vencerá em {vencim_atual.strftime("%d/%m/%Y")} (em {delta2.days} dias)'
+                else:
+                    txt = f'Vencerá em {vencim_atual.strftime("%d/%m/%Y")} (em {delta2.days} dias)'
                 title = ''
         return txt, title
 
@@ -742,6 +770,7 @@ class ContratoModelo(models.Model):
     titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo')
     autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
                               on_delete=models.SET_NULL)
+    descricao = models.CharField(blank=True, max_length=480, verbose_name='', help_text='Descrição')
     corpo = RichTextField(null=True, blank=True, verbose_name='')
     data_criacao = models.DateTimeField(auto_now_add=True)
     variaveis = models.JSONField(null=True, blank=True)
