@@ -31,12 +31,12 @@ class Command(BaseCommand):
         tickets = 100
         estadocivil = 0
         ocupacao = 'Programador - Hashtag Treinamentos'
-        endereco = 'Rodovia Augusto Montenegro, 6955'
+        endereco_completo = 'Rodovia Augusto Montenegro, 6955'
         dados_pagamento1 = 'Pix, chave: 91985707819 (Fábio A M Santos)'
 
         User.objects.create_superuser(username=username, password=password, email=email, first_name=first,
                                       last_name=last, RG=RG, CPF=CPF, telefone=telefone, tickets=tickets,
-                                      estadocivil=estadocivil, ocupacao=ocupacao, endereco=endereco,
+                                      estadocivil=estadocivil, ocupacao=ocupacao, endereco_completo=endereco_completo,
                                       dados_pagamento1=dados_pagamento1)
 
         self.stdout.write(f'Local user "{username}" was created')

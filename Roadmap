@@ -79,29 +79,25 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 Fazer:
 PAREI AQUI \/
 Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes no botão de enviar um form.
-Já encontrei e apliquei o js 'prevent_multiple_click.js', agora falta tranformar o restando das tags <a> em formulários
+Já encontrei e apliquei o js 'prevent_multiple_click.js', agora falta transformar o restando das tags <a> em formulários
 pra compatibilizar. Fazer uma revisão no back-end: usar 'get_object_or_404' quando capturar um objeto para tratamento.
 
-
 Criar a função comunidade no editor de modelos.
-        1. colocar o visualizar / 2. colocar descrição.
+        1. colocar o visualizar / 2. colocar descrição / 3. Colocar a variável 'mobiliado' no contrato pdf.
 
 Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
         informações de cada usuário nas queryes, nunca a partir de todos os objetos.
 
 Implementar filtros/buscas nas paginas do botão histórico.
 
-Criar um botão de painel com configurações diversas, sistema de ativação de slots com tickets e compra de tickets
-        com bitcoin via lightning network, e botão de backup de todos os dados, bem como, botão de restaurar
-        (criptografados e únicos para cada usuário).
+Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
+        e botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
 
 Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando a sugestão do usuário for aprovada = OK.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
 
 Melhorar a exibição do painel gerador de fictícios.
-
-Colocar a variável 'mobiliado' no contrato pdf.
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
