@@ -2155,6 +2155,18 @@ def criar_contratos_ficticios(request, quantidade, multiplicador, usuario_s, dis
         messages.error(request, f"Quantia insuficiente para distribuir 'contratos' entre todos os usuários")
     else:
         for usuario in usuario_s:
+            locatarios = Locatario.objects.filter(do_locador=usuario).count()
+            imoveis = Imovei.objects.filter(do_locador=usuario).count()
+
+            if imoveis == 0:
+                messages.error(request,
+                               f"Nenhum Imóvel disponível para criar contrato(s) para o usuário: {usuario}")
+                break
+            elif locatarios == 0:
+                messages.error(request,
+                               f"Nenhum Locatário disponível para criar contratos para o usuário: {usuario}")
+                break
+
             count = 0
             for x in range(range_):
                 count += 1
@@ -2300,9 +2312,6 @@ def criar_usuarios_ficticios(request, quantidade, multiplicador):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def botaoteste(request):
-
-    # FABIO DO FUTURO: FAZER OS TESTES GERAIS NO BOTÃO TESTE
-
     form_adm = FormAdmin(request.POST)
 
     if form_adm.is_valid():
@@ -2339,29 +2348,29 @@ def botaoteste(request):
                 usuario = form_adm.cleaned_data['para_o_usuario']
                 usuario_s = Usuario.objects.filter(pk=usuario.pk)
 
-            if qtd_locatario * fict_multi > 0:
+            if qtd_locatario * fict_multi > 0 and len(usuario_s) > 0:
                 criar_locatarios_ficticios(request, quantidade=qtd_locatario, multiplicador=fict_multi,
                                            usuario_s=usuario_s, distribuir=distribuir)
-            if qtd_imovel_g * fict_multi > 0:
+            if qtd_imovel_g * fict_multi > 0 and len(usuario_s) > 0:
                 criar_imov_grupo_fict(request, quantidade=qtd_imovel_g, multiplicador=fict_multi,
                                       usuario_s=usuario_s, distribuir=distribuir)
-            if qtd_imovel * fict_multi > 0:
+            if qtd_imovel * fict_multi > 0 and len(usuario_s) > 0:
                 criar_imoveis_ficticios(request, quantidade=qtd_imovel, multiplicador=fict_multi,
-                                      usuario_s=usuario_s, distribuir=distribuir)
-            if qtd_contrato * fict_multi > 0:
+                                        usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_contrato * fict_multi > 0 and len(usuario_s) > 0:
                 criar_contratos_ficticios(request, quantidade=qtd_contrato, multiplicador=fict_multi,
-                                      usuario_s=usuario_s, distribuir=distribuir)
-            if qtd_pagamento * fict_multi > 0:
+                                          usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_pagamento * fict_multi > 0 and len(usuario_s) > 0:
                 criar_pagamentos_ficticios(request, quantidade=qtd_pagamento, multiplicador=fict_multi,
-                                      usuario_s=usuario_s, distribuir=distribuir)
-            if qtd_gasto * fict_multi > 0:
+                                           usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_gasto * fict_multi > 0 and len(usuario_s) > 0:
                 criar_gastos_ficticios(request, quantidade=qtd_gasto, multiplicador=fict_multi,
-                                      usuario_s=usuario_s, distribuir=distribuir)
-            if qtd_nota * fict_multi > 0:
+                                       usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_nota * fict_multi > 0 and len(usuario_s) > 0:
                 criar_anotacoes_ficticias(request, quantidade=qtd_nota, multiplicador=fict_multi,
-                                      usuario_s=usuario_s, distribuir=distribuir)
-            if qtd_sugestao * fict_multi > 0:
+                                          usuario_s=usuario_s, distribuir=distribuir)
+            if qtd_sugestao * fict_multi > 0 and len(usuario_s) > 0:
                 criar_sugestoes_ficticias(request, quantidade=qtd_sugestao, multiplicador=fict_multi,
-                                      usuario_s=usuario_s, distribuir=distribuir)
+                                          usuario_s=usuario_s, distribuir=distribuir)
 
     return redirect(request.META['HTTP_REFERER'])

@@ -64,6 +64,9 @@ Ok. Corrigir: Validador impede cadastro de contrato novo quando é feito em um i
 Ok. Criar prioridade de aparição dos contratos ativados sobre os rescindidos nos esbranquiçados da tabela pdf.
 OK. Mostrar para o usuário o que será apagado(caso haja) caso ele exclua algum item registrado, em imóveis e contratos.
 OK. Mostrar no visão geral o total por grupo de imóveis e por tipo.
+Ok. (FICT_QTD ficou como initial do formulario, não fiz o sistema de configurações)Criar o multiplicador no botão de
+        gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos itens espalhada para todos
+        os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de configurações do fake test em settings.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -72,10 +75,6 @@ Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes
 
 Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
         informações de cada usuário nas queryes, nunca a partir de todos os objetos.
-
-Criar o multiplicador no botão de gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos
-        itens espalhada para todos os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de
-        configurações do fake test em settings.
 
 Implementar filtros/buscas nas paginas do botão histórico.
 
@@ -86,6 +85,11 @@ Criar um botão de painel com configurações diversas, sistema de ativação de
 Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando a sugestão do usuário for aprovada = OK.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
+
+Melhorar o nome do contrato quando é o mesmo locador no mesmo imóvel colocando uma contagem ao invés da data no
+        final(ou junto)
+
+Melhorar a exibição do painel gerador de fictícios.
 
 Criar a função comunidade no editor de modelos.
         1. colocar o visualizar / 2. colocar descrição.

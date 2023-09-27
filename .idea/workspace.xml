@@ -4,15 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Melhorado o botaoteste, gerador de ficticios.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/fakes_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/fakes_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,19 +52,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates",
+    "settings.editor.selected.configurable": "preferences.editor"
   }
-}</component>
+}]]></component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
@@ -473,12 +471,22 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="140" />
+    <option name="localTasksCounter" value="141" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="553cd29f-6bbd-4037-80b5-286109ae633e" value="TOOL_WINDOW" />
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
+        <entry key="553cd29f-6bbd-4037-80b5-286109ae633e">
+          <value>
+            <State />
+          </value>
+        </entry>
         <entry key="82c3e00a-ecba-4b74-9386-1ec1aeaee16d">
           <value>
             <State />
@@ -506,7 +514,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Retirado o nome_curto dos contratos pois era redundante com a função __str__.&#10;Agora os pagamentos_ficticios geram pagamentos dentro do limite do permitido para cada contrato." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Corrigido o validador(em faker e forms) que verifica se o novo contrato cadastrado está em data válida, ou seja, não entra em conflito com as datas de outros contratos no mesmo imóvel.&#10;Melhorias no ContratoManager(buscar contratos ativos e inativos)." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Corrigido e melhorado o sistema de ordenamento dos itens listados na página visão geral." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Tarefas agora se chama notificações(mudei apenas no front end)" />
@@ -531,6 +538,7 @@
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições." />
     <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições.&#10;Melhoris nos slots: Agora tem uma barra de progresso." />
     <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto." />
+    <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Melhorado o botaoteste, gerador de ficticios." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Melhorado o botaoteste, gerador de ficticios." />
   </component>
 </project>
