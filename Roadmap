@@ -77,7 +77,14 @@ Ok. 'Sugestões enviadas' está com a página maior do que o esperado, arrumar. 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
+PAREI AQUI \/
 Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes no botão de enviar um form.
+Já encontrei e apliquei o js 'prevent_multiple_click.js', agora falta tranformar o restando das tags <a> em formulários
+pra compatibilizar. Fazer uma revisão no back-end: usar 'get_object_or_404' quando capturar um objeto para tratamento.
+
+
+Criar a função comunidade no editor de modelos.
+        1. colocar o visualizar / 2. colocar descrição.
 
 Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
         informações de cada usuário nas queryes, nunca a partir de todos os objetos.
@@ -93,9 +100,6 @@ Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando 
         Quando o desenvolvedor responder uma mensagem.
 
 Melhorar a exibição do painel gerador de fictícios.
-
-Criar a função comunidade no editor de modelos.
-        1. colocar o visualizar / 2. colocar descrição.
 
 Colocar a variável 'mobiliado' no contrato pdf.
 

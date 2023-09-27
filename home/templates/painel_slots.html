@@ -193,45 +193,20 @@ Painel / {{ SITE_NAME }}
                         {{ form_slots.slots_qtd|as_crispy_field }}
                     </div>
                     <div>
-                        <h1 class="fs-6">Isso irá consumir um ticket por slot  🎫</h1>
+                        <h1 class="fs-6">Isso irá consumir um ticket por slot 🎫</h1>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                    <button type="submit" class="btn btn-primary">
+                        Confirmar
+                    </button>
                 </div>
 
             </form>
         </div>
     </div>
 </div>
-
-<!--Modal apagar slot -->
-{% for slot in slots %}
-<div class="modal fade" id="apagar_slot{{ slot.pk }}" tabindex="-1" aria-labelledby="APAGAR_SLOT" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark border border-black text-white">
-
-            <div class="modal-header text-center flex items-center flex-col">
-                <h1 class="fs-3">Apagar slot</h1>
-            </div>
-
-            <div class="modal-body text-center items-center">
-                <h1 class="fs-5">Deseja mesmo apagar este slot? Você perderá os tickets dele.</h1>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
-                </button>
-                <a href="{% url 'home:Apagar Slot' slot.pk %}">
-                    <button type="button" class="btn btn-primary">Confirmar
-                    </button>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-{% endfor %}
 
 <!--Modal adicionar tickets todos -->
 <div class="modal fade" id="adicionar_tickets_todos" tabindex="-1" aria-labelledby="ADICIONAR_TICKETS_TODOS"
@@ -255,7 +230,9 @@ Painel / {{ SITE_NAME }}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                    <button type="submit" class="btn btn-primary">
+                        Confirmar
+                    </button>
                 </div>
 
             </form>
@@ -286,7 +263,9 @@ Painel / {{ SITE_NAME }}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                    <button type="submit" class="btn btn-primary">
+                        Confirmar
+                    </button>
                 </div>
 
             </form>
@@ -295,4 +274,28 @@ Painel / {{ SITE_NAME }}
 </div>
 {% endfor %}
 
+<!--Modal apagar slot -->
+{% for slot in slots %}
+<div class="modal fade" id="apagar_slot{{ slot.pk }}" tabindex="-1" aria-labelledby="APAGAR_SLOT" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-black text-white">
+            <div class="modal-header text-center flex items-center flex-col">
+                <h1 class="fs-3">Apagar slot</h1>
+            </div>
+            <div class="modal-body text-center items-center">
+                <h1 class="fs-5">Deseja mesmo apagar este slot? Você perderá os tickets dele.</h1>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
+                </button>
+                <form action="{% url 'home:Apagar Slot' slot.pk %}">
+                    <button type="submit" class="btn btn-primary">
+                        Confirmar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

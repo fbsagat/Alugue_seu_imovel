@@ -1901,7 +1901,7 @@ def adicionar_ticket_todos(request):
 
 @login_required
 def apagar_slot(request, pk):
-    slot = Slot.objects.get(pk=pk)
+    slot = get_object_or_404(Slot, pk=pk)
     if slot.do_usuario == request.user and slot.imovel() is None and slot.gratuito is False:
         slot.delete()
     else:

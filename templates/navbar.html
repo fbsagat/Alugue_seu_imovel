@@ -22,18 +22,23 @@
 
         <!-- LOGO -->
         <div class="ps-1">
-            <a href="/">
-                <img width="40" height="40" class="d-inline-block" src="{% static 'images/logo.png' %}">
-            </a>
+            <form action="/">
+                <button>
+                    <img width="40" height="40" class="d-inline-block" src="{% static 'images/logo.png' %}">
+                </button>
+            </form>
         </div>
 
         <!-- BEM-VINDO DISTINTIVO -->
         <div class="ps-1">
-            <a href="/">
-                <div class="badge bg-black text-white text-wrap border-b-2" style="width: 9rem;">
-                    -{{ SITE_NAME }}- Administrador
-                </div>
-            </a>
+
+            <form action="/">
+                <button>
+                    <div class="badge bg-black text-white text-wrap border-b-2" style="width: 9rem;">
+                        -{{ SITE_NAME }}- Administrador
+                    </div>
+                </button>
+            </form>
         </div>
 
         <!-- BLOCK TITULO -->
@@ -47,20 +52,20 @@
 
         <!-- BOTAO VISÃO GERAL -->
         <div class="ps-1">
-            <a href="{% url 'home:Visão Geral' %}">
+            <form action="{% url 'home:Visão Geral' %}">
                 <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
                     Visão Geral
                 </button>
-            </a>
+            </form>
         </div>
 
         <!-- BOTAO EVENTOS -->
         <div class="ps-1">
-            <a href="{% url 'home:Eventos' %}">
+            <form action="{% url 'home:Eventos' %}">
                 <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
                     Eventos 🔍
                 </button>
-            </a>
+            </form>
         </div>
 
         <!-- BOTAO ATIVOS -->
@@ -71,13 +76,27 @@
                 Ativos
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'home:Imóveis Ativos' %}">Imóveis Ativos 🏠💡</a>
+                <li>
+                    <form action="{% url 'home:Imóveis Ativos' %}">
+                        <button class="dropdown-item">
+                            Imóveis Ativos 🏠💡
+                        </button>
+                    </form>
                 </li>
-                <li><a class="dropdown-item" href="{% url 'home:Locatários Ativos' %}">Locatários
-                    Ativos 👨‍💼🏠</a>
+                <li>
+                    <form action="{% url 'home:Locatários Ativos' %}">
+                        <button class="dropdown-item">
+                            Locatários Ativos 👨‍💼🏠
+                        </button>
+                    </form>
                 </li>
-                <li><a class="dropdown-item" href="{% url 'home:Contratos Ativos' %}">Contratos
-                    Ativos 📃✒️</a></li>
+                <li>
+                    <form action="{% url 'home:Contratos Ativos' %}">
+                        <button class="dropdown-item">
+                            Contratos Ativos 📃✒️
+                        </button>
+                    </form>
+                </li>
             </ul>
         </div>
 
@@ -120,10 +139,26 @@
                     Gerar PDF
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'home:Recibos PDF' %}">de Recibos 🧾</a>
+                    <li>
+                        <form action="{% url 'home:Recibos PDF' %}">
+                            <button class="dropdown-item">
+                                de Recibos 🧾
+                            </button>
+                        </form>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'home:Tabela PDF' %}">de Tabela 📑</a></li>
-                    <li><a class="dropdown-item" href="{% url 'home:Contrato PDF' %}">de Contrato 📃</a>
+                    <li>
+                        <form action="{% url 'home:Tabela PDF' %}">
+                            <button class="dropdown-item">
+                                de Tabela 📑
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <form action="{% url 'home:Contrato PDF' %}">
+                            <button class="dropdown-item">
+                                de Contrato 📃
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </div>
@@ -136,15 +171,47 @@
                     Histórico
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'home:Pagamentos' %}">Pagamentos 💵</a>
+                    <li>
+                        <form action="{% url 'home:Pagamentos' %}">
+                            <button class="dropdown-item">
+                                Pagamentos 💵
+                            </button>
+                        </form>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'home:Locatários' %}">Locatários 👨‍💼</a>
-                    <li><a class="dropdown-item" href="{% url 'home:Contratos' %}">Contratos 📃</a>
-                    <li><a class="dropdown-item" href="{% url 'home:Imóveis' %}">Imóveis 🏠</a></li>
-                    <li><a class="dropdown-item" href="{% url 'home:Gastos' %}">Gastos 💸</a></li>
+                    <li>
+                        <form action="{% url 'home:Locatários' %}">
+                            <button class="dropdown-item">
+                                Locatários 👨‍💼
+                            </button>
+                        </form>
                     </li>
+                    <li>
+                        <form action="{% url 'home:Contratos' %}">
+                            <button class="dropdown-item">
+                                Contratos 📃
+                            </button>
+                        </form>
                     </li>
-                    <li><a class="dropdown-item" href="{% url 'home:Anotações' %}">Notas/Tarefas 🗒️</a>
+                    <li>
+                        <form action="{% url 'home:Imóveis' %}">
+                            <button class="dropdown-item">
+                                Imóveis 🏠
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <form action="{% url 'home:Gastos' %}">
+                            <button class="dropdown-item">
+                                Gastos 💸
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <form action="{% url 'home:Anotações' %}">
+                            <button class="dropdown-item">
+                                Notas/Tarefas 🗒️
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </div>
@@ -178,11 +245,26 @@
                 {{ request.user.username }}
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'home:Painel Configs' %}">Painel 🎛️</a>
+                <li>
+                    <form action="{% url 'home:Painel Configs' %}">
+                        <button class="dropdown-item">
+                            Painel 🎛️
+                        </button>
+                    </form>
                 </li>
-                <li><a class="dropdown-item" href="{% url 'home:Editar Perfil' %}">Editar Perfil 👨‍💼</a>
+                <li>
+                    <form action="{% url 'home:Editar Perfil' %}">
+                        <button class="dropdown-item">
+                            Editar Perfil 👨‍💼
+                        </button>
+                    </form>
                 </li>
-                <li><a class="dropdown-item" href="{% url 'home:Logout' %}">Sair 🚪</a>
+                <li>
+                    <form action="{% url 'home:Logout' %}">
+                        <button class="dropdown-item">
+                            Sair 🚪
+                        </button>
+                    </form>
                 </li>
             </ul>
         </div>
@@ -191,7 +273,7 @@
 </nav>
 <!--Fim da Navbar -->
 
-<!-- MODAL3 PAGAMENTO -->
+<!-- MODAL1 PAGAMENTO -->
 <div class="modal fade" id="modal3" tabindex="-1" aria-labelledby="MODAL3_PAGAMENTO" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
@@ -206,7 +288,8 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                             </button>
-                            <button type="submit" class="btn btn-primary">Confirmar
+                            <button type="submit" class="btn btn-primary">
+                                Confirmar
                             </button>
                         </div>
                     </form>
@@ -216,43 +299,7 @@
     </div>
 </div>
 
-<!-- MODAL4 GASTO -->
-<div class="modal fade modal-lg" id="modal4" tabindex="-1" aria-labelledby="MODAL4_GASTO" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="MODAL4_GASTO">Registrar Gasto</h1>
-            </div>
-            <div class="">
-                <div class="modal-body">
-                    <form action="{% url 'home:Registrar Gasto' %}" method="POST" enctype="multipart/form-data"
-                          class="mask-x_form ps-5 pe-5">
-                        {% csrf_token %}
-                        {{ form_gasto.do_imovel|as_crispy_field }}
-                        <div class="row">
-                            <div class="col">
-                                {{ form_gasto.valor|as_crispy_field }}
-                            </div>
-                            <div class="col">
-                                {{ form_gasto.data|as_crispy_field }}
-                            </div>
-                        </div>
-                        {{ form_gasto.observacoes|as_crispy_field }}
-                        {{ form_gasto.comprovante|as_crispy_field }}
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
-                            </button>
-                            <button type="submit" class="btn btn-primary">Confirmar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL5 LOCATARIO -->
+<!-- MODAL2 LOCATÁRIO -->
 <div class="modal modal-lg fade" id="modal5" tabindex="-1" aria-labelledby="MODAL5_LOCATARIO" aria-hidden="true">
     <div class="modal-dialog  modal-scrollable">
         <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
@@ -329,7 +376,8 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                             </button>
-                            <button type="submit" class="btn btn-primary">Confirmar
+                            <button type="submit" class="btn btn-primary">
+                                Confirmar
                             </button>
                         </div>
                     </form>
@@ -339,7 +387,7 @@
     </div>
 </div>
 
-<!-- MODAL6 CONTRATO -->
+<!-- MODAL3 CONTRATO -->
 <div class="modal fade modal-lg" id="modal6" tabindex="-1" aria-labelledby="MODAL6_CONTRATO" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
@@ -377,7 +425,8 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                             </button>
-                            <button type="submit" class="btn btn-primary">Confirmar
+                            <button type="submit" class="btn btn-primary">
+                                Confirmar
                             </button>
                         </div>
                     </form>
@@ -387,7 +436,7 @@
     </div>
 </div>
 
-<!-- MODAL7 IMÓVEL -->
+<!-- MODAL4 IMÓVEL -->
 <div class="modal fade modal-lg" id="modal8" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
@@ -464,7 +513,11 @@
                         <h1 class="fs-2">Adicione um slot para cadastrar outro imóvel</h1>
                     </div>
                     <div class="row">
-                        <a class="fs-3" href="{% url 'home:Painel Slots' %}">Painel 🎛️</a>
+                        <form action="{% url 'home:Painel Slots' %}" class="mt-3">
+                            <button class="fs-3">
+                                Painel 🎛️
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -475,15 +528,50 @@
     </div>
 </div>
 
-<!-- MODAL8 ANOTAÇÃO -->
+<!-- MODAL5 GASTO -->
+<div class="modal fade modal-lg" id="modal4" tabindex="-1" aria-labelledby="MODAL4_GASTO" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="MODAL4_GASTO">Registrar Gasto</h1>
+            </div>
+            <div class="">
+                <div class="modal-body">
+                    <form action="{% url 'home:Registrar Gasto' %}" method="POST" enctype="multipart/form-data"
+                          class="mask-x_form ps-5 pe-5">
+                        {% csrf_token %}
+                        {{ form_gasto.do_imovel|as_crispy_field }}
+                        <div class="row">
+                            <div class="col">
+                                {{ form_gasto.valor|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form_gasto.data|as_crispy_field }}
+                            </div>
+                        </div>
+                        {{ form_gasto.observacoes|as_crispy_field }}
+                        {{ form_gasto.comprovante|as_crispy_field }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Confirmar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL6 NOTA -->
 <div class="modal fade modal-lg" id="modal7" tabindex="-1" aria-labelledby="MODAL8_ANOTAÇÃO" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content bg-dark bg-opacity-75 border border-white text-white">
-
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="MODAL8_ANOTAÇÃO">Registrar Anotação</h1>
             </div>
-
             <form action="{% url 'home:Registrar Anotação' %}" method="POST" class="ps-5 pe-5">
                 {% csrf_token %}
                 <div class="modal-body">
@@ -502,17 +590,12 @@
                         {{ form_notas.texto|as_crispy_field }}
                     </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar
+                    </button>
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>
-
-
-

@@ -4,17 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot.">
       <change afterPath="$PROJECT_DIR$/home/migrations/0002_alter_usuario_tickets.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js/prevent_multiple_click.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/management/commands/createsuperuser_if_none_exists.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/management/commands/createsuperuser_if_none_exists.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,20 +62,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.editor"
   }
-}</component>
+}]]></component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
@@ -483,7 +483,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="143" />
+    <option name="localTasksCounter" value="144" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -526,7 +526,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Tarefas agora se chama notificações(mudei apenas no front end)" />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Fakes_test melhorado e otimizado.&#10;Mais dois meses no formulário da tabela_PDF: FormTabela." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos" />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Atualizados várias bibliotecas.&#10;Agora as classes de locatarios e imoveis não armazenam estes dados: 'com_contratos', 'com_imoveis' e 'contrato_atual', 'com_locatario', pois estes resultados podem ser gerador por métodos, e isso foi feito. Economia de linhas em signal, que serviam para salvar estes dados antes." />
@@ -551,6 +550,7 @@
     <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Melhorado o botaoteste, gerador de ficticios." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Melhorado o botaoteste, gerador de ficticios, mais atualizações, mais estável." />
     <MESSAGE value="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer." />
+    <MESSAGE value="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot." />
   </component>
 </project>
