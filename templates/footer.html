@@ -15,11 +15,9 @@
         opacity: 1 !important;
     }
 </style>
-
 {% endblock %}
 
 {% if request.resolver_match.url_name == 'home' %}
-
 <section class='flex flex-col md:flex-row items-center border-gray-900 border-b-8' style="min-height: 70vh;">
     <div class="md:w-1/2 flex flex-col justify-center text-center md:text-left p-5 md:p-10 ">
         <h2 class="md:text-5xl text-4xl font-semibold mb-4">
@@ -63,34 +61,39 @@
         <img src="{% static 'images/ex_home_003.jpg' %}" class="w-11/12" alt="">
     </div>
 </section>
-
-{% else %}
-
-<footer class=" px-10 py-2">
-
-    {% if user.is_authenticated %}
-    <ul class="flex justify-between items-center">
-        <li><a href="{% url 'home:Sugestões' %}" class="link-primary">Sugestões</a></li>
-        <li>© 2022 - {{ ano_atual }}</li>
-        <li><a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal1">Fale com o Desenvolvedor</a>
-        </li>
-        {% if user.is_superuser %}
-        <li>
-            <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal2">Gerador de fictícios</a>
-        </li>
-        {% endif %}
-
-        {% else %}
-        <ul class="flex justify-center items-center">
-            <li>© 2022 - {{ ano_atual }}</li>
-        </ul>
-        {% endif %}
-
-    </ul>
-</footer>
-
 {% endif %}
 
+{% if user.is_authenticated %}
+
+<footer>
+    <div class="mt-2 mb-2 items-center text-center">
+
+        <div class="mx-auto">
+            <a href="{% url 'home:Sugestões' %}" class="link-primary"><h1>Sugestões</h1></a>
+        </div>
+        <div class="mx-auto">
+            <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal1"><h1>Fale com o
+                Desenvolvedor</h1></a>
+        </div>
+        {% if user.is_superuser %}
+        <div class="mx-auto">
+            <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal2"><h1>Gerador de
+                fictícios</h1></a>
+        </div>
+        {% endif %}
+        <div class="mx-auto">
+            <small>© 2022 - {{ ano_atual }} - {{ SITE_NAME }}</small>
+        </div>
+
+        {% else %}
+        <div class="flex justify-center items-center">
+            <h1>© 2022 - {{ ano_atual }} - {{ SITE_NAME }}</h1>
+        </div>
+        {% endif %}
+    </div>
+</footer>
+
+{% if user.is_authenticated %}
 <!-- MODAL 1 -->
 <div class="modal fade modal-xl" id="modal1" tabindex="-1" aria-labelledby="MODAL" aria-hidden="true">
     <div class="modal-dialog modal-scrollable">
@@ -101,7 +104,8 @@
             <div class="">
                 <div class="modal-body">
                     <p class="text-start ps-5 pe-5">
-                        Elogios, reclamações, dúvidas, sugestões e report de bugs são bem vindos! Exagere nos elogios,
+                        Elogios, reclamações, dúvidas, sugestões e report de bugs são bem vindos! Exagere nos
+                        elogios,
                         manere nos xingamentos, e as dúvidas serão respondidas o mais breve possível. Em caso de
                         sugestão, por favor, entre no mini-fórum clicando
                         <a href="{% url 'home:Sugestões' %}" class="link-primary">AQUI</a>.
@@ -124,6 +128,8 @@
         </div>
     </div>
 </div>
+{% endif %}
+
 {% if user.is_authenticated %}
 {% if user.is_superuser %}
 <!-- MODAL 2 -->

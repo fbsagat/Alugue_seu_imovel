@@ -139,7 +139,8 @@ Visão Geral / {{ SITE_NAME }}
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
                                 data-bs-target="#pills-home"
-                                type="button" role="tab" aria-controls="pills-home" aria-selected="true">Tudo
+                                type="button" role="tab" aria-controls="pills-home" aria-selected="true">
+                            <p class="badge text-bg-dark fw-bolder fs-6">Tudo</p>
                         </button>
                     </li>
                     {% for item in grupos %}
@@ -148,7 +149,8 @@ Visão Geral / {{ SITE_NAME }}
                                 data-bs-target="#pills-{{ forloop.counter0 }}"
                                 type="button" role="tab" aria-controls="pills-{{ forloop.counter0 }}"
                                 aria-selected="false">
-                            {{ item }}
+                            <p class="badge text-bg-dark fw-bolder fs-6">{{ item }}</p>
+
                         </button>
                     </li>
                     {% endfor %}

@@ -69,7 +69,7 @@ class Usuario(AbstractUser):
     dados_pagamento2 = models.CharField(null=True, blank=True, max_length=90,
                                         verbose_name='Informações de pagamentos 2')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
-    tickets = models.IntegerField(default=50)
+    tickets = models.IntegerField(default=10)
     # Outros poderão ter acesso ao uuid por cópias digitais de pdfs que poderão ser repassadas pelo usuário
 
     locat_slots = models.IntegerField(default=2)
