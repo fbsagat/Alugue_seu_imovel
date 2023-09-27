@@ -4,16 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;&#10;Melhorado o botaoteste, gerador de ficticios, mais atualizações, mais estável.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer.">
+      <change afterPath="$PROJECT_DIR$/home/migrations/0002_alter_usuario_tickets.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/management/commands/createsuperuser_if_none_exists.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/management/commands/createsuperuser_if_none_exists.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/paginacao.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/paginacao.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +92,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Execução inicial add/predio">
+  <component name="RunManager" selected="Python.Runserver">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -482,7 +483,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="142" />
+    <option name="localTasksCounter" value="143" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -525,7 +526,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Corrigido e melhorado o sistema de ordenamento dos itens listados na página visão geral." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Tarefas agora se chama notificações(mudei apenas no front end)" />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Fakes_test melhorado e otimizado.&#10;Mais dois meses no formulário da tabela_PDF: FormTabela." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos" />
@@ -550,6 +550,7 @@
     <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto." />
     <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Melhorado o botaoteste, gerador de ficticios." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Melhorado o botaoteste, gerador de ficticios, mais atualizações, mais estável." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;&#10;Melhorado o botaoteste, gerador de ficticios, mais atualizações, mais estável." />
+    <MESSAGE value="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer." />
   </component>
 </project>

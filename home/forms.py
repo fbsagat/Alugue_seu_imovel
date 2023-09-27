@@ -416,6 +416,11 @@ class FormTickets(forms.Form):
                                      widget=forms.NumberInput())
 
 
+class FormSlots(forms.Form):
+    slots_qtd = forms.IntegerField(label='', initial=1, min_value=1, max_value=25, required=True,
+                                     widget=forms.NumberInput())
+
+
 class FormAdmin(forms.Form):
     todos_ou_cada_opt = [(0, 'Para cada usuário (inclusive adm)'), (1, 'Para cada usuário (exceto adm)'),
                          (2, 'Distribuir entre todos (inclusive adm)'), (3, 'Distribuir entre todos (exceto adm)'),

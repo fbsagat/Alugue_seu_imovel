@@ -216,7 +216,7 @@ class Slot(models.Model):
 
     def vencimento(self):
         # colocar para vencer um dia após, não zero(evitar reclamações dos usuários/não pode comer tempo deles)
-        data = self.criado_em + relativedelta(days=int(self.tickets)*30)
+        data = self.criado_em + relativedelta(days=int(self.tickets) * 30)
         return data.date()
 
     def dias_ativo(self):
@@ -240,7 +240,7 @@ class Slot(models.Model):
     def tickets_restando(self):
         """Aqui deve retornar os tickets(self.tickets) menos a quantia de tickets equivalentes aos dias que já passaram
         esde a criação do slot até hoje"""
-        tickets_passados = floor(self.dias_passados()/30)
+        tickets_passados = floor(self.dias_passados() / 30)
         tickets_restando = self.tickets - tickets_passados
         return tickets_restando if tickets_restando >= 0 else 0
 
@@ -589,8 +589,14 @@ class Contrato(models.Model):
         ordering = ['-data_entrada']
 
     def __str__(self):
-        return f'({self.do_locatario.primeiro_ultimo_nome()}-{self.do_imovel.nome}-' \
-               f'{self.data_entrada.strftime("%m/%Y")})'
+        """'O objeto count' diz em que posição este contrato fica na lista de contratos feitos com este locador neste
+         imóvel"""
+        contratos = Contrato.objects.filter(do_locador=self.do_locador, do_locatario=self.do_locatario,
+                                            do_imovel=self.do_imovel)
+        count = (f'{list(contratos).index(self)+2}' if len(contratos) > 1 else '1')
+        return (f'({self.do_locatario.primeiro_ultimo_nome()} em '
+                f'{self.do_imovel.nome} - nº{count} - '
+                f'{self.data_entrada.strftime("%m/%Y")})')
 
     def nome_completo(self):
         return f'{self.do_locatario.nome} - {self.do_imovel} - {self.data_entrada.strftime("%d/%m/%Y")} - ' \

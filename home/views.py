@@ -30,7 +30,7 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
-    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets
+    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
     ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot
@@ -1809,8 +1809,8 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
 def painel_slots(request):
     context = {}
     if request.method == 'GET':
-        form = FormTickets()
-        context['form'] = form
+        context['form'] = FormTickets()
+        context['form_slots'] = FormSlots()
 
     slots = Slot.objects.filter(do_usuario=request.user).order_by('pk')
 
@@ -1839,8 +1839,13 @@ def add_slot(request):
     if usuario.tickets <= 0:
         messages.error(request, "Tickets insuficientes para esta operação")
     else:
-        Slot.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
-        usuario.tickets -= 1
+        if request.method == 'POST':
+            form = FormSlots(request.POST)
+            if form.is_valid():
+                quantidade = int(form.cleaned_data['slots_qtd'])
+                for x in range(0, quantidade):
+                    Slot.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
+                    usuario.tickets -= 1
         usuario.save(update_fields=['tickets'])
     return redirect(request.META['HTTP_REFERER'])
 
@@ -1990,9 +1995,9 @@ def forum_sugestoes(request):
         sugestoes_implementadas_usuario = Sugestao.objects.filter(implementada=True, aprovada=False,
                                                                   do_usuario=request.user.pk)
 
-        sugestoes = sugestoes_geral.union(sugestoes_usuario).order_by('-data_registro')[:15]
+        sugestoes = sugestoes_geral.union(sugestoes_usuario).order_by('-data_registro')[:20]
         sugestoes_implementadas = sugestoes_implementadas_geral.union(sugestoes_implementadas_usuario).order_by(
-            '-data_implementada')[:10]
+            '-data_implementada')[:40]
 
     usuario = request.user
     sugestoes_curtidas = Sugestao.objects.filter(likes=usuario)
@@ -2143,6 +2148,7 @@ def criar_imoveis_ficticios(request, quantidade, multiplicador, usuario_s, distr
                 imovel.uc_agua = aleatorio.get('uc_agua')
                 imovel.data_registro = aleatorio.get('data_registro')
                 imovel.save()
+                Slot.objects.create(do_usuario=usuario, gratuito=False, tickets=1)
             messages.success(request, f"Criado(s) {count} imovei(s) para {usuario}")
 
 

@@ -67,6 +67,12 @@ OK. Mostrar no visão geral o total por grupo de imóveis e por tipo.
 Ok. (FICT_QTD ficou como initial do formulario, não fiz o sistema de configurações)Criar o multiplicador no botão de
         gerar fakes, eliminando o FICT_QTD em settings / adicionar função de criação dos itens espalhada para todos
         os usuários existentes / arrumar views.py linha 1891 / Fazer um sistema de configurações do fake test em settings.
+Ok. Liberar mais tickets para o adm.
+Ok. Melhorar o nome do contrato quando é o mesmo locador no mesmo imóvel colocando uma contagem ao invés da data no
+        final(ou junto).
+Ok. Criar slots para os imóveis criados no gerador de fictícios.
+Ok. Em slots adicionar, criar o formulário de quantidade.
+Ok. 'Sugestões enviadas' está com a página maior do que o esperado, arrumar. E colocar modal de confirmação de exclusão.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -86,16 +92,7 @@ Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando 
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
 
-Melhorar o nome do contrato quando é o mesmo locador no mesmo imóvel colocando uma contagem ao invés da data no
-        final(ou junto)
-
 Melhorar a exibição do painel gerador de fictícios.
-
-'Sugestões enviadas' está com a página maior do que o esperado, arrumar. E colocar modal de confirmação de exclusão.
-
-Criar slots para os imóveis criados no gerador de fictícios.
-
-Em slots adicionar, criar o formulário de quantidade.
 
 Criar a função comunidade no editor de modelos.
         1. colocar o visualizar / 2. colocar descrição.

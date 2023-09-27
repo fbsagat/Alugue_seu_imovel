@@ -133,7 +133,7 @@ Painel / {{ SITE_NAME }}
                                 {% else %}
                                 <div class="col-1">
                                     <a data-bs-toggle="modal" data-bs-target="#apagar_slot{{ slot.pk }}"
-                                       class="dropdown-item text-center">
+                                       class="text-center">
                                         <button type="button" class="btn btn-sm btn-secondary" title="Apagar">
                                             ❌
                                         </button>
@@ -179,23 +179,29 @@ Painel / {{ SITE_NAME }}
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border border-black text-white">
 
-            <div class="modal-header text-center flex items-center flex-col">
-                <h1 class="fs-3">Adicionar slot</h1>
-            </div>
+            <form method="POST" action="{% url 'home:Add Slot' %}">
+                {% csrf_token %}
 
-            <div class="modal-body text-center items-center">
-                <h1 class="fs-5">Isso irá consumir um ticket 🎫</h1>
-            </div>
+                <div class="modal-header text-center flex items-center flex-col">
+                    <h1 class="fs-3">Adicionar slots</h1>
+                </div>
+                <div class="modal-body d-flex flex-column text-center items-center">
+                    <div>
+                        <h1 class="fs-5">Quantos slots você deseja adicionar?</h1>
+                    </div>
+                    <div class="w-15 py-2">
+                        {{ form_slots.slots_qtd|as_crispy_field }}
+                    </div>
+                    <div>
+                        <h1 class="fs-6">Isso irá consumir um ticket por slot  🎫</h1>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
-                </button>
-                <a href="{% url 'home:Add Slot' %}">
-                    <button type="button" class="btn btn-primary">Confirmar
-                    </button>
-                </a>
-            </div>
-
+            </form>
         </div>
     </div>
 </div>
