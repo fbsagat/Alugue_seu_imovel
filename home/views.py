@@ -2238,8 +2238,9 @@ def criar_pagamentos_ficticios(request, quantidade, multiplicador, usuario_s, di
                     for n, parcela in enumerate(parcelas):
                         cem_por_cento = len(parcelas)
                         percentual_desta_parcela = floor(n * 100/cem_por_cento)
+                        percentual_final = floor(percentual_desta_parcela - (percentual_desta_parcela * 15 / 100))
                         if parcela.esta_pago() and parcela.recibo_entregue is False:
-                            entregue = False if porcentagem_de_chance(percentual_desta_parcela) else True
+                            entregue = False if porcentagem_de_chance(percentual_final) else True
                             parcela.recibo_entregue = entregue
                             parcela.save(update_fields=['recibo_entregue', ])
                             if entregue is False:
