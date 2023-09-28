@@ -15,8 +15,7 @@ def titulo_pag(request):
     titulo = resolve(request.path_info).url_name
     ano_atual = datetime.date.today().year
     if settings.DEBUG:
-        debug = resolve(request.path_info)
-        return {'block_titulo': titulo, 'pageinfo': debug, 'ano_atual': ano_atual}
+        return {'block_titulo': titulo, 'ano_atual': ano_atual, 'fakes_test_on': True}
     return {'block_titulo': titulo, 'ano_atual': ano_atual}
 
 
@@ -113,7 +112,7 @@ def forms_da_navbar(request):
         else:
             form7 = FormAnotacoes(initial={'data_registro': datetime.date.today().strftime('%Y-%m-%d')})
 
-        if request.user.is_superuser:
+        if request.user.is_superuser or settings.DEBUG:
             form8 = FormAdmin(
                 initial={'qtd_usuario': settings.FICT_QTD['qtd_usuario'],
                          'qtd_locatario': settings.FICT_QTD['qtd_locatario'],

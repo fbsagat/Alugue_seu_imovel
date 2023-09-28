@@ -4,16 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot.">
-      <change afterPath="$PROJECT_DIR$/home/migrations/0002_alter_usuario_tickets.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js/prevent_multiple_click.js" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,21 +59,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.editor"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
   }
-}]]></component>
+}</component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
@@ -92,7 +89,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver">
+  <component name="RunManager" selected="Python.Execução inicial add/predio">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -483,7 +480,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="144" />
+    <option name="localTasksCounter" value="146" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -526,7 +523,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Fakes_test melhorado e otimizado.&#10;Mais dois meses no formulário da tabela_PDF: FormTabela." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos" />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Atualizados várias bibliotecas.&#10;Agora as classes de locatarios e imoveis não armazenam estes dados: 'com_contratos', 'com_imoveis' e 'contrato_atual', 'com_locatario', pois estes resultados podem ser gerador por métodos, e isso foi feito. Economia de linhas em signal, que serviam para salvar estes dados antes." />
     <MESSAGE value="Pequenas melhorias e correções de bugs diversos." />
@@ -541,7 +537,6 @@
     <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Atualização dos frameworks, correção de bugs e melhorias.&#10;Melhorias relevantes: Agora a tabela pdf mostra também, em texto menos destacado, parcelas de contratos antigos e futuros, dos imoveis listados, caso hajam, ou 'sem contrato' caso não haja.&#10;View da tabela mais organizada e explicativa." />
     <MESSAGE value="Correções e melhorias no código:&#10;&#10;Criado validador 'validar_contrato_no_imovel_na_data' que valida na hora de ativar algum contrato. &#10;Agora contratos rescindidos não contam como impedimento para criação ou ativação de novos contratos nos validadores referentes a isto." />
-    <MESSAGE value="Correções e melhorias no código." />
     <MESSAGE value="Correções e melhorias no código.&#10;Removido o django debug toolbar.&#10;&#10;Mais informações no visão geral: Arrecadação total desde o início, arrecadação mensal dos contratos, valor total dos contratos ativos, valor total de todos os contratos organizados por grupos de imóveis." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Iniciada a produção do sistema de pagamentos." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições." />
@@ -551,6 +546,8 @@
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Melhorado o botaoteste, gerador de ficticios, mais atualizações, mais estável." />
     <MESSAGE value="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot." />
+    <MESSAGE value="Correções e melhorias no código.&#10;&#10;Adicionado o js que previne cliques múltiplos dos usuáios: 'prevent_multiple_click.js'&#10;navbar: tags &lt;a&gt; fora, transformadas em formulários para compatibilização do prevent_multiple_click.js." />
+    <MESSAGE value="Correções e melhorias no código." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código." />
   </component>
 </project>

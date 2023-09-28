@@ -82,6 +82,11 @@ Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes
 Já encontrei e apliquei o js 'prevent_multiple_click.js', agora falta transformar o restando das tags <a> em formulários
 pra compatibilizar. Fazer uma revisão no back-end: usar 'get_object_or_404' quando capturar um objeto para tratamento.
 
+Criar as outras informações dos usuários fictícios, estão faltando. Estado Civil, etc...
+Tentar registrar contrato e pagamento num imovel com slot vencido pra verificar se ta tudo ok.
+adicionar slot não faz verificação de tickets, a não ser q já esteja no negativo(tickets do user). arrumar!
+O gerador de imóveis tá fazern três slots s mais(já vêm 3 grátis). Arrumar.
+
 Criar a função comunidade no editor de modelos.
         1. colocar o visualizar / 2. colocar descrição / 3. Colocar a variável 'mobiliado' no contrato pdf.
 
@@ -123,6 +128,7 @@ Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir tam
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Melhorias muito futuras:
+Fazer um sistema de configurações do fake test, onde serão modificadas as probabilidades de cada variável aleatória.
 Arrumar e organizar, deixar otimizado o painel administrativo(django admin) completo.
 Criar o help (sistema de dicas e recomendações espalhados por to_do o site, referentes ao manuseio do mesmo e a regras
         e dicas de locação)

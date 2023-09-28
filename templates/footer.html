@@ -64,7 +64,6 @@
 {% endif %}
 
 {% if user.is_authenticated %}
-
 <footer>
     <div class="mt-2 mb-2 items-center text-center">
 
@@ -75,7 +74,7 @@
             <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal1"><h1>Fale com o
                 Desenvolvedor</h1></a>
         </div>
-        {% if user.is_superuser %}
+        {% if user.is_superuser or fakes_test_on %}
         <div class="mx-auto">
             <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal2"><h1>Gerador de
                 fictícios</h1></a>
@@ -131,7 +130,7 @@
 {% endif %}
 
 {% if user.is_authenticated %}
-{% if user.is_superuser %}
+{% if user.is_superuser or fakes_test_on %}
 <!-- MODAL 2 -->
 <div class="modal fade modal-xl" id="modal2" tabindex="-1" aria-labelledby="MODAL" aria-hidden="true">
     <div class="modal-dialog modal-scrollable">
