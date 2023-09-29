@@ -2249,11 +2249,11 @@ def criar_pagamentos_ficticios(request, quantidade, multiplicador, usuario_s, di
                     # Decidir a quantidade de recibos a distribuir para a lista de parcelas do contrato
                     # chance para decidir 'recibar' tudo, ou um certo range \/
                     if parc_pagas_qtd > 0:
-                        chance = 75
+                        chance = 70
                         recibos_qtd = parc_pagas_qtd if porcentagem_de_chance(chance) else randrange(0, parc_pagas_qtd)
                         # For para alterar as parcelas com recibo entregue
                         for n, parcela in enumerate(parcelas):
-                            if parcela.recibo_entregue is False and n <= recibos_qtd:
+                            if parcela.recibo_entregue is False and n < recibos_qtd:
                                 parcela.recibo_entregue = True
                                 parcela.save(update_fields=['recibo_entregue', ])
                             else:
