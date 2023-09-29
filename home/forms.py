@@ -418,7 +418,7 @@ class FormTickets(forms.Form):
 
 class FormSlots(forms.Form):
     slots_qtd = forms.IntegerField(label='', initial=1, min_value=1, max_value=25, required=True,
-                                     widget=forms.NumberInput())
+                                   widget=forms.NumberInput())
 
 
 class FormAdmin(forms.Form):
@@ -426,31 +426,46 @@ class FormAdmin(forms.Form):
                          (2, 'Distribuir entre todos (inclusive adm)'), (3, 'Distribuir entre todos (exceto adm)'),
                          (4, 'Para o usuário específico ------------>> ')]
     criar_usuarios = forms.BooleanField(label='Criar usuários: ', required=False)
-    qtd_usuario = forms.IntegerField(label='Quantidade', widget=forms.NumberInput(), required=True, min_value=0,
-                                     max_value=100)
-    criar_itens = forms.BooleanField(label='Criar itens para os usuários: ', required=False, initial=True)
-    qtd_locatario = forms.IntegerField(label='Locatário(s)', widget=forms.NumberInput(), required=True, min_value=0,
-                                       max_value=100)
-    qtd_imovel_g = forms.IntegerField(label='Imóv. Grupo(s)', widget=forms.NumberInput(), required=True, min_value=0,
-                                      max_value=100)
-    qtd_imovel = forms.IntegerField(label='Imóvel(s)', widget=forms.NumberInput(), required=True, min_value=0,
-                                    max_value=100)
-    qtd_contrato = forms.IntegerField(label='Contrato(s)', widget=forms.NumberInput(), required=True, min_value=0,
-                                      max_value=100)
-    qtd_pagamento = forms.IntegerField(label='Pagamento(s)', widget=forms.NumberInput(), required=True, min_value=0,
-                                       max_value=100)
-    qtd_gasto = forms.IntegerField(label='Gasto(s)', widget=forms.NumberInput(), required=True, min_value=0,
-                                   max_value=100)
-    qtd_nota = forms.IntegerField(label='Nota(s)', widget=forms.NumberInput(), required=True, min_value=0,
-                                  max_value=100)
-    qtd_sugestao = forms.IntegerField(label='Sugestão(ões)', widget=forms.NumberInput(), required=True, min_value=0,
-                                      max_value=100)
-    para_o_usuario = forms.ModelChoiceField(label='Para o usuário', queryset=Usuario.objects.all(), initial='',
-                                            required=True)
-    multiplicar_por = forms.IntegerField(label='Multiplicar cada por', max_value=100, min_value=1, initial=1,
-                                         required=True)
-    todos_ou_cada = forms.ChoiceField(label='', choices=todos_ou_cada_opt, initial=0, required=True)
+    qtd_usuario = forms.IntegerField(label='Quantidade', widget=forms.NumberInput(attrs={'class': 'form-control'}),
+                                     required=True, min_value=0, max_value=100)
+    multiplicar_user_por = forms.IntegerField(label='Multipl. por',
+                                              widget=forms.NumberInput(attrs={'class': 'form-control'}), max_value=100,
+                                              min_value=1, initial=1, required=True)
+    criar_itens = forms.BooleanField(label='Criar itens para os usuários: ', required=False)
+    qtd_locatario = forms.IntegerField(label='Locatário(s)',
+                                       widget=forms.NumberInput(attrs={'class': 'form-control-sm'}), required=True,
+                                       min_value=0, max_value=100)
+    qtd_imovel_g = forms.IntegerField(label='Imóv. Grupo(s)',
+                                      widget=forms.NumberInput(attrs={'class': 'form-control-sm'}), required=True,
+                                      min_value=0, max_value=100)
+    qtd_imovel = forms.IntegerField(label='Imóvel(s)', widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
+                                    required=True, min_value=0, max_value=100)
+    qtd_contrato = forms.IntegerField(label='Contrato(s)', widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
+                                      required=True, min_value=0, max_value=100)
+    qtd_pagamento = forms.IntegerField(label='Pagamento(s)',
+                                       widget=forms.NumberInput(attrs={'class': 'form-control-sm'}), required=True,
+                                       min_value=0, max_value=100)
+    qtd_gasto = forms.IntegerField(label='Gasto(s)', widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
+                                   required=True, min_value=0, max_value=100)
+    qtd_nota = forms.IntegerField(label='Nota(s)', widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
+                                  required=True, min_value=0, max_value=100)
+    qtd_sugestao = forms.IntegerField(label='Sugestão(ões)',
+                                      widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
+                                      required=True, min_value=0, max_value=100)
+    para_o_usuario = forms.ModelChoiceField(label='Para o usuário', queryset=Usuario.objects.all(), required=True)
+    multiplicar_por = forms.IntegerField(label='Multiplicar cada item por',
+                                         widget=forms.NumberInput(attrs={'class': 'form-control'}), max_value=100,
+                                         min_value=1, initial=1, required=True)
+    todos_ou_cada = forms.ChoiceField(label='', choices=todos_ou_cada_opt, initial=4, required=True)
 
     def __init__(self, *args, **kwargs):
         super(FormAdmin, self).__init__(*args, **kwargs)
-        self.fields['qtd_usuario'].widget.attrs.update(style="width: 75px;")
+        self.fields['qtd_usuario'].widget.attrs.update(id="zero_fill1")
+        self.fields['qtd_locatario'].widget.attrs.update(id="zero_fill2")
+        self.fields['qtd_imovel_g'].widget.attrs.update(id="zero_fill3")
+        self.fields['qtd_imovel'].widget.attrs.update(id="zero_fill4")
+        self.fields['qtd_contrato'].widget.attrs.update(id="zero_fill5")
+        self.fields['qtd_pagamento'].widget.attrs.update(id="zero_fill6")
+        self.fields['qtd_gasto'].widget.attrs.update(id="zero_fill7")
+        self.fields['qtd_nota'].widget.attrs.update(id="zero_fill8")
+        self.fields['qtd_sugestao'].widget.attrs.update(id="zero_fill9")

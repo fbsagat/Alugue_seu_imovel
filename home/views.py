@@ -2149,7 +2149,8 @@ def criar_imoveis_ficticios(request, quantidade, multiplicador, usuario_s, distr
                 imovel.uc_agua = aleatorio.get('uc_agua')
                 imovel.data_registro = aleatorio.get('data_registro')
                 imovel.save()
-                Slot.objects.create(do_usuario=usuario, gratuito=False, tickets=1)
+                if Imovei.objects.filter(do_locador=usuario).count() > 3:
+                    Slot.objects.create(do_usuario=usuario, gratuito=False, tickets=1)
             messages.success(request, f"Criado(s) {count} imovei(s) para {usuario}")
 
 
@@ -2363,9 +2364,10 @@ def botaoteste(request):
             qtd_sugestao = form_adm.cleaned_data['qtd_sugestao']
 
             fict_multi = int(form_adm.data['multiplicar_por'])
+            fict_user_multi = int(form_adm.data['multiplicar_user_por'])
 
             if qtd_usuario > 0 and form_adm.cleaned_data['criar_usuarios']:
-                criar_usuarios_ficticios(request, quantidade=qtd_usuario, multiplicador=fict_multi)
+                criar_usuarios_ficticios(request, quantidade=qtd_usuario, multiplicador=fict_user_multi)
 
             distribuir = False
             usuario_s = Usuario.objects.none()

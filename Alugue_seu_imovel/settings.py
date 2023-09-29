@@ -15,12 +15,7 @@ TEMPO_SESSION_FORM = 30
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item / dados iniciais do formulário \/
-tudo_zero = False
-if tudo_zero:
-    FICT_QTD = {'qtd_usuario': 0, 'qtd_locatario': 0, 'qtd_imovel_g': 0, 'qtd_imovel': 0, 'qtd_contrato': 0,
-                'qtd_pagamento': 0, 'qtd_gasto': 0, 'qtd_nota': 0, 'qtd_sugestao': 0}
-else:
-    FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel': 5, 'qtd_contrato': 4,
+FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel': 5, 'qtd_contrato': 4,
                 'qtd_pagamento': 10, 'qtd_gasto': 1, 'qtd_nota': 1, 'qtd_sugestao': 1}
 
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/

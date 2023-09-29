@@ -15,7 +15,7 @@ def titulo_pag(request):
     titulo = resolve(request.path_info).url_name
     ano_atual = datetime.date.today().year
     if settings.DEBUG:
-        return {'block_titulo': titulo, 'ano_atual': ano_atual, 'fakes_test_on': True}
+        return {'block_titulo': titulo, 'ano_atual': ano_atual, 'debug_true': True}
     return {'block_titulo': titulo, 'ano_atual': ano_atual}
 
 

@@ -17,13 +17,12 @@
 
 <nav style="z-index: 20;" class="navbar w-full items-center align-middle py-1 px-1 fixed border-b-2 bg-dark">
 
-
     <div class="flex justify-content-start">
 
         <!-- LOGO -->
         <div class="ps-1">
             <form action="/">
-                <button>
+                <button type="submit">
                     <img width="40" height="40" class="d-inline-block" src="{% static 'images/logo.png' %}">
                 </button>
             </form>
@@ -33,7 +32,7 @@
         <div class="ps-1">
 
             <form action="/">
-                <button>
+                <button type="submit">
                     <div class="badge bg-black text-white text-wrap border-b-2" style="width: 9rem;">
                         -{{ SITE_NAME }}- Administrador
                     </div>
@@ -53,7 +52,7 @@
         <!-- BOTAO VISÃO GERAL -->
         <div class="ps-1">
             <form action="{% url 'home:Visão Geral' %}">
-                <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
+                <button type="submit" class="bg-blue-700 text-white p-1 px-3 rounded-md">
                     Visão Geral
                 </button>
             </form>
@@ -62,7 +61,7 @@
         <!-- BOTAO EVENTOS -->
         <div class="ps-1">
             <form action="{% url 'home:Eventos' %}">
-                <button class="bg-blue-700 text-white p-1 px-3 rounded-md">
+                <button type="submit" class="bg-blue-700 text-white p-1 px-3 rounded-md">
                     Eventos 🔍
                 </button>
             </form>
@@ -78,21 +77,21 @@
             <ul class="dropdown-menu">
                 <li>
                     <form action="{% url 'home:Imóveis Ativos' %}">
-                        <button class="dropdown-item">
+                        <button type="submit" class="dropdown-item">
                             Imóveis Ativos 🏠💡
                         </button>
                     </form>
                 </li>
                 <li>
                     <form action="{% url 'home:Locatários Ativos' %}">
-                        <button class="dropdown-item">
+                        <button type="submit" class="dropdown-item">
                             Locatários Ativos 👨‍💼🏠
                         </button>
                     </form>
                 </li>
                 <li>
                     <form action="{% url 'home:Contratos Ativos' %}">
-                        <button class="dropdown-item">
+                        <button type="submit" class="dropdown-item">
                             Contratos Ativos 📃✒️
                         </button>
                     </form>
@@ -141,21 +140,21 @@
                 <ul class="dropdown-menu">
                     <li>
                         <form action="{% url 'home:Recibos PDF' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 de Recibos 🧾
                             </button>
                         </form>
                     </li>
                     <li>
                         <form action="{% url 'home:Tabela PDF' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 de Tabela 📑
                             </button>
                         </form>
                     </li>
                     <li>
                         <form action="{% url 'home:Contrato PDF' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 de Contrato 📃
                             </button>
                         </form>
@@ -173,42 +172,42 @@
                 <ul class="dropdown-menu">
                     <li>
                         <form action="{% url 'home:Pagamentos' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 Pagamentos 💵
                             </button>
                         </form>
                     </li>
                     <li>
                         <form action="{% url 'home:Locatários' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 Locatários 👨‍💼
                             </button>
                         </form>
                     </li>
                     <li>
                         <form action="{% url 'home:Contratos' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 Contratos 📃
                             </button>
                         </form>
                     </li>
                     <li>
                         <form action="{% url 'home:Imóveis' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 Imóveis 🏠
                             </button>
                         </form>
                     </li>
                     <li>
                         <form action="{% url 'home:Gastos' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 Gastos 💸
                             </button>
                         </form>
                     </li>
                     <li>
                         <form action="{% url 'home:Anotações' %}">
-                            <button class="dropdown-item">
+                            <button type="submit" class="dropdown-item">
                                 Notas/Tarefas 🗒️
                             </button>
                         </form>
@@ -247,21 +246,21 @@
             <ul class="dropdown-menu">
                 <li>
                     <form action="{% url 'home:Painel Configs' %}">
-                        <button class="dropdown-item">
+                        <button type="submit" class="dropdown-item">
                             Painel 🎛️
                         </button>
                     </form>
                 </li>
                 <li>
                     <form action="{% url 'home:Editar Perfil' %}">
-                        <button class="dropdown-item">
+                        <button type="submit" class="dropdown-item">
                             Editar Perfil 👨‍💼
                         </button>
                     </form>
                 </li>
                 <li>
                     <form action="{% url 'home:Logout' %}">
-                        <button class="dropdown-item">
+                        <button type="submit" class="dropdown-item">
                             Sair 🚪
                         </button>
                     </form>
@@ -286,6 +285,8 @@
                         {% csrf_token %}
                         {{ form_pagamento|crispy }}
                         <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary">Limpar
+                            </button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                             </button>
                             <button type="submit" class="btn btn-primary">
@@ -374,6 +375,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary">Limpar
+                            </button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                             </button>
                             <button type="submit" class="btn btn-primary">
@@ -422,7 +425,10 @@
                                 {{ form_contrato.dia_vencimento|as_crispy_field }}
                             </div>
                         </div>
+                        <
                         <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary">Limpar
+                            </button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                             </button>
                             <button type="submit" class="btn btn-primary">
@@ -497,11 +503,13 @@
                             {{ form_imovel.uc_agua|as_crispy_field }}
                         </div>
                     </div>
-
                     <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary">Limpar
+                        </button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                         </button>
-                        <button type="submit" class="btn btn-primary">Confirmar
+                        <button type="submit" class="btn btn-primary">
+                            Confirmar
                         </button>
                     </div>
                 </form>
@@ -514,7 +522,7 @@
                     </div>
                     <div class="row">
                         <form action="{% url 'home:Painel Slots' %}" class="mt-3">
-                            <button class="fs-3">
+                            <button class="fs-3" type="submit">
                                 Painel 🎛️
                             </button>
                         </form>
@@ -552,6 +560,8 @@
                         {{ form_gasto.observacoes|as_crispy_field }}
                         {{ form_gasto.comprovante|as_crispy_field }}
                         <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary">Limpar
+                            </button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
                             </button>
                             <button type="submit" class="btn btn-primary">
@@ -591,8 +601,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar
+                    <button type="reset" class="btn btn-secondary">Limpar
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Confirmar
                     </button>
                 </div>
             </form>

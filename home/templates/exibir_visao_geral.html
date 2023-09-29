@@ -37,34 +37,81 @@ Visão Geral / {{ SITE_NAME }}
                     </td>
                 </tr>
                 <tr>
-                    <th scope="col" style="cursor:default;">Nº</th>
-                    <th scope="col" style="cursor:default;" title="Nome do imóvel"><a
-                            href="?order_by={{ reverter }}nome_do_imovel">Nome🔁</a></th>
-                    <th scope="col" style="cursor:default;" title="Locatário neste imóvel"><a
-                            href="?order_by={{ reverter }}nome_do_locatario">Com locatário🔁</a>
+                    <th scope="col" style="cursor:default;">Nº
+                    </th>
+                    <th scope="col" style="cursor:default;" title="Nome do imóvel">
+                        <form action="?order_by={{ reverter }}nome_do_imovel">
+                            <button type="submit">
+                                Nome🔁
+                            </button>
+                        </form>
                     </th>
 
-                    <th scope="col" style="cursor:default;" title="Valor mensal do aluguel"><a
-                            href="?order_by={{ reverter }}valor_mensal">Valor/Mês🔁</a></th>
+                    <th scope="col" style="cursor:default;" title="Locatário neste imóvel">
+                        <form action="?order_by={{ reverter }}nome_do_locatario">
+                            <button type="submit">
+                                Com locatário🔁
+                            </button>
+                        </form>
+                    </th>
 
-                    <th scope="col" style="cursor:default;" title="Vencimento da mensalidade"><a
-                            href="?order_by={{ reverter }}vencimento_atual">Vencimento🔁</a></th>
+                    <th scope="col" style="cursor:default;" title="Valor mensal do aluguel">
+                        <form action="?order_by={{ reverter }}valor_mensal">
+                            <button type="submit">
+                                Valor/Mês🔁
+                            </button>
+                        </form>
+                    </th>
+
+                    <th scope="col" style="cursor:default;" title="Vencimento da mensalidade">
+                        <form action="?order_by={{ reverter }}vencimento_atual">
+                            <button type="submit">
+                                Vencimento🔁
+                            </button>
+                        </form>
+                    </th>
+
                     <th scope="col" style="cursor:default;"
-                        title="Valor atrasado até a data de hoje / Quantidade de meses não quitados"><a
-                            href="?order_by={{ reverter }}divida_atual_valor">Atraso🔁</a></th>
-                    <th scope="col" style="cursor:default;" title="Recibos entregues do total de meses pagos"><a
-                            href="?order_by={{ reverter }}recibos_entregues">Recibos Entr.🔁</a></th>
+                        title="Valor atrasado até a data de hoje / Quantidade de meses não quitados">
+                        <form action="?order_by={{ reverter }}divida_atual_valor">
+                            <button type="submit">
+                                Atraso🔁
+                            </button>
+                        </form>
+                    </th>
 
-                    <th scope="col" style="cursor:default;" title="Nome do contrato"><a
-                            href="?order_by={{ reverter }}nome_do_locatario">Nome🔁</a></th>
-                    <th scope="col" style="cursor:default;" title="Total pago deste contrato"><a
-                            href="?order_by={{ reverter }}total_quitado">Total
-                        Pago🔁</a></th>
+                    <th scope="col" style="cursor:default;" title="Recibos entregues do total de meses pagos">
+                        <form action="?order_by={{ reverter }}recibos_entregues">
+                            <button type="submit">
+                                Recibos Entr.🔁
+                            </button>
+                        </form>
+                    </th>
+
+                    <th scope="col" style="cursor:default;" title="Nome do contrato">
+                        <form action="?order_by={{ reverter }}nome_do_locatario">
+                            <button type="submit">
+                                Nome🔁
+                            </button>
+                        </form>
+                    </th>
+
+                    <th scope="col" style="cursor:default;" title="Total pago deste contrato">
+                        <form action="?order_by={{ reverter }}total_quitado">
+                            <button type="submit">
+                                Total Pago🔁
+                            </button>
+                        </form>
+                    </th>
+
                     <th scope="col" style="cursor:default;" title="Tempo transcorrido">
-                        <a href="?order_by={{ reverter }}dias_transcorridos">Tempo🔁</a></th>
-
+                        <form action="?order_by={{ reverter }}dias_transcorridos">
+                            <button type="submit">
+                                Tempo🔁
+                            </button>
+                        </form>
+                    </th>
                 </tr>
-
 
                 </thead>
 

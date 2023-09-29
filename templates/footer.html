@@ -68,13 +68,17 @@
     <div class="mt-2 mb-2 items-center text-center">
 
         <div class="mx-auto">
-            <a href="{% url 'home:Sugestões' %}" class="link-primary"><h1>Sugestões</h1></a>
+            <form action="{% url 'home:Sugestões' %}">
+                <button type="submit" class="link-primary">
+                    Sugestões
+                </button>
+            </form>
         </div>
         <div class="mx-auto">
             <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal1"><h1>Fale com o
                 Desenvolvedor</h1></a>
         </div>
-        {% if user.is_superuser or fakes_test_on %}
+        {% if user.is_superuser or debug_true %}
         <div class="mx-auto">
             <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal2"><h1>Gerador de
                 fictícios</h1></a>
@@ -97,31 +101,33 @@
 <div class="modal fade modal-xl" id="modal1" tabindex="-1" aria-labelledby="MODAL" aria-hidden="true">
     <div class="modal-dialog modal-scrollable">
         <div class="modal-content bg-dark border border-white text-white">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5">Fale com o Desenvolvedor</h1>
-            </div>
-            <div class="">
-                <div class="modal-body">
-                    <p class="text-start ps-5 pe-5">
-                        Elogios, reclamações, dúvidas, sugestões e report de bugs são bem vindos! Exagere nos
-                        elogios,
-                        manere nos xingamentos, e as dúvidas serão respondidas o mais breve possível. Em caso de
-                        sugestão, por favor, entre no mini-fórum clicando
-                        <a href="{% url 'home:Sugestões' %}" class="link-primary">AQUI</a>.
-                        Envie uma imagem se quiser, principalmente no report de bugs, obrigado!
-                    </p>
-                    <br>
-                    <form action="{% url 'home:Mensagem pro Desenvolvedor' %}" method="POST"
-                          enctype="multipart/form-data">
-                        {% csrf_token %}
+            <div class="container">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Fale com o Desenvolvedor</h1>
+                </div>
+                <div class="">
+                    <div class="modal-body">
+                        <p class="text-start ps-5 pe-5">
+                            Elogios, reclamações, dúvidas, sugestões e report de bugs são bem vindos! Exagere nos
+                            elogios,
+                            manere nos xingamentos, e as dúvidas serão respondidas o mais breve possível. Em caso de
+                            sugestão, por favor, entre no mini-fórum clicando
+                            <a href="{% url 'home:Sugestões' %}" class="link-primary">AQUI</a>.
+                            Envie uma imagem se quiser, principalmente no report de bugs, obrigado!
+                        </p>
+                        <br>
+                        <form action="{% url 'home:Mensagem pro Desenvolvedor' %}" method="POST"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
 
-                        {{ form_mensagem|crispy }}
+                            {{ form_mensagem|crispy }}
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                            <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
-                        </div>
-                    </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,9 +136,9 @@
 {% endif %}
 
 {% if user.is_authenticated %}
-{% if user.is_superuser or fakes_test_on %}
+{% if user.is_superuser or debug_true %}
 <!-- MODAL 2 -->
-<div class="modal fade modal-xl" id="modal2" tabindex="-1" aria-labelledby="MODAL" aria-hidden="true">
+<div class="modal fade modal-lg" id="modal2" tabindex="-1" aria-labelledby="MODAL" aria-hidden="true">
     <div class="modal-dialog modal-scrollable">
         <div class="modal-content bg-dark border border-white text-white">
             <div class="modal-header">
@@ -143,8 +149,11 @@
                 <div class="modal-body">
                     {{ botao_admin.criar_usuarios|as_crispy_field }}
                     <div class="row">
-                        <div class="col">
+                        <div class="col-2">
                             {{ botao_admin.qtd_usuario|as_crispy_field }}
+                        </div>
+                        <div class="col-2">
+                            {{ botao_admin.multiplicar_user_por|as_crispy_field }}
                         </div>
                     </div>
                     <hr>
@@ -163,6 +172,8 @@
                         <div class="col">
                             {{ botao_admin.qtd_contrato|as_crispy_field }}
                         </div>
+                    </div>
+                    <div class="row justify-content-md-center text-center">
                         <div class="col">
                             {{ botao_admin.qtd_pagamento|as_crispy_field }}
                         </div>
@@ -176,7 +187,7 @@
                             {{ botao_admin.qtd_sugestao|as_crispy_field }}
                         </div>
                     </div>
-                    <div class="row d-flex align-items-end text-center" style="width: 750px;">
+                    <div class="row d-flex align-items-end text-center">
                         <div class="col-2">
                             {{ botao_admin.multiplicar_por|as_crispy_field }}
                         </div>
@@ -189,6 +200,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" onclick="fill_zero(0)">Zerar Tudo</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                     <button type="submit" class="mt-1 btn btn-primary">GO!</button>
                 </div>

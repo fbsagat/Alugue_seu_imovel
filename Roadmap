@@ -83,9 +83,9 @@ Já encontrei e apliquei o js 'prevent_multiple_click.js', agora falta transform
 pra compatibilizar. Fazer uma revisão no back-end: usar 'get_object_or_404' quando capturar um objeto para tratamento.
 
 Criar as outras informações dos usuários fictícios, estão faltando. Estado Civil, etc...
-Tentar registrar contrato e pagamento num imovel com slot vencido pra verificar se ta tudo ok.
+Tentar registrar contrato e pagamento num imóvel com slot vencido pra verificar se ta tudo ok.
 adicionar slot não faz verificação de tickets, a não ser q já esteja no negativo(tickets do user). arrumar!
-O gerador de imóveis tá fazern três slots s mais(já vêm 3 grátis). Arrumar.
+O gerador de imóveis tá fazendo três slots a mais(já vêm 3 grátis). Arrumar.
 
 Criar a função comunidade no editor de modelos.
         1. colocar o visualizar / 2. colocar descrição / 3. Colocar a variável 'mobiliado' no contrato pdf.

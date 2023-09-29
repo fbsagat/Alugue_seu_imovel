@@ -51,6 +51,9 @@ justify-center bg-no-repeat"
 <script src="{% static 'js/jquery.mask.min.js' %}"></script>
 <script src="{% static 'js/mascara.js' %}"></script>
 <script src="{% static 'js/prevent_multiple_click.js' %}"></script>
+{% if user.is_superuser or debug_true %}
+<script src="{% static 'js/preenchedor.js' %}"></script>
+{% endif %}
 <!--  Custom js  -->
 
 {% block scripts %}

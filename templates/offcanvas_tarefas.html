@@ -48,36 +48,69 @@
                             <div class="col">
 
                                 {% if tarefa.autor_tipo == 1 %}
-                                <a href="{% url 'home:Recibo Entregue' tarefa.pk %}"
-                                   class="btn btn-outline-primary btn-sm small">Confirmar</a>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Recibo Entregue' tarefa.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Confirmar
+                                        </button>
+                                    </form>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 2 %}
-                                <a href="{% url 'home:Afazer Concluida' tarefa.pk %}"
-                                   class="btn btn-outline-primary btn-sm small">Concluída</a>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Afazer Concluida' tarefa.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Concluída
+                                        </button>
+                                    </form>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 3 %}
-                                <a href="{% url 'home:Contrato Recebido' tarefa.pk %}"
-                                   class="btn btn-outline-primary btn-sm small">Recebido</a>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Contrato Recebido' tarefa.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Recebido
+                                        </button>
+                                    </form>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 4 %}
-                                <a href="{% url 'home:Aviso Lido' tarefa.pk %}"
-                                   class="btn btn-outline-primary btn-sm small">Lido</a>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Aviso Lido' tarefa.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Lido
+                                        </button>
+                                    </form>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 5 %}
-                                <a href="{% url 'home:Revisar Locatário' tarefa.pk %}"
-                                   class="btn btn-outline-primary btn-sm small">Revisar</a>
-                                <a href="{% url 'home:Excluir Locatario' tarefa.content_object.pk %}">
-                                    <button class="btn btn-outline-danger btn-sm small">
-                                        <ion-icon size="small" name="trash-outline"></ion-icon>
-                                        Excluir
-                                    </button>
-                                </a>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Revisar Locatário' tarefa.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Revisar 📋
+                                        </button>
+                                    </form>
+                                    <form action="{% url 'home:Excluir Locatario' tarefa.content_object.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Excluir 🗑️
+                                        </button>
+                                    </form>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 6 %}
-                                <a href="{% url 'home:Painel' %}"
-                                   class="btn btn-outline-primary btn-sm small">Painel 🎛️</a>
-                                <a href="{% url 'home:Aviso Lido' tarefa.pk %}"
-                                   class="btn btn-outline-primary btn-sm small">Lido</a>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Painel' %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Painel 🎛️
+                                        </button>
+                                    </form>
+
+                                    <form action="{% url 'home:Aviso Lido' tarefa.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Lido
+                                        </button>
+                                    </form>
+                                </div>
 
                                 {% endif %}
 
@@ -108,54 +141,86 @@
                             <div class="col">
 
                                 {% if tarefa.autor_tipo == 1 %}
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Recibo Entregue' tarefa.pk %}">Não entregue
-                                </a></button>
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    Confirmar
-                                </button>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Recibo Entregue' tarefa.pk %}">
+                                        <button type="submit"
+                                                class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1">
+                                            Não entregue
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1"
+                                            disabled>
+                                        Confirmar
+                                    </button>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 2 %}
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Afazer Concluida' tarefa.pk %}">À fazer
-                                </a></button>
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    Concluída
-                                </button>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Afazer Concluida' tarefa.pk %}">
+                                        <button type="submit"
+                                                class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1">
+                                            À fazer
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1"
+                                            disabled>
+                                        Concluída
+                                    </button>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 3 %}
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Contrato Recebido' tarefa.pk %}">Não Recebido
-                                </a></button>
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    Recebido
-                                </button>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Contrato Recebido' tarefa.pk %}">
+                                        <button type="submit"
+                                                class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1">
+                                            Não Recebido
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1"
+                                            disabled>
+                                        Recebido
+                                    </button>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 4 %}
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Aviso Lido' tarefa.pk %}">Não Lido
-                                </a></button>
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    Lido
-                                </button>
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Aviso Lido' tarefa.pk %}">
+                                        <button type="submit"
+                                                class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1">
+                                            Não Lido
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1"
+                                            disabled>
+                                        Lido
+                                    </button>
 
-                                {% elif tarefa.autor_tipo == 5 %}
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    Aprovado
-                                </button>
+                                    {% elif tarefa.autor_tipo == 5 %}
+                                    <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1"
+                                            disabled>
+                                        Aprovado
+                                    </button>
+                                </div>
 
                                 {% elif tarefa.autor_tipo == 6 %}
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Painel Slots' %}">Painel 🎛️
-                                </a></button>
-
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small"><a
-                                        href="{% url 'home:Aviso Lido' tarefa.pk %}">Não Lido
-                                </a></button>
-                                <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small" disabled>
-                                    Lido
-                                </button>
-
+                                <div class="d-flex justify-content-start">
+                                    <form action="{% url 'home:Painel Slots' %}">
+                                        <button type="submit"
+                                                class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1">
+                                            Painel 🎛️
+                                        </button>
+                                    </form>
+                                    <form action="{% url 'home:Aviso Lido' tarefa.pk %}">
+                                        <button type="submit"
+                                                class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1">
+                                            Não Lido
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-outline-primary bg-gray-800 btn-sm small ms-1"
+                                            disabled>
+                                        Lido
+                                    </button>
+                                </div>
 
                                 {% endif %}
                             </div>

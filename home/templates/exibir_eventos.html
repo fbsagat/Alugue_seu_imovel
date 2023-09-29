@@ -64,7 +64,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">Valor</th>
             <th scope="col" style="cursor:default;">Data do pagam.</th>
             <th scope="col" style="cursor:default;" title="Forma de pagamento">Forma de Pag.</th>
-            <th scope="col" style="cursor:default;">Recibo</th>
         </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -78,13 +77,6 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">{{ pagamento.valor_format }}</th>
             <th scope="col" style="cursor:default;">{{ pagamento.data_pagamento|date:"d/m/Y" }}</th>
             <th scope="col" style="cursor:default;">{{ pagamento.get_forma_display }}</th>
-            {% if pagamento.recibo %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Recibo Entregue' pagamento.pk %}"
-                               title="Entregue ao locatário">✅</a></th>
-            {% else %}
-            <th scope="col"><a class="link-primary" href="{% url 'home:Recibo Entregue' pagamento.pk %}"
-                               title="Não entregue ao locatário">️✖️</a></th>
-            {% endif %}
         </tr>
         {% endfor %}
         <tr>
@@ -128,8 +120,12 @@ Eventos / {{ SITE_NAME }}
             </th>
             {% if gasto.comprovante %}
             <th scope="col">
-                <a href="{{ gasto.comprovante.url }}" class="link-primary" target="_blank"
-                   title="Clique para visualizar">🗂</a></th>
+                <form action="{{ gasto.comprovante.url }}" target="_blank">
+                    <button type="submit" class="link-primary">
+                        🗂
+                    </button>
+                </form>
+            </th>
             {% else %}
             <th scope="col" style="cursor:default;" title="Sem registro">✖️</th>
             {% endif %}
@@ -197,7 +193,11 @@ Eventos / {{ SITE_NAME }}
 
             {% if locatario.docs %}
             <th scope="col">
-                <a href="{{ locatario.docs.url }}" class="link-primary" target="_blank" title="Clique para visualizar">🗂</a>
+                <form action="{{ locatario.docs.url }}" target="_blank">
+                    <button type="submit" class="link-primary" title="Clique para visualizar">
+                        🗂
+                    </button>
+                </form>
             </th>
             {% else %}
             <th scope="col" style="cursor:default;" title="Sem registro">✖️</th>
@@ -243,18 +243,28 @@ Eventos / {{ SITE_NAME }}
             <th scope="col" style="cursor:default;">{{ contrato.dia_vencimento }}</th>
 
             {% if contrato.em_posse %}
-            <th scope="col"><a style="cursor:default;" class="link-primary">✅️</a></th>
+            <th scope="col">
+                <div style="cursor:default;" class="link-primary" title="Em mãos">✅️</div>
+            </th>
             {% else %}
-            <th scope="col"><a style="cursor:default;" class="link-primary">✖️</a></th>
+            <th scope="col">
+                <div style="cursor:default;" class="link-primary" title="Não entregue">✖️</div>
+            </th>
             {% endif %}
 
             {% if contrato.vencido %}
-            <th scope="col" style="cursor:default;"><a class="link-primary" title="Contrato Vencido">️✖️</a></th>
+            <th scope="col" style="cursor:default;">
+                <div class="link-primary" title="Contrato Vencido">️✖️</div>
+            </th>
             {% else %}
             {% if contrato.rescindido %}
-            <th scope="col"><a style="cursor:default;" class="link-primary">️✖️</a></th>
+            <th scope="col">
+                <div style="cursor:default;" class="link-primary" title="Contrato Rescindido">️✖️</div>
+            </th>
             {% else %}
-            <th scope="col"><a style="cursor:default;" class="link-primary">✅</a></th>
+            <th scope="col">
+                <div style="cursor:default;" class="link-primary" title="Contrato Ativo">✅</div>
+            </th>
             {% endif %}
             {% endif %}
             {% endfor %}
