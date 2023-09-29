@@ -1,7 +1,8 @@
-import os, json
+import os
 from datetime import datetime, timedelta
 from os import path
 from math import floor
+from random import randrange
 from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
@@ -365,6 +366,10 @@ class ExcluirPagm(LoginRequiredMixin, DeleteView):
         self.object = get_object_or_404(Pagamento, pk=self.kwargs['pk'], ao_locador=self.request.user)
         return self.object
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ExcluirPagm, self).get_context_data(**kwargs)
+        context['SITE_NAME'] = settings.SITE_NAME
+        return context
 
 # GASTO ---------------------------------------
 @login_required
@@ -2236,17 +2241,23 @@ def criar_pagamentos_ficticios(request, quantidade, multiplicador, usuario_s, di
                 contratos_user = Contrato.objects.filter(do_locador=usuario)
                 for contrato in contratos_user:
                     parcelas = Parcela.objects.filter(do_contrato=contrato).order_by('pk')
-                    for n, parcela in enumerate(parcelas):
-                        cem_por_cento = len(parcelas)
-                        percentual_desta_parcela = floor(n * 100/cem_por_cento)
-                        percentual_final = floor(percentual_desta_parcela - (percentual_desta_parcela * 15 / 100))
-                        if parcela.esta_pago() and parcela.recibo_entregue is False:
-                            entregue = False if porcentagem_de_chance(percentual_final) else True
-                            parcela.recibo_entregue = entregue
-                            parcela.save(update_fields=['recibo_entregue', ])
-                            if entregue is False:
+                    # for para saber a quantidade de parcelas deste contrato que estão pagas
+                    parc_pagas_qtd = 0
+                    for parcela in parcelas:
+                        if parcela.esta_pago():
+                            parc_pagas_qtd += 1
+                    # Decidir a quantidade de recibos a distribuir para a lista de parcelas do contrato
+                    # chance para decidir 'recibar' tudo, ou um certo range \/
+                    if parc_pagas_qtd > 0:
+                        chance = 75
+                        recibos_qtd = parc_pagas_qtd if porcentagem_de_chance(chance) else randrange(0, parc_pagas_qtd)
+                        # For para alterar as parcelas com recibo entregue
+                        for n, parcela in enumerate(parcelas):
+                            if parcela.recibo_entregue is False and n <= recibos_qtd:
+                                parcela.recibo_entregue = True
+                                parcela.save(update_fields=['recibo_entregue', ])
+                            else:
                                 break
-
                 messages.success(request, f"Criado(s) {count} pagamento(s) para {usuario}")
 
 
