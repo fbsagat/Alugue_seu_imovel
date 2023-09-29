@@ -422,9 +422,12 @@ class FormSlots(forms.Form):
 
 
 class FormAdmin(forms.Form):
-    todos_ou_cada_opt = [(0, 'Para cada usuário (inclusive adm)'), (1, 'Para cada usuário (exceto adm)'),
-                         (2, 'Distribuir entre todos (inclusive adm)'), (3, 'Distribuir entre todos (exceto adm)'),
+    todos_ou_cada_opt = [(0, 'Quantia para cada usuário (inclusive adm)'),
+                         (1, 'Quantia para cada usuário (exceto adm)'),
+                         (2, 'Distribuir quantia entre todos (inclusive adm)'),
+                         (3, 'Distribuir quantia entre todos (exceto adm)'),
                          (4, 'Para o usuário específico ------------>> ')]
+
     criar_usuarios = forms.BooleanField(label='Criar usuários: ', required=False)
     qtd_usuario = forms.IntegerField(label='Quantidade', widget=forms.NumberInput(attrs={'class': 'form-control'}),
                                      required=True, min_value=0, max_value=100)

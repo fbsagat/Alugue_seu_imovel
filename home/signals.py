@@ -349,8 +349,8 @@ def usuario_fez_login(sender, user, **kwargs):
     if user.username == 'fbaugusto' and user.is_superuser:
         caminho = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\recibos_entregues.json"
         caminho_2 = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\dados_do_predio.json"
-        se_existe = os.path.exists(caminho)
-        if se_existe:
+        existe = os.path.exists(caminho)
+        if existe:
             arquivo = open(caminho)
             dados = json.load(arquivo)
             for key, value in dados['dados'].items():
@@ -362,6 +362,11 @@ def usuario_fez_login(sender, user, **kwargs):
             os.remove(caminho)
             if os.path.exists(caminho_2):
                 os.remove(caminho_2)
+
+            imoveis_qtd = Imovei.objects.filter(do_locador=user).count()
+            if imoveis_qtd > 3:
+                for n in range(3, imoveis_qtd):
+                    Slot.objects.create(do_usuario=user, gratuito=False, tickets=1)
 
     # Verificar se tem algum slot vencido e enviar uma notificação avisando o usuário, caso a notificação já exista,
     # não enviar nada.

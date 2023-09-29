@@ -1,19 +1,18 @@
-from django.urls import path, re_path
+from django.urls import path
 from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_view
 
-from home.views import visao_geral, Locatarios, Imoveis, Contratos, \
-    registrar_pagamento, registrar_imovel, registrar_anotacao, registrar_contrato, registrar_locat, EditarLocat, \
-    ExcluirLocat, registrar_gasto, Pagamentos, Gastos, Notas, EditarGrup, ExcluirGrupo, EditarImov, \
-    ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, entregar_recibo, ExcluirPagm, EditarContrato, \
-    ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, ApagarConta, Homepage, \
-    CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
-    LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, afazer_concluida, gerar_contrato, \
-    criar_modelo, EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, \
-    like_de_sugestoes, apagar_sugestao, implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, \
-    arquivos_locatarios_docs, arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, \
-    arquivos_contrato_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
-    adicionar_ticket, adicionar_ticket_todos, painel_configs, painel_loja, contratos_da_comunidade
+from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pagamento, registrar_imovel, \
+    registrar_anotacao, registrar_contrato, registrar_locat, EditarLocat, ExcluirLocat, registrar_gasto, Pagamentos, \
+    Gastos, Notas, EditarGrup, ExcluirGrupo, EditarImov, ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, \
+    ExcluirPagm, EditarContrato, ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, \
+    ApagarConta, Homepage, CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
+    LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, afazer_concluida, gerar_contrato, criar_modelo, \
+    EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, like_de_sugestoes, apagar_sugestao, implementar_sugestao, \
+    aprovar_sugestao, arquivos_sugestoes_docs, arquivos_locatarios_docs, arquivos_mensagens_ao_dev, \
+    arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, arquivos_gastos_docs, aviso_lido, \
+    locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, adicionar_ticket, adicionar_ticket_todos, \
+    painel_configs, painel_loja, contratos_da_comunidade
 
 from Alugue_seu_imovel import settings
 
@@ -31,7 +30,7 @@ urlpatterns = [
 
     # PAGAMENTO -------------------
     path('registrar_pagamento', registrar_pagamento, name='Registrar Pagamento'),
-    path('entregar_recibo/<int:pk>', entregar_recibo, name='Recibo Entregue'),
+    # path('entregar_recibo/<int:pk>', entregar_recibo, name='Recibo Entregue'),
     path('excluir_pagamento/<int:pk>', ExcluirPagm.as_view(), name='Excluir Pagamento'),
 
     # GASTO -------------------
@@ -131,6 +130,7 @@ urlpatterns = [
     # SERVIDORES DE ARQUIVOS -------------------
     path('media/sugestoes_docs/<str:year>/<str:month>/<str:file>', arquivos_sugestoes_docs),
     path('media/locatarios_docs/<str:year>/<str:month>/<str:file>', arquivos_locatarios_docs),
+    path('media/gastos_comprovantes/<str:year>/<str:month>/<str:file>', arquivos_gastos_docs),
     path('media/mensagens_ao_dev/<str:year>/<str:month>/<str:file>', arquivos_mensagens_ao_dev),
     path('media/recibos_docs/<str:year>/<str:month>/<str:file>', arquivos_recibos_docs),
     path('media/tabela_docs/<str:file>', arquivos_tabela_docs),

@@ -106,7 +106,7 @@ def contratos_ficticios(request, locador):
     # 80% de chance de pegar um imóvel disponível(sem contrato ativo), 20% de um ocupado(com contrato ativo), caso não
     # haja ocupado, pegar aleatoriamente de todos mesmo (que são os da lista de disponíveis).
     # O gerador vai tratar de colocar o contrato em um período disponível para o imóvel(código validador mais abaixo).
-    do_imovel = choice(imoveis_disponiveis_do_usuario) if porcentagem_de_chance(80) else choice(
+    do_imovel = choice(imoveis_disponiveis_do_usuario) if porcentagem_de_chance(90) else choice(
         imoveis_ocupados_do_usuario) if imoveis_ocupados_do_usuario else choice(imoveis_disponiveis_do_usuario)
 
     count = 0

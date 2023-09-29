@@ -8,8 +8,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls', namespace='home')),
     path('oauth/', include('social_django.urls', namespace='social')),
-    # \/ Servidor de arquivos de midia do django (Cuidado: serve tudo sem restrições)
-    # re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 
 if settings.DEBUG:

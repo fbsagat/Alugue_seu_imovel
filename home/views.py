@@ -335,26 +335,6 @@ def registrar_pagamento(request):
     return redirect(request.META['HTTP_REFERER'])
 
 
-@login_required
-def entregar_recibo(request, pk):
-    pagamento = Pagamento.objects.get(pk=pk)
-    if pagamento.ao_locador == request.user:
-        if pagamento.recibo is True:
-            pagamento.recibo = False
-            pagamento.save()
-            return redirect(request.META['HTTP_REFERER'])
-        else:
-            pagamento.data_de_recibo = timezone.now()
-            data = dateformat.format(timezone.now(), 'd-m-Y')
-            hora = dateformat.format(timezone.now(), 'H:i')
-            pagamento.recibo = True
-            pagamento.save()
-            messages.warning(request, f"O recibo foi entregue! Resgistro criado em {data} às {hora}")
-        return redirect(request.META['HTTP_REFERER'])
-    else:
-        return Http404
-
-
 class ExcluirPagm(LoginRequiredMixin, DeleteView):
     model = Pagamento
     template_name = 'excluir_item.html'
@@ -514,7 +494,7 @@ def registrar_contrato(request):
     form = FormContrato(request.user, request.POST)
     if form.is_valid():
         imovel_pk = request.POST.get('do_imovel')
-        imovel = Imovei.objects.get(pk=imovel_pk)
+        imovel = get_object_or_404(Imovei, pk=imovel_pk, do_locador=request.user)
         if imovel.em_slot():
             contrato = form.save(commit=False)
             contrato.do_locador = request.user
@@ -689,7 +669,7 @@ def recibos(request):
                 form = FormRecibos(request.POST)
                 form.fields['contrato'].queryset = contratos_ativos
                 if form.is_valid():
-                    contrato = Contrato.objects.get(pk=form.cleaned_data['contrato'].pk)
+                    contrato = get_object_or_404(Contrato, pk=form.cleaned_data['contrato'].pk,do_locador=request.user)
                     usuario.recibo_preenchimento = form.cleaned_data['data_preenchimento']
                     usuario.recibo_ultimo = contrato
                     usuario.save(update_fields=['recibo_ultimo', 'recibo_preenchimento'])
@@ -1378,9 +1358,9 @@ class Gastos(LoginRequiredMixin, ListView):
 @login_required
 def criar_grupo(request):
     if request.method == "GET":
-        grupos = ImovGrupo.objects.all().filter(do_usuario=request.user)
+        grupos = ImovGrupo.objects.filter(do_usuario=request.user)
         form = FormimovelGrupo()
-        context = {'form': form if ImovGrupo.objects.all().filter(do_usuario=request.user).count() <= 17 else '',
+        context = {'form': form if ImovGrupo.objects.filter(do_usuario=request.user).count() <= 17 else '',
                    'grupos': grupos, 'SITE_NAME': settings.SITE_NAME}
         return render(request, 'criar_grupos.html', context)
     elif request.method == 'POST':
@@ -1859,7 +1839,7 @@ def add_slot(request):
 @login_required
 @transaction.atomic
 def adicionar_ticket(request, pk):
-    slot = Slot.objects.get(pk=pk)
+    slot = get_object_or_404(Slot, pk=pk, do_usuario=request.user)
     quantidade = 1
     if request.method == 'POST':
         form = FormTickets(request.POST)
@@ -1907,7 +1887,7 @@ def adicionar_ticket_todos(request):
 
 @login_required
 def apagar_slot(request, pk):
-    slot = get_object_or_404(Slot, pk=pk)
+    slot = get_object_or_404(Slot, pk=pk, do_usuario=request.user)
     if slot.do_usuario == request.user and slot.imovel() is None and slot.gratuito is False:
         slot.delete()
     else:
@@ -1923,8 +1903,9 @@ def arquivos_sugestoes_docs(request, year, month, file):
     link = str(f'sugestoes_docs/{year}/{month}/{file}')
     sugestao = get_object_or_404(Sugestao, imagem=link)
     if sugestao.aprovada or request.user.is_superuser:
-        response = FileResponse(sugestao.imagem)
-        return response
+        return FileResponse(sugestao.imagem)
+    else:
+        raise Http404
 
 
 @login_required
@@ -1932,8 +1913,9 @@ def arquivos_locatarios_docs(request, year, month, file):
     link = str(f'locatarios_docs/{year}/{month}/{file}')
     documentos = get_object_or_404(Locatario, docs=link)
     if documentos.do_locador == request.user or request.user.is_superuser:
-        response = FileResponse(documentos.docs)
-        return response
+        return FileResponse(documentos.docs)
+    else:
+        raise Http404
 
 
 @login_required
@@ -1941,24 +1923,37 @@ def arquivos_recibos_docs(request, year, month, file):
     link = str(f'recibos_docs/{year}/{month}/{file}')
     documentos = get_object_or_404(Contrato, recibos_pdf=link)
     if documentos.do_locador == request.user or request.user.is_superuser:
-        response = FileResponse(documentos.recibos_pdf)
-        return response
+        return FileResponse(documentos.recibos_pdf)
+    else:
+        raise Http404
 
 
 @login_required
 def arquivos_tabela_docs(request, file):
     link = str(f'/tabela_docs/{file}')
     if request.session.session_key in file:
-        response = FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
-        return response
+        return FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
+    else:
+        raise Http404
 
 
 @login_required
 def arquivos_contrato_docs(request, file):
     link = str(f'/contrato_docs/{file}')
     if request.session.session_key in file:
-        response = FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
-        return response
+        return FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
+    else:
+        raise Http404
+
+
+@login_required
+def arquivos_gastos_docs(request, year, month, file):
+    link = str(f'gastos_comprovantes/{year}/{month}/{file}')
+    documentos = get_object_or_404(Gasto, comprovante=link)
+    if documentos.do_locador == request.user or request.user.is_superuser:
+        return FileResponse(documentos.comprovante)
+    else:
+        raise Http404
 
 
 @login_required
@@ -1969,6 +1964,8 @@ def arquivos_mensagens_ao_dev(request, year, month, file):
     if documentos.do_usuario == request.user:
         response = FileResponse(documentos.imagem)
         return response
+    else:
+        raise Http404
 
 
 # -=-=-=-=-=-=-=-= OUTROS -=-=-=-=-=-=-=-=

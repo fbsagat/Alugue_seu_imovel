@@ -80,7 +80,7 @@ Fazer:
 PAREI AQUI \/
 Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes no botão de enviar um form.
 Já encontrei e apliquei o js 'prevent_multiple_click.js', agora falta transformar o restando das tags <a> em formulários
-pra compatibilizar. Fazer uma revisão no back-end: usar 'get_object_or_404' quando capturar um objeto para tratamento.
+pra compatibilizar. (Ok)Fazer uma revisão no back-end: usar 'get_object_or_404' quando capturar um objeto para tratamento.
 
 Criar as outras informações dos usuários fictícios, estão faltando. Estado Civil, etc...
 Tentar registrar contrato e pagamento num imóvel com slot vencido pra verificar se ta tudo ok.
