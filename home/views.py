@@ -1903,7 +1903,11 @@ def arquivos_sugestoes_docs(request, year, month, file):
     link = str(f'sugestoes_docs/{year}/{month}/{file}')
     sugestao = get_object_or_404(Sugestao, imagem=link)
     if sugestao.aprovada or request.user.is_superuser:
-        return FileResponse(sugestao.imagem)
+        local = fr'{settings.MEDIA_ROOT}/{sugestao.imagem}'
+        if os.path.exists(local):
+            return FileResponse(sugestao.imagem)
+        else:
+            raise Http404
     else:
         raise Http404
 
@@ -1911,9 +1915,13 @@ def arquivos_sugestoes_docs(request, year, month, file):
 @login_required
 def arquivos_locatarios_docs(request, year, month, file):
     link = str(f'locatarios_docs/{year}/{month}/{file}')
-    documentos = get_object_or_404(Locatario, docs=link)
-    if documentos.do_locador == request.user or request.user.is_superuser:
-        return FileResponse(documentos.docs)
+    locatario = get_object_or_404(Locatario, docs=link)
+    if locatario.do_locador == request.user or request.user.is_superuser:
+        local = fr'{settings.MEDIA_ROOT}/{locatario.docs}'
+        if os.path.exists(local):
+            return FileResponse(locatario.docs)
+        else:
+            raise Http404
     else:
         raise Http404
 
@@ -1921,9 +1929,13 @@ def arquivos_locatarios_docs(request, year, month, file):
 @login_required
 def arquivos_recibos_docs(request, year, month, file):
     link = str(f'recibos_docs/{year}/{month}/{file}')
-    documentos = get_object_or_404(Contrato, recibos_pdf=link)
-    if documentos.do_locador == request.user or request.user.is_superuser:
-        return FileResponse(documentos.recibos_pdf)
+    contrato = get_object_or_404(Contrato, recibos_pdf=link)
+    if contrato.do_locador == request.user or request.user.is_superuser:
+        local = fr'{settings.MEDIA_ROOT}/{contrato.recibos_pdf}'
+        if os.path.exists(local):
+            return FileResponse(contrato.recibos_pdf)
+        else:
+            raise Http404
     else:
         raise Http404
 
@@ -1932,7 +1944,11 @@ def arquivos_recibos_docs(request, year, month, file):
 def arquivos_tabela_docs(request, file):
     link = str(f'/tabela_docs/{file}')
     if request.session.session_key in file:
-        return FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
+        local = fr'{settings.MEDIA_ROOT}/{link}'
+        if os.path.exists(local):
+            return FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
+        else:
+            raise Http404
     else:
         raise Http404
 
@@ -1941,7 +1957,11 @@ def arquivos_tabela_docs(request, file):
 def arquivos_contrato_docs(request, file):
     link = str(f'/contrato_docs/{file}')
     if request.session.session_key in file:
-        return FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
+        local = fr'{settings.MEDIA_ROOT}/{link}'
+        if os.path.exists(local):
+            return FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')
+        else:
+            raise Http404
     else:
         raise Http404
 
@@ -1949,9 +1969,13 @@ def arquivos_contrato_docs(request, file):
 @login_required
 def arquivos_gastos_docs(request, year, month, file):
     link = str(f'gastos_comprovantes/{year}/{month}/{file}')
-    documentos = get_object_or_404(Gasto, comprovante=link)
-    if documentos.do_locador == request.user or request.user.is_superuser:
-        return FileResponse(documentos.comprovante)
+    gasto = get_object_or_404(Gasto, comprovante=link)
+    if gasto.do_locador == request.user or request.user.is_superuser:
+        local = fr'{settings.MEDIA_ROOT}/{gasto.comprovante}'
+        if os.path.exists(local):
+            return FileResponse(gasto.comprovante)
+        else:
+            raise Http404
     else:
         raise Http404
 
@@ -1960,9 +1984,13 @@ def arquivos_gastos_docs(request, year, month, file):
 @user_passes_test(lambda u: u.is_superuser)
 def arquivos_mensagens_ao_dev(request, year, month, file):
     link = str(f'mensagens_ao_dev/{year}/{month}/{file}')
-    documentos = get_object_or_404(DevMensagen, imagem=link)
-    if documentos.do_usuario == request.user:
-        response = FileResponse(documentos.imagem)
+    devmensagem = get_object_or_404(DevMensagen, imagem=link)
+    if devmensagem.do_usuario == request.user:
+        local = fr'{settings.MEDIA_ROOT}/{devmensagem.imagem}'
+        if os.path.exists(local):
+            return FileResponse(devmensagem.imagem)
+        else:
+            raise Http404
         return response
     else:
         raise Http404
