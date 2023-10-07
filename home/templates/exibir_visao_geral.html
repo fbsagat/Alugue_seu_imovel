@@ -117,63 +117,103 @@ Visão Geral / {{ SITE_NAME }}
 
                 <tbody class="table-group-divider">
                 {% for contrato in page_obj %}
+
                 <tr>
-                    <th scope="col" style="cursor:default;">{{ page_obj.start_index|add:forloop.counter0 }}</th>
+
+                    <th scope="col" style="cursor:default;">
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ page_obj.start_index|add:forloop.counter0 }}
+                        </div>
+                    </th>
                     <th scope="col" style="cursor:default;" title="No grupo: {{ contrato.fo_imovel.grupo }}">
-                        {{ contrato.do_imovel.nome }}
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.do_imovel.nome }}
+                        </div>
                     </th>
                     <th scope="col" style="cursor:default;" title="{{ contrato.do_locatario.nome }}">
-                        {{ contrato.do_locatario.primeiro_ultimo_nome }}
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.do_locatario.primeiro_ultimo_nome }}
+                        </div>
                     </th>
-                    <th scope="col" style="cursor:default;">{{ contrato.valor_format }}</th>
+                    <th scope="col" style="cursor:default;">
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.valor_format }}
+                        </div>
+                    </th>
                     <th scope="col" style="cursor:default;" title="{{ contrato.vencimento_atual_textual.1 }}">
-                        {{ contrato.vencimento_atual_textual.0 }}
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.vencimento_atual_textual.0 }}
+                        </div>
                     </th>
 
                     {% if contrato.divida_atual_valor.0 == 0 %}
-                    <th style="cursor:default;">Em dia ✔️</th>
+                    <th style="cursor:default;">
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            Em dia ✔️
+                        </div>
+                    </th>
                     {% else %}
-                    <th scope="col" style="cursor:default;">{{ contrato.divida_atual_valor.1 }} /
-                        {{ contrato.divida_atual_meses }}
-                        {% if contrato.divida_atual_meses == 1 %}Mês{% else %}Meses{% endif %} ⭕
+                    <th scope="col" style="cursor:default;">
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.divida_atual_valor.1 }} /
+                            {{ contrato.divida_atual_meses }}
+                            {% if contrato.divida_atual_meses == 1 %}Mês{% else %}Meses{% endif %} ⭕
+                        </div>
                     </th>
                     {% endif %}
-                    <th scope="col" style="cursor:default;">{{ contrato.recibos_entregues_qtd }}
-                        de {{ contrato.parcelas_pagas_qtd }}
-                        {% if contrato.recibos_entregues_qtd >= contrato.parcelas_pagas_qtd %}
-                        ✔️
-                        {% else %}
-                        ⭕
-                        {% endif %}
+                    <th scope="col" style="cursor:default;">
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.recibos_entregues_qtd }}
+                            de {{ contrato.parcelas_pagas_qtd }}
+                            {% if contrato.recibos_entregues_qtd >= contrato.parcelas_pagas_qtd %}
+                            ✔️
+                            {% else %}
+                            ⭕
+                            {% endif %}
+                        </div>
                     </th>
                     <th scope="col" style="cursor:default;" title="{{ contrato.nome_completo }}">
-                        {{ contrato }}
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato }}
+                        </div>
                     </th>
                     <th scope="col" style="cursor:default;" title="{{ contrato.title_pagou_parcelas }}">
-                        {{ contrato.total_pg_format }} ({{ contrato.parcelas_pagas_qtd }})
-                        de {{ contrato.valor_do_contrato_format }} ({{ contrato.duracao }})
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.total_pg_format }} ({{ contrato.parcelas_pagas_qtd }})
+                            de {{ contrato.valor_do_contrato_format }} ({{ contrato.duracao }})
+                        </div>
                     </th>
                     {% if contrato.transcorrido_dias|add:45 > contrato.duracao_dias %}
                     <th scope="col" style="cursor:default;"
                         title="O contrato está perto do vencimento. Vence em {{ contrato.faltando_dias }} dias">
-                        {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
-                        {% if contrato.transcorrido_dias|add:45 > contrato.duracao_dias %}
-                        ⚠️
-                        {% endif %}
-                        {% else %}
-                        {% if contrato.passou_do_limite %}
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
+                            {% if contrato.transcorrido_dias|add:45 > contrato.duracao_dias %}
+                            ⚠️
+                            {% endif %}
+                            {% else %}
+                            {% if contrato.passou_do_limite %}
+                        </div>
+                    </th>
                     <th scope="col" style="cursor:default;"
                         title="Vence em {{ contrato.faltando_dias }} dias" class="text-warning">
-                        {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
-                        {% else %}
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
+                            {% else %}
+                        </div>
+                    </th>
                     <th scope="col" style="cursor:default;"
                         title="Vence em {{ contrato.faltando_dias }} dias">
-                        {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
-                        {% endif %}
-                        {% endif %}
+                        <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
+                            {{ contrato.transcorrido_dias }} de {{ contrato.duracao_dias }} dias
+                            {% endif %}
+                            {% endif %}
+                        </div>
                     </th>
                 </tr>
+
                 {% endfor %}
+
                 </tbody>
             </table>
         </div>

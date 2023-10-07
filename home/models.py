@@ -527,7 +527,7 @@ class ContratoManager(models.Manager):
         contratos_ativos = Contrato.objects.filter(pk__in=lista)
         return contratos_ativos
 
-    def ativos_e_antes_de(self, data):
+    def ativos_hoje_e_antes_de(self, data):
         contratos_qs = self.filter(em_posse=True, rescindido=False, data_entrada__lte=data)
         lista = []
         for contrato in contratos_qs:

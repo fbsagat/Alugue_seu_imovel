@@ -42,7 +42,8 @@ from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGru
 @login_required
 def visao_geral(request):
     context = {}
-    contratos = Contrato.objects.ativos_hoje().filter(do_locador=request.user)
+    data = datetime.now().date() + timedelta(days=15)
+    contratos = Contrato.objects.ativos_hoje_e_antes_de(data=data).filter(do_locador=request.user)
     usuario = Usuario.objects.get(pk=request.user.pk)
 
     # Sistema de ordenação inicio \/
@@ -948,7 +949,7 @@ def tabela(request):
     if mostrar_somente_ativos:
         contratos = Contrato.objects.ativos_hoje().filter(do_locador=request.user).order_by('-data_entrada')
     else:
-        contratos = Contrato.objects.ativos_e_antes_de(data=ate).filter(do_locador=request.user).order_by(
+        contratos = Contrato.objects.ativos_hoje_e_antes_de(data=ate).filter(do_locador=request.user).order_by(
             '-data_entrada')
     imoveis = gerar_dados_de_imoveis_para_tabela_pdf(contratos)
 
