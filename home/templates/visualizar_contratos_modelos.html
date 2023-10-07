@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+Visualizar Modelo de Contrato / {{ SITE_NAME }}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container pt-1 text-center text-justify justify-center">
+
+    <iframe class="border border-white rounded-2 my-2" src="{{ modelo.visualizar.url }}" style="width:100%; height:98%;"
+            frameborder="0"></iframe>
+
+</div>
+
+{% endblock %}

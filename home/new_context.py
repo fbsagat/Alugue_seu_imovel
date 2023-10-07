@@ -11,15 +11,13 @@ from home.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, Fo
 from home.models import Contrato
 
 
-def titulo_pag(request):
+def titulo_pagina(request):
     titulo = resolve(request.path_info).url_name
     ano_atual = datetime.date.today().year
-    if settings.DEBUG:
-        return {'block_titulo': titulo, 'ano_atual': ano_atual, 'debug_true': True}
-    return {'block_titulo': titulo, 'ano_atual': ano_atual}
+    return {'block_titulo': titulo, 'ano_atual': ano_atual, 'debug_true': True if settings.DEBUG else False}
 
 
-def forms_da_navbar(request):
+def navbar_forms(request):
     if request.user.is_authenticated:
         # Apenas contratos ativos hoje ou futuramente para os forms
         contratos_exibir = Contrato.objects.ativos_margem().filter(do_locador=request.user).order_by('-data_entrada')
@@ -125,14 +123,20 @@ def forms_da_navbar(request):
         else:
             form8 = ''
 
-        # TAREFAS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+        context = {'form_pagamento': form1, 'form_mensagem': form2, 'form_gasto': form3, 'form_locatario': form4,
+                   'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8}
+        return context
+    else:
+        context = {}
+        return context
+
+
+def navbar_notificacoes(request):
+    if request.user.is_authenticated:
         tarefas = Tarefa.objects.tarefas_novas().filter(do_usuario=request.user).order_by('-data_registro')
         tarefas_historico = Tarefa.objects.tarefas_historico().filter(do_usuario=request.user).order_by('-data_lida')
 
-        context = {'form_pagamento': form1, 'form_mensagem': form2, 'form_gasto': form3, 'form_locatario': form4,
-                   'form_contrato': form5, 'form_imovel': form6, 'form_notas': form7, 'botao_admin': form8,
-                   'tarefas': tarefas[:40], 'tarefas_hist': tarefas_historico[:40]}
-
+        context = {'tarefas': tarefas[:40], 'tarefas_hist': tarefas_historico[:40]}
         return context
     else:
         context = {}

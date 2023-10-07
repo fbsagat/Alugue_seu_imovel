@@ -9,7 +9,9 @@ from django.db.models.signals import pre_delete, post_save, pre_save, post_delet
 from django.db import transaction
 from django.dispatch import receiver
 
-from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao, Slot, Imovei
+from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao, Slot, Imovei, \
+    ContratoModelo
+from home.funcoes_proprias import gerar_contrato_pdf
 
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
@@ -275,6 +277,13 @@ def contrato_post_save(sender, instance, created, **kwargs):
         tipo_conteudo = ContentType.objects.get_for_model(Contrato)
         tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
         Contrato.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+
+
+@receiver(post_save, sender=ContratoModelo)
+def contrato_modelo_post_save(sender, instance, created, **kwargs):
+    dados = {'modelo_pk': instance.pk, 'modelo': instance, 'usuario_username': str(instance.autor.username)}
+    link = gerar_contrato_pdf(dados=dados, visualizar=True)
+    ContratoModelo.objects.filter(pk=instance.pk).update(visualizar=link)
 
 
 @receiver(post_save, sender=Pagamento)

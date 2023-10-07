@@ -8,11 +8,11 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     ExcluirPagm, EditarContrato, ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, \
     ApagarConta, Homepage, CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
     LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, afazer_concluida, gerar_contrato, criar_modelo, \
-    EditarModelo, ExcluirModelo, Modelos, forum_sugestoes, like_de_sugestoes, apagar_sugestao, implementar_sugestao, \
+    EditarModelo, ExcluirModelo, MeusModelos, forum_sugestoes, like_de_sugestoes, apagar_sugestao, implementar_sugestao, \
     aprovar_sugestao, arquivos_sugestoes_docs, arquivos_locatarios_docs, arquivos_mensagens_ao_dev, \
     arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, arquivos_gastos_docs, aviso_lido, \
     locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, adicionar_ticket, adicionar_ticket_todos, \
-    painel_configs, painel_loja, contratos_da_comunidade
+    painel_configs, painel_loja, ModelosComunidade, arquivos_contratos_modelos, visualizar_modelo
 
 from Alugue_seu_imovel import settings
 
@@ -30,7 +30,6 @@ urlpatterns = [
 
     # PAGAMENTO -------------------
     path('registrar_pagamento', registrar_pagamento, name='Registrar Pagamento'),
-    # path('entregar_recibo/<int:pk>', entregar_recibo, name='Recibo Entregue'),
     path('excluir_pagamento/<int:pk>', ExcluirPagm.as_view(), name='Excluir Pagamento'),
 
     # GASTO -------------------
@@ -75,11 +74,12 @@ urlpatterns = [
     path('contrato_PDF/', gerar_contrato, name='Contrato PDF'),
 
     # MODELO DE CONTRATO -------------------
-    path('modelos/', Modelos.as_view(), name='Modelos'),
+    path('modelos/', MeusModelos.as_view(), name='Modelos'),
     path('criar_modelo', criar_modelo, name='Criar Modelo'),
     path('editar_modelo/<int:pk>', EditarModelo.as_view(), name='Editar Modelo'),
+    path('visualizar_modelo/<int:pk>', visualizar_modelo, name='Visualizar Modelo'),
     path('excluir_modelo/<int:pk>', ExcluirModelo.as_view(), name='Excluir Modelo'),
-    path('contrato_modelos_comunidade/', contratos_da_comunidade, name='Contrato Comunidade'),
+    path('contrato_modelos_comunidade/', ModelosComunidade.as_view(), name='Contrato Comunidade'),
 
     # ABA HISTORICO -------------------
     path('pagamentos/', Pagamentos.as_view(), name='Pagamentos'),
@@ -128,6 +128,7 @@ urlpatterns = [
     path('botao/', botaoteste, name='botaoteste'),
 
     # SERVIDORES DE ARQUIVOS -------------------
+    path('media/contratos_modelos/<str:file>', arquivos_contratos_modelos),
     path('media/sugestoes_docs/<str:year>/<str:month>/<str:file>', arquivos_sugestoes_docs),
     path('media/locatarios_docs/<str:year>/<str:month>/<str:file>', arquivos_locatarios_docs),
     path('media/gastos_comprovantes/<str:year>/<str:month>/<str:file>', arquivos_gastos_docs),

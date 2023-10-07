@@ -316,11 +316,12 @@ class FormContratoModelo(forms.ModelForm):
     class Meta:
         model = ContratoModelo
         fields = '__all__'
-        exclude = ['autor', 'data_criacao', 'variaveis', 'condicoes']
+        exclude = ['autor', 'data_criacao', 'variaveis', 'condicoes', 'visualizar']
 
     def __init__(self, *args, **kwargs):
         super(FormContratoModelo, self).__init__(*args, **kwargs)
         self.fields['titulo'].widget.attrs.update({'class': 'text-center'})
+        self.fields['descricao'].widget.attrs.update({'class': 'text-center'})
 
 
 class FormimovelGrupo(forms.ModelForm):
@@ -407,6 +408,7 @@ class FormTabela(forms.Form):
     itens = [(6, '6'), (7, '7'), (8, '8'), (9, '9'), (10, '10')]
 
     mes = forms.ChoiceField(label='', initial='', choices=meses, required=True)
+    mostrar_ativos = forms.BooleanField(label='', initial='', required=False)
     itens_qtd = forms.ChoiceField(label='', initial=10, choices=itens, required=True)
     mostrar_qtd = forms.ChoiceField(label='', initial=7, choices=mostrar, required=True)
 

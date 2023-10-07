@@ -527,120 +527,131 @@ modelo_condicoes = {
 }
 
 
-def gerar_contrato_pdf(dados):
+def gerar_contrato_pdf(dados, visualizar=False):
     # Gerar modelo em pdf e salvar em media/contrato_docs para ser carregado pela view'
     # Criar a pasta contrato_docs se não existe
-    pasta = rf'{settings.MEDIA_ROOT}/contrato_docs/'
-    se_existe = os.path.exists(pasta)
-    if not se_existe:
-        os.makedirs(pasta)
-
     modelo_corpo = dados['modelo'].corpo
-    local = f'{settings.MEDIA_ROOT}/contrato_docs/contrato_{dados["session_key"]}_{dados["usuario"]}.pdf'
 
-    # Capturar trechos de cada condição registrada em modelo_condicoes
-    for i, j in modelo_condicoes.items():
-        # Aqui colocaremos no objeto posições cada trecho do item atual de modelo_condicoes
-        comando_inicio = j[0]
-        comando_fim = f'{comando_inicio[:comando_inicio.find("]")]}_fim{comando_inicio[comando_inicio.find("]"):]}'
-        indice = 0
+    if visualizar:
+        pasta = rf'{settings.MEDIA_ROOT}/contratos_modelos/'
+        se_existe = os.path.exists(pasta)
+        if not se_existe:
+            os.makedirs(pasta)
+        local = f'contratos_modelos/user_{dados["usuario_username"]}-modelo_{dados["modelo_pk"]}.pdf'
+    else:
+        pasta = rf'{settings.MEDIA_ROOT}/contrato_docs/'
+        se_existe = os.path.exists(pasta)
+        if not se_existe:
+            os.makedirs(pasta)
+        local = f'contrato_docs/contrato_{dados["session_key"]}_{dados["usuario"]}.pdf'
 
-        while indice < len(modelo_corpo):
-            indice = modelo_corpo.find(j[0], indice)
-            if indice == -1:
-                break
-            pos_fim = modelo_corpo[indice:].find(comando_fim)
-            trecho = modelo_corpo[indice:indice + pos_fim + len(comando_fim)]
-            tem_comando_fim = True if comando_fim in trecho else False
-            trecho_final = trecho[len(comando_inicio):-len(comando_fim)]
+    if visualizar is False:
+        # Capturar trechos de cada condição registrada em modelo_condicoes
+        for i, j in modelo_condicoes.items():
+            # Aqui colocaremos no objeto posições cada trecho do item atual de modelo_condicoes(caso haja, senão aviso)
+            comando_inicio = j[0]
+            comando_fim = f'{comando_inicio[:comando_inicio.find("]")]}_fim{comando_inicio[comando_inicio.find("]"):]}'
+            indice = 0
 
-            # Funções das condições:
-            # Economizar processamento, se necessário: Evitar essa busca de texto, e sim, enviar um parâmetro \/
-            if comando_inicio == '[!condicao: fiador_existe]' and tem_comando_fim:
-                if '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]' in dados['fiador_nome_completo']:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+            while indice < len(modelo_corpo):
+                indice = modelo_corpo.find(j[0], indice)
+                if indice == -1:
+                    break
+                pos_fim = modelo_corpo[indice:].find(comando_fim)
+                trecho = modelo_corpo[indice:indice + pos_fim + len(comando_fim)]
+                tem_comando_fim = True if comando_fim in trecho else False
+                trecho_final = trecho[len(comando_inicio):-len(comando_fim)]
 
-            if comando_inicio == '[!condicao: fiador_nao_existe]' and tem_comando_fim:
-                if '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]' in dados['fiador_nome_completo']:
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                # Funções das condições:
+                # Economizar processamento, se necessário: Evitar essa busca de texto, e sim, enviar um parâmetro \/
+                if comando_inicio == '[!condicao: fiador_existe]' and tem_comando_fim:
+                    if '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]' in dados['fiador_nome_completo']:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
 
-            if comando_inicio == '[!condicao: tipo_residencial]' and tem_comando_fim:
-                if dados['tipo_de_locacao'] == 'residencial':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: fiador_nao_existe]' and tem_comando_fim:
+                    if '[ESTE DADO DO FIADOR NÃO FOI PREENCHIDO]' in dados['fiador_nome_completo']:
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: tipo_nao_residencial]' and tem_comando_fim:
-                if dados['tipo_de_locacao'] == 'não residencial':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: tipo_residencial]' and tem_comando_fim:
+                    if dados['tipo_de_locacao'] == 'residencial':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: imovel_grupo_Casa]' and tem_comando_fim:
-                if dados['imovel_grupo_tipo'] == 'Casa':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: tipo_nao_residencial]' and tem_comando_fim:
+                    if dados['tipo_de_locacao'] == 'não residencial':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: imovel_grupo_Apartamento]' and tem_comando_fim:
-                if dados['imovel_grupo_tipo'] == 'Apartamento':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: imovel_grupo_Casa]' and tem_comando_fim:
+                    if dados['imovel_grupo_tipo'] == 'Casa':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: imovel_grupo_Kitnet]' and tem_comando_fim:
-                if dados['imovel_grupo_tipo'] == 'Kitnet':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: imovel_grupo_Apartamento]' and tem_comando_fim:
+                    if dados['imovel_grupo_tipo'] == 'Apartamento':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: imovel_grupo_Box/Loja]' and tem_comando_fim:
-                if dados['imovel_grupo_tipo'] == 'Box/Loja':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: imovel_grupo_Kitnet]' and tem_comando_fim:
+                    if dados['imovel_grupo_tipo'] == 'Kitnet':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: imovel_grupo_Escritório]' and tem_comando_fim:
-                if dados['imovel_grupo_tipo'] == 'Escritório':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: imovel_grupo_Box/Loja]' and tem_comando_fim:
+                    if dados['imovel_grupo_tipo'] == 'Box/Loja':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: imovel_grupo_Depósito/Armazém]' and tem_comando_fim:
-                if dados['imovel_grupo_tipo'] == 'Depósito/Armazém':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: imovel_grupo_Escritório]' and tem_comando_fim:
+                    if dados['imovel_grupo_tipo'] == 'Escritório':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: imovel_grupo_Galpão]' and tem_comando_fim:
-                if dados['imovel_grupo_tipo'] == 'Galpão':
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: imovel_grupo_Depósito/Armazém]' and tem_comando_fim:
+                    if dados['imovel_grupo_tipo'] == 'Depósito/Armazém':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: contrato_anterior_existe]' and tem_comando_fim:
-                if '[NÃO EXISTE CONTRATO ANTERIOR A ESTE]' in dados['contrato_anterior-codigo']:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                if comando_inicio == '[!condicao: imovel_grupo_Galpão]' and tem_comando_fim:
+                    if dados['imovel_grupo_tipo'] == 'Galpão':
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-            if comando_inicio == '[!condicao: contrato_anterior_nao_existe]' and tem_comando_fim:
-                if '[NÃO EXISTE CONTRATO ANTERIOR A ESTE]' in dados['contrato_anterior-codigo']:
-                    modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
-                else:
-                    modelo_corpo = modelo_corpo.replace(trecho, '')
+                if comando_inicio == '[!condicao: contrato_anterior_existe]' and tem_comando_fim:
+                    if '[NÃO EXISTE CONTRATO ANTERIOR A ESTE]' in dados['contrato_anterior-codigo']:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
 
-            # Fim das funções das condições
-            indice += 1
+                if comando_inicio == '[!condicao: contrato_anterior_nao_existe]' and tem_comando_fim:
+                    if '[NÃO EXISTE CONTRATO ANTERIOR A ESTE]' in dados['contrato_anterior-codigo']:
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
 
-    # Aplicar Variaveis \/
-    for i, j in modelo_variaveis.items():
-        modelo_corpo = modelo_corpo.replace(j[0], dados[f"{j[0][j[0].find(': ') + 2:-1]}"])
+                # Fim das funções das condições
+                indice += 1
 
-    with open(local, "wb") as f:
-        pisa.CreatePDF(modelo_corpo, dest=f)
+        # Aplicar Variaveis \/
+        for i, j in modelo_variaveis.items():
+            modelo_corpo = modelo_corpo.replace(j[0], dados[f"{j[0][j[0].find(': ') + 2:-1]}"])
+
+    with open(fr"{settings.MEDIA_ROOT}/{local}", "wb") as f:
+        pisa.CreatePDF(modelo_corpo, dest=f, )
     f.close()
+
+    if visualizar:
+        return local

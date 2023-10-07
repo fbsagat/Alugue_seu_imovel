@@ -97,8 +97,10 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
-                'home.new_context.titulo_pag',
-                'home.new_context.forms_da_navbar',
+
+                'home.new_context.titulo_pagina',
+                'home.new_context.navbar_forms',
+                'home.new_context.navbar_notificacoes',
             ],
         },
     },

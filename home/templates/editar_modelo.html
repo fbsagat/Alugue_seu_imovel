@@ -53,21 +53,22 @@ Editar Modelo / {{ SITE_NAME }}
                         <small>Variáveis e</small>
                         <small>Condições</small>
                     </div>
-
                 </div>
-
                 <div class="col">
                     <div class="text-gray-100 text-center flex items-center flex-col">
                         <p class="fs-6">Editar Modelo: {{ object }}</p>
                         <form action="{% url 'home:Editar Modelo' object.pk %}" method="POST">
                             {% csrf_token %}
-                            {{ form.media }}
-                            {{ form|crispy }}
-                            <div class="justify-center items-center">
-                                <button accesskey="s" title="Tecla de atalho: Alt + S"
-                                        class="mb-1 btn btn-sm bg-blue-600 text-white rounded-md"
-                                        type="submit">Salvar
-                                    Modelo
+                            {{ form.titulo|as_crispy_field }}
+                            {{ form.descricao|as_crispy_field }}
+                            {{ form.corpo|as_crispy_field }}
+                            <hr>
+                            <div class="text-center flex items-center flex-col">
+                                <small>Deseja compartilhar este modelo na aba comunidade?</small>
+                                {{ form.comunidade|as_crispy_field }}
+                                <button accesskey="s" title="Tecla de atalho: Alt + Q"
+                                        class="mb-2 btn btn-sm bg-blue-600 text-white rounded-md" type="submit">
+                                    Salvar Modelo
                                 </button>
                             </div>
                         </form>

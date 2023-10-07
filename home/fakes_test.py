@@ -9,6 +9,7 @@ from home.models import ImovGrupo, Locatario, Imovei, Contrato, Usuario, estados
 locales = 'pt_BR'
 fake = Faker(locales)
 nomes_populares = ['Silva', 'Rodrigues', 'Santos', 'Oliveira', 'Souza', 'Moraes', 'Carvalho', 'Dias']
+nacionalidades = ['australiano', 'baremita', 'boliviano', 'americano', 'chinês', 'russo', 'argentino']
 
 
 def porcentagem_de_chance(percentual):
@@ -33,8 +34,18 @@ def usuarios_ficticios():
     telefone = fake.msisdn()[-11::]
     rg = randrange(1000000, 9999999)
     cpf = randrange(10000000000, 99999999999)
+    nacionalidade = 'brasileiro' if porcentagem_de_chance(90) else choice(nacionalidades)
+    estadocivil = randrange(0, 4)
+    ocupacao = f'Frase sem nexo aleatória: {fake.catch_phrase()} kkkk q engraçado.'
+    endereco_completo = fake.address()
+    dados_pagamento1 = f'Pix, chave: {randrange(99999999, 999999999)} ({first_name} {last_name})'
+    dados_pagamento2 = (f'Transferência: CC: {randrange(99999, 999999)} '
+                        f'AG: ({randrange(999, 9999)}) ({first_name} {last_name})')
+
     return {'username': username, 'password': password, 'first_name': first_name, 'last_name': last_name,
-            'email': email, 'telefone': telefone, 'RG': rg, 'CPF': cpf}
+            'email': email, 'telefone': telefone, 'RG': rg, 'CPF': cpf, 'nacionalidade': nacionalidade,
+            'estadocivil': estadocivil, 'ocupacao': ocupacao, 'endereco_completo': endereco_completo,
+            'dados_pagamento1': dados_pagamento1, 'dados_pagamento2': dados_pagamento2}
 
 
 def locatarios_ficticios():
@@ -46,7 +57,6 @@ def locatarios_ficticios():
     telefone1 = f'{91}98{randrange(1000000, 9999999)}'
     telefone2 = fake.msisdn()[-11::]
     email = f'{randrange(1, 999)}{fake.email()}'
-    nacionalidades = ['australiano', 'baremita', 'boliviano', 'americano', 'chinês', 'russo', 'argentino']
     nacionalidade = 'brasileiro' if porcentagem_de_chance(90) else choice(nacionalidades)
     estadocivil = randrange(0, 4)
     return {'nome': nome, 'RG': rg, 'CPF': cpf, 'ocupacao': ocupacao, 'telefone1': telefone1,
@@ -94,7 +104,7 @@ def contratos_ficticios(request, locador):
      em um período disponível para o mesmo"""
     todos_locatarios = Locatario.objects.filter(do_locador=locador)
     do_locatario = choice(todos_locatarios)
-    contratos_ativos = Contrato.objects.ativos().filter(do_locador=locador)
+    contratos_ativos = Contrato.objects.ativos_hoje().filter(do_locador=locador)
     imoveis_ativos = []
     for contrato in contratos_ativos:
         imoveis_ativos.append(contrato.do_imovel.pk)

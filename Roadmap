@@ -73,22 +73,21 @@ Ok. Melhorar o nome do contrato quando é o mesmo locador no mesmo imóvel coloc
 Ok. Criar slots para os imóveis criados no gerador de fictícios.
 Ok. Em slots adicionar, criar o formulário de quantidade.
 Ok. 'Sugestões enviadas' está com a página maior do que o esperado, arrumar. E colocar modal de confirmação de exclusão.
+Ok. Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes no botão de enviar um form.
+Já encontrei e apliquei o js 'prevent_multiple_click.js', agora falta transformar o restando das tags <a> em formulários
+pra compatibilizar. (Ok)Fazer uma revisão no back-end: usar 'get_object_or_404' quando capturar um objeto para tratamento.
+Ok. Criar as outras informações dos usuários fictícios, estão faltando. Estado Civil, etc...
+Ok. O gerador de imóveis tá fazendo três slots a mais(já vêm 3 grátis). Arrumar.
+Ok. Função 'adicionar slot' não faz verificação de tickets, a não ser q já esteja no negativo(tickets do user), quando
+ se adiciona múltiplos slots. arrumar!
+Ok. Melhorar a exibição do painel gerador de fictícios.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
 PAREI AQUI \/
-Procurar uma forma de impedir o envio de múltiplos forms clicando várias vezes no botão de enviar um form.
-Já encontrei e apliquei o js 'prevent_multiple_click.js', agora falta transformar o restando das tags <a> em formulários
-pra compatibilizar. (Ok)Fazer uma revisão no back-end: usar 'get_object_or_404' quando capturar um objeto para tratamento.
-
-Criar as outras informações dos usuários fictícios, estão faltando. Estado Civil, etc...
-Tentar registrar contrato e pagamento num imóvel com slot vencido pra verificar se ta tudo ok.
-adicionar slot não faz verificação de tickets, a não ser q já esteja no negativo(tickets do user). arrumar!
-O gerador de imóveis tá fazendo três slots a mais(já vêm 3 grátis). Arrumar.
-
 Criar a função comunidade no editor de modelos.
-        1. colocar o visualizar / 2. colocar descrição / 3. Colocar a variável 'mobiliado' no contrato pdf.
+        1. colocar o visualizar / 2. colocar descrição / 3.
 
 Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
         informações de cada usuário nas queryes, nunca a partir de todos os objetos.
@@ -102,22 +101,24 @@ Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando 
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
 
-Melhorar a exibição do painel gerador de fictícios.
-
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
-Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para casa tipo de utilização
+Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização
+        (link de auto cadastro do locatario, link de exclusão da conta que será enviado para o email, etc...)
         baseados no uuid principal do usuário. É mais seguro! Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
 
-Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
-
-Ja ta na hora de instalar o celery e começar a usar.
+Colocar a variável 'mobiliado' no contrato pdf(ou um sistema personalizado de ativação de trechos para os usuários
+        onde eles criam as próprias condições, seria interessante).
 
 Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
         tarefa. Ex: locatario.da_tarefa --> locatario.da_tarefa(filtros). Por enquanto todos os item que possuem
         tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
         ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
         ficar o atributo da_tarefa?
+
+Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
+
+Ja ta na hora de instalar o celery e começar a usar.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 

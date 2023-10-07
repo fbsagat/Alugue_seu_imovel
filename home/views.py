@@ -42,7 +42,7 @@ from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGru
 @login_required
 def visao_geral(request):
     context = {}
-    contratos = Contrato.objects.ativos().filter(do_locador=request.user)
+    contratos = Contrato.objects.ativos_hoje().filter(do_locador=request.user)
     usuario = Usuario.objects.get(pk=request.user.pk)
 
     # Sistema de ordenação inicio \/
@@ -253,7 +253,7 @@ class ImoveisAtivos(LoginRequiredMixin, ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
+        self.object_list = Contrato.objects.ativos_hoje().filter(do_locador=self.request.user).order_by('-data_entrada')
         ativo_tempo = []
         for obj in self.object_list:
             ativo_tempo.append(obj.do_imovel)
@@ -273,7 +273,7 @@ class LocatariosAtivos(LoginRequiredMixin, ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
+        self.object_list = Contrato.objects.ativos_hoje().filter(do_locador=self.request.user).order_by('-data_entrada')
         ativo = []
         for obj in self.object_list:
             if obj.do_locatario not in ativo:
@@ -294,7 +294,7 @@ class ContratosAtivos(LoginRequiredMixin, ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        self.object_list = Contrato.objects.ativos().filter(do_locador=self.request.user).order_by('-data_entrada')
+        self.object_list = Contrato.objects.ativos_hoje().filter(do_locador=self.request.user).order_by('-data_entrada')
         return self.object_list
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -350,6 +350,7 @@ class ExcluirPagm(LoginRequiredMixin, DeleteView):
         context = super(ExcluirPagm, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
+
 
 # GASTO ---------------------------------------
 @login_required
@@ -669,7 +670,7 @@ def recibos(request):
                 form = FormRecibos(request.POST)
                 form.fields['contrato'].queryset = contratos_ativos
                 if form.is_valid():
-                    contrato = get_object_or_404(Contrato, pk=form.cleaned_data['contrato'].pk,do_locador=request.user)
+                    contrato = get_object_or_404(Contrato, pk=form.cleaned_data['contrato'].pk, do_locador=request.user)
                     usuario.recibo_preenchimento = form.cleaned_data['data_preenchimento']
                     usuario.recibo_ultimo = contrato
                     usuario.save(update_fields=['recibo_ultimo', 'recibo_preenchimento'])
@@ -768,16 +769,21 @@ def tabela(request):
 
     # Carregar os dados de mes para o form e tabela a partir da informação salva no perfil
     # ou datetime.now() quando não há info salva
-    if usuario.tabela_ultima_data_ger is not None and usuario.tabela_meses_qtd is not None \
-            and usuario.tabela_imov_qtd is not None and request.method == 'GET':
+    if (usuario.tabela_ultima_data_ger is not None and usuario.tabela_meses_qtd is not None
+            and usuario.tabela_imov_qtd is not None and usuario.tabela_mostrar_ativos is not None
+            and request.method == 'GET'):
+
         form = FormTabela(initial={'mes': usuario.tabela_ultima_data_ger, 'mostrar_qtd': usuario.tabela_meses_qtd,
-                                   'itens_qtd': usuario.tabela_imov_qtd})
+                                   'itens_qtd': usuario.tabela_imov_qtd,
+                                   'mostrar_ativos': usuario.tabela_mostrar_ativos})
         a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=4 - usuario.tabela_ultima_data_ger)
+        mostrar_somente_ativos = usuario.tabela_mostrar_ativos
         meses_qtd = usuario.tabela_meses_qtd
         imov_qtd = usuario.tabela_imov_qtd
     else:
         form = FormTabela(initial={'mes': 4})
         a_partir_de = datetime.now().date().replace(day=1)
+        mostrar_somente_ativos = False
         meses_qtd = 7
         imov_qtd = 10
 
@@ -786,10 +792,13 @@ def tabela(request):
         form = FormTabela(request.POST)
         if form.is_valid():
             usuario.tabela_ultima_data_ger = int(form.cleaned_data['mes'])
+            usuario.tabela_mostrar_ativos = int(form.cleaned_data['mostrar_ativos'])
             usuario.tabela_meses_qtd = int(form.cleaned_data['mostrar_qtd'])
             usuario.tabela_imov_qtd = int(form.cleaned_data['itens_qtd'])
-            usuario.save(update_fields=["tabela_ultima_data_ger", 'tabela_meses_qtd', 'tabela_imov_qtd'])
+            usuario.save(update_fields=["tabela_ultima_data_ger", 'tabela_meses_qtd', 'tabela_imov_qtd',
+                                        'tabela_mostrar_ativos'])
             a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=4 - int(form.cleaned_data['mes']))
+            mostrar_somente_ativos = form.cleaned_data['mostrar_ativos']
             meses_qtd = int(form.cleaned_data['mostrar_qtd'])
             imov_qtd = int(form.cleaned_data['itens_qtd'])
 
@@ -936,8 +945,13 @@ def tabela(request):
         return def_imoveis
 
     # Pegando informações dos imoveis que possuem contrato no período selecionado para preenchimento da tabela
-    contratos_ativos = Contrato.objects.ativos().filter(do_locador=request.user).order_by('-data_entrada')
-    imoveis = gerar_dados_de_imoveis_para_tabela_pdf(contratos_ativos)
+    if mostrar_somente_ativos:
+        contratos = Contrato.objects.ativos_hoje().filter(do_locador=request.user).order_by('-data_entrada')
+    else:
+        contratos = Contrato.objects.ativos_e_antes_de(data=ate).filter(do_locador=request.user).order_by(
+            '-data_entrada')
+    imoveis = gerar_dados_de_imoveis_para_tabela_pdf(contratos)
+
     dados = {'usuario': usuario,
              "usuario_uuid": usuario.uuid,
              "usuario_username": usuario.username,
@@ -1184,7 +1198,7 @@ def gerar_contrato(request):
         context['contrato_doc'] = link
     else:
         if contrato_ultimo:
-            # Se o contrato não tem configurações, carrega o formulario de configuração para criar uma instância
+            # Se o contrato não tem configurações, carrega o formulário de configuração para criar uma instância
             # de configurações para este contrato
             context['form2'] = form2
             context['contrato_ultimo_nome'] = contrato_ultimo
@@ -1239,20 +1253,46 @@ def criar_modelo(request):
     return render(request, 'criar_modelo.html', context)
 
 
-class Modelos(LoginRequiredMixin, ListView):
+@login_required
+def visualizar_modelo(request, pk):
+    context = {}
+    modelo = get_object_or_404(ContratoModelo, pk=pk)
+    if modelo.autor == request.user or modelo.comunidade:
+        context['modelo'] = modelo
+        context['SITE_NAME'] = settings.SITE_NAME
+        return render(request, 'visualizar_contratos_modelos.html', context)
+    else:
+        raise Http404
+
+
+class MeusModelos(LoginRequiredMixin, ListView):
     template_name = 'exibir_modelos.html'
     model = ContratoModelo
     context_object_name = 'modelos'
-    paginate_by = 3
+    paginate_by = 9
 
     def get_queryset(self):
-        admins = Usuario.objects.filter(is_superuser=True).values_list('pk').first()
         qs1 = ContratoModelo.objects.filter(autor=self.request.user)
-        qs2 = ContratoModelo.objects.filter(autor=admins)
-        return qs1.union(qs2).order_by('-data_criacao')
+        return qs1.order_by('-data_criacao')
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Modelos, self).get_context_data(**kwargs)
+        context = super(MeusModelos, self).get_context_data(**kwargs)
+        context['SITE_NAME'] = settings.SITE_NAME
+        return context
+
+
+class ModelosComunidade(LoginRequiredMixin, ListView):
+    template_name = 'modelos_da_comunidade.html'
+    model = ContratoModelo
+    context_object_name = 'modelos'
+    paginate_by = 9
+
+    def get_queryset(self):
+        qs1 = ContratoModelo.objects.filter(comunidade=True)
+        return qs1.order_by('-data_criacao')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ModelosComunidade, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
         return context
 
@@ -1318,7 +1358,7 @@ class ExcluirModelo(LoginRequiredMixin, DeleteView):
         return context
 
 
-# -=-=-=-=-=-=-=-= BOTÃO HISTORICO -=-=-=-=-=-=-=-=
+# -=-=-=-=-=-=-=-= BOTÃO HISTÓRICO -=-=-=-=-=-=-=-=
 
 # PAGAMENTOS ---------------------------------------
 class Pagamentos(LoginRequiredMixin, ListView):
@@ -1829,10 +1869,13 @@ def add_slot(request):
             form = FormSlots(request.POST)
             if form.is_valid():
                 quantidade = int(form.cleaned_data['slots_qtd'])
-                for x in range(0, quantidade):
-                    Slot.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
-                    usuario.tickets -= 1
-        usuario.save(update_fields=['tickets'])
+                if usuario.tickets >= quantidade:
+                    for x in range(0, quantidade):
+                        Slot.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
+                        usuario.tickets -= 1
+                    usuario.save(update_fields=['tickets'])
+                else:
+                    messages.error(request, "Tickets insuficientes para esta operação")
     return redirect(request.META['HTTP_REFERER'])
 
 
@@ -1896,6 +1939,20 @@ def apagar_slot(request, pk):
 
 
 # -=-=-=-=-=-=-=-= SERVIDORES DE ARQUIVOS -=-=-=-=-=-=-=-=
+
+
+@login_required
+def arquivos_contratos_modelos(request, file):
+    link = str(f'contratos_modelos/{file}')
+    modelo = get_object_or_404(ContratoModelo, visualizar=link)
+    if modelo.autor == request.user or modelo.comunidade or request.user.is_superuser:
+        local = fr'{settings.MEDIA_ROOT}/{modelo.visualizar}'
+        if os.path.exists(local):
+            return FileResponse(modelo.visualizar)
+        else:
+            raise Http404
+    else:
+        raise Http404
 
 
 @login_required
@@ -1984,14 +2041,13 @@ def arquivos_gastos_docs(request, year, month, file):
 @user_passes_test(lambda u: u.is_superuser)
 def arquivos_mensagens_ao_dev(request, year, month, file):
     link = str(f'mensagens_ao_dev/{year}/{month}/{file}')
-    devmensagem = get_object_or_404(DevMensagen, imagem=link)
-    if devmensagem.do_usuario == request.user:
-        local = fr'{settings.MEDIA_ROOT}/{devmensagem.imagem}'
+    dev_mensagem = get_object_or_404(DevMensagen, imagem=link)
+    if dev_mensagem.do_usuario == request.user:
+        local = fr'{settings.MEDIA_ROOT}/{dev_mensagem.imagem}'
         if os.path.exists(local):
-            return FileResponse(devmensagem.imagem)
+            return FileResponse(dev_mensagem.imagem)
         else:
             raise Http404
-        return response
     else:
         raise Http404
 
@@ -2376,6 +2432,12 @@ def criar_usuarios_ficticios(request, quantidade, multiplicador):
                 user.last_name = aleatorio.get('last_name')
                 user.email = aleatorio.get('email')
                 user.telefone = aleatorio.get('telefone')
+                user.nacionalidade = aleatorio.get('nacionalidade')
+                user.estadocivil = aleatorio.get('estadocivil')
+                user.ocupacao = aleatorio.get('ocupacao')
+                user.endereco_completo = aleatorio.get('endereco_completo')
+                user.dados_pagamento1 = aleatorio.get('dados_pagamento1')
+                user.dados_pagamento2 = aleatorio.get('dados_pagamento2')
                 user.RG = aleatorio.get('RG')
                 user.CPF = aleatorio.get('CPF')
                 user.save()

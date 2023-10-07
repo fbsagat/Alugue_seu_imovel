@@ -88,6 +88,7 @@ class Usuario(AbstractUser):
     tabela_ultima_data_ger = models.IntegerField(null=True, blank=True)
     tabela_meses_qtd = models.IntegerField(null=True, blank=True)
     tabela_imov_qtd = models.IntegerField(null=True, blank=True)
+    tabela_mostrar_ativos = models.BooleanField(null=True, blank=True)
 
     contrato_ultimo = models.ForeignKey('Contrato', null=True, blank=True, related_name='usuario_contrato_set',
                                         on_delete=models.SET_NULL)
@@ -124,7 +125,7 @@ class Usuario(AbstractUser):
 
     def arrecadacao_mensal(self):
         try:
-            contratos_user = Contrato.objects.ativos().filter(do_locador=self)
+            contratos_user = Contrato.objects.ativos_hoje().filter(do_locador=self)
             arrecadacao_mensal = 0
             for contrato in contratos_user:
                 arrecadacao_mensal += int(contrato.valor_mensal)
@@ -134,7 +135,7 @@ class Usuario(AbstractUser):
 
     def valor_total_contratos_ativos(self):
         try:
-            contratos_user = Contrato.objects.ativos().filter(do_locador=self)
+            contratos_user = Contrato.objects.ativos_hoje().filter(do_locador=self)
             valor_total_contratos_ativos = 0
             for contrato in contratos_user:
                 valor_total_contratos_ativos += int(contrato.valor_do_contrato())
@@ -300,7 +301,7 @@ class Locatario(models.Model):
         return f'{self.nome}'
 
     def com_contratos(self):
-        contratos = Contrato.objects.ativos().filter(do_locador=self.do_locador, do_locatario=self)
+        contratos = Contrato.objects.ativos_hoje().filter(do_locador=self.do_locador, do_locatario=self)
         return contratos or None
 
     def com_imoveis(self):
@@ -376,7 +377,7 @@ class ImovGrupo(models.Model):
     def arrecadacao_mensal(self):
         try:
             imoveis = Imovei.objects.filter(grupo=self)
-            contratos_user = Contrato.objects.ativos().filter(do_imovel__in=imoveis, do_locador=self.do_usuario)
+            contratos_user = Contrato.objects.ativos_hoje().filter(do_imovel__in=imoveis, do_locador=self.do_usuario)
             arrecadacao_mensal = 0
             for contrato in contratos_user:
                 arrecadacao_mensal += int(contrato.valor_mensal)
@@ -387,7 +388,7 @@ class ImovGrupo(models.Model):
     def valor_total_contratos_ativos(self):
         try:
             imoveis = Imovei.objects.filter(grupo=self)
-            contratos_user = Contrato.objects.ativos().filter(do_imovel__in=imoveis, do_locador=self.do_usuario)
+            contratos_user = Contrato.objects.ativos_hoje().filter(do_imovel__in=imoveis, do_locador=self.do_usuario)
             valor_total_contratos_ativos = 0
             for contrato in contratos_user:
                 valor_total_contratos_ativos += int(contrato.valor_do_contrato())
@@ -460,7 +461,7 @@ class Imovei(models.Model):
         return f'{self.nome} ({self.grupo if self.grupo else "Sem grupo"})'
 
     def contrato_atual(self):
-        contratos = Contrato.objects.ativos().filter(do_locador=self.do_locador, do_imovel=self)
+        contratos = Contrato.objects.ativos_hoje().filter(do_locador=self.do_locador, do_imovel=self)
         if contratos:
             return contratos[0]
         else:
@@ -516,12 +517,21 @@ class Imovei(models.Model):
 
 
 class ContratoManager(models.Manager):
-    def ativos(self):
+    def ativos_hoje(self):
         hoje = datetime.today().date()
         contratos_qs = self.filter(em_posse=True, rescindido=False, data_entrada__lte=hoje)
         lista = []
         for contrato in contratos_qs:
-            if contrato.periodo_ativo_hoje() is True:
+            if contrato.periodo_ativo_hoje():
+                lista.append(contrato.pk)
+        contratos_ativos = Contrato.objects.filter(pk__in=lista)
+        return contratos_ativos
+
+    def ativos_e_antes_de(self, data):
+        contratos_qs = self.filter(em_posse=True, rescindido=False, data_entrada__lte=data)
+        lista = []
+        for contrato in contratos_qs:
+            if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_antes_de(data):
                 lista.append(contrato.pk)
         contratos_ativos = Contrato.objects.filter(pk__in=lista)
         return contratos_ativos
@@ -660,6 +670,9 @@ class Contrato(models.Model):
         hoje = datetime.today().date()
         return True if self.data_entrada <= hoje <= self.data_saida() else False
 
+    def periodo_ativo_antes_de(self, data):
+        return True if self.data_entrada <= data <= self.data_saida() else False
+
     def periodo_ativo_futuramente(self):
         return True if self.data_entrada > datetime.today().date() else False
 
@@ -781,6 +794,8 @@ class ContratoModelo(models.Model):
     data_criacao = models.DateTimeField(auto_now_add=True)
     variaveis = models.JSONField(null=True, blank=True)
     condicoes = models.JSONField(null=True, blank=True)
+    comunidade = models.BooleanField(default=False, verbose_name='')
+    visualizar = models.FileField(null=True)
 
     class Meta:
         verbose_name_plural = 'Modelos de contratos'
