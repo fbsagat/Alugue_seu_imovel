@@ -538,7 +538,7 @@ class ContratoManager(models.Manager):
 
     def ativos_margem(self):
         hoje = datetime.today().date()
-        contratos_qs = self.filter(rescindido=False, data_entrada__lte=hoje)
+        contratos_qs = self.filter(rescindido=False)
         lista = []
         for contrato in contratos_qs:
             if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente() or \
