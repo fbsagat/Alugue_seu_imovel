@@ -12,30 +12,86 @@ Painel / {{ SITE_NAME }}
 
 {% block content %}
 
-<div class="container-xxl my-1 text-center text-justify my-1">
+<div class="container-fluid my-1 text-center text-justify my-1">
 
-    <div class="container-auto my-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
-        <a class="py-2 px-3" href="{% url 'home:Painel Configs' %}">
-            <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+    <div class="container-xxl">
+        <div class="container-auto my-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
+            <form action="{% url 'home:Painel Configs' %}" class="py-1 px-1">
+            <button type="submit"
+                    class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
                 Configurações
             </button>
-        </a>
-        <a class="py-2 px-3" href="{% url 'home:Painel Slots' %}">
-            <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+        </form>
+        <form action="{% url 'home:Painel Slots' %}" class="py-1 px-1">
+            <button type="submit"
+                    class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
                 Slots
             </button>
-        </a>
-        <a class="py-2 px-3" href="{% url 'home:Painel Loja' %}">
-            <button class="btn btn-sm active btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+        </form>
+        <form action="{% url 'home:Painel Loja' %}" class="py-1 px-1">
+            <button type="submit"
+                    class="active btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
                 Loja
             </button>
-        </a>
+        </form>
+        </div>
     </div>
 
-    <div class="px-2 py-2 bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
-        <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
+    <div class="container-xxl text-center mt-4">
+        <div class="row row-cols-4 g-3 p-2">
 
+            {% for card in loja_info %}
+            <div class="col">
+                <div class="card bg-black bg-opacity-75 border-secondary h-100">
+                    <div class="card-title">
+                        <h1 class=" fs-2">{{ card.nome }}</h1>
+                        <h1 class="fs-4">{{ card.ticket_qtd }} tickets 🎫</h1>
+                        <br>
+                    </div>
+                    <div class="card-body">
+                        <hr>
+                        <br>
+                        <div class="d-grid my-3">
+                            <button class="btn btn-outline-success btn-block">Comprar com REAL</button>
+                            <small class="text-muted">Comprar com Real via Mercado Pago</small>
+                        </div>
+                        <span class="h2">R${{ card.valor_pct_brl }}</span>
+                        <br>
+                        <small class='text-muted'>R${{ card.valor_por_ticket_brl }}/ticket</small>
+                        <small class='text-muted'>{% if card.desconto_p_un_brl > 0 %} - Desconto de
+                            {{ card.desconto_p_un_brl }}% por unidade{% else %}(Valor base)
+                            {% endif %}</small>
+                        <ul>
+                            <li>Comprando com Real</li>
+                            <li>Você ganha mais formas de pagamento:</li>
+                            <li>Pix, crédito, débito, boleto e etc...</li>
+                        </ul>
 
+                        <br>
+                        <hr>
+                        <br>
+
+                        <div class="d-grid my-3">
+                            <button class="btn btn-outline-warning btn-block">Comprar com BTC
+                            </button>
+                            <small class="text-muted">Comprar com Bitcoin via lightning Network</small>
+                        </div>
+                        <span class="h2">R${{ card.valor_pct_btc }}</span>
+                        <br>
+                        <small class='text-muted'>R${{ card.valor_por_ticket_btc }}/ticket - </small>
+                        <small class='text-muted'>Desconto de {{ card.desconto_p_un_btc }}% por unidade</small>
+                        <ul>
+                            <li>Comprando diretamente com Bitcoin</li>
+                            <li>via Lightning Network</li>
+                            <li>Você ganha MAIS DESCONTO</li>
+                        </ul>
+
+                        <br>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
         </div>
     </div>
 </div>

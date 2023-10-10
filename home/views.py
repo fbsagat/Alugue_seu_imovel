@@ -27,7 +27,7 @@ from django.template.defaultfilters import date as data_ptbr
 from home.fakes_test import porcentagem_de_chance
 
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
-    modelo_variaveis, modelo_condicoes, valor_por_extenso
+    modelo_variaveis, modelo_condicoes, valor_por_extenso, loja_info
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
@@ -1854,8 +1854,9 @@ def painel_configs(request):
 
 
 def painel_loja(request):
-    context = {}
-    context['SITE_NAME'] = settings.SITE_NAME
+    loja_info_ = loja_info()
+
+    context = {'SITE_NAME': settings.SITE_NAME, 'loja_info': loja_info_}
     return render(request, 'painel_loja.html', context)
 
 

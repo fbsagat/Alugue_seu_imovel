@@ -64,6 +64,7 @@ def valor_por_extenso(valor):
     else:
         return None
 
+
 # 007: -----------------------------------------------
 
 
@@ -100,6 +101,48 @@ def validar_cpf(cpf):
         return True
     else:
         return False
+
+
+# 008: -----------------------------------------------
+def loja_info():
+    """ Esta função deve retornar um dicionário com os cards da loja
+    Cada item deve se chamar pelo título do card e deve conter uma lista com as seguintes informações e na mesma ordem:
+    Quantidades de tickets(ambos), valor do pacote(btc e brl), valor por ticket no pacote(btc e brl),
+    desconto percentual por unidade(btc e brl).
+    """
+
+    pacotes_nomes = ['Pacote Pequeno', 'Pacote Médio', 'Pacote Grande', 'Pacote Gigante']
+    valor_ticket = settings.TICKET_VALOR_BASE_BRL
+    pacote_qtd_inicial = settings.PACOTE_QTD_INICIAL
+    pacote_qtd_mult = settings.PACOTE_QTD_MULTIPLICADOR
+    desconto_multiplicador = settings.DESCONTO_PACOTE_MULTIPLICADOR
+    desconto_add_cripto = settings.DESCONTO_ADD_BITCOIN
+
+    cards = []
+    for n, pacote in enumerate(pacotes_nomes):
+        ticket_qtd = pacote_qtd_inicial + (10 * n) + (n * pacote_qtd_mult)
+        desconto_porcent = desconto_multiplicador * n
+
+        valor_por_ticket_brl = valor_ticket - (valor_ticket * desconto_porcent / 100)
+        valor_pacote_brl = valor_por_ticket_brl * ticket_qtd
+
+        valor_por_ticket_btc = valor_ticket - (valor_ticket * (desconto_porcent+desconto_add_cripto) / 100)
+        valor_pacote_btc = valor_por_ticket_btc * ticket_qtd
+
+        desconto_p_un_btc = desconto_porcent + desconto_add_cripto
+        pacote = {
+            'nome': pacote,
+            'ticket_qtd': ticket_qtd,
+            'desconto_porcent': desconto_porcent,
+            'valor_pct_brl': f'{valor_pacote_brl:.2f}',
+            'valor_pct_btc': f'{round(valor_pacote_btc, 2):.2f}',
+            'valor_por_ticket_brl': f'{round(valor_por_ticket_brl, 2):.2f}',
+            'valor_por_ticket_btc': f'{round(valor_por_ticket_btc, 2):.2f}',
+            'desconto_p_un_brl': desconto_porcent,
+            'desconto_p_un_btc': desconto_p_un_btc,
+        }
+        cards.append(pacote)
+    return cards
 
 
 # 100: -----------------------------------------------
@@ -353,7 +396,8 @@ def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
                 textobject = pdf.beginText(inicia_em_h + y + espacamento_h,
                                            pag_alt - inicia_em_v - x - (espacamento_v - 3))
 
-                se_ativo = dados['imoveis']['parcelas_ativas'][((pag_n - 1) * dados["imov_qtd"]) + vertical][horizontal - 1]
+                se_ativo = dados['imoveis']['parcelas_ativas'][((pag_n - 1) * dados["imov_qtd"]) + vertical][
+                    horizontal - 1]
                 if se_ativo is True:
                     textobject.setFillColor(colors.black)
                 else:

@@ -4,17 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;&#10;Corrigido um bug de distribuição de recibos na função criar_pagamentos_ficticios.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;&#10;Visão geral agora mostra contratos que serão ativados em breve (15 dias)">
+      <change afterPath="$PROJECT_DIR$/home/migrations/0003_usuario_tabela_mostrar_ativos.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/fakes_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/fakes_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_contratos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_contratos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/funcoes_proprias.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/funcoes_proprias.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_imoveis.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_imoveis.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_configs.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_configs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_loja.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_loja.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -484,7 +486,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="151" />
+    <option name="localTasksCounter" value="156" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -527,10 +529,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs diversos.&#10;Criado o fixtures loaddata do predio.&#10;Melhorias nas configurações e aadição de novas configurações, como adicionar o loaddata do predio.&#10;Corrigido: Agora a tabela responde as parcelas do contratos ativos corretamente.&#10;Melhorado o carregamento das tarefas no new_context, adicionei dois managers personalizados.&#10;Corrigido um erro do metodo do usuario: arrecadacao_mensal." />
-    <MESSAGE value="Agora a função pós fixture do prédio de preencher parcela.recibo_entregue com os dados do prédio é automática, fica em signal -&gt; usuario_fez_login.&#10;Também apaga os arquivos de loaddata do prédio após o primeiro login para conveniência." />
-    <MESSAGE value="Roadmap." />
-    <MESSAGE value="Arquivos de configurações atualizados." />
     <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Criado o contrato manager: ativos_margem." />
     <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Aplicado o contrato manager ativos_margem nas forms_da_navbar." />
     <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Atualizados requirements." />
@@ -548,10 +546,14 @@
     <MESSAGE value="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Adicionado o js que previne cliques múltiplos dos usuáios: 'prevent_multiple_click.js'&#10;navbar: tags &lt;a&gt; fora, transformadas em formulários para compatibilização do prevent_multiple_click.js." />
-    <MESSAGE value="Correções e melhorias no código." />
     <MESSAGE value="Correções e melhorias no código.&#10;Agora o gerador de fictícios aparece pr qualquer usuário com o debug ativado.&#10;Menos erros no gerador de fictícios.&#10;Agora o gerador de fictícios marca 'recibo_entregue' de parcelas." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Melhorado o gerador de fictícios(preenchedor.js, zera (0) os inputs).&#10;Iniciada(falta concluir) a prevenção de cliques duplos que ocasionam múltiplos requests, congestionando a rede.&#10;Correções gerais no footer.&#10;Melhorias gerais na navbar." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Corrigido um bug de distribuição de recibos na função criar_pagamentos_ficticios." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;&#10;Corrigido um bug de distribuição de recibos na função criar_pagamentos_ficticios." />
+    <MESSAGE value="Correções e melhorias no código.&#10;&#10;gastos_comprovantes estava sem a view servidora de servidor de arquivos, agora tem." />
+    <MESSAGE value="Correções e melhorias no código.&#10;&#10;Servidores de arquivos melhorados. Retornam http404 caso não haja algum arquivo onde era pra haver." />
+    <MESSAGE value="Correções e melhorias no código.&#10;&#10;Criada a comunidade para partilhamento de modelos de contratos entre os usuários. (faltam alguns detalhes)&#10;Criado o visualizar modelos de contratos.&#10;Melhorias no gerador de fictícios. Mais inteligente e mais dados.&#10;Criado o botão 'Mostrar somente imóveis ativos' no gerador de tabelas pdf.&#10;Arrumada e melhorada a página new context." />
+    <MESSAGE value="Correções e melhorias no código." />
+    <MESSAGE value="Correções e melhorias no código.&#10;&#10;Visão geral agora mostra contratos que serão ativados em breve (15 dias)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;&#10;Visão geral agora mostra contratos que serão ativados em breve (15 dias)" />
   </component>
 </project>

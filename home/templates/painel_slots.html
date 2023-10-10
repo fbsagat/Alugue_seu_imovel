@@ -15,21 +15,24 @@ Painel / {{ SITE_NAME }}
 <div class="container-xxl my-1 text-center text-justify my-1">
 
     <div class="container-auto my-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
-        <a class="py-2 px-3" href="{% url 'home:Painel Configs' %}">
-            <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+        <form action="{% url 'home:Painel Configs' %}" class="py-1 px-1">
+            <button type="submit"
+                    class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
                 Configurações
             </button>
-        </a>
-        <a class="py-2 px-3" href="{% url 'home:Painel Slots' %}">
-            <button class="btn btn-sm active btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+        </form>
+        <form action="{% url 'home:Painel Slots' %}" class="py-1 px-1">
+            <button type="submit"
+                    class="active btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
                 Slots
             </button>
-        </a>
-        <a class="py-2 px-3" href="{% url 'home:Painel Loja' %}">
-            <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
+        </form>
+        <form action="{% url 'home:Painel Loja' %}" class="py-1 px-1">
+            <button type="submit"
+                    class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
                 Loja
             </button>
-        </a>
+        </form>
     </div>
 
     <div class="px-2 py-2 bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">

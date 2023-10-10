@@ -21,6 +21,13 @@ FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
 TAMANHO_DAS_IMAGENS_Mb = 4
 
+# Configurações dos Tickets
+TICKET_VALOR_BASE_BRL = 1.82  # coloca número PAR sempre
+PACOTE_QTD_INICIAL = 20
+PACOTE_QTD_MULTIPLICADOR = 30
+DESCONTO_PACOTE_MULTIPLICADOR = 4  # percentual
+DESCONTO_ADD_BITCOIN = 20
+
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

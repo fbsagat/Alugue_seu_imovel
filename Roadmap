@@ -87,15 +87,18 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 Fazer:
 PAREI AQUI \/
 Criar a função comunidade no editor de modelos.
-        1. colocar o visualizar / 2. colocar descrição / 3.
-
-Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
-        informações de cada usuário nas queryes, nunca a partir de todos os objetos.
+        1. colocar o visualizar / 2. colocar descrição / 3. Fazer o sistema de exclusão inteligente
 
 Implementar filtros/buscas nas paginas do botão histórico.
 
 Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
         e botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
+
+Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
+        tarefa. Ex: locatario.da_tarefa --> locatario.da_tarefa(filtros). Por enquanto todos os item que possuem
+        tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
+        ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
+        ficar o atributo da_tarefa?
 
 Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando a sugestão do usuário for aprovada = OK.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
@@ -110,15 +113,12 @@ Não utilizar diretamente o uuid do usuário no front-end, apenas derivados dest
 Colocar a variável 'mobiliado' no contrato pdf(ou um sistema personalizado de ativação de trechos para os usuários
         onde eles criam as próprias condições, seria interessante).
 
-Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
-        tarefa. Ex: locatario.da_tarefa --> locatario.da_tarefa(filtros). Por enquanto todos os item que possuem
-        tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
-        ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
-        ficar o atributo da_tarefa?
-
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
 Ja ta na hora de instalar o celery e começar a usar.
+
+Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
+        informações de cada usuário nas queryes, nunca a partir de todos os objetos.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
