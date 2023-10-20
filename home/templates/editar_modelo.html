@@ -27,7 +27,7 @@ Editar Modelo / {{ SITE_NAME }}
                 Meus modelos
             </button>
         </a>
-        <a class="py-2 px-3" href="{% url 'home:Contrato Comunidade' %}">
+        <a class="py-2 px-3" href="{% url 'home:Modelos Comunidade' %}">
             <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
                 Modelos da comunidade
             </button>
@@ -64,7 +64,10 @@ Editar Modelo / {{ SITE_NAME }}
                             {{ form.corpo|as_crispy_field }}
                             <hr>
                             <div class="text-center flex items-center flex-col">
-                                <small>Deseja compartilhar este modelo na aba comunidade?</small>
+                                <h1 class="fs-6">Deseja compartilhar este modelo na aba comunidade?</h1>
+                                <small>Certifique-se de que não haja nenhuma informação sensível
+                                    neste modelo de contrato antes de publicá-lo na comunidade. Clicando no botão
+                                    abaixo você CONCORDA em compartilhá-lo com outros usuários.</small>
                                 {{ form.comunidade|as_crispy_field }}
                                 <button accesskey="s" title="Tecla de atalho: Alt + Q"
                                         class="mb-2 btn btn-sm bg-blue-600 text-white rounded-md" type="submit">

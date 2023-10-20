@@ -9,4 +9,5 @@ function fill_zero(zero) {
         document.getElementById("zero_fill7").value = zero;
         document.getElementById("zero_fill8").value = zero;
         document.getElementById("zero_fill9").value = zero;
+        document.getElementById("zero_fill10").value = zero;
       }

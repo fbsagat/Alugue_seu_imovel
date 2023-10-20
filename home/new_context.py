@@ -8,7 +8,7 @@ from django.urls import resolve
 from home.models import Tarefa
 from home.forms import FormMensagem, FormAdmin
 from home.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, FormImovel, FormAnotacoes
-from home.models import Contrato
+from home.models import Contrato, Imovei
 
 
 def titulo_pagina(request):
@@ -21,6 +21,8 @@ def navbar_forms(request):
     if request.user.is_authenticated:
         # Apenas contratos ativos hoje ou futuramente para os forms
         contratos_exibir = Contrato.objects.ativos_margem().filter(do_locador=request.user).order_by('-data_entrada')
+        # Apenas os imóveis do locador
+        imovies_locador = Imovei.objects.filter(do_locador=request.user).order_by('-data_registro')
 
         if request.session.get('form1'):
             tempo_form = datetime.datetime.strptime(request.session.get('form1')[1], '%H:%M:%S')
@@ -56,11 +58,14 @@ def navbar_forms(request):
 
             if tempo_form + timedelta(seconds=settings.TEMPO_SESSION_FORM) > tempo_agora:
                 form3 = FormGasto(request.session.get('form3')[0])
+                form3.fields['do_imovel'].queryset = imovies_locador
             else:
                 form3 = FormGasto(initial={'data': datetime.date.today().strftime('%Y-%m-%d')})
+                form3.fields['do_imovel'].queryset = imovies_locador
                 request.session.pop('form3')
         else:
             form3 = FormGasto(initial={'data': datetime.date.today().strftime('%Y-%m-%d')})
+            form3.fields['do_imovel'].queryset = imovies_locador
 
         if request.session.get('form4'):
             tempo_form = datetime.datetime.strptime(request.session.get('form4')[1], '%H:%M:%S')
@@ -118,8 +123,11 @@ def navbar_forms(request):
                          'qtd_imovel': settings.FICT_QTD['qtd_imovel'],
                          'qtd_contrato': settings.FICT_QTD['qtd_contrato'],
                          'qtd_pagamento': settings.FICT_QTD['qtd_pagamento'],
-                         'qtd_gasto': settings.FICT_QTD['qtd_gasto'], 'qtd_nota': settings.FICT_QTD['qtd_nota'],
-                         'qtd_sugestao': settings.FICT_QTD['qtd_sugestao'], 'para_o_usuario': request.user})
+                         'qtd_gasto': settings.FICT_QTD['qtd_gasto'],
+                         'qtd_nota': settings.FICT_QTD['qtd_nota'],
+                         'qtd_sugestao': settings.FICT_QTD['qtd_sugestao'],
+                         'qtd_contr_modelo': settings.FICT_QTD['qtd_contr_modelo'],
+                         'para_o_usuario': request.user})
         else:
             form8 = ''
 

@@ -29,7 +29,8 @@ from home.fakes_test import porcentagem_de_chance
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
     modelo_variaveis, modelo_condicoes, valor_por_extenso, loja_info
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
-    pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias
+    pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias, \
+    modelos_contratos_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots
@@ -996,10 +997,8 @@ def gerar_contrato(request):
     contr_doc_configs = ContratoDocConfig.objects.filter(do_contrato=contrato_ultimo).first()
     form = FormContratoDoc(initial={'contrato': contrato_ultimo})
     form2 = FormContratoDocConfig()  # ver se ainda é util: initial={'do_modelo': contr_doc_configs.do_modelo}
-    admins = Usuario.objects.filter(is_superuser=True).values_list('pk').first()
-    qs1 = ContratoModelo.objects.filter(autor=request.user)
-    qs2 = ContratoModelo.objects.filter(autor=admins)
-    form2.fields['do_modelo'].queryset = qs1.union(qs2).order_by('-data_criacao')
+    qs1 = ContratoModelo.objects.filter(usuarios=request.user).order_by('-data_criacao')
+    form2.fields['do_modelo'].queryset = qs1
     contratos_ativos = Contrato.objects.ativos_margem().filter(do_locador=request.user).order_by('-data_entrada')
 
     # Se for POST
@@ -1059,6 +1058,7 @@ def gerar_contrato(request):
                          'fiador_endereco_completo': contr_doc_configs.fiador_endereco_completo,
                          'fiador_nacionalidade': contr_doc_configs.fiador_nacionalidade,
                          'fiador_estadocivil': contr_doc_configs.fiador_estadocivil})
+            form2.fields['do_modelo'].queryset = qs1
             contr_doc_configs = None
 
     form.fields['contrato'].queryset = contratos_ativos
@@ -1243,6 +1243,7 @@ def criar_modelo(request):
 
             modelo.variaveis = variaveis
             modelo.condicoes = condicoes
+            modelo.usuarios.add(request.user)
             modelo.save()
 
             return redirect(reverse('home:Modelos'))
@@ -1255,13 +1256,24 @@ def criar_modelo(request):
 
 
 @login_required
+def copiar_modelo(request, pk):
+    modelo = get_object_or_404(ContratoModelo, pk=pk)
+    if modelo.comunidade is True and request.user not in modelo.usuarios.all():
+        modelo.usuarios.add(request.user.pk)
+    return redirect(reverse('home:Modelos'))
+
+
+@login_required
 def visualizar_modelo(request, pk):
     context = {}
     modelo = get_object_or_404(ContratoModelo, pk=pk)
-    if modelo.autor == request.user or modelo.comunidade:
-        context['modelo'] = modelo
-        context['SITE_NAME'] = settings.SITE_NAME
-        return render(request, 'visualizar_contratos_modelos.html', context)
+    if request.user in modelo.usuarios.all():
+        if modelo.autor == request.user or modelo.comunidade:
+            context['modelo'] = modelo
+            context['SITE_NAME'] = settings.SITE_NAME
+            return render(request, 'visualizar_contratos_modelos.html', context)
+        else:
+            raise Http404
     else:
         raise Http404
 
@@ -1273,7 +1285,7 @@ class MeusModelos(LoginRequiredMixin, ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        qs1 = ContratoModelo.objects.filter(autor=self.request.user)
+        qs1 = ContratoModelo.objects.filter(usuarios=self.request.user)
         return qs1.order_by('-data_criacao')
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -1344,10 +1356,13 @@ class ExcluirModelo(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Modelos')
+        if self.kwargs['pag_orig'] == 1:
+            return reverse_lazy('home:Modelos Comunidade')
+        else:
+            return reverse_lazy('home:Modelos')
 
     def get_object(self, queryset=None):
-        self.object = get_object_or_404(ContratoModelo, pk=self.kwargs['pk'], autor=self.request.user)
+        self.object = get_object_or_404(ContratoModelo, pk=self.kwargs['pk'])
         return self.object
 
     def get_context_data(self, *, object_list=True, **kwargs):
@@ -1848,8 +1863,7 @@ def painel_slots(request):
 
 
 def painel_configs(request):
-    context = {}
-    context['SITE_NAME'] = settings.SITE_NAME
+    context = {'SITE_NAME': settings.SITE_NAME}
     return render(request, 'painel_configs.html', context)
 
 
@@ -2419,6 +2433,33 @@ def criar_sugestoes_ficticias(request, quantidade, multiplicador, usuario_s, dis
             messages.success(request, f"Criada(s) {count} sugestão(ões) para {usuario}")
 
 
+def criar_modelos_contratos_ficticios(request, quantidade, multiplicador, usuario_s, distribuir):
+    if distribuir:
+        range_ = floor((multiplicador * quantidade) / len(usuario_s))
+    else:
+        range_ = multiplicador * quantidade
+    if range_ < 1 and distribuir:
+        messages.error(request, f"Quantia insuficiente para distribuir 'Modelos de Contratos' entre todos os usuários")
+    else:
+        for usuario in usuario_s:
+            count = 0
+            for x in range(range_):
+                count += 1
+                aleatorio = modelos_contratos_ficticios(usuario)
+                form = FormContratoModelo()
+                c_model = form.save(commit=False)
+                c_model.autor = usuario
+                c_model.titulo = aleatorio.get('titulo')
+                c_model.corpo = aleatorio.get('corpo')
+                c_model.descricao = aleatorio.get('descricao')
+                c_model.comunidade = aleatorio.get('comunidade')
+                c_model.save()
+                if aleatorio.get('usuarios'):
+                    for usuario_ in aleatorio.get('usuarios'):
+                        c_model.usuarios.add(usuario_)
+            messages.success(request, f"Criado(s) {count} modelo(s) de contrato(s) para {usuario}")
+
+
 def criar_usuarios_ficticios(request, quantidade, multiplicador):
     count = 0
     for x in range(multiplicador * quantidade):
@@ -2462,6 +2503,7 @@ def botaoteste(request):
             qtd_gasto = form_adm.cleaned_data['qtd_gasto']
             qtd_nota = form_adm.cleaned_data['qtd_nota']
             qtd_sugestao = form_adm.cleaned_data['qtd_sugestao']
+            qtd_contr_modelo = form_adm.cleaned_data['qtd_contr_modelo']
 
             fict_multi = int(form_adm.data['multiplicar_por'])
             fict_user_multi = int(form_adm.data['multiplicar_user_por'])
@@ -2511,5 +2553,8 @@ def botaoteste(request):
                 if qtd_sugestao * fict_multi > 0 and len(usuario_s) > 0:
                     criar_sugestoes_ficticias(request, quantidade=qtd_sugestao, multiplicador=fict_multi,
                                               usuario_s=usuario_s, distribuir=distribuir)
+                if qtd_contr_modelo * fict_multi > 0 and len(usuario_s) > 0:
+                    criar_modelos_contratos_ficticios(request, quantidade=qtd_contr_modelo, multiplicador=fict_multi,
+                                                      usuario_s=usuario_s, distribuir=distribuir)
 
         return redirect(request.META['HTTP_REFERER'])

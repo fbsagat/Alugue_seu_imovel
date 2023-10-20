@@ -82,7 +82,7 @@ class FormEventos(forms.Form):
     ordem_eventos = forms.ChoiceField(label='Ordem', initial=1, choices=ordem_em_eventos,
                                       widget=forms.RadioSelect())
 
-    itens_eventos = forms.MultipleChoiceField(label='Selecione os itens', choices=mostrar_em_eventos,
+    itens_eventos = forms.MultipleChoiceField(label='Mostrar os itens selecionados', choices=mostrar_em_eventos,
                                               initial=[1, 2, 3, 4, 5, 6],
                                               widget=forms.CheckboxSelectMultiple(
                                                   attrs={'choices': mostrar_em_eventos}))
@@ -316,7 +316,7 @@ class FormContratoModelo(forms.ModelForm):
     class Meta:
         model = ContratoModelo
         fields = '__all__'
-        exclude = ['autor', 'data_criacao', 'variaveis', 'condicoes', 'visualizar']
+        exclude = ['autor', 'data_criacao', 'variaveis', 'condicoes', 'visualizar', 'usuarios', 'excluidos']
 
     def __init__(self, *args, **kwargs):
         super(FormContratoModelo, self).__init__(*args, **kwargs)
@@ -457,6 +457,9 @@ class FormAdmin(forms.Form):
     qtd_sugestao = forms.IntegerField(label='Sugestão(ões)',
                                       widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
                                       required=True, min_value=0, max_value=100)
+    qtd_contr_modelo = forms.IntegerField(label='Contr. Modelo(s)',
+                                      widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
+                                      required=True, min_value=0, max_value=100)
     para_o_usuario = forms.ModelChoiceField(label='Para o usuário', queryset=Usuario.objects.all(), required=True)
     multiplicar_por = forms.IntegerField(label='Multiplicar cada item por',
                                          widget=forms.NumberInput(attrs={'class': 'form-control'}), max_value=100,
@@ -474,3 +477,4 @@ class FormAdmin(forms.Form):
         self.fields['qtd_gasto'].widget.attrs.update(id="zero_fill7")
         self.fields['qtd_nota'].widget.attrs.update(id="zero_fill8")
         self.fields['qtd_sugestao'].widget.attrs.update(id="zero_fill9")
+        self.fields['qtd_contr_modelo'].widget.attrs.update(id="zero_fill10")

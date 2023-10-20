@@ -2,6 +2,8 @@ from pathlib import Path
 
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
+from dotenv import load_dotenv
+load_dotenv()
 
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -16,17 +18,17 @@ TEMPO_SESSION_FORM = 30
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item / dados iniciais do formulário \/
 FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel': 5, 'qtd_contrato': 4,
-                'qtd_pagamento': 10, 'qtd_gasto': 1, 'qtd_nota': 1, 'qtd_sugestao': 1}
+            'qtd_pagamento': 10, 'qtd_gasto': 1, 'qtd_nota': 1, 'qtd_sugestao': 1, 'qtd_contr_modelo': 2}
 
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
 TAMANHO_DAS_IMAGENS_Mb = 4
 
 # Configurações dos Tickets
-TICKET_VALOR_BASE_BRL = 1.82  # coloca número PAR sempre
-PACOTE_QTD_INICIAL = 20
-PACOTE_QTD_MULTIPLICADOR = 30
+TICKET_VALOR_BASE_BRL = 1.82  # coloca final PAR sempre(para calculos exatos precisos no resultado)
+PACOTE_QTD_INICIAL = 15
+PACOTE_QTD_MULTIPLICADOR = 50
 DESCONTO_PACOTE_MULTIPLICADOR = 4  # percentual
-DESCONTO_ADD_BITCOIN = 20
+DESCONTO_ADD_BITCOIN = 20  # percentual
 
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -139,14 +141,7 @@ elif USAR_DB == 2:
         DATABASES = {'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)}
     else:
         # Para criar a base de dados inicial(makemigrations e migrate). Conecta e cria.
-        DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql',
-                                 'NAME': 'railway',
-                                 'USER': 'postgres',
-                                 'PASSWORD': 'q032LeA3QMG3zX1Jir0I',
-                                 'HOST': 'containers-us-west-28.railway.app',
-                                 'PORT': '5905',
-                                 }
-                     }
+        DATABASES = {'default': dj_database_url.config(default=os.environ['DEFAULT'], conn_max_age=1800)}
 elif USAR_DB == 3:
     # PostGreSQL + Render.com ( with dj-database-url)
     DATABASES = {

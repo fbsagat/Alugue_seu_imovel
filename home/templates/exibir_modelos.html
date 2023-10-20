@@ -24,7 +24,7 @@ Meus Modelos / {{ SITE_NAME }}
             </button>
         </form>
 
-        <form class="py-2 px-3" action="{% url 'home:Contrato Comunidade' %}">
+        <form class="py-2 px-3" action="{% url 'home:Modelos Comunidade' %}">
             <button class="btn btn-sm btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
                 Modelos da comunidade
             </button>
@@ -91,7 +91,7 @@ Meus Modelos / {{ SITE_NAME }}
                             <a href="{% url 'home:Editar Modelo' modelo.pk %}" title="Editar">✒️</a>
                             <a href="{% url 'home:Visualizar Modelo' modelo.pk %}" title="Visualizar"
                                target="_blank">📑</a>
-                            <a href="{% url 'home:Excluir Modelo' modelo.pk %}" title="Excluir">❌</a>
+                            <a href="{% url 'home:Excluir Modelo' modelo.pk 0 %}" title="Excluir">❌</a>
                         </div>
                     </div>
                 </div>

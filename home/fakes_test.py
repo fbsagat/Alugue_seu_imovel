@@ -239,3 +239,27 @@ def sugestoes_ficticias():
                                           datetime.now().date() + timedelta(days=-dias))
     return {'corpo': corpo, 'likes': likes, 'aprovada': aprovada, 'implementada': implementada,
             'data_implementada': data_implementada}
+
+
+def modelos_contratos_ficticios(usuario):
+    titulo = fake.paragraph(nb_sentences=1)
+    corpo = fake.paragraph(nb_sentences=randrange(15, 60))
+
+    usuarios = Usuario.objects.all()
+    alguns_usuarios = []
+    count = 0
+    valor = randrange(0, len(usuarios))
+    while True:
+        if count == 0:
+            alguns_usuarios.append(usuario)
+        alguns_usuarios.append(choice(usuarios)) if porcentagem_de_chance(75) else None
+        if count == valor:
+            break
+        count += 1
+
+    usuarios = alguns_usuarios
+    descricao = fake.paragraph(nb_sentences=randrange(2, 3))
+    comunidade = porcentagem_de_chance(50)
+
+    return {'titulo': titulo, 'corpo': corpo, 'usuarios': usuarios, 'descricao': descricao,
+            'comunidade': comunidade}

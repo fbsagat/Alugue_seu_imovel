@@ -89,6 +89,16 @@ PAREI AQUI \/
 Criar a função comunidade no editor de modelos.
         1. colocar o visualizar / 2. colocar descrição / 3. Fazer o sistema de exclusão inteligente
 
+        # Ps: No ato de editar um contrato, se não houver nenhum ContratoDocConfig utilizando o mesmo
+        #   ou outro usuário além do autor, editá-lo
+        #   normalmente, porém, se houver alguma das duas condições, criar uma cópia nova, para não modificar o
+        #   'modelo de contrato' do contrato que
+        #   está utilizando-o, ou usuário utilizando-o, no caso da segunda condição, criando assim um sistema de
+        #   versionamento.
+        #   Para tudo isso, criaremos a função copiar() que duplicará o modelo nomeando o novo autor.
+        #   Isso tudo deverá acontecer, para não haver edição de nenhum 'modelo' que já esteja sendo usado por um
+        #   contrato ou 'copiado' por algum usuário, apenas quando, o único usuário esteja sendo o próprio autor.
+
 Implementar filtros/buscas nas paginas do botão histórico.
 
 Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
@@ -150,12 +160,12 @@ Regras do programador:
     1.2. Criar o signal que vai criar a tarefa de acordo com o momento desejado(na criação do objeto, na modificação
         de algum parâmetro, gatilho temporal(celery), etc...)
     1.3. Configurar a nova tarefa na classe Tarefa em models, nos seguintes métodos:
-        a. autor_tipo = Adicionar o numero referente ao novo autor da tarefa (usada pelo template).
-        b. autor_tipo_display = Adicionar o display para esta tarefa (usada pelo template).
-        c. tarefa_nova = Verifica se a tarefa aparecerá em 'tarefas novas' ou em 'histórico de tarefas' (cada autor tem
+        1.3.1. autor_tipo = Adicionar o numero referente ao novo autor da tarefa (usada pelo template).
+        1.3.2. autor_tipo_display = Adicionar o display para esta tarefa (usada pelo template).
+        1.3.3. tarefa_nova = Verifica se a tarefa aparecerá em 'tarefas novas' ou em 'histórico de tarefas' (cada autor tem
             a sua regra).
-        d. borda = Retorna a classe(html) que gerencia a cor da borda do card da tarefa em questão(usada pelo template).
-        e. texto = Retorna o texto a ser exibido na aba de tarefas(cada autor tem seu texto).
+        1.3.4. borda = Retorna a classe(html) que gerencia a cor da borda do card da tarefa em questão(usada pelo template).
+        1.3.5. texto = Retorna o texto a ser exibido na aba de tarefas(cada autor tem seu texto).
     1.4. Adicionar a exibição da tarefa nova e as urls(criar elas tbm, em urls.py) necessárias para as modificações do
         estado do autor e/ou tarefa no template (offcanvas_tarefas.html).
     1.5. Modificar a função criar_uma_tarefa em signals.py adicionando a forma/regra de recuperação(desfazer exclusão)

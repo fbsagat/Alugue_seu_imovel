@@ -106,9 +106,11 @@ def validar_cpf(cpf):
 # 008: -----------------------------------------------
 def loja_info():
     """ Esta função deve retornar um dicionário com os cards da loja
-    Cada item deve se chamar pelo título do card e deve conter uma lista com as seguintes informações e na mesma ordem:
-    Quantidades de tickets(ambos), valor do pacote(btc e brl), valor por ticket no pacote(btc e brl),
-    desconto percentual por unidade(btc e brl).
+    Cada item deve conter uma lista com as seguintes informações e na mesma ordem:
+    Nome do card(nome), percentual de desconto para o card(desconto_porcent), quantidade de tickets(ticket_qtd),
+     valor do pacote(btc e brl)(valor_pct_brl, valor_pct_btc), valor por ticket no pacote(btc e brl)
+     (valor_por_ticket_brl, valor_por_ticket_btc) e desconto percentual por unidade(btc e brl)(desconto_p_un_brl,
+     desconto_p_un_btc).
     """
 
     pacotes_nomes = ['Pacote Pequeno', 'Pacote Médio', 'Pacote Grande', 'Pacote Gigante']
@@ -125,11 +127,10 @@ def loja_info():
 
         valor_por_ticket_brl = valor_ticket - (valor_ticket * desconto_porcent / 100)
         valor_pacote_brl = valor_por_ticket_brl * ticket_qtd
-
         valor_por_ticket_btc = valor_ticket - (valor_ticket * (desconto_porcent+desconto_add_cripto) / 100)
         valor_pacote_btc = valor_por_ticket_btc * ticket_qtd
-
         desconto_p_un_btc = desconto_porcent + desconto_add_cripto
+
         pacote = {
             'nome': pacote,
             'ticket_qtd': ticket_qtd,

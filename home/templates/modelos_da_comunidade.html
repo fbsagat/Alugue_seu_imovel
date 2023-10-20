@@ -24,7 +24,7 @@ Modelos da Comunidade / {{ SITE_NAME }}
             </button>
         </form>
 
-        <form class="py-2 px-3" action="{% url 'home:Contrato Comunidade' %}">
+        <form class="py-2 px-3" action="{% url 'home:Modelos Comunidade' %}">
             <button class="btn btn-sm active btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
                 Modelos da comunidade
             </button>
@@ -88,14 +88,33 @@ Modelos da Comunidade / {{ SITE_NAME }}
 
                     <div class="card-footer">
                         <div class="col d-flex justify-content-around">
-                            {% if modelo.autor == request.user %}
-                            <a href="{% url 'home:Editar Modelo' modelo.pk %}" title="Editar">✒️</a>
-                            <a href="{% url 'home:Visualizar Modelo' modelo.pk %}" title="Visualizar"
-                               target="_blank">📑</a>
-                            <a href="{% url 'home:Excluir Modelo' modelo.pk %}" title="Excluir">❌</a>
+                            {% if request.user in modelo.usuarios.all %}
+                            <form action="{% url 'home:Editar Modelo' modelo.pk %}">
+                                <button type="submit" title="Editar">
+                                    ✒️
+                                </button>
+                            </form>
+                            <form action="{% url 'home:Visualizar Modelo' modelo.pk %}" target="_blank">
+                                <button type="submit" title="Visualizar">
+                                    📑
+                                </button>
+                            </form>
+                            <form action="{% url 'home:Excluir Modelo' modelo.pk 1 %}">
+                                <button type="submit" title="Excluir">
+                                    ❌
+                                </button>
+                            </form>
                             {% else %}
-                            <a href="{% url 'home:Visualizar Modelo' modelo.pk %}" title="Visualizar"
-                               target="_blank">📑</a>
+                            <form action="{% url 'home:Copiar Modelo' modelo.pk %}">
+                                <button type="submit" title="Copiar">
+                                    📥
+                                </button>
+                            </form>
+                            <form action="{% url 'home:Visualizar Modelo' modelo.pk %}" target="_blank">
+                                <button type="submit" title="Visualizar">
+                                    📑
+                                </button>
+                            </form>
                             {% endif %}
                         </div>
                     </div>

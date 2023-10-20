@@ -12,7 +12,7 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     aprovar_sugestao, arquivos_sugestoes_docs, arquivos_locatarios_docs, arquivos_mensagens_ao_dev, \
     arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, arquivos_gastos_docs, aviso_lido, \
     locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, adicionar_ticket, adicionar_ticket_todos, \
-    painel_configs, painel_loja, ModelosComunidade, arquivos_contratos_modelos, visualizar_modelo
+    painel_configs, painel_loja, ModelosComunidade, arquivos_contratos_modelos, visualizar_modelo, copiar_modelo
 
 from Alugue_seu_imovel import settings
 
@@ -77,9 +77,10 @@ urlpatterns = [
     path('modelos/', MeusModelos.as_view(), name='Modelos'),
     path('criar_modelo', criar_modelo, name='Criar Modelo'),
     path('editar_modelo/<int:pk>', EditarModelo.as_view(), name='Editar Modelo'),
+    path('copiar_modelo/<int:pk>', copiar_modelo, name='Copiar Modelo'),
     path('visualizar_modelo/<int:pk>', visualizar_modelo, name='Visualizar Modelo'),
-    path('excluir_modelo/<int:pk>', ExcluirModelo.as_view(), name='Excluir Modelo'),
-    path('contrato_modelos_comunidade/', ModelosComunidade.as_view(), name='Contrato Comunidade'),
+    path('excluir_modelo/<int:pk>/<int:pag_orig>', ExcluirModelo.as_view(), name='Excluir Modelo'),
+    path('contrato_modelos_comunidade/', ModelosComunidade.as_view(), name='Modelos Comunidade'),
 
     # ABA HISTORICO -------------------
     path('pagamentos/', Pagamentos.as_view(), name='Pagamentos'),

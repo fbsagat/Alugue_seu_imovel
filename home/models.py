@@ -603,7 +603,7 @@ class Contrato(models.Model):
          imóvel"""
         contratos = Contrato.objects.filter(do_locador=self.do_locador, do_locatario=self.do_locatario,
                                             do_imovel=self.do_imovel)
-        count = (f'{list(contratos).index(self)+2}' if len(contratos) > 1 else '1')
+        count = (f'{list(contratos).index(self) + 2}' if len(contratos) > 1 else '1')
         return (f'({self.do_locatario.primeiro_ultimo_nome()} em '
                 f'{self.do_imovel.nome} - nº{count} - '
                 f'{self.data_entrada.strftime("%m/%Y")})')
@@ -789,6 +789,8 @@ class ContratoModelo(models.Model):
     titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo')
     autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
                               on_delete=models.SET_NULL)
+    usuarios = models.ManyToManyField('Usuario', related_name='contratomod_usuarios', blank=False)
+
     descricao = models.CharField(blank=True, max_length=480, verbose_name='', help_text='Descrição')
     corpo = RichTextField(null=True, blank=True, verbose_name='')
     data_criacao = models.DateTimeField(auto_now_add=True)
@@ -816,6 +818,30 @@ class ContratoModelo(models.Model):
             if condicao in modelo_condicoes:
                 condicoes.append([modelo_condicoes[condicao][0], modelo_condicoes[condicao][1]])
         return condicoes if len(condicoes) > 0 else False
+
+    def verificar_utilizacao_config(self):
+        """Este método visa verificar se existe algum 'ContratoDocConfig' utilizando esta instancia de modelo"""
+        configs_do_user = ContratoDocConfig.objects.filter(do_modelo=self).exists()
+        return True if configs_do_user else False
+
+    def verificar_utilizacao_usuarios(self):
+        """Este método visa verificar se existe algum 'usuário' além do autor com uma cópia desta instancia de modelo"""
+        outros_usuarios = self.usuarios.all().exclude(pk=self.autor.pk).exists()
+        return True if outros_usuarios else False
+
+    def delete(self, *args, **kwargs):
+        # apagar o contrato apenas se não houver nenhum ContratoDocConfig ou outro usuário utilizando-o, caso contrário
+        # apagar o contrato apenas para o usuário e retirar da comunidade.
+        if self.verificar_utilizacao_config() or self.verificar_utilizacao_usuarios():
+            print(args)
+            print(kwargs)
+            self.usuarios.remove(self.autor)
+            # Fabio do futuro: Não é pra remover o autor e sim o usuário requisitante.
+            self.comunidade = False
+            # Tirar da comunidade? não! é um item público e não propriedade do requisitante.
+            self.save(update_fields=['comunidade', ])
+        else:
+            super(ContratoModelo, self).delete(*args, **kwargs)
 
 
 tipos_de_locacao = (
