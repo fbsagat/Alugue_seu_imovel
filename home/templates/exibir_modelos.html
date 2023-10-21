@@ -88,10 +88,18 @@ Meus Modelos / {{ SITE_NAME }}
 
                     <div class="card-footer">
                         <div class="col d-flex justify-content-around">
-                            <a href="{% url 'home:Editar Modelo' modelo.pk %}" title="Editar">✒️</a>
+                            <form action="{% url 'home:Editar Modelo' modelo.pk %}">
+                                <button type="submit" title="Editar">
+                                    ✒️
+                                </button>
+                            </form>
                             <a href="{% url 'home:Visualizar Modelo' modelo.pk %}" title="Visualizar"
                                target="_blank">📑</a>
-                            <a href="{% url 'home:Excluir Modelo' modelo.pk 0 %}" title="Excluir">❌</a>
+                            <form action="{% url 'home:Excluir Modelo' modelo.pk 0 %}">
+                                <button type="submit" title="Excluir">
+                                    ❌
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -129,7 +137,7 @@ Meus Modelos / {{ SITE_NAME }}
                 </div>
                 {% else %}
                 <div class="row mb-3 text-center">
-                    <h1>Nenhuma variável em: {{modelo.titulo}}</h1>
+                    <h1>Nenhuma variável neste modelo de contrato</h1>
                 </div>
                 {% endif %}
                 <div class="row mt-3">
@@ -169,7 +177,7 @@ Meus Modelos / {{ SITE_NAME }}
                 </div>
                 {% else %}
                 <div class="row mb-3 text-center">
-                    <h1>Nenhuma condição em: {{modelo.titulo}}</h1>
+                    <h1>Nenhuma condição neste modelo de contrato</h1>
                 </div>
                 {% endif %}
                 <div class="row mt-3">
@@ -189,20 +197,11 @@ Meus Modelos / {{ SITE_NAME }}
 <div class="container-fluid pt-1 text-center text-justify">
     <br>
     <div class="container-xxl">
-        <div class="row row-cols-5 row-cols-md-3 g-3 d-flex justify-content-center">
-            <div class="col ">
+        <div class="row g-3 d-flex justify-content-center">
+            <div class="col">
                 <div class="card bg-secondary text-white bg-opacity-50 border-white h-100">
                     <div class="card-body flex items-center justify-content-center">
-                        <a class="py-2 px-3" href="{% url 'home:Criar Modelo' %}">
-                            <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
-                                Criar novo modelo
-                            </button>
-                        </a>
-                        <a class="py-2 px-3" href="{% url 'home:Contrato PDF' %}">
-                            <button class="btn btn-outline-primary py-2 px-3 text-white rounded-md form-control-sm">
-                                Sair do editor
-                            </button>
-                        </a>
+                        <h1 class="fs-5">Você ainda não tem nenhum modelo de contrato</h1>
                     </div>
                 </div>
             </div>
@@ -211,5 +210,4 @@ Meus Modelos / {{ SITE_NAME }}
 </div>
 
 {% endif %}
-
 {% endblock %}

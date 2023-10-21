@@ -789,14 +789,15 @@ class ContratoModelo(models.Model):
     titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo')
     autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
                               on_delete=models.SET_NULL)
-    usuarios = models.ManyToManyField('Usuario', related_name='contratomod_usuarios', blank=False)
+    usuarios = models.ManyToManyField('Usuario', related_name='contratomod_usuarios', blank=True)
+    excluidos = models.ManyToManyField('Usuario', related_name='contratomod_excluidos', blank=True)
 
     descricao = models.CharField(blank=True, max_length=480, verbose_name='', help_text='Descrição')
     corpo = RichTextField(null=True, blank=True, verbose_name='')
     data_criacao = models.DateTimeField(auto_now_add=True)
     variaveis = models.JSONField(null=True, blank=True)
     condicoes = models.JSONField(null=True, blank=True)
-    comunidade = models.BooleanField(default=False, verbose_name='')
+    comunidade = models.BooleanField(default=False, verbose_name='Comunidade')
     visualizar = models.FileField(null=True)
 
     class Meta:
@@ -830,18 +831,17 @@ class ContratoModelo(models.Model):
         return True if outros_usuarios else False
 
     def delete(self, *args, **kwargs):
-        # apagar o contrato apenas se não houver nenhum ContratoDocConfig ou outro usuário utilizando-o, caso contrário
-        # apagar o contrato apenas para o usuário e retirar da comunidade.
+        """Apagar o contrato apenas se não houver nenhum ContratoDocConfig ou outro usuário utilizando-o, caso contrário
+        # apagar o contrato apenas para o usuário, retirar da comunidade caso ele seja o autor."""
+        user = Usuario.objects.get(pk=kwargs['kwargs'].get('user_pk'))
         if self.verificar_utilizacao_config() or self.verificar_utilizacao_usuarios():
-            print(args)
-            print(kwargs)
-            self.usuarios.remove(self.autor)
-            # Fabio do futuro: Não é pra remover o autor e sim o usuário requisitante.
-            self.comunidade = False
-            # Tirar da comunidade? não! é um item público e não propriedade do requisitante.
+            self.usuarios.remove(user)
+            if self.autor == user:
+                self.comunidade = False
+                self.excluidos.add(user)
             self.save(update_fields=['comunidade', ])
         else:
-            super(ContratoModelo, self).delete(*args, **kwargs)
+            super(ContratoModelo, self).delete()
 
 
 tipos_de_locacao = (

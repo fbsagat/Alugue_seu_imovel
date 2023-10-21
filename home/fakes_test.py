@@ -243,7 +243,7 @@ def sugestoes_ficticias():
 
 def modelos_contratos_ficticios(usuario):
     titulo = fake.paragraph(nb_sentences=1)
-    corpo = fake.paragraph(nb_sentences=randrange(15, 60))
+    corpo = f'<p>{fake.paragraph(nb_sentences=randrange(15, 60))}<p>'
 
     usuarios = Usuario.objects.all()
     alguns_usuarios = []
@@ -252,7 +252,7 @@ def modelos_contratos_ficticios(usuario):
     while True:
         if count == 0:
             alguns_usuarios.append(usuario)
-        alguns_usuarios.append(choice(usuarios)) if porcentagem_de_chance(75) else None
+        alguns_usuarios.append(choice(usuarios)) if porcentagem_de_chance(15) else None
         if count == valor:
             break
         count += 1

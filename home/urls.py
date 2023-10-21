@@ -8,11 +8,12 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     ExcluirPagm, EditarContrato, ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, \
     ApagarConta, Homepage, CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
     LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, afazer_concluida, gerar_contrato, criar_modelo, \
-    EditarModelo, ExcluirModelo, MeusModelos, forum_sugestoes, like_de_sugestoes, apagar_sugestao, implementar_sugestao, \
-    aprovar_sugestao, arquivos_sugestoes_docs, arquivos_locatarios_docs, arquivos_mensagens_ao_dev, \
-    arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, arquivos_gastos_docs, aviso_lido, \
-    locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, adicionar_ticket, adicionar_ticket_todos, \
-    painel_configs, painel_loja, ModelosComunidade, arquivos_contratos_modelos, visualizar_modelo, copiar_modelo
+    editar_modelo, ExcluirModelo, MeusModelos, forum_sugestoes, like_de_sugestoes, apagar_sugestao, \
+    implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, arquivos_locatarios_docs, \
+    arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, \
+    arquivos_gastos_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
+    adicionar_ticket, adicionar_ticket_todos, painel_configs, painel_loja, ModelosComunidade, \
+    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo
 
 from Alugue_seu_imovel import settings
 
@@ -76,7 +77,7 @@ urlpatterns = [
     # MODELO DE CONTRATO -------------------
     path('modelos/', MeusModelos.as_view(), name='Modelos'),
     path('criar_modelo', criar_modelo, name='Criar Modelo'),
-    path('editar_modelo/<int:pk>', EditarModelo.as_view(), name='Editar Modelo'),
+    path('editar_modelo/<int:pk>', editar_modelo, name='Editar Modelo'),
     path('copiar_modelo/<int:pk>', copiar_modelo, name='Copiar Modelo'),
     path('visualizar_modelo/<int:pk>', visualizar_modelo, name='Visualizar Modelo'),
     path('excluir_modelo/<int:pk>/<int:pag_orig>', ExcluirModelo.as_view(), name='Excluir Modelo'),

@@ -4,26 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções e melhorias no código.&#10;&#10;Criada a página loja.&#10;&#10;Atualizados os requerimentos.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;&#10;Melhorias no sistema de comunidade de compartilhamento de modelos de contratos.&#10;Iniciado o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Criado o modelos_contratos_ficticios, gerador de modelos de contratos ficticios.">
+      <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/fakes_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/fakes_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" beforeDir="false" afterPath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/funcoes_proprias.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/funcoes_proprias.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/criar_modelo.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/criar_modelo.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_modelo.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_modelo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/excluir_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_item.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/modelos_da_comunidade.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/modelos_da_comunidade.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/painel_loja.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_loja.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/preenchedor.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/preenchedor.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -493,7 +488,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="157" />
+    <option name="localTasksCounter" value="158" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -536,7 +531,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Aplicado o contrato manager ativos_margem nas forms_da_navbar." />
     <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Atualizados requirements." />
     <MESSAGE value="Atualização do roadmap." />
     <MESSAGE value="Melhorias e correções de bugs." />
@@ -561,6 +555,7 @@
     <MESSAGE value="Correções e melhorias no código." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Visão geral agora mostra contratos que serão ativados em breve (15 dias)" />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Criada a página loja.&#10;&#10;Atualizados os requerimentos." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções e melhorias no código.&#10;&#10;Criada a página loja.&#10;&#10;Atualizados os requerimentos." />
+    <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Melhorias no sistema de comunidade de compartilhamento de modelos de contratos.&#10;Iniciado o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Criado o modelos_contratos_ficticios, gerador de modelos de contratos ficticios." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;&#10;Melhorias no sistema de comunidade de compartilhamento de modelos de contratos.&#10;Iniciado o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Criado o modelos_contratos_ficticios, gerador de modelos de contratos ficticios." />
   </component>
 </project>

@@ -94,11 +94,8 @@ Modelos da Comunidade / {{ SITE_NAME }}
                                     ✒️
                                 </button>
                             </form>
-                            <form action="{% url 'home:Visualizar Modelo' modelo.pk %}" target="_blank">
-                                <button type="submit" title="Visualizar">
-                                    📑
-                                </button>
-                            </form>
+                            <a href="{% url 'home:Visualizar Modelo' modelo.pk %}" title="Visualizar"
+                               target="_blank">📑</a>
                             <form action="{% url 'home:Excluir Modelo' modelo.pk 1 %}">
                                 <button type="submit" title="Excluir">
                                     ❌
@@ -110,11 +107,8 @@ Modelos da Comunidade / {{ SITE_NAME }}
                                     📥
                                 </button>
                             </form>
-                            <form action="{% url 'home:Visualizar Modelo' modelo.pk %}" target="_blank">
-                                <button type="submit" title="Visualizar">
-                                    📑
-                                </button>
-                            </form>
+                            <a href="{% url 'home:Visualizar Modelo' modelo.pk %}" title="Visualizar"
+                               target="_blank">📑</a>
                             {% endif %}
                         </div>
                     </div>
@@ -154,7 +148,7 @@ Modelos da Comunidade / {{ SITE_NAME }}
                 </div>
                 {% else %}
                 <div class="row mb-3 text-center">
-                    <h1>Nenhuma variável em: {{modelo.titulo}}</h1>
+                    <h1>Nenhuma variável neste modelo de contrato</h1>
                 </div>
                 {% endif %}
                 <div class="row mt-3">
@@ -194,7 +188,7 @@ Modelos da Comunidade / {{ SITE_NAME }}
                 </div>
                 {% else %}
                 <div class="row mb-3 text-center">
-                    <h1>Nenhuma condição em: {{modelo.titulo}}</h1>
+                    <h1>Nenhuma condição neste modelo de contrato</h1>
                 </div>
                 {% endif %}
                 <div class="row mt-3">

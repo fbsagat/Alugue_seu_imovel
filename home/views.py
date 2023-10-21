@@ -1211,14 +1211,6 @@ def gerar_contrato(request):
 
 
 @login_required
-def contratos_da_comunidade(request):
-    # exibir os modelos de contratos criados pelos usuários que estão marcados como compartilhados para a comunidade
-    context = {}
-    context['SITE_NAME'] = settings.SITE_NAME
-    return render(request, 'modelos_da_comunidade.html', context)
-
-
-@login_required
 def criar_modelo(request):
     context = {}
     form = FormContratoModelo()
@@ -1267,15 +1259,15 @@ def copiar_modelo(request, pk):
 def visualizar_modelo(request, pk):
     context = {}
     modelo = get_object_or_404(ContratoModelo, pk=pk)
-    if request.user in modelo.usuarios.all():
+    if request.user in modelo.excluidos.all():
+        raise Http404
+    else:
         if modelo.autor == request.user or modelo.comunidade:
             context['modelo'] = modelo
             context['SITE_NAME'] = settings.SITE_NAME
             return render(request, 'visualizar_contratos_modelos.html', context)
         else:
             raise Http404
-    else:
-        raise Http404
 
 
 class MeusModelos(LoginRequiredMixin, ListView):
@@ -1301,8 +1293,11 @@ class ModelosComunidade(LoginRequiredMixin, ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        qs1 = ContratoModelo.objects.filter(comunidade=True)
-        return qs1.order_by('-data_criacao')
+        user = self.request.user
+        qs1 = ContratoModelo.objects.filter(comunidade=True, autor=user).exclude(excluidos__in=[user, ])
+        qs2 = ContratoModelo.objects.filter(comunidade=True).exclude(usuarios__in=[user, ]).exclude(
+            excluidos__in=[user, ])
+        return qs1.union(qs2).order_by('-data_criacao')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ModelosComunidade, self).get_context_data(**kwargs)
@@ -1310,50 +1305,87 @@ class ModelosComunidade(LoginRequiredMixin, ListView):
         return context
 
 
-class EditarModelo(LoginRequiredMixin, UpdateView):
-    model = ContratoModelo
-    template_name = 'editar_modelo.html'
-    form_class = FormContratoModelo
+@transaction.atomic
+@login_required
+def editar_modelo(request, pk):
+    context = {}
 
-    def get_success_url(self):
-        return reverse_lazy('home:Modelos')
+    modelo = get_object_or_404(ContratoModelo, pk=pk)
+    form = FormContratoModelo(instance=modelo)
+    context['SITE_NAME'] = settings.SITE_NAME
+    context['form'] = form
+    context['object'] = modelo
+    context['variaveis'] = modelo_variaveis
+    context['condicoes'] = modelo_condicoes
 
-    def get_object(self, queryset=None):
-        self.object = get_object_or_404(ContratoModelo, pk=self.kwargs['pk'], autor=self.request.user)
-        return self.object
+    if request.method == "POST":
+        form = FormContratoModelo(request.POST)
+        if form.is_valid():
 
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(EditarModelo, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        context['variaveis'] = modelo_variaveis
-        context['condicoes'] = modelo_condicoes
-        return context
+            form_titulo = form.cleaned_data['titulo']
+            form_descr = form.cleaned_data['descricao']
+            form_corpo = form.cleaned_data['corpo']
+            form_comun = form.cleaned_data['comunidade']
 
-    def form_valid(self, form):
-        self.object = form.save()
+            if (form_titulo != modelo.titulo or form_descr != modelo.descricao or form_corpo != modelo.corpo or
+                    form_comun != modelo.comunidade):
 
-        variaveis = []
-        for i, j in modelo_variaveis.items():
-            if j[0] in self.object.corpo:
-                variaveis.append(i)
-        variaveis = list(dict.fromkeys(variaveis))
-        self.object.variaveis = variaveis
+                def salvar_modelo(criar_novo_modelo=False):
+                    variaveis = []
+                    for i, j in modelo_variaveis.items():
+                        if j[0] in form_corpo:
+                            variaveis.append(i)
+                    variaveis = list(dict.fromkeys(variaveis))
 
-        condicoes = []
-        for i, j in modelo_condicoes.items():
-            if j[0] in self.object.corpo:
-                condicoes.append(i)
-        condicoes = list(dict.fromkeys(condicoes))
-        self.object.condicoes = condicoes
+                    condicoes = []
+                    for i, j in modelo_condicoes.items():
+                        if j[0] in form_corpo:
+                            condicoes.append(i)
+                    condicoes = list(dict.fromkeys(condicoes))
 
-        self.object.save(update_fields=['variaveis', 'condicoes'])
+                    dados = {'modelo_pk': modelo.pk, 'modelo': modelo, 'usuario_username': str(modelo.autor.username)}
+                    link = gerar_contrato_pdf(dados=dados, visualizar=True)
 
-        return super().form_valid(form)
+                    if criar_novo_modelo:
+                        novo_modelo = ContratoModelo.objects.create(autor=request.user, titulo=form_titulo,
+                                                                    corpo=form_corpo, descricao=form_descr,
+                                                                    comunidade=form_comun, variaveis=variaveis or None,
+                                                                    condicoes=condicoes or None, visualizar=link)
+
+                        novo_modelo.usuarios.add(request.user)
+                        modelo.usuarios.remove(request.user)
+                        if modelo.autor == request.user:
+                            modelo.comunidade = False
+                            modelo.excluidos.add(request.user)
+                    else:
+                        modelo.titulo = form_titulo
+                        modelo.corpo = form_corpo
+                        modelo.descricao = form_descr
+                        modelo.comunidade = form_comun
+                        modelo.variaveis = variaveis or None
+                        modelo.condicoes = condicoes or None
+                        modelo.visualizar = link
+                        modelo.data_criacao = datetime.now()
+                        modelo.save()
+
+                if modelo.verificar_utilizacao_config() or modelo.verificar_utilizacao_usuarios():
+                    salvar_modelo(criar_novo_modelo=True)
+                else:
+                    salvar_modelo(criar_novo_modelo=False)
+
+            return redirect(reverse_lazy('home:Modelos'))
+
+    return render(request, 'editar_modelo.html', context)
 
 
 class ExcluirModelo(LoginRequiredMixin, DeleteView):
     model = ContratoModelo
     template_name = 'excluir_item.html'
+
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        self.object.delete(kwargs=dict(user_pk=self.request.user.pk))
+        return HttpResponseRedirect(success_url)
 
     def get_success_url(self):
         if self.kwargs['pag_orig'] == 1:
@@ -2453,6 +2485,24 @@ def criar_modelos_contratos_ficticios(request, quantidade, multiplicador, usuari
                 c_model.corpo = aleatorio.get('corpo')
                 c_model.descricao = aleatorio.get('descricao')
                 c_model.comunidade = aleatorio.get('comunidade')
+
+                variaveis = []
+                for i, j in modelo_variaveis.items():
+                    if j[0] in c_model.corpo:
+                        variaveis.append(i)
+                variaveis = list(dict.fromkeys(variaveis))
+
+                condicoes = []
+                for i, j in modelo_condicoes.items():
+                    if j[0] in c_model.corpo:
+                        condicoes.append(i)
+                condicoes = list(dict.fromkeys(condicoes))
+                c_model.variaveis = variaveis or None
+                c_model.condicoes = condicoes or None
+
+                dados = {'modelo_pk': c_model.pk, 'modelo': c_model, 'usuario_username': str(usuario)}
+                link = gerar_contrato_pdf(dados=dados, visualizar=True)
+                c_model.visualizar = link
                 c_model.save()
                 if aleatorio.get('usuarios'):
                     for usuario_ in aleatorio.get('usuarios'):
