@@ -46,18 +46,18 @@ Meus Modelos / {{ SITE_NAME }}
                 <div class="card bg-secondary text-white bg-opacity-50 border-white h-100">
 
                     <div class="card-header text-decoration-underline">
-                        <h1>{{ page_obj.start_index|add:forloop.counter0 }}. {{ modelo.titulo }}</h1>
+                        <h1>{{ page_obj.start_index|add:forloop.counter0 }}. {{ modelo.contrato_modelo.titulo }}</h1>
                     </div>
 
                     <div class="card-body row g-3 d-flex justify-content-center">
 
                         <div class="d-flex flex-column mb-3">
                             <div class="p-2">
-                                <h1>Descrição: {{ modelo.descricao }}</h1>
+                                <h1>Descrição: {{ modelo.contrato_modelo.descricao }}</h1>
                             </div>
                             <br>
                             <div class="p-2">
-                                <h1>{% if modelo.autor == request.user %}
+                                <h1>{% if modelo.contrato_modelo.autor == request.user %}
                                     Criado por Você{% else %}Modelo da comunidade{% endif %}</h1>
                             </div>
                             <br>
@@ -68,14 +68,14 @@ Meus Modelos / {{ SITE_NAME }}
 
                         <div class="d-flex justify-content-around">
                             <!-- Botão modal variáveis -->
-                            <a data-bs-toggle="modal" data-bs-target="#modal_variaveis{{ modelo.pk }}"
+                            <a data-bs-toggle="modal" data-bs-target="#modal_variaveis{{ modelo.contrato_modelo.pk }}"
                                class="dropdown-item text-center">
                                 <button type="button" class="btn btn-sm btn-secondary">
                                     Variáveis neste modelo
                                 </button>
                             </a>
                             <!-- Botão modal condições -->
-                            <a data-bs-toggle="modal" data-bs-target="#modal_condicoes{{ modelo.pk }}"
+                            <a data-bs-toggle="modal" data-bs-target="#modal_condicoes{{ modelo.contrato_modelo.pk }}"
                                class="dropdown-item text-center">
                                 <button type="button" class="btn btn-sm btn-secondary"
                                         title="Adicionar tickets em todos os slots">
@@ -88,14 +88,14 @@ Meus Modelos / {{ SITE_NAME }}
 
                     <div class="card-footer">
                         <div class="col d-flex justify-content-around">
-                            <form action="{% url 'home:Editar Modelo' modelo.pk %}">
+                            <form action="{% url 'home:Editar Modelo' modelo.contrato_modelo.pk %}">
                                 <button type="submit" title="Editar">
                                     ✒️
                                 </button>
                             </form>
-                            <a href="{% url 'home:Visualizar Modelo' modelo.pk %}" title="Visualizar"
+                            <a href="{% url 'home:Visualizar Modelo' modelo.contrato_modelo.pk %}" title="Visualizar"
                                target="_blank">📑</a>
-                            <form action="{% url 'home:Excluir Modelo' modelo.pk 0 %}">
+                            <form action="{% url 'home:Excluir Modelo' modelo.contrato_modelo.pk 0 %}">
                                 <button type="submit" title="Excluir">
                                     ❌
                                 </button>
@@ -113,18 +113,18 @@ Meus Modelos / {{ SITE_NAME }}
 
 <!--modal de Variáveis -->
 {% for modelo in modelos %}
-<div class="modal modal-lg fade" id="modal_variaveis{{ modelo.pk }}" tabindex="-1"
-     aria-labelledby="MODAL_VARIAVEIS{{ modelo.pk }}"
+<div class="modal modal-lg fade" id="modal_variaveis{{ modelo.contrato_modelo.pk }}" tabindex="-1"
+     aria-labelledby="MODAL_VARIAVEIS{{ modelo.contrato_modelo.pk }}"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border border-black text-white">
             <div class="col mx-1 my-1">
-                {% if modelo.display_variaveis is not False %}
+                {% if modelo.contrato_modelo.display_variaveis is not False %}
                 <div class="row mb-3 text-center">
-                    <h1>Variáveis em: {{modelo.titulo}}:</h1>
+                    <h1>Variáveis em: {{modelo.contrato_modelo.titulo}}:</h1>
                 </div>
                 <div class="row row-cols-md-2 g-1">
-                    {% for variavel in modelo.display_variaveis %}
+                    {% for variavel in modelo.contrato_modelo.display_variaveis %}
                     <div class="col">
                         <div class="card bg-black border-secondary" style="cursor:default;"
                              title="{{ variavel.1 }}">
@@ -153,18 +153,18 @@ Meus Modelos / {{ SITE_NAME }}
 <!--modal fim -->
 
 <!--modal de Condições -->
-<div class="modal modal-lg fade" id="modal_condicoes{{ modelo.pk }}" tabindex="-1"
-     aria-labelledby="MODAL_CONDICOES{{ modelo.pk }}"
+<div class="modal modal-lg fade" id="modal_condicoes{{ modelo.contrato_modelo.pk }}" tabindex="-1"
+     aria-labelledby="MODAL_CONDICOES{{ modelo.contrato_modelo.pk }}"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border border-black text-white">
             <div class="col mx-1 my-1">
-                {% if modelo.display_condicoes is not False %}
+                {% if modelo.contrato_modelo.display_condicoes is not False %}
                 <div class="row mb-3 text-center">
-                    <h1>Condições em: {{modelo.titulo}}:</h1>
+                    <h1>Condições em: {{modelo.contrato_modelo.titulo}}:</h1>
                 </div>
                 <div class="row row-cols-md-2 g-1">
-                    {% for condicao in modelo.display_condicoes %}
+                    {% for condicao in modelo.contrato_modelo.display_condicoes %}
                     <div class="col">
                         <div class="card bg-black border-secondary" style="cursor:default;"
                              title="{{ condicao.1 }}">

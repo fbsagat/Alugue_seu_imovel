@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, DevMensagen, ImovGrupo, Parcela, \
-    Tarefa, ContratoDocConfig, ContratoModelo, Sugestao
+    Tarefa, ContratoDocConfig, ContratoModelo, Sugestao, UsuarioContratoModelo
 
 
 @admin.register(Usuario)
@@ -63,6 +63,12 @@ class ContratoDocConfigsAdmin(admin.ModelAdmin):
 @admin.register(ContratoModelo)
 class ContratoModeloAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'autor', 'data_criacao',)
+
+
+@admin.register(UsuarioContratoModelo)
+class UsuarioContratoModeloAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'contrato_modelo', 'data_criacao',)
+    readonly_fields = ['data_criacao']
 
 
 @admin.register(Pagamento)

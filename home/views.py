@@ -36,7 +36,7 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
-    ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot
+    ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot, UsuarioContratoModelo
 
 
 # -=-=-=-=-=-=-=-= BOTÃO VISÃO GERAL -=-=-=-=-=-=-=-=
@@ -1250,7 +1250,8 @@ def criar_modelo(request):
 @login_required
 def copiar_modelo(request, pk):
     modelo = get_object_or_404(ContratoModelo, pk=pk)
-    if modelo.comunidade is True and request.user not in modelo.usuarios.all():
+    if (modelo.comunidade is True and request.user not in modelo.usuarios.all()
+            and request.user not in modelo.excluidos.all()):
         modelo.usuarios.add(request.user.pk)
     return redirect(reverse('home:Modelos'))
 
@@ -1277,7 +1278,9 @@ class MeusModelos(LoginRequiredMixin, ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        qs1 = ContratoModelo.objects.filter(usuarios=self.request.user)
+        user = self.request.user
+        qs1 = UsuarioContratoModelo.objects.filter(usuario__in=[user, ]).exclude(
+            contrato_modelo__excluidos__in=[user, ])
         return qs1.order_by('-data_criacao')
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -1293,10 +1296,11 @@ class ModelosComunidade(LoginRequiredMixin, ListView):
     paginate_by = 9
 
     def get_queryset(self):
+        # Aqui mostrar todos os modelos de contratos com comunidade True, retirar os que o usuário está em excluídos,
+        # retirar os que o usuário está em usuários
         user = self.request.user
         qs1 = ContratoModelo.objects.filter(comunidade=True, autor=user).exclude(excluidos__in=[user, ])
-        qs2 = ContratoModelo.objects.filter(comunidade=True).exclude(usuarios__in=[user, ]).exclude(
-            excluidos__in=[user, ])
+        qs2 = ContratoModelo.objects.filter(comunidade=True).exclude(excluidos__in=[user, ])
         return qs1.union(qs2).order_by('-data_criacao')
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -1366,6 +1370,8 @@ def editar_modelo(request, pk):
                         modelo.condicoes = condicoes or None
                         modelo.visualizar = link
                         modelo.data_criacao = datetime.now()
+                        modelo.usuarios.remove(request.user)
+                        modelo.usuarios.add(request.user)
                         modelo.save()
 
                 if modelo.verificar_utilizacao_config() or modelo.verificar_utilizacao_usuarios():
@@ -1400,7 +1406,9 @@ class ExcluirModelo(LoginRequiredMixin, DeleteView):
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirModelo, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
-        contratos_config = ContratoDocConfig.objects.filter(do_modelo=self.object).values_list('do_contrato')
+        contratos_config = ContratoDocConfig.objects.filter(do_modelo=self.object,
+                                                            do_contrato__do_locador=self.request.user).values_list(
+            'do_contrato')
         contratos = Contrato.objects.filter(pk__in=contratos_config)
         context['contratos_modelo'] = contratos
         return context
@@ -2499,11 +2507,14 @@ def criar_modelos_contratos_ficticios(request, quantidade, multiplicador, usuari
                 condicoes = list(dict.fromkeys(condicoes))
                 c_model.variaveis = variaveis or None
                 c_model.condicoes = condicoes or None
+                c_model.save()
 
+                c_model = ContratoModelo.objects.get(pk=c_model.pk)
                 dados = {'modelo_pk': c_model.pk, 'modelo': c_model, 'usuario_username': str(usuario)}
                 link = gerar_contrato_pdf(dados=dados, visualizar=True)
                 c_model.visualizar = link
-                c_model.save()
+                c_model.save(update_fields=['visualizar'])
+
                 if aleatorio.get('usuarios'):
                     for usuario_ in aleatorio.get('usuarios'):
                         c_model.usuarios.add(usuario_)

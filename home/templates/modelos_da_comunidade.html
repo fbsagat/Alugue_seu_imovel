@@ -88,7 +88,7 @@ Modelos da Comunidade / {{ SITE_NAME }}
 
                     <div class="card-footer">
                         <div class="col d-flex justify-content-around">
-                            {% if request.user in modelo.usuarios.all %}
+                            {% if request.user == modelo.autor %}
                             <form action="{% url 'home:Editar Modelo' modelo.pk %}">
                                 <button type="submit" title="Editar">
                                     ✒️

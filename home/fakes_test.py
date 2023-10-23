@@ -68,7 +68,7 @@ def imov_grupo_fict():
     lista = ['Res.', 'Edf.', 'Conj.', 'Rua', 'Avenida', 'Bairro']
     siglas = choice(lista)
     nome = f'{siglas} {fake.bairro()}'
-    tipo = randrange(0, 7)
+    tipo = randrange(0, 6)
     return {'nome': nome, 'tipo': tipo}
 
 

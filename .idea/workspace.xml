@@ -4,20 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;&#10;Melhorias no sistema de comunidade de compartilhamento de modelos de contratos.&#10;Iniciado o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Criado o modelos_contratos_ficticios, gerador de modelos de contratos ficticios.">
-      <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;View editar_modelo foi aprimorada: mais inteligente, economizadora de espaço no banco de dados.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/fakes_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/fakes_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" beforeDir="false" afterPath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/excluir_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_item.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/modelos_da_comunidade.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/modelos_da_comunidade.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -97,7 +90,7 @@
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Execução inicial s/predio">
+  <component name="RunManager" selected="Python.Runserver">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -488,7 +481,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="158" />
+    <option name="localTasksCounter" value="159" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -531,7 +524,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Pequenas melhorias e correções de bugs.&#10;Atualizados requirements." />
     <MESSAGE value="Atualização do roadmap." />
     <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Atualização dos frameworks, correção de bugs e melhorias.&#10;Melhorias relevantes: Agora a tabela pdf mostra também, em texto menos destacado, parcelas de contratos antigos e futuros, dos imoveis listados, caso hajam, ou 'sem contrato' caso não haja.&#10;View da tabela mais organizada e explicativa." />
@@ -556,6 +548,7 @@
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Visão geral agora mostra contratos que serão ativados em breve (15 dias)" />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Criada a página loja.&#10;&#10;Atualizados os requerimentos." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Melhorias no sistema de comunidade de compartilhamento de modelos de contratos.&#10;Iniciado o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Criado o modelos_contratos_ficticios, gerador de modelos de contratos ficticios." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;&#10;Melhorias no sistema de comunidade de compartilhamento de modelos de contratos.&#10;Iniciado o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Criado o modelos_contratos_ficticios, gerador de modelos de contratos ficticios." />
+    <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;View editar_modelo foi aprimorada: mais inteligente, economizadora de espaço no banco de dados." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;View editar_modelo foi aprimorada: mais inteligente, economizadora de espaço no banco de dados." />
   </component>
 </project>

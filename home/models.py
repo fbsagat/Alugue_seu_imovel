@@ -789,8 +789,9 @@ class ContratoModelo(models.Model):
     titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo')
     autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
                               on_delete=models.SET_NULL)
-    usuarios = models.ManyToManyField('Usuario', related_name='contratomod_usuarios', blank=True)
-    excluidos = models.ManyToManyField('Usuario', related_name='contratomod_excluidos', blank=True)
+    usuarios = models.ManyToManyField('Usuario', related_name='contratos_modelos', blank=True,
+                                      through='UsuarioContratoModelo')
+    excluidos = models.ManyToManyField('Usuario', related_name='contratos_modelos_excluidos', blank=True)
 
     descricao = models.CharField(blank=True, max_length=480, verbose_name='', help_text='Descrição')
     corpo = RichTextField(null=True, blank=True, verbose_name='')
@@ -848,6 +849,19 @@ tipos_de_locacao = (
     (None, '-----------'),
     (1, 'residencial'),
     (2, 'não residencial'))
+
+
+class UsuarioContratoModelo(models.Model):
+    usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='usuario_contrato_modelo')
+    contrato_modelo = models.ForeignKey('ContratoModelo', on_delete=models.CASCADE,
+                                        related_name='usuario_contrato_modelo')
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.contrato_modelo} - {self.usuario} - {self.data_criacao}'
+
+    class Meta:
+        verbose_name_plural = 'Modelos de contratos-Usuários'
 
 
 class ContratoDocConfig(models.Model):
