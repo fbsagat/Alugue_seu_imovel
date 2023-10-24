@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;View editar_modelo foi aprimorada: mais inteligente, economizadora de espaço no banco de dados.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/fakes_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/fakes_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
@@ -80,6 +79,13 @@
       <force-push-target remote-path="origin" branch="main" />
       <force-push-target remote-path="origin" branch="deploy_testes" />
     </force-push-targets>
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings>
+        <option name="useSoftWraps" value="true" />
+      </console-settings>
+    </option>
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -481,22 +487,12 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="159" />
+    <option name="localTasksCounter" value="160" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
-    <option name="OPEN_GENERIC_TABS">
-      <map>
-        <entry key="553cd29f-6bbd-4037-80b5-286109ae633e" value="TOOL_WINDOW" />
-      </map>
-    </option>
     <option name="TAB_STATES">
       <map>
-        <entry key="553cd29f-6bbd-4037-80b5-286109ae633e">
-          <value>
-            <State />
-          </value>
-        </entry>
         <entry key="82c3e00a-ecba-4b74-9386-1ec1aeaee16d">
           <value>
             <State />
@@ -524,7 +520,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Atualização do roadmap." />
     <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Atualização dos frameworks, correção de bugs e melhorias.&#10;Melhorias relevantes: Agora a tabela pdf mostra também, em texto menos destacado, parcelas de contratos antigos e futuros, dos imoveis listados, caso hajam, ou 'sem contrato' caso não haja.&#10;View da tabela mais organizada e explicativa." />
     <MESSAGE value="Correções e melhorias no código:&#10;&#10;Criado validador 'validar_contrato_no_imovel_na_data' que valida na hora de ativar algum contrato. &#10;Agora contratos rescindidos não contam como impedimento para criação ou ativação de novos contratos nos validadores referentes a isto." />
@@ -549,6 +544,7 @@
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Criada a página loja.&#10;&#10;Atualizados os requerimentos." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Melhorias no sistema de comunidade de compartilhamento de modelos de contratos.&#10;Iniciado o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Criado o modelos_contratos_ficticios, gerador de modelos de contratos ficticios." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;View editar_modelo foi aprimorada: mais inteligente, economizadora de espaço no banco de dados." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;View editar_modelo foi aprimorada: mais inteligente, economizadora de espaço no banco de dados." />
+    <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário." />
   </component>
 </project>

@@ -823,19 +823,20 @@ class ContratoModelo(models.Model):
 
     def verificar_utilizacao_config(self):
         """Este método visa verificar se existe algum 'ContratoDocConfig' utilizando esta instancia de modelo"""
-        configs_do_user = ContratoDocConfig.objects.filter(do_modelo=self).exists()
-        return True if configs_do_user else False
+        configs_do_user = ContratoDocConfig.objects.filter(do_modelo=self).count()
+        return True if configs_do_user > 0 else False
 
-    def verificar_utilizacao_usuarios(self):
-        """Este método visa verificar se existe algum 'usuário' além do autor com uma cópia desta instancia de modelo"""
-        outros_usuarios = self.usuarios.all().exclude(pk=self.autor.pk).exists()
-        return True if outros_usuarios else False
+    def verificar_utilizacao_usuarios(self, usuario_pk):
+        """Este método visa verificar se existe algum 'usuário' além do usuário verificador com uma cópia desta
+        instancia de modelo"""
+        outros_usuarios = self.usuarios.all().exclude(pk=usuario_pk).count()
+        return True if outros_usuarios > 0 else False
 
     def delete(self, *args, **kwargs):
         """Apagar o contrato apenas se não houver nenhum ContratoDocConfig ou outro usuário utilizando-o, caso contrário
         # apagar o contrato apenas para o usuário, retirar da comunidade caso ele seja o autor."""
         user = Usuario.objects.get(pk=kwargs['kwargs'].get('user_pk'))
-        if self.verificar_utilizacao_config() or self.verificar_utilizacao_usuarios():
+        if self.verificar_utilizacao_config() or self.verificar_utilizacao_usuarios(user.pk):
             self.usuarios.remove(user)
             if self.autor == user:
                 self.comunidade = False

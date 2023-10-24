@@ -56,11 +56,12 @@ Modelos da Comunidade / {{ SITE_NAME }}
                                 <h1>Descrição: {{ modelo.descricao }}</h1>
                             </div>
                             <br>
+                            {% if user.is_superuser %}
                             <div class="p-2">
-                                <h1>{% if modelo.autor == request.user %}
-                                    Criado por Você{% else %}Modelo da comunidade{% endif %}</h1>
+                                <h1 class="text-muted">Criado por {{ modelo.autor }}</h1>
                             </div>
                             <br>
+                            {% endif %}
                             <div class="p-2">
                                 <h1>Criado em: {{ modelo.data_criacao }}</h1>
                             </div>

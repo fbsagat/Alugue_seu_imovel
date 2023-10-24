@@ -1170,7 +1170,7 @@ def gerar_contrato(request):
                  'imovel_estado': imovel.get_estado_display() or erro4,
                  'imovel_bairro': imovel.bairro or erro4,
                  'imovel_grupo': str(getattr(imovel, 'grupo') or erro4),
-                 'imovel_grupo_tipo': imov_grupo.get_tipo_display() or erro4,
+                 'imovel_grupo_tipo': imov_grupo.get_tipo_display() or erro4 if imov_grupo else erro4,
 
                  'fiador_nome_completo': getattr(contr_doc_configs, 'fiador_nome') or erro5,
                  'fiador_cpf': contr_doc_configs.f_cpf() or erro5,
@@ -1263,7 +1263,7 @@ def visualizar_modelo(request, pk):
     if request.user in modelo.excluidos.all():
         raise Http404
     else:
-        if modelo.autor == request.user or modelo.comunidade:
+        if modelo.autor == request.user or modelo.comunidade or request.user in modelo.usuarios.all():
             context['modelo'] = modelo
             context['SITE_NAME'] = settings.SITE_NAME
             return render(request, 'visualizar_contratos_modelos.html', context)
@@ -1313,7 +1313,6 @@ class ModelosComunidade(LoginRequiredMixin, ListView):
 @login_required
 def editar_modelo(request, pk):
     context = {}
-
     modelo = get_object_or_404(ContratoModelo, pk=pk)
     form = FormContratoModelo(instance=modelo)
     context['SITE_NAME'] = settings.SITE_NAME
@@ -1321,66 +1320,74 @@ def editar_modelo(request, pk):
     context['object'] = modelo
     context['variaveis'] = modelo_variaveis
     context['condicoes'] = modelo_condicoes
-
     if request.method == "POST":
         form = FormContratoModelo(request.POST)
         if form.is_valid():
-
             form_titulo = form.cleaned_data['titulo']
             form_descr = form.cleaned_data['descricao']
             form_corpo = form.cleaned_data['corpo']
             form_comun = form.cleaned_data['comunidade']
 
-            if (form_titulo != modelo.titulo or form_descr != modelo.descricao or form_corpo != modelo.corpo or
-                    form_comun != modelo.comunidade):
-
-                def salvar_modelo(criar_novo_modelo=False):
-                    variaveis = []
-                    for i, j in modelo_variaveis.items():
-                        if j[0] in form_corpo:
-                            variaveis.append(i)
-                    variaveis = list(dict.fromkeys(variaveis))
-
-                    condicoes = []
-                    for i, j in modelo_condicoes.items():
-                        if j[0] in form_corpo:
-                            condicoes.append(i)
-                    condicoes = list(dict.fromkeys(condicoes))
-
+            def salvar_modelo(criar_novo_modelo=False):
+                variaveis = []
+                for i, j in modelo_variaveis.items():
+                    if j[0] in form_corpo:
+                        variaveis.append(i)
+                variaveis = list(dict.fromkeys(variaveis))
+                condicoes = []
+                for i, j in modelo_condicoes.items():
+                    if j[0] in form_corpo:
+                        condicoes.append(i)
+                condicoes = list(dict.fromkeys(condicoes))
+                if criar_novo_modelo:
+                    novo_modelo = ContratoModelo.objects.create(autor=request.user, titulo=form_titulo,
+                                                                corpo=form_corpo, descricao=form_descr,
+                                                                comunidade=form_comun,
+                                                                variaveis=variaveis or None,
+                                                                condicoes=condicoes or None)
+                    novo_modelo.usuarios.add(request.user)
+                    modelo.usuarios.remove(request.user)
+                    if modelo.autor == request.user:
+                        modelo.comunidade = False
+                        modelo.excluidos.add(request.user)
+                    c_model = ContratoModelo.objects.get(pk=novo_modelo.pk)
+                    dados = {'modelo_pk': c_model.pk, 'modelo': c_model, 'usuario_username': str(request.user)}
+                    link = gerar_contrato_pdf(dados=dados, visualizar=True)
+                    c_model.visualizar = link
+                    c_model.save(update_fields=['visualizar'])
+                else:
                     dados = {'modelo_pk': modelo.pk, 'modelo': modelo, 'usuario_username': str(modelo.autor.username)}
                     link = gerar_contrato_pdf(dados=dados, visualizar=True)
+                    modelo.autor = request.user
+                    modelo.titulo = form_titulo
+                    modelo.corpo = form_corpo
+                    modelo.descricao = form_descr
+                    modelo.comunidade = form_comun
+                    modelo.variaveis = variaveis or None
+                    modelo.condicoes = condicoes or None
+                    modelo.visualizar = link
+                    modelo.data_criacao = datetime.now()
+                    modelo.usuarios.remove(request.user)
+                    modelo.usuarios.add(request.user)
+                    modelo.save()
 
-                    if criar_novo_modelo:
-                        novo_modelo = ContratoModelo.objects.create(autor=request.user, titulo=form_titulo,
-                                                                    corpo=form_corpo, descricao=form_descr,
-                                                                    comunidade=form_comun, variaveis=variaveis or None,
-                                                                    condicoes=condicoes or None, visualizar=link)
-
-                        novo_modelo.usuarios.add(request.user)
-                        modelo.usuarios.remove(request.user)
-                        if modelo.autor == request.user:
-                            modelo.comunidade = False
-                            modelo.excluidos.add(request.user)
-                    else:
-                        modelo.titulo = form_titulo
-                        modelo.corpo = form_corpo
-                        modelo.descricao = form_descr
-                        modelo.comunidade = form_comun
-                        modelo.variaveis = variaveis or None
-                        modelo.condicoes = condicoes or None
-                        modelo.visualizar = link
-                        modelo.data_criacao = datetime.now()
-                        modelo.usuarios.remove(request.user)
-                        modelo.usuarios.add(request.user)
-                        modelo.save()
-
-                if modelo.verificar_utilizacao_config() or modelo.verificar_utilizacao_usuarios():
+            # No ato de salvar um modelo editado: Condições para criar um modelo novo:
+            if modelo.verificar_utilizacao_config() or modelo.verificar_utilizacao_usuarios(request.user.pk):
+                if form_titulo != modelo.titulo or form_descr != modelo.descricao or form_corpo != modelo.corpo:
                     salvar_modelo(criar_novo_modelo=True)
+                elif form_titulo == modelo.titulo or form_descr == modelo.descricao or form_corpo == modelo.corpo:
+                    salvar_modelo(criar_novo_modelo=False)
                 else:
                     salvar_modelo(criar_novo_modelo=False)
-
+            else:
+                # No ato de salvar um modelo editado: Condições para editar o mesmo modelo:
+                if form_titulo != modelo.titulo or form_descr != modelo.descricao or form_corpo != modelo.corpo:
+                    salvar_modelo(criar_novo_modelo=True)
+                elif form_titulo == modelo.titulo or form_descr == modelo.descricao or form_corpo == modelo.corpo:
+                    salvar_modelo(criar_novo_modelo=False)
+                else:
+                    salvar_modelo(criar_novo_modelo=False)
             return redirect(reverse_lazy('home:Modelos'))
-
     return render(request, 'editar_modelo.html', context)
 
 
