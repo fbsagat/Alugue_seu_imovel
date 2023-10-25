@@ -28,5 +28,17 @@
       "usuarios":[1],
       "descricao": "Um Termo Aditivo, que tem por objeto a prorrogação do prazo de vigência estabelecido em um contrato anterior, com alteração no valor mensal."
     }
+  },
+  {
+    "model": "financeiro.PacoteConfig",
+    "pk": 1,
+    "fields": {
+      "ticket_valor_base_brl": 2.56,
+      "pacote_qtd_inicial": 15,
+      "pacote_qtd_multiplicador": 50,
+      "desconto_pacote_multiplicador": 4,
+      "desconto_add_bitcoin": 25,
+      "data_registro": "2023-10-25 01:04:00.000000"
+    }
   }
 ]

@@ -27,7 +27,7 @@ from django.template.defaultfilters import date as data_ptbr
 from home.fakes_test import porcentagem_de_chance
 
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
-    modelo_variaveis, modelo_condicoes, valor_por_extenso, loja_info
+    modelo_variaveis, modelo_condicoes, valor_por_extenso
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias, \
     modelos_contratos_ficticios
@@ -1387,7 +1387,9 @@ def editar_modelo(request, pk):
                     salvar_modelo(criar_novo_modelo=False)
                 else:
                     salvar_modelo(criar_novo_modelo=False)
+
             return redirect(reverse_lazy('home:Modelos'))
+
     return render(request, 'editar_modelo.html', context)
 
 
@@ -1909,16 +1911,10 @@ def painel_slots(request):
     return render(request, 'painel_slots.html', context)
 
 
+@login_required
 def painel_configs(request):
     context = {'SITE_NAME': settings.SITE_NAME}
     return render(request, 'painel_configs.html', context)
-
-
-def painel_loja(request):
-    loja_info_ = loja_info()
-
-    context = {'SITE_NAME': settings.SITE_NAME, 'loja_info': loja_info_}
-    return render(request, 'painel_loja.html', context)
 
 
 @login_required

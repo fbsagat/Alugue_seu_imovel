@@ -52,7 +52,7 @@ class ImoveisAdmin(admin.ModelAdmin):
 class ContratosAdmin(admin.ModelAdmin):
     list_display = ('do_locador', 'do_locatario', 'do_imovel', 'data_entrada', 'duracao', 'valor_mensal',
                     'data_registro')
-    list_filter = ('em_posse', 'rescindido', )
+    list_filter = ('em_posse', 'rescindido',)
 
 
 @admin.register(ContratoDocConfig)
@@ -109,8 +109,9 @@ class MensagemDevAdmin(admin.ModelAdmin):
 
 
 @admin.register(Tarefa)
-class Tarefas(admin.ModelAdmin):
+class TarefasAdmin(admin.ModelAdmin):
     list_display = (
-    'texto', 'content_object', 'do_usuario', 'autor_classe', 'objeto_id', 'data_registro', 'tarefa_nova', 'data_lida')
+        'texto', 'content_object', 'do_usuario', 'autor_classe', 'objeto_id', 'data_registro', 'tarefa_nova',
+        'data_lida')
     readonly_fields = ['content_object', 'texto', 'tarefa_nova']
     list_filter = ('autor_classe', 'apagada')

@@ -243,7 +243,9 @@ def sugestoes_ficticias():
 
 def modelos_contratos_ficticios(usuario):
     titulo = fake.paragraph(nb_sentences=1)
-    corpo = f'<p>{fake.paragraph(nb_sentences=randrange(15, 60))}<p>'
+    # PS: \/ o aplicativo ckeditor costuma modificar este campo, mesmo que o usuário, no site, não modifique nada na
+    # edição. (causa um fork no modelo, poré isto só acontece com os fictícios)
+    corpo = str(f'<p>{fake.paragraph(nb_sentences=randrange(10, 15))}<p>')
 
     usuarios = Usuario.objects.all()
     alguns_usuarios = []

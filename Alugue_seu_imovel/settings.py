@@ -23,13 +23,6 @@ FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
 TAMANHO_DAS_IMAGENS_Mb = 4
 
-# Configurações dos Tickets
-TICKET_VALOR_BASE_BRL = 2.56  # coloca final PAR sempre(para calculos exatos precisos no resultado)
-PACOTE_QTD_INICIAL = 15
-PACOTE_QTD_MULTIPLICADOR = 50
-DESCONTO_PACOTE_MULTIPLICADOR = 4  # percentual
-DESCONTO_ADD_BITCOIN = 25  # percentual
-
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -76,6 +69,7 @@ INSTALLED_APPS = [
     'social_django',
 
     'home',
+    'financeiro',
 ]
 
 MIDDLEWARE = [

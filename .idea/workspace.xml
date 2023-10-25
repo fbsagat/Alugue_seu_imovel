@@ -4,12 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.">
+      <change afterPath="$PROJECT_DIR$/financeiro/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/apps.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/funcoes_proprias.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/migrations/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/tests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/views.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/home/tests.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/fakes_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/fakes_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/modelos_da_comunidade.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/modelos_da_comunidade.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" beforeDir="false" afterPath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/funcoes_proprias.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/funcoes_proprias.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_loja.html" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -21,6 +36,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -59,21 +75,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home/templates&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.editor"
   }
-}</component>
+}]]></component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
@@ -89,14 +105,17 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home" />
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\templates" />
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures" />
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\templates" />
       <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\home\templates" />
-      <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\financeiro\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver">
+  <component name="RunManager" selected="Python.Execução inicial s/predio">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -487,7 +506,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="160" />
+    <option name="localTasksCounter" value="161" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -520,7 +539,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Atualização dos frameworks, correção de bugs e melhorias.&#10;Melhorias relevantes: Agora a tabela pdf mostra também, em texto menos destacado, parcelas de contratos antigos e futuros, dos imoveis listados, caso hajam, ou 'sem contrato' caso não haja.&#10;View da tabela mais organizada e explicativa." />
     <MESSAGE value="Correções e melhorias no código:&#10;&#10;Criado validador 'validar_contrato_no_imovel_na_data' que valida na hora de ativar algum contrato. &#10;Agora contratos rescindidos não contam como impedimento para criação ou ativação de novos contratos nos validadores referentes a isto." />
     <MESSAGE value="Correções e melhorias no código.&#10;Removido o django debug toolbar.&#10;&#10;Mais informações no visão geral: Arrecadação total desde o início, arrecadação mensal dos contratos, valor total dos contratos ativos, valor total de todos os contratos organizados por grupos de imóveis." />
@@ -545,6 +563,7 @@
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Melhorias no sistema de comunidade de compartilhamento de modelos de contratos.&#10;Iniciado o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Criado o modelos_contratos_ficticios, gerador de modelos de contratos ficticios." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;View editar_modelo foi aprimorada: mais inteligente, economizadora de espaço no banco de dados." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário." />
+    <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição." />
   </component>
 </project>

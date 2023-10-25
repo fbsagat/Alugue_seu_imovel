@@ -81,24 +81,14 @@ Ok. O gerador de imóveis tá fazendo três slots a mais(já vêm 3 grátis). Ar
 Ok. Função 'adicionar slot' não faz verificação de tickets, a não ser q já esteja no negativo(tickets do user), quando
  se adiciona múltiplos slots. arrumar!
 Ok. Melhorar a exibição do painel gerador de fictícios.
+Ok. Criar a função comunidade no editor de modelos.
+        (1. colocar o visualizar / 2. colocar descrição / 3. Fazer o sistema de exclusão inteligente
+        / 4. Fazer o sistema de versionamento)
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-PAREI AQUI \/
-Criar a função comunidade no editor de modelos.
-        1. colocar o visualizar / 2. colocar descrição / 3. Fazer o sistema de exclusão inteligente
-
-        # Ps: No ato de editar um contrato, se não houver nenhum ContratoDocConfig utilizando o mesmo
-        #   ou outro usuário além do autor, editá-lo
-        #   normalmente, porém, se houver alguma das duas condições, criar uma cópia nova, para não modificar o
-        #   'modelo de contrato' do contrato que
-        #   está utilizando-o, ou usuário utilizando-o, no caso da segunda condição, criando assim um sistema de
-        #   versionamento.
-        #   Para tudo isso, criaremos a função copiar() que duplicará o modelo nomeando o novo autor.
-        #   Isso tudo deverá acontecer, para não haver edição de nenhum 'modelo' que já esteja sendo usado por um
-        #   contrato ou 'copiado' por algum usuário, apenas quando, o único usuário esteja sendo o próprio autor.
-
+Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico.
 
 Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
@@ -116,9 +106,14 @@ Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando 
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
+Fazer uma class .model para os pacotes de vendas, para que se mantenham corretos e facilitados os cálculos de ganhos
+        e etc.. no decorrer das mudanças, de valores, pacote_qtd_inicial, pacote_qtd_mult, desconto_multiplicador
+        e desconto_add_cripto, ao longo do tempo.
+
 Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização
         (link de auto cadastro do locatario, link de exclusão da conta que será enviado para o email, etc...)
         baseados no uuid principal do usuário. É mais seguro! Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
+        Funções a corrigir: funcoes_proprias.py/gerar_contrato_pdf
 
 Colocar a variável 'mobiliado' no contrato pdf(ou um sistema personalizado de ativação de trechos para os usuários
         onde eles criam as próprias condições, seria interessante).
