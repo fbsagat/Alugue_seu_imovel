@@ -56,7 +56,7 @@ Modelos da Comunidade / {{ SITE_NAME }}
                                 <h1>Descrição: {{ modelo.descricao }}</h1>
                             </div>
                             <br>
-                            {% if user.is_superuser %}
+                            {% if user.is_superuser or debug_true %}
                             <div class="p-2">
                                 <h1 class="text-muted">Criado por {{ modelo.autor }}</h1>
                             </div>

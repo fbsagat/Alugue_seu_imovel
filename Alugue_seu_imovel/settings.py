@@ -4,6 +4,8 @@ from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 from dotenv import load_dotenv
 load_dotenv()
+env = environ.Env()
+environ.Env.read_env()
 
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -22,15 +24,15 @@ FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel
 
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
 TAMANHO_DAS_IMAGENS_Mb = 4
+TAMANHO_DO_MODELO_Mb = 0.5
 
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-env = environ.Env()
-environ.Env.read_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 TOKEN_CSRF = os.getenv('TOKEN_CSRF')

@@ -84,6 +84,7 @@ Ok. Melhorar a exibição do painel gerador de fictícios.
 Ok. Criar a função comunidade no editor de modelos.
         (1. colocar o visualizar / 2. colocar descrição / 3. Fazer o sistema de exclusão inteligente
         / 4. Fazer o sistema de versionamento)
+Ok. Quando um modelo de contrato é salvo, é atualizado no banco, sem ter sido modificado em nada, arrumar.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 

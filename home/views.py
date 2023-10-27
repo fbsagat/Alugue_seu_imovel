@@ -1235,10 +1235,17 @@ def criar_modelo(request):
 
             modelo.variaveis = variaveis
             modelo.condicoes = condicoes
-            modelo.usuarios.add(request.user)
             modelo.save()
-
+            modelo.usuarios.add(request.user)
             return redirect(reverse('home:Modelos'))
+        else:
+            if 'já existe' in str(form.errors):
+                messages.error(request, f'Por favor, escolha outro nome para este modelo de contrato')
+            else:
+                messages.error(request, f'O tamanho do arquivo está maior do que o permitido, o limite é de'
+                                        f' {settings.TAMANHO_DO_MODELO_Mb}Mb')
+            messages.error(request, f'O tamanho do arquivo está maior do que o permitido, o limite é de'
+                                    f' {settings.TAMANHO_DO_MODELO_Mb}Mb')
 
     context['form'] = form
     context['SITE_NAME'] = settings.SITE_NAME
@@ -1312,6 +1319,7 @@ class ModelosComunidade(LoginRequiredMixin, ListView):
 @transaction.atomic
 @login_required
 def editar_modelo(request, pk):
+    debug = True
     context = {}
     modelo = get_object_or_404(ContratoModelo, pk=pk)
     form = FormContratoModelo(instance=modelo)
@@ -1355,13 +1363,27 @@ def editar_modelo(request, pk):
                     link = gerar_contrato_pdf(dados=dados, visualizar=True)
                     c_model.visualizar = link
                     c_model.save(update_fields=['visualizar'])
+                    if debug:
+                        print('criei um novo modelo')
                 else:
                     dados = {'modelo_pk': modelo.pk, 'modelo': modelo, 'usuario_username': str(modelo.autor.username)}
                     link = gerar_contrato_pdf(dados=dados, visualizar=True)
                     modelo.autor = request.user
                     modelo.titulo = form_titulo
-                    modelo.corpo = form_corpo
-                    modelo.descricao = form_descr
+                    if modelo.corpo != form_corpo:
+                        if debug:
+                            print('atualizou corpo no banco')
+                        modelo.corpo = form_corpo
+                    else:
+                        if debug:
+                            print('não precisou atualizar corpo no banco')
+                    if modelo.descricao != form_descr:
+                        if debug:
+                            print('atualizou descricao no banco')
+                        modelo.descricao = form_descr
+                    else:
+                        if debug:
+                            print('não precisou atualizar descricao no banco')
                     modelo.comunidade = form_comun
                     modelo.variaveis = variaveis or None
                     modelo.condicoes = condicoes or None
@@ -1370,25 +1392,75 @@ def editar_modelo(request, pk):
                     modelo.usuarios.remove(request.user)
                     modelo.usuarios.add(request.user)
                     modelo.save()
+                    if debug:
+                        print('atualizei esse modelo')
 
             # No ato de salvar um modelo editado: Condições para criar um modelo novo:
-            if modelo.verificar_utilizacao_config() or modelo.verificar_utilizacao_usuarios(request.user.pk):
+            if debug:
+                print('O q fazer?')
+            um = modelo.verificar_utilizacao_config()
+            dois = modelo.verificar_utilizacao_usuarios(request.user.pk)
+            if um or dois:
+                if debug:
+                    print('Tem gente utilizando -->', 'config: ', um, ' ', 'usuarios: ', dois)
+                    print(modelo.usuarios.all())
                 if form_titulo != modelo.titulo or form_descr != modelo.descricao or form_corpo != modelo.corpo:
+                    if debug:
+                        print('titulo ou descricao ou corpo diferentes')
                     salvar_modelo(criar_novo_modelo=True)
-                elif form_titulo == modelo.titulo or form_descr == modelo.descricao or form_corpo == modelo.corpo:
-                    salvar_modelo(criar_novo_modelo=False)
+                elif form_titulo == modelo.titulo and form_descr == modelo.descricao and form_corpo == modelo.corpo:
+                    if debug:
+                        print('titulo, descricao e corpo iguais')
+                    if form_comun != modelo.comunidade:
+                        if debug:
+                            print('comunidade está diferente')
+                            if modelo.autor == request.user:
+                                if debug:
+                                    print('este é o autor deste modelo')
+                                    salvar_modelo(criar_novo_modelo=False)
+                            else:
+                                if debug:
+                                    print('este não é o autor deste modelo')
+                                salvar_modelo(criar_novo_modelo=True)
+                    else:
+                        if debug:
+                            print('comunidade está igual')
+                            print('não fiz nada')
                 else:
+                    if debug:
+                        print('why?!')
                     salvar_modelo(criar_novo_modelo=False)
             else:
                 # No ato de salvar um modelo editado: Condições para editar o mesmo modelo:
+                if debug:
+                    print('ninguém utilizando além deste usuario')
                 if form_titulo != modelo.titulo or form_descr != modelo.descricao or form_corpo != modelo.corpo:
-                    salvar_modelo(criar_novo_modelo=True)
-                elif form_titulo == modelo.titulo or form_descr == modelo.descricao or form_corpo == modelo.corpo:
+                    if debug:
+                        print('titulo ou descricao ou corpo diferentes')
                     salvar_modelo(criar_novo_modelo=False)
+                elif form_titulo == modelo.titulo or form_descr == modelo.descricao or form_corpo == modelo.corpo:
+                    if debug:
+                        print('titulo ou descricao ou corpo iguais')
+                    if form_comun != modelo.comunidade:
+                        if debug:
+                            print('comunidade está diferente: ', 'form_comun:', form_comun, ' ', 'modelo.comunidade: ', modelo.comunidade)
+                        salvar_modelo(criar_novo_modelo=False)
+                    else:
+                        if debug:
+                            print('comunidade está igual')
+                            print('não fiz nada')
                 else:
+                    if debug:
+                        print('titulo ou descricao ou corpo diferentes')
                     salvar_modelo(criar_novo_modelo=False)
 
             return redirect(reverse_lazy('home:Modelos'))
+        else:
+            if 'já existe' in str(form.errors):
+                messages.error(request, f'Por favor, escolha outro nome para este modelo de contrato')
+            else:
+                messages.error(request, f'O tamanho do arquivo está maior do que o permitido, o limite é de'
+                                    f' {settings.TAMANHO_DO_MODELO_Mb}Mb')
 
     return render(request, 'editar_modelo.html', context)
 

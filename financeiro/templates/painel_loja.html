@@ -17,23 +17,23 @@ Painel / {{ SITE_NAME }}
     <div class="container-xxl">
         <div class="container-auto my-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
             <form action="{% url 'home:Painel Configs' %}" class="py-1 px-1">
-            <button type="submit"
-                    class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
-                Configurações
-            </button>
-        </form>
-        <form action="{% url 'home:Painel Slots' %}" class="py-1 px-1">
-            <button type="submit"
-                    class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
-                Slots
-            </button>
-        </form>
-        <form action="{% url 'home:Painel Loja' %}" class="py-1 px-1">
-            <button type="submit"
-                    class="active btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
-                Loja
-            </button>
-        </form>
+                <button type="submit"
+                        class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
+                    Configurações
+                </button>
+            </form>
+            <form action="{% url 'home:Painel Slots' %}" class="py-1 px-1">
+                <button type="submit"
+                        class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
+                    Slots
+                </button>
+            </form>
+            <form action="{% url 'home:Painel Loja' %}" class="py-1 px-1">
+                <button type="submit"
+                        class="active btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
+                    Loja
+                </button>
+            </form>
         </div>
     </div>
 
@@ -52,7 +52,12 @@ Painel / {{ SITE_NAME }}
                         <hr>
                         <br>
                         <div class="d-grid my-3">
-                            <button class="btn btn-outline-success btn-block">Comprar com REAL</button>
+                            <form action="{% url 'financeiro:Pagar Pacote' forloop.counter0 'brl' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success btn-block">
+                                    Comprar com REAL
+                                </button>
+                            </form>
                             <small class="text-muted">Comprar com Real via Mercado Pago</small>
                         </div>
                         <span class="h2">R${{ card.valor_pct_brl }}</span>
@@ -72,8 +77,12 @@ Painel / {{ SITE_NAME }}
                         <br>
 
                         <div class="d-grid my-3">
-                            <button class="btn btn-outline-warning btn-block">Comprar com BTC
-                            </button>
+                            <form action="{% url 'financeiro:Pagar Pacote' forloop.counter0 'btc' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-warning btn-block">
+                                    Comprar com BTC
+                                </button>
+                            </form>
                             <small class="text-muted">Comprar com Bitcoin via lightning Network</small>
                         </div>
                         <span class="h2">R${{ card.valor_pct_btc }}</span>

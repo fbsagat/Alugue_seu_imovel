@@ -1,4 +1,4 @@
-import string, secrets
+import string, secrets, sys
 from datetime import datetime, timedelta
 from math import floor
 
@@ -7,6 +7,7 @@ from num2words import num2words
 
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator, MinValueValidator, \
     MaxValueValidator, FileExtensionValidator
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.template.defaultfilters import date as data_ptbr
@@ -16,7 +17,7 @@ from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
-from home.funcoes_proprias import modelo_variaveis, modelo_condicoes
+from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 estados_civis = (
@@ -786,7 +787,7 @@ class Contrato(models.Model):
 
 
 class ContratoModelo(models.Model):
-    titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo')
+    titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo', unique=True)
     autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
                               on_delete=models.SET_NULL)
     usuarios = models.ManyToManyField('Usuario', related_name='contratos_modelos', blank=True,
@@ -794,7 +795,7 @@ class ContratoModelo(models.Model):
     excluidos = models.ManyToManyField('Usuario', related_name='contratos_modelos_excluidos', blank=True)
 
     descricao = models.CharField(blank=True, max_length=480, verbose_name='', help_text='Descrição')
-    corpo = RichTextField(null=True, blank=True, verbose_name='')
+    corpo = RichTextField(null=True, blank=True, verbose_name='', validators=[tamanho_max_mb])
     data_criacao = models.DateTimeField(auto_now_add=True)
     variaveis = models.JSONField(null=True, blank=True)
     condicoes = models.JSONField(null=True, blank=True)
@@ -835,14 +836,23 @@ class ContratoModelo(models.Model):
     def delete(self, *args, **kwargs):
         """Apagar o contrato apenas se não houver nenhum ContratoDocConfig ou outro usuário utilizando-o, caso contrário
         # apagar o contrato apenas para o usuário, retirar da comunidade caso ele seja o autor."""
-        user = Usuario.objects.get(pk=kwargs['kwargs'].get('user_pk'))
-        if self.verificar_utilizacao_config() or self.verificar_utilizacao_usuarios(user.pk):
-            self.usuarios.remove(user)
-            if self.autor == user:
-                self.comunidade = False
-                self.excluidos.add(user)
-            self.save(update_fields=['comunidade', ])
-        else:
+        try:
+            user = Usuario.objects.get(pk=kwargs['kwargs'].get('user_pk'))
+            um = self.verificar_utilizacao_config()
+            dois = self.verificar_utilizacao_usuarios(user.pk)
+            if um or dois:
+                self.usuarios.remove(user)
+                if self.autor == user:
+                    self.comunidade = False
+                    self.excluidos.add(user)
+                self.save(update_fields=['comunidade', ])
+                if um and not dois:
+                    self.titulo = f'{self.titulo}///só_config///{parcela_uuid()}'
+                    self.save(update_fields=['titulo', ])
+
+            else:
+                super(ContratoModelo, self).delete()
+        except:
             super(ContratoModelo, self).delete()
 
 
@@ -1163,7 +1173,8 @@ class Tarefa(models.Model):
                 mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
                            f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
                            f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
-                           f'{parcela.do_contrato.codigo} foi detectado. Confirme a entrega do recibo.'
+                           f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} foi detectado. '\
+                           f'Confirme a entrega do recibo.'
             except:
                 pass
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):

@@ -1,4 +1,4 @@
-import io, os
+import io, os, sys
 from math import ceil
 from textwrap import wrap
 
@@ -18,6 +18,8 @@ from Alugue_seu_imovel import settings
 
 
 # 001: -----------------------------------------------
+
+
 def valor_format(valor):
     """ O valor deve ser inteiro e vir em format string e será convertido para valor financeiro em Reais(R$) onde as
     duas últimas casas sempre representarão centavos Ex: de 134567899 para 1.345.678,99"""
@@ -26,8 +28,9 @@ def valor_format(valor):
     z = f'{y[:-3]}{virgola}{str(valor)[-2:]}'
     return f'R${z}'
 
-
 # 002: -----------------------------------------------
+
+
 def cpf_format(cpf):
     if cpf is None:
         return None
@@ -36,24 +39,28 @@ def cpf_format(cpf):
 
 
 # 003: -----------------------------------------------
+
+
 def cel_format(cel):
     return f'({cel[:2]}) {cel[2:7]}-{cel[7:11]}'
 
-
 # 004: -----------------------------------------------
+
+
 def cep_format(cep):
     return f'{cep[:5]}-{cep[5:8]}'
 
-
 # 005: -----------------------------------------------
+
+
 def tratar_imagem(arquivo_obj):
     size = arquivo_obj.file.size
     limite_mb = settings.TAMANHO_DAS_IMAGENS_Mb
     if size > limite_mb * 1024 * 1024:
         raise ValidationError(f"O arquivo não deve ser maior que {str(limite_mb)}Mb")
 
-
 # 006: -----------------------------------------------
+
 
 def valor_por_extenso(valor):
     if type(valor) == str:
@@ -63,7 +70,6 @@ def valor_por_extenso(valor):
         return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
     else:
         return None
-
 
 # 007: -----------------------------------------------
 
@@ -102,8 +108,18 @@ def validar_cpf(cpf):
     else:
         return False
 
+# 007: -----------------------------------------------
+
+
+def tamanho_max_mb(value):
+    size = sys.getsizeof(value)
+    tama_max_mb = settings.TAMANHO_DO_MODELO_Mb * 1024 * 1024
+    if size > tama_max_mb:
+        raise ValidationError(f'O tamanho do arquivo está maior do que o permitido, o limite é de {tamanho_max_mb}Mb')
 
 # 100: -----------------------------------------------
+
+
 def gerar_um_recibo(pdf, pag_lar, pag_centro, recibo_n, pos_y, dados, parcelas):
     """ Ex:
         infos = {'cod_recibo': ['465736', '463416', '125736', '465676', '465756', '465346', '474936'],
@@ -207,8 +223,9 @@ def gerar_recibos_pdf(dados):
     buffer.seek(0)
     return buffer
 
-
 # 101: -----------------------------------------------
+
+
 def criar_uma_pagina_tabela(fazer, pag_n, a4h, dados, pdf, celula_altura):
     # Atributos da página
     pag_lar = a4h[0]
@@ -419,8 +436,9 @@ def gerar_tabela_pdf(dados):
 
     pdf.save()
 
-
 # 102: -----------------------------------------------
+
+
 modelo_variaveis = {
     0: ['[!variavel: semana_extenso_hoje]', 'Dia da semana hoje escrito por extenso'],
     64: ['[!variavel: data_extenso_hoje]', 'Dia, mês e ano de hoje escritos por extenso'],

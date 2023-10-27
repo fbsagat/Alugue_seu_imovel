@@ -1,5 +1,7 @@
+import json, os
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from Alugue_seu_imovel import settings
 
 from faker import Faker
 from random import randrange, choice
@@ -245,7 +247,14 @@ def modelos_contratos_ficticios(usuario):
     titulo = fake.paragraph(nb_sentences=1)
     # PS: \/ o aplicativo ckeditor costuma modificar este campo, mesmo que o usuário, no site, não modifique nada na
     # edição. (causa um fork no modelo, poré isto só acontece com os fictícios)
-    corpo = str(f'<p>{fake.paragraph(nb_sentences=randrange(10, 15))}<p>')
+    try:
+        home = os.path.join(settings.BASE_DIR, 'home').replace('\\', '/')
+        with open(fr"{home}/fixtures/dados_iniciais.json", 'r') as dados:
+            arquivo = json.load(dados)
+            corpo = arquivo[0 if porcentagem_de_chance(50) else 1]['fields']['corpo']
+        dados.close()
+    except:
+        corpo = str(f'<p>{fake.paragraph(nb_sentences=randrange(10, 15))}<p>')
 
     usuarios = Usuario.objects.all()
     alguns_usuarios = []
