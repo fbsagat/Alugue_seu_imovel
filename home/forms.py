@@ -323,6 +323,7 @@ class FormContratoModelo(forms.ModelForm):
         self.fields['titulo'].widget.attrs.update({'class': 'text-center'})
         self.fields['descricao'].widget.attrs.update({'class': 'text-center'})
         self.fields['comunidade'].label = 'Compartilhar'
+        self.fields['titulo'].label = ''
 
 
 class FormimovelGrupo(forms.ModelForm):

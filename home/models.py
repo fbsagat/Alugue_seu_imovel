@@ -1,4 +1,4 @@
-import string, secrets, sys
+import string, secrets
 from datetime import datetime, timedelta
 from math import floor
 
@@ -7,7 +7,6 @@ from num2words import num2words
 
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator, MinValueValidator, \
     MaxValueValidator, FileExtensionValidator
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.template.defaultfilters import date as data_ptbr
@@ -17,28 +16,16 @@ from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
-from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb
+from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, parcela_uuid, user_uuid
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
+
 estados_civis = (
     (0, 'Solteiro(a)'),
     (1, 'Casado(a)'),
     (2, 'Separado(a)'),
     (3, 'Divorciado(a)'),
     (4, 'Viuvo(a)'))
-
-
-def user_uuid():
-    con_codigo = ''.join(
-        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
-    return f'{con_codigo[:10]}'
-
-
-def parcela_uuid():
-    recibo_codigo = ''.join(
-        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
-        range(6))
-    return f'{recibo_codigo[:3]}-{recibo_codigo[3:]}'
 
 
 # Gerar o código para o contrato:
@@ -603,8 +590,8 @@ class Contrato(models.Model):
         """'O objeto count' diz em que posição este contrato fica na lista de contratos feitos com este locador neste
          imóvel"""
         contratos = Contrato.objects.filter(do_locador=self.do_locador, do_locatario=self.do_locatario,
-                                            do_imovel=self.do_imovel)
-        count = (f'{list(contratos).index(self) + 2}' if len(contratos) > 1 else '1')
+                                            do_imovel=self.do_imovel).order_by('pk')
+        count = (f'{list(contratos).index(self) + 1}' if len(contratos) > 1 else '1')
         return (f'({self.do_locatario.primeiro_ultimo_nome()} em '
                 f'{self.do_imovel.nome} - nº{count} - '
                 f'{self.data_entrada.strftime("%m/%Y")})')
@@ -787,7 +774,7 @@ class Contrato(models.Model):
 
 
 class ContratoModelo(models.Model):
-    titulo = models.CharField(blank=False, max_length=120, verbose_name='', help_text='Titulo', unique=True)
+    titulo = models.CharField(blank=False, max_length=120, verbose_name='Titulo', help_text='Titulo', unique=True)
     autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
                               on_delete=models.SET_NULL)
     usuarios = models.ManyToManyField('Usuario', related_name='contratos_modelos', blank=True,

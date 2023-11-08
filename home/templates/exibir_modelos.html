@@ -62,6 +62,15 @@ Meus Modelos / {{ SITE_NAME }}
                             </div>
                             <br>
                             {% endif %}
+                            {% if modelo.contrato_modelo.comunidade %}
+                            <div class="p-2">
+                                <h1>Compartilhado na comunidade: ☑️</h1>
+                            </div>
+                            {% else %}
+                            <div class="p-2">
+                                <h1>Compartilhado na comunidade: ❌</h1>
+                            </div>
+                            {% endif %}
                             <div class="p-2">
                                 <h1>Criado em: {{ modelo.data_criacao }}</h1>
                             </div>

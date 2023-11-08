@@ -1,4 +1,4 @@
-import io, os, sys
+import io, os, sys, string, secrets
 from math import ceil
 from textwrap import wrap
 
@@ -28,6 +28,7 @@ def valor_format(valor):
     z = f'{y[:-3]}{virgola}{str(valor)[-2:]}'
     return f'R${z}'
 
+
 # 002: -----------------------------------------------
 
 
@@ -44,11 +45,13 @@ def cpf_format(cpf):
 def cel_format(cel):
     return f'({cel[:2]}) {cel[2:7]}-{cel[7:11]}'
 
+
 # 004: -----------------------------------------------
 
 
 def cep_format(cep):
     return f'{cep[:5]}-{cep[5:8]}'
+
 
 # 005: -----------------------------------------------
 
@@ -58,6 +61,7 @@ def tratar_imagem(arquivo_obj):
     limite_mb = settings.TAMANHO_DAS_IMAGENS_Mb
     if size > limite_mb * 1024 * 1024:
         raise ValidationError(f"O arquivo não deve ser maior que {str(limite_mb)}Mb")
+
 
 # 006: -----------------------------------------------
 
@@ -70,6 +74,7 @@ def valor_por_extenso(valor):
         return f'{num2words(int(reais), lang="pt_BR").capitalize()} reais{centavos_format if int(centavos) > 1 else ""}'
     else:
         return None
+
 
 # 007: -----------------------------------------------
 
@@ -108,6 +113,7 @@ def validar_cpf(cpf):
     else:
         return False
 
+
 # 007: -----------------------------------------------
 
 
@@ -116,6 +122,26 @@ def tamanho_max_mb(value):
     tama_max_mb = settings.TAMANHO_DO_MODELO_Mb * 1024 * 1024
     if size > tama_max_mb:
         raise ValidationError(f'O tamanho do arquivo está maior do que o permitido, o limite é de {tamanho_max_mb}Mb')
+
+
+# 008: -----------------------------------------------
+
+
+def parcela_uuid():
+    recibo_codigo = ''.join(
+        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+        range(6))
+    return f'{recibo_codigo[:3]}-{recibo_codigo[3:]}'
+
+
+# 009: -----------------------------------------------
+
+
+def user_uuid():
+    con_codigo = ''.join(
+        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
+    return f'{con_codigo[:10]}'
+
 
 # 100: -----------------------------------------------
 
@@ -222,6 +248,7 @@ def gerar_recibos_pdf(dados):
     pdf.save()
     buffer.seek(0)
     return buffer
+
 
 # 101: -----------------------------------------------
 
@@ -436,6 +463,7 @@ def gerar_tabela_pdf(dados):
 
     pdf.save()
 
+
 # 102: -----------------------------------------------
 
 
@@ -544,6 +572,10 @@ modelo_condicoes = {
          'Mostrar trecho caso exista um contrato anterior à este com este locador neste imóvel'],
     12: ['[!condicao: contrato_anterior_nao_existe]',
          'Mostrar trecho caso não exista um contrato anterior à este com este locador neste imóvel'],
+    13: ['[!condicao: imovel_uc_sanemameto_existe]',
+         'Mostrar trecho caso exista uma Unidade Consumidora de saneamento registrada neste imóvel'],
+    14: ['[!condicao: imovel_uc_energia_existe]',
+         'Mostrar trecho caso exista uma Unidade Consumidora de energia elétrica registrada neste imóvel'],
 }
 
 
@@ -650,6 +682,18 @@ def gerar_contrato_pdf(dados, visualizar=False):
                     else:
                         modelo_corpo = modelo_corpo.replace(trecho, '')
 
+                if comando_inicio == '[!condicao: imovel_uc_sanemameto_existe]' and tem_comando_fim:
+                    if '[ESTE DADO DO IMÓVEL NÃO FOI PREENCHIDO]' not in dados['imovel_uc_sanemameto']:
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
+
+                if comando_inicio == '[!condicao: imovel_uc_energia_existe]' and tem_comando_fim:
+                    if '[ESTE DADO DO IMÓVEL NÃO FOI PREENCHIDO]' not in dados['imovel_uc_energia']:
+                        modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
+                    else:
+                        modelo_corpo = modelo_corpo.replace(trecho, '')
+
                 if comando_inicio == '[!condicao: contrato_anterior_existe]' and tem_comando_fim:
                     if '[NÃO EXISTE CONTRATO ANTERIOR A ESTE]' in dados['contrato_anterior-codigo']:
                         modelo_corpo = modelo_corpo.replace(trecho, '')
@@ -661,6 +705,7 @@ def gerar_contrato_pdf(dados, visualizar=False):
                         modelo_corpo = modelo_corpo.replace(trecho, trecho_final)
                     else:
                         modelo_corpo = modelo_corpo.replace(trecho, '')
+
 
                 # Fim das funções das condições
                 indice += 1

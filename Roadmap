@@ -114,7 +114,7 @@ Fazer uma class .model para os pacotes de vendas, para que se mantenham corretos
 Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização
         (link de auto cadastro do locatario, link de exclusão da conta que será enviado para o email, etc...)
         baseados no uuid principal do usuário. É mais seguro! Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
-        Funções a corrigir: funcoes_proprias.py/gerar_contrato_pdf
+        Funções a corrigir: funcoes_proprias.py/gerar_contrato_pdf (não deve utilizar o username no nome do arquivo)
 
 Colocar a variável 'mobiliado' no contrato pdf(ou um sistema personalizado de ativação de trechos para os usuários
         onde eles criam as próprias condições, seria interessante).
