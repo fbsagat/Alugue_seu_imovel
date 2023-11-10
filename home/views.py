@@ -27,7 +27,7 @@ from django.template.defaultfilters import date as data_ptbr
 from home.fakes_test import porcentagem_de_chance
 
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
-    modelo_variaveis, modelo_condicoes, valor_por_extenso, parcela_uuid
+    valor_por_extenso, modelo_variaveis, modelo_condicoes, uuid_20
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias, \
     modelos_contratos_ficticios
@@ -1213,28 +1213,13 @@ def gerar_contrato(request):
 @login_required
 def criar_modelo(request):
     context = {}
-    form = FormContratoModelo()
+    form = FormContratoModelo(request.user)
 
     if request.method == 'POST':
-        form = FormContratoModelo(request.POST)
+        form = FormContratoModelo(request.user, request.POST)
         if form.is_valid():
             modelo = form.save(commit=False)
             modelo.autor = request.user
-
-            variaveis = []
-            for i, j in modelo_variaveis.items():
-                if j[0] in modelo.corpo:
-                    variaveis.append(i)
-            variaveis = list(dict.fromkeys(variaveis))
-
-            condicoes = []
-            for i, j in modelo_condicoes.items():
-                if j[0] in modelo.corpo:
-                    condicoes.append(i)
-            condicoes = list(dict.fromkeys(condicoes))
-
-            modelo.variaveis = variaveis
-            modelo.condicoes = condicoes
             modelo.save()
             modelo.usuarios.add(request.user)
             return redirect(reverse('home:Modelos'))
@@ -1319,155 +1304,118 @@ class ModelosComunidade(LoginRequiredMixin, ListView):
 @transaction.atomic
 @login_required
 def editar_modelo(request, pk):
-    local_debug = True
+    local_debug = False
     context = {}
-    modelo = get_object_or_404(ContratoModelo, pk=pk)
-    form = FormContratoModelo(instance=modelo)
+    modelo__ = get_object_or_404(ContratoModelo, pk=pk)
+    form = FormContratoModelo(request.user, instance=modelo__)
     context['SITE_NAME'] = settings.SITE_NAME
     context['form'] = form
-    context['object'] = modelo
+    context['object'] = modelo__
     context['variaveis'] = modelo_variaveis
     context['condicoes'] = modelo_condicoes
+
+    def criar_um_modelo(modelo, _um, _dois):
+        if local_debug:
+            print('bora criar_um_modelo')
+        novo_modelo = ContratoModelo.objects.create(autor=request.user, titulo=form_titulo,
+                                                    corpo=form_corpo, descricao=form_descr,
+                                                    comunidade=form_comun)
+        novo_modelo.usuarios.add(request.user)
+        modelo.usuarios.remove(request.user)
+        if modelo.autor == request.user:
+            modelo.comunidade = False
+            modelo.excluidos.add(request.user)
+        if _um and not _dois:
+            if local_debug:
+                print('só config usa este modelo')
+            modelo.titulo = f'config/{uuid_20()}'
+            modelo.comunidade = False
+            modelo.save(update_fields=['titulo', 'comunidade', ])
+        if local_debug:
+            print('criei um novo modelo')
+
+    def atualizar_o_modelo(modelo, _um, _dois):
+        if local_debug:
+            print('bora atualizar_o_modelo')
+        modelo.autor = request.user
+        modelo.titulo = form_titulo
+        if modelo.corpo != form_corpo:
+            if local_debug:
+                print('atualizou corpo no banco')
+            modelo.corpo = form_corpo
+        else:
+            if local_debug:
+                print('não precisou atualizar corpo no banco')
+        if modelo.descricao != form_descr:
+            if local_debug:
+                print('atualizou descrição no banco')
+            modelo.descricao = form_descr
+        else:
+            if local_debug:
+                print('não precisou atualizar descrição no banco')
+        modelo.comunidade = form_comun
+        modelo.data_criacao = datetime.now()
+        modelo.usuarios.remove(request.user)
+        modelo.usuarios.add(request.user)
+        modelo.save()
+        if local_debug:
+            print('atualizei esse modelo')
+
     if request.method == "POST":
-        form = FormContratoModelo(request.POST)
+        form = FormContratoModelo(request.user, request.POST, instance=modelo__)
         if form.is_valid():
+            modelo_ = get_object_or_404(ContratoModelo, pk=pk)
             form_titulo = form.cleaned_data['titulo']
             form_descr = form.cleaned_data['descricao']
             form_corpo = form.cleaned_data['corpo']
             form_comun = form.cleaned_data['comunidade']
 
-            def salvar_modelo(um, dois, criar_novo_modelo=False):
-                variaveis = []
-                for i, j in modelo_variaveis.items():
-                    if j[0] in form_corpo:
-                        variaveis.append(i)
-                variaveis = list(dict.fromkeys(variaveis))
-                condicoes = []
-                for i, j in modelo_condicoes.items():
-                    if j[0] in form_corpo:
-                        condicoes.append(i)
-                condicoes = list(dict.fromkeys(condicoes))
-                if criar_novo_modelo:
-                    novo_modelo = ContratoModelo.objects.create(autor=request.user, titulo=form_titulo,
-                                                                corpo=form_corpo, descricao=form_descr,
-                                                                comunidade=form_comun,
-                                                                variaveis=variaveis or None,
-                                                                condicoes=condicoes or None)
-                    novo_modelo.usuarios.add(request.user)
-                    modelo.usuarios.remove(request.user)
-                    if modelo.autor == request.user:
-                        modelo.comunidade = False
-                        modelo.excluidos.add(request.user)
-                    if um and not dois:
-                        modelo.titulo = f'{modelo.titulo}///só_config///{parcela_uuid()}'
-                        modelo.save(update_fields=['titulo', ])
-                    c_model = ContratoModelo.objects.get(pk=novo_modelo.pk)
-                    dados = {'modelo_pk': c_model.pk, 'modelo': c_model, 'usuario_username': str(request.user)}
-                    link = gerar_contrato_pdf(dados=dados, visualizar=True)
-                    c_model.visualizar = link
-                    c_model.save(update_fields=['visualizar'])
-                    if local_debug:
-                        print('criei um novo modelo')
-                else:
-                    dados = {'modelo_pk': modelo.pk, 'modelo': modelo, 'usuario_username': str(modelo.autor.username)}
-                    link = gerar_contrato_pdf(dados=dados, visualizar=True)
-                    modelo.autor = request.user
-                    modelo.titulo = form_titulo
-                    if modelo.corpo != form_corpo:
-                        if local_debug:
-                            print('atualizou corpo no banco')
-                        modelo.corpo = form_corpo
-                    else:
-                        if local_debug:
-                            print('não precisou atualizar corpo no banco')
-                    if modelo.descricao != form_descr:
-                        if local_debug:
-                            print('atualizou descricao no banco')
-                        modelo.descricao = form_descr
-                    else:
-                        if local_debug:
-                            print('não precisou atualizar descricao no banco')
-                    modelo.comunidade = form_comun
-                    modelo.variaveis = variaveis or None
-                    modelo.condicoes = condicoes or None
-                    modelo.visualizar = link
-                    modelo.data_criacao = datetime.now()
-                    modelo.usuarios.remove(request.user)
-                    modelo.usuarios.add(request.user)
-                    modelo.save()
-                    if local_debug:
-                        print('atualizei esse modelo')
+            config_usa = modelo_.verificar_utilizacao_config()
+            usuario_usa = modelo_.verificar_utilizacao_usuarios()
 
-            # No ato de salvar um modelo editado: Condições para criar um modelo novo:
+            # NO ATO DE O USUÁRIO EDITAR UM MODELO:
+            # QUANDO EU DEVO CRIAR UM MODELO NOVO?
+            # Quando o corpo, compartilhar, título ou descrição do modelo for diferente e ele não for o único usuário
 
-            # ADD: CASO SÓ ESTEJA EM USO POR UM CONFIG: SÓ CRIAR UM NOVO MODELO SE TIVER MODIFICADO O CORPO, SE NÃO,
-            # PODE MODIFICAR.
+            # QUANDO EU DEVO MODIFICAR O MODELO EXISTENTE?
+            # Quando o corpo, compartilhar, título ou descrição do modelo for diferente e ele for o único usuário
+
+            # QUANDO EU NÃO DEVO FAZER NADA?
+            # Quando o corpo, compartilhar, título ou descrição do modelo forem idênticos ao inicial
 
             if local_debug:
                 print('O q fazer?')
-            um = modelo.verificar_utilizacao_config()
-            dois = modelo.verificar_utilizacao_usuarios(request.user.pk)
-            if um or dois:
+            if (form_titulo != modelo_.titulo or form_comun != modelo_.comunidade or form_descr != modelo_.descricao or
+                    form_corpo != modelo_.corpo):
                 if local_debug:
-                    print('Tem gente utilizando -->', 'config: ', um, ' ', 'usuarios: ', dois)
-                    print(modelo.usuarios.all())
-                if form_titulo != modelo.titulo or form_descr != modelo.descricao or form_corpo != modelo.corpo:
+                    print('titulo ou descrição ou corpo ou comunidade diferentes')
+                if usuario_usa:
                     if local_debug:
-                        print('titulo ou descricao ou corpo diferentes')
-                    salvar_modelo(um, dois, criar_novo_modelo=True)
-                elif form_titulo == modelo.titulo and form_descr == modelo.descricao and form_corpo == modelo.corpo:
-                    if local_debug:
-                        print('titulo, descricao e corpo iguais')
-                    if form_comun != modelo.comunidade:
-                        if local_debug:
-                            print('comunidade está diferente')
-                            if modelo.autor == request.user:
-                                if local_debug:
-                                    print('este é o autor deste modelo')
-                                    salvar_modelo(um, dois, criar_novo_modelo=True)
-                            else:
-                                if local_debug:
-                                    print('este não é o autor deste modelo')
-                                salvar_modelo(um, dois, criar_novo_modelo=True)
-                    else:
-                        if local_debug:
-                            print('comunidade está igual')
-                            print('não fiz nada')
-                # else:
-                #     if local_debug:
-                #         print('why?!')
-                #     salvar_modelo(um, dois, criar_novo_modelo=True)
-            else:
-                # No ato de salvar um modelo editado: Condições para editar o mesmo modelo:
-                if local_debug:
-                    print('ninguém utilizando além deste usuario')
-                if form_titulo != modelo.titulo or form_descr != modelo.descricao or form_corpo != modelo.corpo:
-                    if local_debug:
-                        print('titulo ou descricao ou corpo diferentes')
-                    salvar_modelo(um, dois, criar_novo_modelo=True)
-                elif form_titulo == modelo.titulo or form_descr == modelo.descricao or form_corpo == modelo.corpo:
-                    if local_debug:
-                        print('titulo ou descricao ou corpo iguais')
-                    if form_comun != modelo.comunidade:
-                        if local_debug:
-                            print('comunidade está diferente: ', 'form_comun:', form_comun, ' ', 'modelo.comunidade: ',
-                                  modelo.comunidade)
-                        salvar_modelo(um, dois, criar_novo_modelo=True)
-                    else:
-                        if local_debug:
-                            print('comunidade está igual')
-                            print('não fiz nada')
+                        print('Tem outros usuários usando o modelo')
+                    criar_um_modelo(modelo=modelo_, _um=config_usa, _dois=usuario_usa)
                 else:
                     if local_debug:
-                        print('titulo ou descricao ou corpo diferentes')
-                    salvar_modelo(um, dois, criar_novo_modelo=True)
+                        print('Não tem outros usuários usando o modelo')
+                    if config_usa:
+                        if local_debug:
+                            print('Tem configurações usando este modelo')
+                            if form_corpo != modelo_.corpo:
+                                if local_debug:
+                                    print('O corpo do modelo está diferente')
+                                criar_um_modelo(modelo=modelo_, _um=config_usa, _dois=usuario_usa)
+                    else:
+                        atualizar_o_modelo(modelo=modelo_, _um=config_usa, _dois=usuario_usa)
+            else:
+                if local_debug:
+                    print('Não fiz nada')
 
             return redirect(reverse_lazy('home:Modelos'))
+
         else:
-            if 'já existe' not in str(form.errors):
+            if 'O tamanho do arquivo está maior do que o permitido' in str(form.errors):
                 messages.error(request, f'O tamanho do arquivo está maior do que o permitido, o limite é de'
                                         f' {settings.TAMANHO_DO_MODELO_Mb}Mb')
-            form = FormContratoModelo(request.POST)
+            form = FormContratoModelo(request.user, request.POST, instance=modelo__)
             context['form'] = form
 
     return render(request, 'editar_modelo.html', context)
@@ -2569,34 +2517,14 @@ def criar_modelos_contratos_ficticios(request, quantidade, multiplicador, usuari
             for x in range(range_):
                 count += 1
                 aleatorio = modelos_contratos_ficticios(usuario)
-                form = FormContratoModelo()
+                form = FormContratoModelo(request.user)
                 c_model = form.save(commit=False)
                 c_model.autor = usuario
                 c_model.titulo = aleatorio.get('titulo')
                 c_model.corpo = aleatorio.get('corpo')
                 c_model.descricao = aleatorio.get('descricao')
                 c_model.comunidade = aleatorio.get('comunidade')
-
-                variaveis = []
-                for i, j in modelo_variaveis.items():
-                    if j[0] in c_model.corpo:
-                        variaveis.append(i)
-                variaveis = list(dict.fromkeys(variaveis))
-
-                condicoes = []
-                for i, j in modelo_condicoes.items():
-                    if j[0] in c_model.corpo:
-                        condicoes.append(i)
-                condicoes = list(dict.fromkeys(condicoes))
-                c_model.variaveis = variaveis or None
-                c_model.condicoes = condicoes or None
                 c_model.save()
-
-                c_model = ContratoModelo.objects.get(pk=c_model.pk)
-                dados = {'modelo_pk': c_model.pk, 'modelo': c_model, 'usuario_username': str(usuario)}
-                link = gerar_contrato_pdf(dados=dados, visualizar=True)
-                c_model.visualizar = link
-                c_model.save(update_fields=['visualizar'])
 
                 if aleatorio.get('usuarios'):
                     for usuario_ in aleatorio.get('usuarios'):

@@ -4,25 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Iniciado o aplicativo financeiro do site, que vai cuidar dos pagamentos.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.">
       <change afterPath="$PROJECT_DIR$/financeiro/__init__.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/__init__.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/financeiro/funcoes_proprias.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/funcoes_proprias.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/financeiro/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/financeiro/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/financeiro/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/fakes_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/fakes_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" beforeDir="false" afterPath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/funcoes_proprias.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/funcoes_proprias.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/modelos_da_comunidade.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/modelos_da_comunidade.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -504,7 +498,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="162" />
+    <option name="localTasksCounter" value="164" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -537,8 +531,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções e melhorias no código:&#10;&#10;Criado validador 'validar_contrato_no_imovel_na_data' que valida na hora de ativar algum contrato. &#10;Agora contratos rescindidos não contam como impedimento para criação ou ativação de novos contratos nos validadores referentes a isto." />
-    <MESSAGE value="Correções e melhorias no código.&#10;Removido o django debug toolbar.&#10;&#10;Mais informações no visão geral: Arrecadação total desde o início, arrecadação mensal dos contratos, valor total dos contratos ativos, valor total de todos os contratos organizados por grupos de imóveis." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Iniciada a produção do sistema de pagamentos." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições." />
     <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições.&#10;Melhoris nos slots: Agora tem uma barra de progresso." />
@@ -562,6 +554,8 @@
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Iniciado o aplicativo financeiro do site, que vai cuidar dos pagamentos." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Iniciado o aplicativo financeiro do site, que vai cuidar dos pagamentos." />
+    <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;corpo de um modelo fictício de contrato pdf agora é idêntico ao dos fixtures.&#10;Aplicativo novo para finanças, semaprado do app home, para melhor organização.&#10;validação adicionada para o corpo do contrato modelo, agora tem limite de tamanho em mb. validador: tamanho_max_mb.&#10;Titulo do contrato modelo agora é renomeado com uuid, quando só sobre a instanci para um contrato_doc_config, para evitar nome repetido, pois agora tem constraint no titulo do mesmo.&#10;Instalei o stripe, ainda não está implementado.&#10;Implementado o messanger de erro nos formularios de criação e edição de modelos de contratos.&#10;Implementado o debug da view de editar_modelo." />
+    <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado." />
   </component>
 </project>

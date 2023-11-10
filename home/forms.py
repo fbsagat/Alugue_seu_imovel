@@ -1,7 +1,6 @@
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
-from Alugue_seu_imovel import settings
 from home.funcoes_proprias import valor_format, validar_cpf
 
 from django import forms
@@ -318,12 +317,25 @@ class FormContratoModelo(forms.ModelForm):
         fields = '__all__'
         exclude = ['autor', 'data_criacao', 'variaveis', 'condicoes', 'visualizar', 'usuarios', 'excluidos']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(FormContratoModelo, self).__init__(*args, **kwargs)
         self.fields['titulo'].widget.attrs.update({'class': 'text-center'})
         self.fields['descricao'].widget.attrs.update({'class': 'text-center'})
         self.fields['comunidade'].label = 'Compartilhar'
         self.fields['titulo'].label = ''
+        self.user = user
+
+    def clean_titulo(self):
+        titulo = self.cleaned_data['titulo']
+        if self.user == self.instance.autor or self.instance.verificar_utilizacao_usuarios() is False:
+            titulos_de_modelos = ContratoModelo.objects.all().exclude(pk=self.instance.pk).values_list('titulo',
+                                                                                                       flat=True)
+        else:
+            titulos_de_modelos = ContratoModelo.objects.all().values_list('titulo', flat=True)
+        if titulo in titulos_de_modelos:
+            raise forms.ValidationError("Por favor, escolha outro título para este modelo.")
+        else:
+            return titulo
 
 
 class FormimovelGrupo(forms.ModelForm):
@@ -460,8 +472,8 @@ class FormAdmin(forms.Form):
                                       widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
                                       required=True, min_value=0, max_value=100)
     qtd_contr_modelo = forms.IntegerField(label='Contr. Modelo(s)',
-                                      widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
-                                      required=True, min_value=0, max_value=100)
+                                          widget=forms.NumberInput(attrs={'class': 'form-control-sm'}),
+                                          required=True, min_value=0, max_value=100)
     para_o_usuario = forms.ModelChoiceField(label='Para o usuário', queryset=Usuario.objects.all(), required=True)
     multiplicar_por = forms.IntegerField(label='Multiplicar cada item por',
                                          widget=forms.NumberInput(attrs={'class': 'form-control'}), max_value=100,

@@ -246,7 +246,7 @@ def sugestoes_ficticias():
 def modelos_contratos_ficticios(usuario):
     titulo = fake.paragraph(nb_sentences=1)
     # PS: \/ o aplicativo ckeditor costuma modificar este campo, mesmo que o usuário, no site, não modifique nada na
-    # edição. (causa um fork no modelo, poré isto só acontece com os fictícios)
+    # edição. (causa um fork no modelo, porém isto só acontece com os fictícios)
     try:
         home = os.path.join(settings.BASE_DIR, 'home').replace('\\', '/')
         with open(fr"{home}/fixtures/dados_iniciais.json", 'r') as dados:
@@ -262,9 +262,8 @@ def modelos_contratos_ficticios(usuario):
     count = 0
     valor = randrange(0, len(usuarios))
     if comunidade:
+        alguns_usuarios.append(usuario)
         while True:
-            if count == 0:
-                alguns_usuarios.append(usuario)
             alguns_usuarios.append(choice(usuarios)) if porcentagem_de_chance(15) else None
             if count == valor:
                 break

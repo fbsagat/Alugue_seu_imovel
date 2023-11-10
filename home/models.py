@@ -16,7 +16,7 @@ from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
-from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, parcela_uuid, user_uuid
+from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, parcela_uuid, user_uuid, uuid_20
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 
@@ -592,8 +592,8 @@ class Contrato(models.Model):
         contratos = Contrato.objects.filter(do_locador=self.do_locador, do_locatario=self.do_locatario,
                                             do_imovel=self.do_imovel).order_by('pk')
         count = (f'{list(contratos).index(self) + 1}' if len(contratos) > 1 else '1')
-        return (f'({self.do_locatario.primeiro_ultimo_nome()} em '
-                f'{self.do_imovel.nome} - nº{count} - '
+        return (f'({count}º - {self.do_locatario.primeiro_ultimo_nome()} - '
+                f'{self.do_imovel.nome} - '
                 f'{self.data_entrada.strftime("%m/%Y")})')
 
     def nome_completo(self):
@@ -774,7 +774,7 @@ class Contrato(models.Model):
 
 
 class ContratoModelo(models.Model):
-    titulo = models.CharField(blank=False, max_length=120, verbose_name='Titulo', help_text='Titulo', unique=True)
+    titulo = models.CharField(blank=False, max_length=120, verbose_name='Titulo', help_text='Titulo')
     autor = models.ForeignKey('Usuario', blank=False, null=True, related_name='contratomod_autor_set',
                               on_delete=models.SET_NULL)
     usuarios = models.ManyToManyField('Usuario', related_name='contratos_modelos', blank=True,
@@ -814,11 +814,11 @@ class ContratoModelo(models.Model):
         configs_do_user = ContratoDocConfig.objects.filter(do_modelo=self).count()
         return True if configs_do_user > 0 else False
 
-    def verificar_utilizacao_usuarios(self, usuario_pk):
+    def verificar_utilizacao_usuarios(self):
         """Este método visa verificar se existe algum 'usuário' além do usuário verificador com uma cópia desta
         instancia de modelo"""
-        outros_usuarios = self.usuarios.all().exclude(pk=usuario_pk).count()
-        return True if outros_usuarios > 0 else False
+        outros_usuarios = self.usuarios.all().count()
+        return True if outros_usuarios > 1 else False
 
     def delete(self, *args, **kwargs):
         """Apagar o contrato apenas se não houver nenhum ContratoDocConfig ou outro usuário utilizando-o, caso contrário
@@ -826,17 +826,19 @@ class ContratoModelo(models.Model):
         try:
             user = Usuario.objects.get(pk=kwargs['kwargs'].get('user_pk'))
             um = self.verificar_utilizacao_config()
-            dois = self.verificar_utilizacao_usuarios(user.pk)
+            dois = self.verificar_utilizacao_usuarios()
+
+            # Se alguém estiver usando \/
             if um or dois:
                 self.usuarios.remove(user)
                 if self.autor == user:
                     self.comunidade = False
                     self.excluidos.add(user)
-                self.save(update_fields=['comunidade', ])
+                    self.save(update_fields=['comunidade', ])
                 if um and not dois:
-                    self.titulo = f'{self.titulo}///só_config///{parcela_uuid()}'
-                    self.save(update_fields=['titulo', ])
-
+                    self.titulo = f'config/{uuid_20()}'
+                    self.comunidade = False
+                    self.save(update_fields=['titulo', 'comunidade'], )
             else:
                 super(ContratoModelo, self).delete()
         except:

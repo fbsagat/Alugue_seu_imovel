@@ -142,6 +142,14 @@ def user_uuid():
         secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
     return f'{con_codigo[:10]}'
 
+# 010: -----------------------------------------------
+
+
+def uuid_20():
+    con_codigo = ''.join(
+        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(20))
+    return f'{con_codigo[:20]}'
+
 
 # 100: -----------------------------------------------
 

@@ -11,7 +11,7 @@ from django.dispatch import receiver
 
 from home.funcoes_proprias import gerar_contrato_pdf
 from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao, Slot, Imovei, \
-    ContratoModelo
+    ContratoModelo, modelo_variaveis, modelo_condicoes
 
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
@@ -239,11 +239,20 @@ def sugestao_pre_save(sender, instance, **kwargs):
 
 # Gerenciadores de post_save \/  ---------------------------------------
 @receiver(post_save, sender=ContratoModelo)
-def contrato_modelo_post_save(sender, instance, **kwargs):
-    if kwargs['raw']:  # if criado pelo fixtures
-        dados = {'modelo_pk': instance.pk, 'modelo': instance, 'usuario_username': str(instance.autor.username)}
-        link = gerar_contrato_pdf(dados=dados, visualizar=True)
-        ContratoModelo.objects.filter(pk=instance.pk).update(visualizar=link)
+def contrato_modelo_post_save(sender, instance, created, **kwargs):
+    dados = {'modelo_pk': instance.pk, 'modelo': instance, 'usuario_username': str(instance.autor.username)}
+    link = gerar_contrato_pdf(dados=dados, visualizar=True)
+    variaveis = []
+    for i, j in modelo_variaveis.items():
+        if j[0] in instance.corpo:
+            variaveis.append(i)
+    variaveis = list(dict.fromkeys(variaveis))
+    condicoes = []
+    for i, j in modelo_condicoes.items():
+        if j[0] in instance.corpo:
+            condicoes.append(i)
+    condicoes = list(dict.fromkeys(condicoes))
+    ContratoModelo.objects.filter(pk=instance.pk).update(variaveis=variaveis, condicoes=condicoes, visualizar=link)
 
 
 @receiver(post_save, sender=Usuario)
