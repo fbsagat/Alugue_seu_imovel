@@ -426,7 +426,7 @@ def registrar_locat(request):
 
 
 def locat_auto_registro(request, username, code):
-    site_code = settings.CODIGOS_POR_FUNCOES['auto-registro']
+    site_code = settings.UUID_CODES['auto-registro']
     hash_uuid = sha256(str(f'{request.user.uuid}{site_code}').encode())
     uuid_digest = hash_uuid.hexdigest()[:25]
     if code != uuid_digest or username != request.user.username:

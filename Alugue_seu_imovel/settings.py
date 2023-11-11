@@ -1,5 +1,5 @@
+import ast, json
 from pathlib import Path
-
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 from dotenv import load_dotenv
@@ -34,12 +34,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 CSRF_TRUSTED_ORIGINS = ''
-TOKEN_CSRF = os.getenv('TOKEN_CSRF')
-if TOKEN_CSRF:
-    SECRET_KEY = TOKEN_CSRF
-    CSRF_TRUSTED_ORIGINS = [SITE_URL, ]
-else:
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
+else:
+    CSRF_TRUSTED_ORIGINS = [SITE_URL, ]
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -49,9 +49,9 @@ ALLOWED_HOSTS = [SITE_URL.split('//')[1]]
 if ALL_HOSTS:
     ALLOWED_HOSTS += ['*', ]
 
-if DEBUG:
-    CODIGOS_POR_FUNCOES = {'auto-registro': 'auto-registro/bd3826fc', 'recibos': 'recibos/29h8Gz7K',
-                           'contrato-modelo': 'contrato-modelo/DvU64RmL', 'contrato': 'contrato/AqwIu7M0'}
+UUID_CODES = ast.literal_eval(str(os.getenv('UUID_CODES')))
+if not UUID_CODES:
+    UUID_CODES = {}
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 

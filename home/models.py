@@ -84,25 +84,25 @@ class Usuario(AbstractUser):
                                         on_delete=models.SET_NULL)
 
     def locat_auto_registro_link(self):
-        site_code = settings.CODIGOS_POR_FUNCOES['auto-registro']
+        site_code = settings.UUID_CODES['auto-registro']
         hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
         code = hash_uuid.hexdigest()[:25]
         return reverse('home:Locatario Auto-Registro', args=[self.username, code])
 
     def recibos_code(self):
-        site_code = settings.CODIGOS_POR_FUNCOES['recibos']
+        site_code = settings.UUID_CODES['recibos']
         hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
         code = hash_uuid.hexdigest()[:25]
         return code
 
     def contrato_code(self):
-        site_code = settings.CODIGOS_POR_FUNCOES['contrato']
+        site_code = settings.UUID_CODES['contrato']
         hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
         code = hash_uuid.hexdigest()[:25]
         return code
 
     def contrato_modelo_code(self):
-        site_code = settings.CODIGOS_POR_FUNCOES['contrato-modelo']
+        site_code = settings.UUID_CODES['contrato-modelo']
         hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
         code = hash_uuid.hexdigest()[:25]
         return code
