@@ -3,6 +3,7 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import os, environ, dj_database_url
 from dotenv import load_dotenv
+
 load_dotenv()
 env = environ.Env()
 environ.Env.read_env()
@@ -15,7 +16,7 @@ USAR_DB = 1
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar o form inválido da navbar das sessions (segundos)
-TEMPO_SESSION_FORM = 30
+TEMPO_SESSION_FORM = 45
 
 # Configurações do gerador de dados fictícios (home.views / home.fakes_test):
 # Total a ser criado para cada item / dados iniciais do formulário \/
@@ -25,9 +26,6 @@ FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
 TAMANHO_DAS_IMAGENS_Mb = 4
 TAMANHO_DO_MODELO_Mb = 0.5
-
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,8 +33,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-TOKEN_CSRF = os.getenv('TOKEN_CSRF')
 CSRF_TRUSTED_ORIGINS = ''
+TOKEN_CSRF = os.getenv('TOKEN_CSRF')
 if TOKEN_CSRF:
     SECRET_KEY = TOKEN_CSRF
     CSRF_TRUSTED_ORIGINS = [SITE_URL, ]
@@ -45,11 +43,15 @@ else:
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALL_HOSTS = True
 
+ALL_HOSTS = True
 ALLOWED_HOSTS = [SITE_URL.split('//')[1]]
 if ALL_HOSTS:
     ALLOWED_HOSTS += ['*', ]
+
+if DEBUG:
+    CODIGOS_POR_FUNCOES = {'auto-registro': 'auto-registro/bd3826fc', 'recibos': 'recibos/29h8Gz7K',
+                           'contrato-modelo': 'contrato-modelo/DvU64RmL', 'contrato': 'contrato/AqwIu7M0'}
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -111,17 +113,9 @@ TEMPLATES = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.facebook.FacebookOAuth2',
-    'social_core.backends.twitter.TwitterOAuth',
-    'social_core.backends.google.GoogleOAuth2',
-
-    'django.contrib.auth.backends.ModelBackend',
-)
-
 WSGI_APPLICATION = 'Alugue_seu_imovel.wsgi.application'
 
-# Database
+# Configurações da base de dados
 if USAR_DB == 1:
     # SQlite3 Local
     DATABASES = {
@@ -144,6 +138,7 @@ elif USAR_DB == 3:
         'default': dj_database_url.parse(env('DATABASE_URL'))
     }
 
+# Modelo de usuário
 AUTH_USER_MODEL = "home.Usuario"
 
 # Password validation
@@ -191,6 +186,14 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
 # configurações do social auth
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.google.GoogleOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 SOCIAL_AUTH_FACEBOOK_KEY = ''
 SOCIAL_AUTH_FACEBOOK_SECRET = ''
 
@@ -213,7 +216,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# Configurações da biblioteca de redimendionamento das imagens enviadas pelos usuários:
+# Configurações da biblioteca de redimensionamento das imagens enviadas pelos usuários:
 DJANGORESIZED_DEFAULT_SIZE = [1080, None]
 DJANGORESIZED_DEFAULT_SCALE = 0.5
 DJANGORESIZED_DEFAULT_QUALITY = 75

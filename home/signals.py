@@ -240,7 +240,9 @@ def sugestao_pre_save(sender, instance, **kwargs):
 # Gerenciadores de post_save \/  ---------------------------------------
 @receiver(post_save, sender=ContratoModelo)
 def contrato_modelo_post_save(sender, instance, created, **kwargs):
-    dados = {'modelo_pk': instance.pk, 'modelo': instance, 'usuario_username': str(instance.autor.username)}
+    # Tem outro gerar_contrato_pdf em visualizar_modelo em views (backup deste)
+    dados = {'modelo_pk': instance.pk, 'modelo': instance, 'usuario_username': str(instance.autor.username),
+             'contrato_modelo_code': instance.autor.contrato_modelo_code()}
     link = gerar_contrato_pdf(dados=dados, visualizar=True)
     variaveis = []
     for i, j in modelo_variaveis.items():
@@ -399,7 +401,7 @@ def usuario_fez_login(sender, user, **kwargs):
 @receiver(user_logged_out)
 def usuario_fez_logout(sender, user, **kwargs):
     # Apagar arquivos temporários da sessão do usuário
-    # 1. tabela_docs
+    # 1. Tabela_docs
     diretorio = rf'{settings.MEDIA_ROOT}/tabela_docs'
     se_existe = os.path.exists(diretorio)
     if not se_existe:
@@ -408,11 +410,12 @@ def usuario_fez_logout(sender, user, **kwargs):
         if file.endswith(f"{user}.pdf"):
             os.remove(os.path.join(diretorio, file))
 
-    # 2. contrato_docs
+    # 2. Contrato_docs
     diretorio = f'{settings.MEDIA_ROOT}/contrato_docs'
     se_existe = os.path.exists(diretorio)
     if not se_existe:
         os.makedirs(diretorio)
+    code = user.contrato_code()
     for file in os.listdir(diretorio):
-        if file.endswith(f"{user}.pdf"):
+        if file.startswith(code):
             os.remove(os.path.join(diretorio, file))

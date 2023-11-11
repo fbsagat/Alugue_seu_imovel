@@ -196,7 +196,7 @@ class FormLocatario(forms.ModelForm):
 
     def clean_CPF(self):
         cpf = self.cleaned_data['CPF']
-        cpfs_dos_locat_deste_user = Locatario.objects.nao_temporarios().filter(do_locador=self.locador_pk).exclude(
+        cpfs_dos_locat_deste_user = Locatario.objects.filter(do_locador=self.locador_pk).exclude(
             pk=self.instance.pk).values_list('CPF', flat=True)
         if cpf in cpfs_dos_locat_deste_user:
             raise forms.ValidationError("Já existe um locatário registrado com este CPF.")

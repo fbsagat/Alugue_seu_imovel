@@ -45,7 +45,7 @@ urlpatterns = [
     path('excluir_registro_de_locatario/<int:pk>', ExcluirLocat.as_view(), name='Excluir Locatario'),
 
     # LOCATARIO Auto-registro -------------------
-    path('locatario_auto_registro/<username>/<str:uuid>', locat_auto_registro, name='Locatario Auto-Registro'),
+    path('locatario_auto_registro/<username>/<str:code>', locat_auto_registro, name='Locatario Auto-Registro'),
     path('revisar_registro_de_locatario/<int:pk>', RevisarLocat.as_view(), name='Revisar Locatário'),
 
     # CONTRATO -------------------

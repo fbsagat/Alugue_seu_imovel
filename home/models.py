@@ -1,10 +1,12 @@
 import string, secrets
 from datetime import datetime, timedelta
 from math import floor
+from hashlib import sha256
 
 from dateutil.relativedelta import relativedelta
 from num2words import num2words
 
+from Alugue_seu_imovel import settings
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator, MinValueValidator, \
     MaxValueValidator, FileExtensionValidator
 from django.db import models
@@ -82,7 +84,28 @@ class Usuario(AbstractUser):
                                         on_delete=models.SET_NULL)
 
     def locat_auto_registro_link(self):
-        return reverse('home:Locatario Auto-Registro', args=[self.username, self.uuid])
+        site_code = settings.CODIGOS_POR_FUNCOES['auto-registro']
+        hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
+        code = hash_uuid.hexdigest()[:25]
+        return reverse('home:Locatario Auto-Registro', args=[self.username, code])
+
+    def recibos_code(self):
+        site_code = settings.CODIGOS_POR_FUNCOES['recibos']
+        hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
+        code = hash_uuid.hexdigest()[:25]
+        return code
+
+    def contrato_code(self):
+        site_code = settings.CODIGOS_POR_FUNCOES['contrato']
+        hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
+        code = hash_uuid.hexdigest()[:25]
+        return code
+
+    def contrato_modelo_code(self):
+        site_code = settings.CODIGOS_POR_FUNCOES['contrato-modelo']
+        hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
+        code = hash_uuid.hexdigest()[:25]
+        return code
 
     def nome_completo(self):
         return f'{str(self.first_name)} {str(self.last_name)}'

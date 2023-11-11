@@ -4,6 +4,7 @@ from os import path
 from math import floor
 from random import randrange
 from dateutil.relativedelta import relativedelta
+from hashlib import sha256
 
 from Alugue_seu_imovel import settings
 from num2words import num2words
@@ -424,29 +425,35 @@ def registrar_locat(request):
         return redirect(request.META['HTTP_REFERER'])
 
 
-def locat_auto_registro(request, username, uuid):
-    user = get_object_or_404(Usuario, username=username, uuid=uuid)
-    context = {}
-    if request.method == 'POST':
-        form = FormLocatario(request.POST, request.FILES, usuario=request.user.pk)
-
-        if form.is_valid():
-            locatario = form.save(commit=False)
-            locatario.do_locador = user
-            locatario.temporario = True
-            locatario.save()
-            messages.success(request, "Dados enviados com sucesso! Aguarde o contato do locador.")
-            return redirect(reverse('home:Locatario Auto-Registro', args=[user.username, user.uuid]))
-        else:
-            messages.error(request, f"Formulário inválido.")
-            context['form'] = form
-            return render(request, 'locatario_auto_registro.html', context)
+def locat_auto_registro(request, username, code):
+    site_code = settings.CODIGOS_POR_FUNCOES['auto-registro']
+    hash_uuid = sha256(str(f'{request.user.uuid}{site_code}').encode())
+    uuid_digest = hash_uuid.hexdigest()[:25]
+    if code != uuid_digest or username != request.user.username:
+        raise Http404
     else:
-        form = FormLocatario(usuario=request.user.pk)
+        user = get_object_or_404(Usuario, username=username)
+        context = {}
+        if request.method == 'POST':
+            form = FormLocatario(request.POST, request.FILES, usuario=request.user.pk)
 
-    context['form'] = form
-    context['SITE_NAME'] = settings.SITE_NAME
-    return render(request, 'locatario_auto_registro.html', context)
+            if form.is_valid():
+                locatario = form.save(commit=False)
+                locatario.do_locador = user
+                locatario.temporario = True
+                locatario.save()
+                messages.success(request, "Dados enviados com sucesso! Aguarde o contato do locador.")
+                return redirect(reverse('home:Locatario Auto-Registro', args=[user.username, code]))
+            else:
+                messages.error(request, f"Formulário inválido.")
+                context['form'] = form
+                return render(request, 'locatario_auto_registro.html', context)
+        else:
+            form = FormLocatario(usuario=request.user.pk)
+
+        context['form'] = form
+        context['SITE_NAME'] = settings.SITE_NAME
+        return render(request, 'locatario_auto_registro.html', context)
 
 
 class RevisarLocat(LoginRequiredMixin, UpdateView):
@@ -570,7 +577,7 @@ def rescindir_contrat(request, pk):
             messages.warning(request, f"Contrato rescindido com sucesso! Registro criado em {data}.")
         return redirect(request.META['HTTP_REFERER'])
     else:
-        return Http404
+        raise Http404
 
 
 @login_required
@@ -588,7 +595,7 @@ def recebido_contrat(request, pk):
             messages.success(request, f"Cópia do contrato do locador em mãos!")
         return redirect(request.META['HTTP_REFERER'])
     else:
-        return Http404
+        raise Http404
 
 
 # IMOVEL ---------------------------------------
@@ -739,7 +746,7 @@ def recibos(request):
                          }
 
                 local_temp = gerar_recibos_pdf(dados=dados)
-                contrato.recibos_pdf = File(local_temp, name=f'recibos_de_{usuario.uuid}_{dados["cod_contrato"]}.pdf')
+                contrato.recibos_pdf = File(local_temp, name=f'recibos_de_{usuario.recibos_code()}_{dados["cod_contrato"]}.pdf')
                 contrato.save()
 
         context = {'form': form, 'contrato': contrato, 'tem_contratos': tem_contratos, 'pede_dados': pede_dados,
@@ -1099,8 +1106,8 @@ def gerar_contrato(request):
             caucao_por_extenso = valor_por_extenso(str(contr_doc_configs.caucao * int(contrato.valor_mensal)))
 
         dados = {'modelo': contr_doc_configs.do_modelo,
-                 'usuario': usuario.username,
-                 'session_key': request.session.session_key,
+                 'contrato_pk': contrato.pk,
+                 'contrato_code': usuario.contrato_code(),
 
                  # A partir deste ponto, variaveis do contrato \/
                  # Regra:
@@ -1194,7 +1201,7 @@ def gerar_contrato(request):
 
         gerar_contrato_pdf(dados=dados)
         # Link do contrato_doc
-        link = rf'/media/contrato_docs/contrato_{dados["session_key"]}_{dados["usuario"]}.pdf'
+        link = rf'/media/contrato_docs/{dados["contrato_code"]}-modelo_{dados["modelo"].pk}-contrato_{dados["contrato_pk"]}.pdf'
         # Preparar o context
         context['contrato_doc'] = link
     else:
@@ -1255,6 +1262,14 @@ def visualizar_modelo(request, pk):
     if request.user in modelo.excluidos.all():
         raise Http404
     else:
+        # Cria o modelo caso não tenha sido criado, por algum erro, pelo signals ou tenha sido apagado do armazenamento.
+        path_completo = fr'{settings.MEDIA_ROOT}/{modelo.visualizar}'
+        if not os.path.isfile(path_completo):
+            dados = {'modelo_pk': modelo.pk, 'modelo': modelo, 'usuario_username': str(modelo.autor.username),
+                     'contrato_modelo_code': modelo.autor.contrato_modelo_code()}
+            link = gerar_contrato_pdf(dados=dados, visualizar=True)
+            ContratoModelo.objects.filter(pk=modelo.pk).update(visualizar=link)
+
         if modelo.autor == request.user or modelo.comunidade or request.user in modelo.usuarios.all():
             context['modelo'] = modelo
             context['SITE_NAME'] = settings.SITE_NAME
@@ -1340,16 +1355,16 @@ def editar_modelo(request, pk):
         modelo.autor = request.user
         modelo.titulo = form_titulo
         if modelo.corpo != form_corpo:
+            modelo.corpo = form_corpo
             if local_debug:
                 print('atualizou corpo no banco')
-            modelo.corpo = form_corpo
         else:
             if local_debug:
                 print('não precisou atualizar corpo no banco')
         if modelo.descricao != form_descr:
+            modelo.descricao = form_descr
             if local_debug:
                 print('atualizou descrição no banco')
-            modelo.descricao = form_descr
         else:
             if local_debug:
                 print('não precisou atualizar descrição no banco')
@@ -1399,10 +1414,10 @@ def editar_modelo(request, pk):
                     if config_usa:
                         if local_debug:
                             print('Tem configurações usando este modelo')
-                            if form_corpo != modelo_.corpo:
-                                if local_debug:
-                                    print('O corpo do modelo está diferente')
-                                criar_um_modelo(modelo=modelo_, _um=config_usa, _dois=usuario_usa)
+                        if form_corpo != modelo_.corpo:
+                            if local_debug:
+                                print('O corpo do modelo está diferente')
+                            criar_um_modelo(modelo=modelo_, _um=config_usa, _dois=usuario_usa)
                     else:
                         atualizar_o_modelo(modelo=modelo_, _um=config_usa, _dois=usuario_usa)
             else:
@@ -2034,7 +2049,7 @@ def arquivos_contratos_modelos(request, file):
     modelo = get_object_or_404(ContratoModelo, visualizar=link)
     if modelo.autor == request.user or modelo.comunidade or request.user.is_superuser:
         local = fr'{settings.MEDIA_ROOT}/{modelo.visualizar}'
-        if os.path.exists(local):
+        if os.path.isfile(local):
             return FileResponse(modelo.visualizar)
         else:
             raise Http404
@@ -2100,7 +2115,7 @@ def arquivos_tabela_docs(request, file):
 @login_required
 def arquivos_contrato_docs(request, file):
     link = str(f'/contrato_docs/{file}')
-    if request.session.session_key in file:
+    if request.user.contrato_code() in file:
         local = fr'{settings.MEDIA_ROOT}/{link}'
         if os.path.exists(local):
             return FileResponse(open(f'{settings.MEDIA_ROOT + link}', 'rb'), content_type='application/pdf')

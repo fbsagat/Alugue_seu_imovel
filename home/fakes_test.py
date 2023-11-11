@@ -256,19 +256,21 @@ def modelos_contratos_ficticios(usuario):
     except:
         corpo = str(f'<p>{fake.paragraph(nb_sentences=randrange(10, 15))}<p>')
 
-    usuarios = Usuario.objects.all()
+    todos_usuarios = Usuario.objects.all()
     alguns_usuarios = []
-    comunidade = porcentagem_de_chance(50)
+    comunidade = porcentagem_de_chance(75)
     count = 0
-    valor = randrange(0, len(usuarios))
+    valor = randrange(0, len(todos_usuarios))
+    alguns_usuarios.append(usuario)
     if comunidade:
-        alguns_usuarios.append(usuario)
-        while True:
-            alguns_usuarios.append(choice(usuarios)) if porcentagem_de_chance(15) else None
-            if count == valor:
-                break
-            count += 1
-        usuarios = alguns_usuarios
+        if porcentagem_de_chance(50):
+            while True:
+                alguns_usuarios.append(choice(todos_usuarios)) if porcentagem_de_chance(50) else None
+                if count == valor:
+                    break
+                count += 1
+    usuarios = alguns_usuarios
+    print(usuarios)
     descricao = fake.paragraph(nb_sentences=randrange(2, 3))
 
     return {'titulo': titulo, 'corpo': corpo, 'usuarios': usuarios, 'descricao': descricao,

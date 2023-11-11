@@ -85,6 +85,15 @@ Ok. Criar a função comunidade no editor de modelos.
         (1. colocar o visualizar / 2. colocar descrição / 3. Fazer o sistema de exclusão inteligente
         / 4. Fazer o sistema de versionamento)
 Ok. Quando um modelo de contrato é salvo, é atualizado no banco, sem ter sido modificado em nada, arrumar.
+Ok. Fazer uma class .model para os pacotes de vendas, para que se mantenham corretos e facilitados os cálculos de ganhos
+        e etc.. no decorrer das mudanças, de valores, pacote_qtd_inicial, pacote_qtd_mult, desconto_multiplicador
+        e desconto_add_cripto, ao longo do tempo.
+Ok. Tirar contratos da lista de pagamentos que já estiverem 100% kits.
+Ok. Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização
+        (link de auto cadastro do locatario, link de exclusão da conta que será enviado para o email, etc...)
+        baseados no uuid principal do usuário. É mais seguro! Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
+        Funções a corrigir: funcoes_proprias.py/gerar_contrato_pdf (não deve utilizar o username no nome do arquivo)
+
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -92,8 +101,11 @@ Fazer:
 Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico.
 
+Arrumar o aviso dde exclusão de locatário que se registrou no auto registro. Sem o alerta.
+
 Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
         e botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
+        Configs: Habilitar ou desabilitar o auto registro de locatários.
 
 Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
         tarefa. Ex: locatario.da_tarefa --> locatario.da_tarefa(filtros). Por enquanto todos os item que possuem
@@ -107,24 +119,12 @@ Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando 
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
-Fazer uma class .model para os pacotes de vendas, para que se mantenham corretos e facilitados os cálculos de ganhos
-        e etc.. no decorrer das mudanças, de valores, pacote_qtd_inicial, pacote_qtd_mult, desconto_multiplicador
-        e desconto_add_cripto, ao longo do tempo.
-
-Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização
-        (link de auto cadastro do locatario, link de exclusão da conta que será enviado para o email, etc...)
-        baseados no uuid principal do usuário. É mais seguro! Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
-        Funções a corrigir: funcoes_proprias.py/gerar_contrato_pdf (não deve utilizar o username no nome do arquivo)
-
 Colocar a variável 'mobiliado' no contrato pdf(ou um sistema personalizado de ativação de trechos para os usuários
         onde eles criam as próprias condições, seria interessante).
 
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
 Ja ta na hora de instalar o celery e começar a usar.
-
-Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
-        informações de cada usuário nas queryes, nunca a partir de todos os objetos.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -135,6 +135,8 @@ Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir tam
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Melhorias muito futuras:
+Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
+        informações de cada usuário nas queryes, nunca a partir de todos os objetos.
 Fazer um sistema de configurações do fake test, onde serão modificadas as probabilidades de cada variável aleatória.
 Arrumar e organizar, deixar otimizado o painel administrativo(django admin) completo.
 Criar o help (sistema de dicas e recomendações espalhados por to_do o site, referentes ao manuseio do mesmo e a regras

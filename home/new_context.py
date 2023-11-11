@@ -19,8 +19,13 @@ def titulo_pagina(request):
 
 def navbar_forms(request):
     if request.user.is_authenticated:
-        # Apenas contratos ativos hoje ou futuramente para os forms
+
+        # Apenas contratos ativos hoje ou futuramente e não quitados para os forms
         contratos_exibir = Contrato.objects.ativos_margem().filter(do_locador=request.user).order_by('-data_entrada')
+        for contrato in contratos_exibir:
+            if contrato.quitado():
+                contratos_exibir = contratos_exibir.exclude(pk=contrato.pk)
+
         # Apenas os imóveis do locador
         imovies_locador = Imovei.objects.filter(do_locador=request.user).order_by('-data_registro')
 

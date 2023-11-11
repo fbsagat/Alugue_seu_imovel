@@ -50,10 +50,11 @@ Painel / {{ SITE_NAME }}
             <div class="container g-0 mb-1">
                 <div class="d-flex items-center justify-content-end">
                     <div class="mx-1">
-                        <a href="{% url 'home:Painel Loja' %}">
-                            <button type="button" class="btn btn-sm btn-primary">Loja 🏬
+                        <form action="{% url 'home:Painel Loja' %}">
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                Loja 🏬
                             </button>
-                        </a>
+                        </form>
                     </div>
                     <div>
                     <span class="badge bg-secondary position-relative">
