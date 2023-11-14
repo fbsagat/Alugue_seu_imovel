@@ -4,16 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/financeiro/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/financeiro/migrations/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/staticfiles/ckeditor/ckeditor.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/staticfiles/js/copiador.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/staticfiles/js/preenchedor.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/staticfiles/js/prevent_multiple_click.js" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias.">
+      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0003_remove_pagamentoinvoice_dados_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/templates/painel_loja_backup.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/stripe.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,8 +30,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -64,21 +70,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/home&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/financeiro/templates",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.editor"
   }
-}</component>
+}]]></component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
@@ -94,11 +100,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\financeiro\templates" />
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home" />
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\templates" />
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures" />
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\templates" />
-      <recent name="D:\Documentos\Dev Projects\Alugue_seu_imovel\home\templates" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\financeiro\templates" />
@@ -495,7 +501,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="166" />
+    <option name="localTasksCounter" value="167" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -528,7 +534,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Iniciada: Criar a função comunidade no editor de modelos&#10;Melhoria na exibição de variáveis e condições.&#10;Melhoris nos slots: Agora tem uma barra de progresso." />
     <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto." />
     <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Melhorado o botaoteste, gerador de ficticios." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Melhorado o botaoteste, gerador de ficticios, mais atualizações, mais estável." />
@@ -553,6 +558,7 @@
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;FormContratoModelo tem um validador de títulos, não pode mais salvar titulo repetido, ao não ser que o usuário seja o dono do objeto salvando o próprio.&#10;&#10;ContratoModelo mais organizado: Criado o contrato_modelo_post_save para auto-salvamento de informações: variaveis=variaveis, condicoes=condicoes, visualizar=link. Retirando repetições nas views.&#10;&#10;view editar_modelo muito mais organizada e inteligivel, funcionando sem bugs, testado e ok." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Feito: Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização(link de auto cadastro do locatário).&#10;&#10;Feito: Apenas contratos ativos hoje ou futuramente e não quitados para os forms" />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Feito: Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização(link de auto cadastro do locatário).&#10;&#10;Feito: Apenas contratos ativos hoje ou futuramente e não quitados para os forms" />
+    <MESSAGE value="Correções de bugs e melhorias." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias." />
   </component>
 </project>

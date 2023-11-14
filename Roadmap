@@ -93,6 +93,7 @@ Ok. Não utilizar diretamente o uuid do usuário no front-end, apenas derivados 
         (link de auto cadastro do locatario, link de exclusão da conta que será enviado para o email, etc...)
         baseados no uuid principal do usuário. É mais seguro! Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
         Funções a corrigir: funcoes_proprias.py/gerar_contrato_pdf (não deve utilizar o username no nome do arquivo)
+Ok. Arrumar o aviso dde exclusão de locatário que se registrou no auto registro. Sem o alerta.
 
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
@@ -100,20 +101,19 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 Fazer:
 Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico.
-
-Arrumar o aviso dde exclusão de locatário que se registrou no auto registro. Sem o alerta.
+Mostrar um histórico de compras do usuário em algum lugar. Explorar o stripe, mais funções.
 
 Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
         e botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
         Configs: Habilitar ou desabilitar o auto registro de locatários.
 
-Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
+Tarefas:
+1. Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
         tarefa. Ex: locatario.da_tarefa --> locatario.da_tarefa(filtros). Por enquanto todos os item que possuem
         tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
         ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
         ficar o atributo da_tarefa?
-
-Tarefas: Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando a sugestão do usuário for aprovada = OK.
+2. Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando a sugestão do usuário for aprovada = OK.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
 

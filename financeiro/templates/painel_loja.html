@@ -52,13 +52,13 @@ Painel / {{ SITE_NAME }}
                         <hr>
                         <br>
                         <div class="d-grid my-3">
-                            <form action="{% url 'financeiro:Pagar Pacote' forloop.counter0 'brl' %}">
+                            <form action="{% url 'financeiro:Criar Checkout' forloop.counter0 'brl' %}" method="POST">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-outline-success btn-block">
                                     Comprar com REAL
                                 </button>
                             </form>
-                            <small class="text-muted">Comprar com Real via Mercado Pago</small>
+                            <small class="text-muted">Comprar com Cartão de Crédito via Stripe Pagamentos</small>
                         </div>
                         <span class="h2">R${{ card.valor_pct_brl }}</span>
                         <br>
@@ -67,9 +67,9 @@ Painel / {{ SITE_NAME }}
                             {{ card.desconto_p_un_brl }}% por unidade{% else %}(Valor base)
                             {% endif %}</small>
                         <ul>
-                            <li>Comprando com Real</li>
-                            <li>Você ganha mais formas de pagamento:</li>
-                            <li>Pix, crédito, débito, boleto e etc...</li>
+                            <li>Comprando com Real você utiliza os</li>
+                            <li>Métodos de Pagamentos mais habituais:</li>
+                            <li>Pix, crédito, boleto...</li>
                         </ul>
 
                         <br>
@@ -77,16 +77,16 @@ Painel / {{ SITE_NAME }}
                         <br>
 
                         <div class="d-grid my-3">
-                            <form action="{% url 'financeiro:Pagar Pacote' forloop.counter0 'btc' %}">
+                            <form action=""  method="POST">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-warning btn-block">
+                                <button type="submit" class="btn btn-outline-warning btn-block" disabled>
                                     Comprar com BTC
                                 </button>
                             </form>
                             <small class="text-muted">Comprar com Bitcoin via lightning Network</small>
                         </div>
-                        <span class="h2">R${{ card.valor_pct_btc }}</span>
-                        <span class="text-muted">(20.667 satoshi)</span>
+                        <span class="h2">~{{ card.valor_pacote_em_satoshis }} sats</span>
+                        <span class="text-muted">R${{ card.valor_pct_btc }}</span>
                         <br>
                         <small class='text-muted'>R${{ card.valor_por_ticket_btc }}/ticket - </small>
                         <small class='text-muted'>Desconto de {{ card.desconto_p_un_btc }}% por unidade</small>

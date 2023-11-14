@@ -31,44 +31,44 @@ urlpatterns = [
     # ABA REGISTRAR -------------------
 
     # PAGAMENTO -------------------
-    path('registrar_pagamento', registrar_pagamento, name='Registrar Pagamento'),
-    path('excluir_pagamento/<int:pk>', ExcluirPagm.as_view(), name='Excluir Pagamento'),
+    path('registrar_pagamento/', registrar_pagamento, name='Registrar Pagamento'),
+    path('excluir_pagamento/<int:pk>/', ExcluirPagm.as_view(), name='Excluir Pagamento'),
 
     # GASTO -------------------
-    path('registrar_gasto', registrar_gasto, name='Registrar Gasto'),
-    path('editar_registro_de_gasto/<int:pk>', EditarGasto.as_view(), name='Editar Gasto'),
-    path('excluir_registro_de_gasto/<int:pk>', ExcluirGasto.as_view(), name='Excluir Gasto'),
+    path('registrar_gasto/', registrar_gasto, name='Registrar Gasto'),
+    path('editar_registro_de_gasto/<int:pk>/', EditarGasto.as_view(), name='Editar Gasto'),
+    path('excluir_registro_de_gasto/<int:pk>/', ExcluirGasto.as_view(), name='Excluir Gasto'),
 
     # LOCATARIO -------------------
-    path('registro_de_locatario', registrar_locat, name='Registrar Locatario'),
-    path('editar_registro_de_locatario/<int:pk>', EditarLocat.as_view(), name='Editar Locatario'),
-    path('excluir_registro_de_locatario/<int:pk>', ExcluirLocat.as_view(), name='Excluir Locatario'),
+    path('registro_de_locatario/', registrar_locat, name='Registrar Locatario'),
+    path('editar_registro_de_locatario/<int:pk>/', EditarLocat.as_view(), name='Editar Locatario'),
+    path('excluir_registro_de_locatario/<int:pk>/', ExcluirLocat.as_view(), name='Excluir Locatario'),
 
     # LOCATARIO Auto-registro -------------------
-    path('locatario_auto_registro/<username>/<str:code>', locat_auto_registro, name='Locatario Auto-Registro'),
-    path('revisar_registro_de_locatario/<int:pk>', RevisarLocat.as_view(), name='Revisar Locatário'),
+    path('locatario_auto_registro/<username>/<str:code>/', locat_auto_registro, name='Locatario Auto-Registro'),
+    path('revisar_registro_de_locatario/<int:pk>/', RevisarLocat.as_view(), name='Revisar Locatário'),
 
     # CONTRATO -------------------
-    path('registrar_contrato', registrar_contrato, name='Registrar Contrato'),
-    path('contrato_rescindido/<int:pk>', rescindir_contrat, name='Rescindir Contrato'),
-    path('receber_contrato/<int:pk>', recebido_contrat, name='Contrato Recebido'),
-    path('editar_contrato/<int:pk>', EditarContrato.as_view(), name='Editar Contrato'),
-    path('excluir_contrato/<int:pk>', ExcluirContrato.as_view(), name='Excluir Contrato'),
+    path('registrar_contrato/', registrar_contrato, name='Registrar Contrato'),
+    path('contrato_rescindido/<int:pk>/', rescindir_contrat, name='Rescindir Contrato'),
+    path('receber_contrato/<int:pk>/', recebido_contrat, name='Contrato Recebido'),
+    path('editar_contrato/<int:pk>/', EditarContrato.as_view(), name='Editar Contrato'),
+    path('excluir_contrato/<int:pk>/', ExcluirContrato.as_view(), name='Excluir Contrato'),
 
     # GRUPO -------------------
     path('criar_grupo/', criar_grupo, name='Criar Grupo Imóveis'),
-    path('editar_grupo/<int:pk>', EditarGrup.as_view(), name='Editar Grupo Imóveis'),
-    path('excluir_grupo/<int:pk>', ExcluirGrupo.as_view(), name='Excluir Grupo Imóveis'),
+    path('editar_grupo/<int:pk>/', EditarGrup.as_view(), name='Editar Grupo Imóveis'),
+    path('excluir_grupo/<int:pk>/', ExcluirGrupo.as_view(), name='Excluir Grupo Imóveis'),
 
     # IMOVEL -------------------
-    path('registrar_imovel', registrar_imovel, name='Registrar Imóvel'),
-    path('editar_regimov/<int:pk>', EditarImov.as_view(), name='Editar Imóvel'),
-    path('excluir_regimov/<int:pk>', ExcluirImov.as_view(), name='Excluir Imóvel'),
+    path('registrar_imovel/', registrar_imovel, name='Registrar Imóvel'),
+    path('editar_regimov/<int:pk>/', EditarImov.as_view(), name='Editar Imóvel'),
+    path('excluir_regimov/<int:pk>/', ExcluirImov.as_view(), name='Excluir Imóvel'),
 
     # ANOTAÇÕES -------------------
-    path('registrar_anotacoes', registrar_anotacao, name='Registrar Anotação'),
-    path('editar_anotacao/<int:pk>', EditarAnotacao.as_view(), name='Editar Anotação'),
-    path('excluir_anotacao/<int:pk>', ExcluirAnotacao.as_view(), name='Excluir Anotação'),
+    path('registrar_anotacoes/', registrar_anotacao, name='Registrar Anotação'),
+    path('editar_anotacao/<int:pk>/', EditarAnotacao.as_view(), name='Editar Anotação'),
+    path('excluir_anotacao/<int:pk>/', ExcluirAnotacao.as_view(), name='Excluir Anotação'),
 
     # ABA GERAR -------------------
     path('recibos_PDF/', recibos, name='Recibos PDF'),
@@ -77,11 +77,11 @@ urlpatterns = [
 
     # MODELO DE CONTRATO -------------------
     path('modelos/', MeusModelos.as_view(), name='Modelos'),
-    path('criar_modelo', criar_modelo, name='Criar Modelo'),
-    path('editar_modelo/<int:pk>', editar_modelo, name='Editar Modelo'),
-    path('copiar_modelo/<int:pk>', copiar_modelo, name='Copiar Modelo'),
-    path('visualizar_modelo/<int:pk>', visualizar_modelo, name='Visualizar Modelo'),
-    path('excluir_modelo/<int:pk>/<int:pag_orig>', ExcluirModelo.as_view(), name='Excluir Modelo'),
+    path('criar_modelo/', criar_modelo, name='Criar Modelo'),
+    path('editar_modelo/<int:pk>/', editar_modelo, name='Editar Modelo'),
+    path('copiar_modelo/<int:pk>/', copiar_modelo, name='Copiar Modelo'),
+    path('visualizar_modelo/<int:pk>/', visualizar_modelo, name='Visualizar Modelo'),
+    path('excluir_modelo/<int:pk>/<int:pag_orig>/', ExcluirModelo.as_view(), name='Excluir Modelo'),
     path('contrato_modelos_comunidade/', ModelosComunidade.as_view(), name='Modelos Comunidade'),
 
     # ABA HISTORICO -------------------
@@ -93,27 +93,27 @@ urlpatterns = [
     path('contratos/', Contratos.as_view(), name='Contratos'),
 
     # AFAZERES -------------------
-    path('recibo_entregue/<int:pk>', recibo_entregue, name='Recibo Entregue'),
-    path('afazer_concluida/<int:pk>', afazer_concluida, name='Afazer Concluida'),
+    path('recibo_entregue/<int:pk>/', recibo_entregue, name='Recibo Entregue'),
+    path('afazer_concluida/<int:pk>/', afazer_concluida, name='Afazer Concluida'),
 
     # DESENVOLVIMENTO -------------------
     path('msgm/', mensagem_desenvolvedor, name='Mensagem pro Desenvolvedor'),
     path('sugestoes_docs/', forum_sugestoes, name='Sugestões'),
-    path('sugestao_like/<int:pk>', like_de_sugestoes, name='like de Sugestão'),
-    path('sugestao_apagar/<int:pk>', apagar_sugestao, name='Apagar Sugestão'),
-    path('sugestao_implementar/<int:pk>', implementar_sugestao, name='Implementar Sugestão'),
-    path('sugestao_aprovar/<int:pk>', aprovar_sugestao, name='Aprovar Sugestão'),
+    path('sugestao_like/<int:pk>/', like_de_sugestoes, name='like de Sugestão'),
+    path('sugestao_apagar/<int:pk>/', apagar_sugestao, name='Apagar Sugestão'),
+    path('sugestao_implementar/<int:pk>/', implementar_sugestao, name='Implementar Sugestão'),
+    path('sugestao_aprovar/<int:pk>/', aprovar_sugestao, name='Aprovar Sugestão'),
 
     # AVISOS -------------------
-    path('aviso_lido/<int:pk>', aviso_lido, name='Aviso Lido'),
+    path('aviso_lido/<int:pk>/', aviso_lido, name='Aviso Lido'),
 
     # PAINEL -------------------
     path('painel_slots/', painel_slots, name='Painel Slots'),
     path('painel_configuracoes/', painel_configs, name='Painel Configs'),
     path('painel_loja/', painel_loja, name='Painel Loja'),
     path('adicionar_slot/', add_slot, name='Add Slot'),
-    path('apagar_slot/<int:pk>', apagar_slot, name='Apagar Slot'),
-    path('adicionar_ticket/<int:pk>', adicionar_ticket, name='Adicionar Ticket'),
+    path('apagar_slot/<int:pk>/', apagar_slot, name='Apagar Slot'),
+    path('adicionar_ticket/<int:pk>/', adicionar_ticket, name='Adicionar Ticket'),
     path('adicionar_ticket_todos/', adicionar_ticket_todos, name='Adicionar Ticket Todos'),
 
     # GERAL -------------------
@@ -121,7 +121,7 @@ urlpatterns = [
     path('criar_conta/', CriarConta.as_view(), name='Criar Conta'),
     path('apagar_conta/', ApagarConta.as_view(), name='Apagar Conta'),
     path('mudar_senha/', auth_view.PasswordChangeView.as_view(
-        template_name='editar_perfil.html', success_url=reverse_lazy('home:home'),
+        template_name='editar_perfil.html/', success_url=reverse_lazy('home:home'),
         extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
     path('editar_perfil/', EditarPerfil.as_view(), name='Editar Perfil'),
     path('login/',
@@ -131,12 +131,12 @@ urlpatterns = [
     path('botao/', botaoteste, name='botaoteste'),
 
     # SERVIDORES DE ARQUIVOS -------------------
-    path('media/contratos_modelos/<str:file>', arquivos_contratos_modelos),
-    path('media/sugestoes_docs/<str:year>/<str:month>/<str:file>', arquivos_sugestoes_docs),
-    path('media/locatarios_docs/<str:year>/<str:month>/<str:file>', arquivos_locatarios_docs),
-    path('media/gastos_comprovantes/<str:year>/<str:month>/<str:file>', arquivos_gastos_docs),
-    path('media/mensagens_ao_dev/<str:year>/<str:month>/<str:file>', arquivos_mensagens_ao_dev),
-    path('media/recibos_docs/<str:year>/<str:month>/<str:file>', arquivos_recibos_docs),
-    path('media/tabela_docs/<str:file>', arquivos_tabela_docs),
-    path('media/contrato_docs/<str:file>', arquivos_contrato_docs),
+    path('media/contratos_modelos/<str:file>/', arquivos_contratos_modelos),
+    path('media/sugestoes_docs/<str:year>/<str:month>/<str:file>/', arquivos_sugestoes_docs),
+    path('media/locatarios_docs/<str:year>/<str:month>/<str:file>/', arquivos_locatarios_docs),
+    path('media/gastos_comprovantes/<str:year>/<str:month>/<str:file>/', arquivos_gastos_docs),
+    path('media/mensagens_ao_dev/<str:year>/<str:month>/<str:file>/', arquivos_mensagens_ao_dev),
+    path('media/recibos_docs/<str:year>/<str:month>/<str:file>/', arquivos_recibos_docs),
+    path('media/tabela_docs/<str:file>/', arquivos_tabela_docs),
+    path('media/contrato_docs/<str:file>/', arquivos_contrato_docs),
 ]

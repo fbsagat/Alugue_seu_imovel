@@ -1679,9 +1679,12 @@ class ExcluirLocat(LoginRequiredMixin, DeleteView):
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirLocat, self).get_context_data(**kwargs)
         context['SITE_NAME'] = settings.SITE_NAME
-        context['aviso'] = (''
-                            'Tem certeza de que deseja apagar o locatário selecionado? Todos os seus contratos e'
-                            ' respectivos registros de pagamentos também serão removidos.')
+        if self.get_object().temporario is True:
+            pass
+        else:
+            context['aviso'] = (''
+                                'Tem certeza de que deseja apagar o locatário selecionado? Todos os seus contratos e'
+                                ' respectivos registros de pagamentos também serão removidos.')
         return context
 
 

@@ -1,5 +1,8 @@
+import requests
+from Alugue_seu_imovel import settings
 from django.db import models
-
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
 
 pacotes_nomes = ['Pacote Pequeno', 'Pacote Médio', 'Pacote Grande', 'Pacote Gigante']
 
@@ -32,6 +35,10 @@ class PacoteConfig(models.Model):
         pacote_qtd_mult = self.pacote_qtd_multiplicador
         desconto_multiplicador = self.desconto_pacote_multiplicador
         desconto_add_cripto = self.desconto_add_bitcoin
+        url = 'https://api.bitpreco.com/btc-brl/ticker'
+        request = requests.get(url)
+        j_son = request.json()
+        btc_brl = j_son['last']
 
         cards = []
         for n, pacote in enumerate(pacotes_nomes):
@@ -41,6 +48,7 @@ class PacoteConfig(models.Model):
             valor_pacote_brl = valor_por_ticket_brl * ticket_qtd
             valor_por_ticket_btc = valor_ticket - (valor_ticket * (desconto_porcent + desconto_add_cripto) / 100)
             valor_pacote_btc = valor_por_ticket_btc * ticket_qtd
+            valor_pacote_em_satoshis = round(valor_pacote_btc / (btc_brl / 100000000))
             desconto_p_un_btc = desconto_porcent + desconto_add_cripto
 
             pacote = {
@@ -53,6 +61,8 @@ class PacoteConfig(models.Model):
                 'valor_por_ticket_btc': f'{round(valor_por_ticket_btc, 2):.2f}',
                 'desconto_p_un_brl': desconto_porcent,
                 'desconto_p_un_btc': desconto_p_un_btc,
+                'valor_pacote_em_satoshis': valor_pacote_em_satoshis,
+                'pacote_stripe_preco': settings.pacotes_stripe_precos[n],
             }
             cards.append(pacote)
         return cards
@@ -60,10 +70,11 @@ class PacoteConfig(models.Model):
 
 class PagamentoInvoice(models.Model):
     do_usuario = models.ForeignKey('home.Usuario', null=False, blank=False, on_delete=models.DO_NOTHING)
-    do_pacote = models.ForeignKey('PacoteConfig', null=False, blank=False, on_delete=models.DO_NOTHING)
+    do_config = models.ForeignKey('PacoteConfig', null=True, on_delete=models.DO_NOTHING)
+    do_pacote = models.IntegerField(null=True, blank=True)
     btc = models.BooleanField(default=False, help_text='Marque se o pagamento foi em bitcoin')
     pago = models.BooleanField(default=False)
-    dados = models.JSONField(null=True, blank=True)
+    checkout_id = models.CharField(max_length=100, null=True)
     data_registro = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -71,3 +82,17 @@ class PagamentoInvoice(models.Model):
 
     def __str__(self):
         return f'{self.do_usuario} - {self.do_pacote} - {self.data_registro}{" - PG" if self.pago else ""}'
+
+
+@receiver(pre_save, sender=PagamentoInvoice)
+def pagamento_invoice_pre_save(sender, instance, **kwargs):
+    if instance.pk is None:  # if criado
+        instance.do_config = PacoteConfig.objects.latest("data_registro")
+
+
+@receiver(post_save, sender=PagamentoInvoice)
+def pagamento_invoice_post_save(sender, instance, created, **kwargs):
+    if not created and instance.pago:
+        tickets_quantidade = instance.do_config.loja_info()[instance.do_pacote]["ticket_qtd"]
+        instance.do_usuario.tickets += tickets_quantidade
+        instance.do_usuario.save(update_fields=['tickets', ])

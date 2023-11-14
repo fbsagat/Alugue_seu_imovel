@@ -26,6 +26,15 @@ FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel
 # Tamanho máximo em ‘megabytes’ permitido para envio de imagens para o site, padrão para todos os campos \/
 TAMANHO_DAS_IMAGENS_Mb = 4
 TAMANHO_DO_MODELO_Mb = 0.5
+
+pacotes_stripe_precos = ['price_1O520QESicPi2hNPvlWgthiq', 'price_1O521sESicPi2hNPnee7X3sz',
+                         'price_1O522YESicPi2hNP1oEWGlMZ', 'price_1O522tESicPi2hNPYLHi8g8u']
+
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+if not STRIPE_SECRET_KEY:
+    STRIPE_SECRET_KEY = ('sk_test_51O50TTESicPi2hNPedrL563Ncjc8O9V6b7rSpjHwnCvvxtNBwxKi2Hdp4eyv'
+                     '617Wb1X0Wzp9y7eKetz1bxFxVueg00TGLgmtDA')
+
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,7 +48,6 @@ if not SECRET_KEY:
     SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
 else:
     CSRF_TRUSTED_ORIGINS = [SITE_URL, ]
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

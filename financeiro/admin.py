@@ -12,5 +12,5 @@ class PacoteConfigAdmin(admin.ModelAdmin):
 
 @admin.register(PagamentoInvoice)
 class PagamentoInvoiceAdmin(admin.ModelAdmin):
-    list_display = ('do_usuario', 'do_pacote', 'pago', 'btc', 'dados', 'data_registro')
+    list_display = ('do_usuario', 'do_config', 'do_pacote', 'pago', 'btc', 'checkout_id', 'data_registro')
     readonly_fields = ('data_registro',)
