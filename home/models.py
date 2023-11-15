@@ -218,6 +218,10 @@ class Slot(models.Model):
         return (f'{self.pk}: {"Gratuito" if self.gratuito else "Pago"}/Criado: {self.criado_em}'
                 f'/Tickets: {self.tickets}/{self.do_usuario}/{self.imovel()}')
 
+    def posicao(self):
+        slots = Slot.objects.filter(do_usuario=self.do_usuario).order_by('pk')
+        return list(slots).index(self)+1
+
     def imovel(self):
         try:
             slots = Slot.objects.filter(do_usuario=self.do_usuario).order_by('pk')

@@ -746,7 +746,8 @@ def recibos(request):
                          }
 
                 local_temp = gerar_recibos_pdf(dados=dados)
-                contrato.recibos_pdf = File(local_temp, name=f'recibos_de_{usuario.recibos_code()}_{dados["cod_contrato"]}.pdf')
+                contrato.recibos_pdf = File(local_temp,
+                                            name=f'recibos_de_{usuario.recibos_code()}_{dados["cod_contrato"]}.pdf')
                 contrato.save()
 
         context = {'form': form, 'contrato': contrato, 'tem_contratos': tem_contratos, 'pede_dados': pede_dados,
@@ -1979,6 +1980,7 @@ def add_slot(request):
                         Slot.objects.create(do_usuario=request.user, gratuito=False, tickets=1)
                         usuario.tickets -= 1
                     usuario.save(update_fields=['tickets'])
+                    messages.success(request, f"Slot adicionado com sucesso")
                 else:
                     messages.error(request, "Tickets insuficientes para esta operação")
     return redirect(request.META['HTTP_REFERER'])
@@ -2004,6 +2006,7 @@ def adicionar_ticket(request, pk):
                 slot.tickets += quantidade
             usuario.save(update_fields=['tickets'])
             slot.save(update_fields=['tickets', 'criado_em'])
+            messages.success(request, f"Ticket adicionado com sucesso no slot {slot.posicao()}")
         else:
             messages.error(request, "Tickets insuficientes para esta operação")
     else:
@@ -2028,6 +2031,8 @@ def adicionar_ticket_todos(request):
             usuario.tickets -= quantidade
             usuario.save(update_fields=['tickets'])
             slot.save(update_fields=['tickets'])
+        messages.success(request, f"Tickets adicionados com sucesso,"
+                                  f" {len(slots) * quantidade} tickets para {len(slots)} slots")
     else:
         messages.error(request, "Tickets insuficientes para esta operação")
     return redirect(request.META['HTTP_REFERER'])
@@ -2038,6 +2043,7 @@ def apagar_slot(request, pk):
     slot = get_object_or_404(Slot, pk=pk, do_usuario=request.user)
     if slot.do_usuario == request.user and slot.imovel() is None and slot.gratuito is False:
         slot.delete()
+        messages.success(request, f"Slot apagado com sucesso")
     else:
         messages.error(request, "Slot não foi apagado!")
     return redirect(request.META['HTTP_REFERER'])
