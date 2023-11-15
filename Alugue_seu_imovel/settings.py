@@ -1,7 +1,9 @@
-import ast, json
+import ast
+import environ
+import dj_database_url
 from pathlib import Path
 from django.contrib.messages import constants as messages
-import os, environ, dj_database_url
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,6 +13,7 @@ environ.Env.read_env()
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 SITE_NAME = 'Alugue Seu imóvel'
+# Coloque aqui a url onde o site ficará hospedado
 SITE_URL = 'https://alugueseuimovel.up.railway.app'
 USAR_DB = 1
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
@@ -27,13 +30,18 @@ FICT_QTD = {'qtd_usuario': 5, 'qtd_locatario': 5, 'qtd_imovel_g': 1, 'qtd_imovel
 TAMANHO_DAS_IMAGENS_Mb = 4
 TAMANHO_DO_MODELO_Mb = 0.5
 
+# Stripe sistema de pagamentos
 pacotes_stripe_precos = ['price_1O520QESicPi2hNPvlWgthiq', 'price_1O521sESicPi2hNPnee7X3sz',
                          'price_1O522YESicPi2hNP1oEWGlMZ', 'price_1O522tESicPi2hNPYLHi8g8u']
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 if not STRIPE_SECRET_KEY:
-    STRIPE_SECRET_KEY = ('sk_test_51O50TTESicPi2hNPedrL563Ncjc8O9V6b7rSpjHwnCvvxtNBwxKi2Hdp4eyv'
-                     '617Wb1X0Wzp9y7eKetz1bxFxVueg00TGLgmtDA')
+    STRIPE_SECRET_KEY = ('sk_test_51O50TTESicPi2hNPedrL563Ncjc8O9V6b7rSpjHwnCvvxtNBwxKi2Hdp4eyv61'
+                         '7Wb1X0Wzp9y7eKetz1bxFxVueg00TGLgmtDA')
+
+STRIPE_ENDPOINT_SECRET = os.getenv('STRIPE_ENDPOINT_SECRET')
+if not STRIPE_ENDPOINT_SECRET:
+    STRIPE_ENDPOINT_SECRET = 'whsec_5999d87bf09b37e7a926f2b3ef497b3555990fbf32d3eb37295793c028a10e7f'
 
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -51,8 +59,8 @@ else:
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALL_HOSTS = True
+
 ALLOWED_HOSTS = [SITE_URL.split('//')[1]]
 if ALL_HOSTS:
     ALLOWED_HOSTS += ['*', ]

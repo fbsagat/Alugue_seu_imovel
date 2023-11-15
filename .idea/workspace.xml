@@ -4,23 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias.&#10;&#10;Adicionadas mensagens de sucesso e erro na pagina de slots.">
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0003_remove_pagamentoinvoice_dados_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/financeiro/templates/painel_loja_backup.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0004_pagamentoinvoice_do_config_and_more.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stripe.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/financeiro/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/financeiro/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/financeiro/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/financeiro/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,21 +68,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/financeiro/templates",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.editor"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/financeiro/templates&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
   }
-}]]></component>
+}</component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
@@ -501,7 +499,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="167" />
+    <option name="localTasksCounter" value="169" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -534,8 +532,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto." />
-    <MESSAGE value="Correções e melhorias no código.&#10;Atualização dos frameworks do projeto.&#10;&#10;Melhorado o botaoteste, gerador de ficticios." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Melhorado o botaoteste, gerador de ficticios, mais atualizações, mais estável." />
     <MESSAGE value="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot." />
@@ -559,6 +555,8 @@
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;FormContratoModelo tem um validador de títulos, não pode mais salvar titulo repetido, ao não ser que o usuário seja o dono do objeto salvando o próprio.&#10;&#10;ContratoModelo mais organizado: Criado o contrato_modelo_post_save para auto-salvamento de informações: variaveis=variaveis, condicoes=condicoes, visualizar=link. Retirando repetições nas views.&#10;&#10;view editar_modelo muito mais organizada e inteligivel, funcionando sem bugs, testado e ok." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Feito: Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização(link de auto cadastro do locatário).&#10;&#10;Feito: Apenas contratos ativos hoje ou futuramente e não quitados para os forms" />
     <MESSAGE value="Correções de bugs e melhorias." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias." />
+    <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Mostra o valor em satoshi: api.bitpreco.&#10;Implementado o sistema de pagamentos Stripe." />
+    <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Adicionadas mensagens de sucesso e erro na pagina de slots." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias.&#10;&#10;Adicionadas mensagens de sucesso e erro na pagina de slots." />
   </component>
 </project>

@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import messages
+from django.shortcuts import redirect, render, reverse, get_object_or_404
 from Alugue_seu_imovel import settings
 from financeiro.models import PacoteConfig, PagamentoInvoice
 from django.shortcuts import redirect, reverse, render
@@ -77,13 +78,13 @@ def painel_loja(request):
 def create_checkout_session(request, pacote_index, forma):
     usuario = request.user
     configs = PacoteConfig.objects.latest("data_registro")
-
-    stripe.api_key = settings.STRIPE_SECRET_KEY
     if request.method == 'POST':
         if forma == 'brl':
-            success_url = request.build_absolute_uri(reverse('financeiro:Compra Sucesso'))
-            cancel_url = request.build_absolute_uri(reverse('financeiro:Compra Cancelada'))
+            stripe.api_key = settings.STRIPE_SECRET_KEY
             try:
+                invoice = PagamentoInvoice.objects.create(do_usuario=usuario, do_pacote=pacote_index)
+                success_url = request.build_absolute_uri(reverse('financeiro:Compra Sucesso', args=[invoice.pk]))
+                cancel_url = request.build_absolute_uri(reverse('financeiro:Compra Cancelada'))
                 checkout_session = stripe.checkout.Session.create(
                     line_items=[
                         {
@@ -96,8 +97,8 @@ def create_checkout_session(request, pacote_index, forma):
                     cancel_url=cancel_url,
                 )
                 checkout_id = checkout_session['id']
-                PagamentoInvoice.objects.create(do_usuario=usuario, checkout_id=checkout_id, do_pacote=pacote_index)
-
+                invoice.checkout_id = checkout_id
+                invoice.save(update_fields=['checkout_id', ])
             except Exception as e:
                 return str(e)
             return redirect(checkout_session.url, code=303)
@@ -110,7 +111,7 @@ def create_checkout_session(request, pacote_index, forma):
 @csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
-    endpoint_secret = 'whsec_5999d87bf09b37e7a926f2b3ef497b3555990fbf32d3eb37295793c028a10e7f'
+    endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
@@ -145,8 +146,10 @@ def stripe_webhook(request):
 
 
 @login_required
-def compra_sucesso(request):
-    messages.success(request, f"Pagamento realizado com sucesso, seus tickets já foram creditados em sua conta")
+def compra_sucesso(request, pk):
+    invoice = get_object_or_404(PagamentoInvoice, pk=pk)
+    if invoice.do_usuario == request.user and invoice.pago is True and invoice.verificar_se_e_recente(30):
+        messages.success(request, f"Pagamento realizado com sucesso, seus tickets já foram creditados em sua conta")
     return redirect(reverse('home:Painel Loja'))
 
 

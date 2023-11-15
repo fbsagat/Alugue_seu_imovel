@@ -124,7 +124,9 @@ Colocar a variável 'mobiliado' no contrato pdf(ou um sistema personalizado de a
 
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
-Ja ta na hora de instalar o celery e começar a usar.
+
+
+Criptografar informações sensíveis no banco de dados(ex: cpf dos locatários)
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -142,7 +144,7 @@ Arrumar e organizar, deixar otimizado o painel administrativo(django admin) comp
 Criar o help (sistema de dicas e recomendações espalhados por to_do o site, referentes ao manuseio do mesmo e a regras
         e dicas de locação)
 Confirmação de email e celular.
-Criptografar informações sensíveis no banco de dados(ex: cpf dos locatários)
+Ja ta na hora de instalar o celery e começar a usar.
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
 aplicar ajax um dia: https://www.youtube.com/watch?v=hISSGMafzvU / https://www.youtube.com/watch?v=QDdLvImfq_g
 Aplicar o celery.

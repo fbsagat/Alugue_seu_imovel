@@ -7,7 +7,7 @@ urlpatterns = [
     # path('pagar_pacote/<int:pacote_index>/<str:forma>', pagamentos_enviar_webhook, name='Enviar Webhook'),
     # path('webhook/', pagamentos_receber_webhook, name='Receber Webhook'),
     path('create-checkout-session/<int:pacote_index>/<str:forma>', create_checkout_session, name='Criar Checkout'),
-    path('compra_sucesso/', compra_sucesso, name='Compra Sucesso'),
+    path('compra_sucesso/<int:pk>', compra_sucesso, name='Compra Sucesso'),
     path('compra_cancelada/', compra_cancelada, name='Compra Cancelada'),
     path('stripe_webhook/', stripe_webhook, name='Stripe webhook'),
 ]
