@@ -4,7 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import messages
-from django.shortcuts import redirect, render, reverse, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import get_object_or_404
 from Alugue_seu_imovel import settings
 from financeiro.models import PacoteConfig, PagamentoInvoice
 from django.shortcuts import redirect, reverse, render
@@ -159,3 +160,20 @@ def compra_sucesso(request, pk):
 def compra_cancelada(request):
     messages.error(request, f"Pagamento cancelado")
     return redirect(reverse('home:Painel Loja'))
+
+
+def historico_de_compras(request):
+    usuario = request.user
+    invoices = PagamentoInvoice.objects.filter(do_usuario=usuario)
+
+    parametro_page = request.GET.get('page', '1')
+    parametro_limite = request.GET.get('limit', '25')
+    contrato_pagination = Paginator(invoices, parametro_limite)
+
+    try:
+        page = contrato_pagination.page(parametro_page)
+    except (EmptyPage, PageNotAnInteger):
+        page = contrato_pagination.page(1)
+
+    context = {'SITE_NAME': settings.SITE_NAME, 'page_obj': page}
+    return render(request, 'painel_historico_compras.html', context)

@@ -94,14 +94,13 @@ Ok. Não utilizar diretamente o uuid do usuário no front-end, apenas derivados 
         baseados no uuid principal do usuário. É mais seguro! Aula: https://www.youtube.com/watch?v=lVTGNXnft7U
         Funções a corrigir: funcoes_proprias.py/gerar_contrato_pdf (não deve utilizar o username no nome do arquivo)
 Ok. Arrumar o aviso dde exclusão de locatário que se registrou no auto registro. Sem o alerta.
-
+Ok. Mostrar um histórico de compras do usuário em algum lugar.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
 Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico.
-Mostrar um histórico de compras do usuário em algum lugar. Explorar o stripe, mais funções.
 
 Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
         e botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).

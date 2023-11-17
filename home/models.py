@@ -872,7 +872,9 @@ class ContratoModelo(models.Model):
                     if se_existe:
                         os.remove(diretorio)
                     self.visualizar = None
-                    self.save(update_fields=['titulo', 'comunidade', 'visualizar', ])
+                    self.variaveis = None
+                    self.condicoes = None
+                    self.save(update_fields=['titulo', 'comunidade', 'visualizar', 'variaveis', 'condicoes', ])
             else:
                 super(ContratoModelo, self).delete()
         except:

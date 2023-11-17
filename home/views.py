@@ -1353,7 +1353,9 @@ def editar_modelo(request, pk):
             if se_existe:
                 os.remove(diretorio)
             modelo.visualizar = None
-            modelo.save(update_fields=['titulo', 'comunidade', 'visualizar', ])
+            modelo.variaveis = None
+            modelo.condicoes = None
+            modelo.save(update_fields=['titulo', 'comunidade', 'visualizar', 'variaveis', 'condicoes', ])
 
         if local_debug:
             print('criei um novo modelo')

@@ -91,6 +91,7 @@ class PagamentoInvoice(models.Model):
 
     class Meta:
         verbose_name_plural = 'Invoices'
+        ordering = ['-data_registro']
 
     def __str__(self):
         return f'{self.do_usuario}/Pacote:{self.do_pacote}/{self.data_registro}{" - PG" if self.pago else " - Ñ PG"}'
@@ -98,6 +99,9 @@ class PagamentoInvoice(models.Model):
     def verificar_se_e_recente(self, minutos):
         if self.data_registro <= datetime.datetime.now() + relativedelta(minutes=minutos):
             return True
+
+    def pacote(self):
+        return self.do_config.loja_info()[self.do_pacote]
 
 
 @receiver(pre_save, sender=PagamentoInvoice)

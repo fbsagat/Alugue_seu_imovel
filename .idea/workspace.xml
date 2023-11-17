@@ -4,18 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias.&#10;&#10;PacoteConfigAdmin: corrigidas algumas validações.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias.&#10;&#10;ContratoModelo: remover o arquivo visualizar e o campo visualizar da model quando ela passa a ser apenas modelo de configs já que este arquivo e campo ficam desnecessários.">
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0003_remove_pagamentoinvoice_dados_and_more.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0004_pagamentoinvoice_do_config_and_more.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0005_alter_pacoteconfig_desconto_add_bitcoin_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/templates/painel_historico_compras.html" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/botoes_painel.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" beforeDir="false" afterPath="$PROJECT_DIR$/home/fixtures/dados_iniciais.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/financeiro/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_configs.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_configs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -497,7 +503,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="171" />
+    <option name="localTasksCounter" value="172" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -530,7 +536,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções e melhorias no código.&#10; &#10; Melhorado e organizado o footer." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;No fórum sugestões agora tem a caixa de diálogo de excluir item.&#10;Melhorada a exibição nome das instâncias do objeto Contrato.&#10;No painel de slots agora tem quantidade na caixa de diálogo criar slot." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Adicionado o js que previne cliques múltiplos dos usuáios: 'prevent_multiple_click.js'&#10;navbar: tags &lt;a&gt; fora, transformadas em formulários para compatibilização do prevent_multiple_click.js." />
     <MESSAGE value="Correções e melhorias no código.&#10;Agora o gerador de fictícios aparece pr qualquer usuário com o debug ativado.&#10;Menos erros no gerador de fictícios.&#10;Agora o gerador de fictícios marca 'recibo_entregue' de parcelas." />
@@ -555,6 +560,7 @@
     <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Adicionadas mensagens de sucesso e erro na pagina de slots." />
     <MESSAGE value="Correções de bugs e melhorias." />
     <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;PacoteConfigAdmin: corrigidas algumas validações." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias.&#10;&#10;PacoteConfigAdmin: corrigidas algumas validações." />
+    <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;ContratoModelo: remover o arquivo visualizar e o campo visualizar da model quando ela passa a ser apenas modelo de configs já que este arquivo e campo ficam desnecessários." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias.&#10;&#10;ContratoModelo: remover o arquivo visualizar e o campo visualizar da model quando ela passa a ser apenas modelo de configs já que este arquivo e campo ficam desnecessários." />
   </component>
 </project>

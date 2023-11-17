@@ -15,24 +15,7 @@ Painel / {{ SITE_NAME }}
 <div class="container-xxl my-1 text-center text-justify my-1">
 
     <div class="container-auto my-1 border bg-dark bg-opacity-50 rounded flex justify-content-evenly items-center">
-        <form action="{% url 'home:Painel Configs' %}" class="py-1 px-1">
-            <button type="submit"
-                    class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
-                Configurações
-            </button>
-        </form>
-        <form action="{% url 'home:Painel Slots' %}" class="py-1 px-1">
-            <button type="submit"
-                    class="active btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
-                Slots
-            </button>
-        </form>
-        <form action="{% url 'home:Painel Loja' %}" class="py-1 px-1">
-            <button type="submit"
-                    class="btn btn-sm btn-outline-primary text-white rounded-md form-control-sm">
-                Loja
-            </button>
-        </form>
+        {% include 'botoes_painel.html' %}
     </div>
 
     <div class="px-2 py-2 bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
