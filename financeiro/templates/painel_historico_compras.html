@@ -19,23 +19,29 @@ Painel / {{ SITE_NAME }}
     </div>
 
     <div class="px-2 py-2 bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
-        <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
-            <div class="row g-2 mt-2">
+        <div class="z-10 md:py-0 w-full text-gray-100 text-center flex items-center flex-col">
+            {% if page_obj %}
+            <div class="col g-2 mt-2 w-full">
                 {% for pagamento in page_obj %}
-                <div class="card bg-black bg-opacity-100 border
-                {% if pagamento.pago %}border-success text-success{% else %}border-danger{% endif %} h-100">
+                <div class="card bg-black bg-opacity-100 border g-2 mt-2
+                {% if pagamento.pago %}border-success text-success{% else %}border-danger{% endif %}">
                     <div class="card-body row">
                         <div class="col-1 fw-bold fs-4">{{ forloop.counter }}</div>
                         <div class="col-5">{{ pagamento.pacote.nome }} / {{ pagamento.pacote.ticket_qtd }} tickets /
                             R${% if pagamento.btc %}{{ pagamento.pacote.valor_pct_btc }}{% else %}
-                            {{ pagamento.pacote.valor_pct_brl }}{% endif %}</div>
+                            {{ pagamento.pacote.valor_pct_brl }}{% endif %}
+                        </div>
                         <div class="col-2">Em: {{ pagamento.data_registro|date:'d/m/Y H:i' }}</div>
                         <div class="col-2">Moeda: {% if pagamento.btc %}BTC{% else %}Real{% endif %}</div>
-                        <div class="col-2">{% if pagamento.pago %}Pago ✅{% else %}Não concretizado ❌{% endif %}</div>
+                        <div class="col-2">{% if pagamento.pago %}Pago ✅{% else %}Não concretizado ❌{% endif %}
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <div class="fs-4">Nenhum pagamento realizado até o momento</div>
+            {% endif %}
         </div>
     </div>
 </div>
