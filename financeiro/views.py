@@ -80,6 +80,7 @@ def create_checkout_session(request, pacote_index, forma):
     configs = PacoteConfig.objects.latest("data_registro")
     if request.method == 'POST':
         if forma == 'brl':
+            # Função para pagamentos em brl (stripe)
             stripe.api_key = settings.STRIPE_SECRET_KEY
             try:
                 invoice = PagamentoInvoice.objects.create(do_usuario=usuario, do_pacote=pacote_index)
@@ -104,6 +105,7 @@ def create_checkout_session(request, pacote_index, forma):
             return redirect(checkout_session.url, code=303)
 
         elif forma == 'btc':
+            # Função para pagamentos em btc (meu próprio node lightning + btcpay server? espero!)
             pass
     return redirect(reverse('home:Painel Loja'))
 

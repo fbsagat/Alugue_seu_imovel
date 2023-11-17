@@ -44,6 +44,8 @@ class PacoteConfig(models.Model):
         pacote_qtd_mult = self.pacote_qtd_multiplicador
         desconto_multiplicador = self.desconto_pacote_multiplicador
         desconto_add_cripto = self.desconto_add_bitcoin
+
+        # Pegar valor em satoshis
         url = 'https://api.bitpreco.com/btc-brl/ticker'
         request = requests.get(url)
         j_son = request.json()

@@ -58,7 +58,8 @@ Painel / {{ SITE_NAME }}
                                     Comprar com REAL
                                 </button>
                             </form>
-                            <small class="text-muted">Comprar com Cartão de Crédito via Stripe Pagamentos</small>
+                            <small class="text-muted">Comprar com Cartão de Crédito via</small>
+                            <small class="text-muted">Stripe Pagamentos</small>
                         </div>
                         <span class="h2">R${{ card.valor_pct_brl }}</span>
                         <br>
@@ -68,8 +69,8 @@ Painel / {{ SITE_NAME }}
                             {% endif %}</small>
                         <ul>
                             <li>Comprando com Real você utiliza os</li>
-                            <li>Métodos de Pagamentos mais habituais:</li>
-                            <li>Pix, crédito, boleto...</li>
+                            <li>métodos de pagamentos mais habituais:</li>
+                            <li>pix, crédito, boleto...</li>
                         </ul>
 
                         <br>
@@ -79,11 +80,13 @@ Painel / {{ SITE_NAME }}
                         <div class="d-grid my-3">
                             <form action=""  method="POST">
                                 {% csrf_token %}
+                                <small class="text-muted">Indisponível no momento</small>
                                 <button type="submit" class="btn btn-outline-warning btn-block" disabled>
                                     Comprar com BTC
                                 </button>
                             </form>
-                            <small class="text-muted">Comprar com Bitcoin via lightning Network</small>
+                            <small class="text-muted">Comprar com Bitcoin via</small>
+                            <small class="text-muted">Lightning Network</small>
                         </div>
                         <span class="h2">~{{ card.valor_pacote_em_satoshis }} sats</span>
                         <span class="text-muted">R${{ card.valor_pct_btc }}</span>
@@ -91,9 +94,9 @@ Painel / {{ SITE_NAME }}
                         <small class='text-muted'>R${{ card.valor_por_ticket_btc }}/ticket - </small>
                         <small class='text-muted'>Desconto de {{ card.desconto_p_un_btc }}% por unidade</small>
                         <ul>
-                            <li>Comprando diretamente com Bitcoin</li>
-                            <li>via Lightning Network</li>
-                            <li>Você ganha MAIS DESCONTO</li>
+                            <li>Comprando com Bitcoin via</li>
+                            <li>lightning network você ganha</li>
+                            <li>um acréscimo de desconto</li>
                         </ul>
 
                         <br>

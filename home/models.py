@@ -729,7 +729,7 @@ class Contrato(models.Model):
     def title_pagou_parcelas(self):
         if self.parcelas_pagas_qtd() > 0:
             plural = 's' if self.parcelas_pagas_qtd() > 1 else ''
-            return f'Quitou {self.parcelas_pagas_qtd()} parcela{plural} de {self.duracao}'
+            return f'Quitou: {self.parcelas_pagas_qtd()} de {self.duracao} parcela{plural}'
         else:
             return 'Nenhuma parcela quitada ainda'
 

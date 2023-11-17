@@ -125,7 +125,7 @@ Visão Geral / {{ SITE_NAME }}
                             {{ page_obj.start_index|add:forloop.counter0 }}
                         </div>
                     </th>
-                    <th scope="col" style="cursor:default;" title="No grupo: {{ contrato.fo_imovel.grupo }}">
+                    <th scope="col" style="cursor:default;" title="No grupo: {{ contrato.do_imovel.grupo }}">
                         <div class="{% if contrato.periodo_ativo_hoje is False %}text-secondary{% endif %}">
                             {{ contrato.do_imovel.nome }}
                         </div>
