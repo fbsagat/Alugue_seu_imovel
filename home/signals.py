@@ -241,20 +241,23 @@ def sugestao_pre_save(sender, instance, **kwargs):
 @receiver(post_save, sender=ContratoModelo)
 def contrato_modelo_post_save(sender, instance, created, **kwargs):
     # Tem outro gerar_contrato_pdf em visualizar_modelo em views (backup deste)
-    dados = {'modelo_pk': instance.pk, 'modelo': instance, 'usuario_username': str(instance.autor.username),
-             'contrato_modelo_code': instance.autor.contrato_modelo_code()}
-    link = gerar_contrato_pdf(dados=dados, visualizar=True)
-    variaveis = []
-    for i, j in modelo_variaveis.items():
-        if j[0] in instance.corpo:
-            variaveis.append(i)
-    variaveis = list(dict.fromkeys(variaveis))
-    condicoes = []
-    for i, j in modelo_condicoes.items():
-        if j[0] in instance.corpo:
-            condicoes.append(i)
-    condicoes = list(dict.fromkeys(condicoes))
-    ContratoModelo.objects.filter(pk=instance.pk).update(variaveis=variaveis, condicoes=condicoes, visualizar=link)
+    if instance.verificar_utilizacao_config() and not instance.verificar_utilizacao_usuarios():
+        pass
+    else:
+        dados = {'modelo_pk': instance.pk, 'modelo': instance, 'usuario_username': str(instance.autor.username),
+                 'contrato_modelo_code': instance.autor.contrato_modelo_code()}
+        link = gerar_contrato_pdf(dados=dados, visualizar=True)
+        variaveis = []
+        for i, j in modelo_variaveis.items():
+            if j[0] in instance.corpo:
+                variaveis.append(i)
+        variaveis = list(dict.fromkeys(variaveis))
+        condicoes = []
+        for i, j in modelo_condicoes.items():
+            if j[0] in instance.corpo:
+                condicoes.append(i)
+        condicoes = list(dict.fromkeys(condicoes))
+        ContratoModelo.objects.filter(pk=instance.pk).update(variaveis=variaveis, condicoes=condicoes, visualizar=link)
 
 
 @receiver(post_save, sender=Usuario)

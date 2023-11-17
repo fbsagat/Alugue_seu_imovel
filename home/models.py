@@ -1,4 +1,4 @@
-import string, secrets
+import string, secrets, os
 from datetime import datetime, timedelta
 from math import floor
 from hashlib import sha256
@@ -814,7 +814,7 @@ class ContratoModelo(models.Model):
     variaveis = models.JSONField(null=True, blank=True)
     condicoes = models.JSONField(null=True, blank=True)
     comunidade = models.BooleanField(default=False, verbose_name='Comunidade')
-    visualizar = models.FileField(null=True)
+    visualizar = models.FileField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Modelos de contratos'
@@ -865,7 +865,14 @@ class ContratoModelo(models.Model):
                 if um and not dois:
                     self.titulo = f'config/{uuid_20()}'
                     self.comunidade = False
-                    self.save(update_fields=['titulo', 'comunidade'], )
+
+                    # remover o arquivo visualizar e o campo visualizar da model
+                    diretorio = fr'{settings.MEDIA_ROOT}/{self.visualizar}'
+                    se_existe = os.path.isfile(diretorio)
+                    if se_existe:
+                        os.remove(diretorio)
+                    self.visualizar = None
+                    self.save(update_fields=['titulo', 'comunidade', 'visualizar', ])
             else:
                 super(ContratoModelo, self).delete()
         except:

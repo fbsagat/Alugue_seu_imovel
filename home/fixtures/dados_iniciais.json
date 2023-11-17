@@ -34,8 +34,8 @@
     "pk": 1,
     "fields": {
       "ticket_valor_base_brl": 2.48,
-      "pacote_qtd_inicial": 20,
-      "pacote_qtd_multiplicador": 50,
+      "pacote_qtd_inicial": 10,
+      "pacote_qtd_multiplicador": 40,
       "desconto_pacote_multiplicador": 5,
       "desconto_add_bitcoin": 10,
       "data_registro": "2023-10-25 01:04:00.000000"

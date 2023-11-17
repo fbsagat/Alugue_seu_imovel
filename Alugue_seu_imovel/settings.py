@@ -31,8 +31,8 @@ TAMANHO_DAS_IMAGENS_Mb = 4
 TAMANHO_DO_MODELO_Mb = 0.5
 
 # Stripe sistema de pagamentos
-pacotes_stripe_precos = ['price_1O520QESicPi2hNPvlWgthiq', 'price_1O521sESicPi2hNPnee7X3sz',
-                         'price_1O522YESicPi2hNP1oEWGlMZ', 'price_1O522tESicPi2hNPYLHi8g8u']
+pacotes_stripe_precos = ['price_1ODSTJESicPi2hNPMybavcmK', 'price_1ODSUfESicPi2hNPmicDtu1Q',
+                         'price_1ODSVeESicPi2hNP1s1p3pWP', 'price_1ODSW8ESicPi2hNPOl3ptDK6']
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 if not STRIPE_SECRET_KEY:

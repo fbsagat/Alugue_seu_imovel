@@ -1346,7 +1346,15 @@ def editar_modelo(request, pk):
                 print('só config usa este modelo')
             modelo.titulo = f'config/{uuid_20()}'
             modelo.comunidade = False
-            modelo.save(update_fields=['titulo', 'comunidade', ])
+
+            # remover o arquivo visualizar e o campo visualizar da model
+            diretorio = fr'{settings.MEDIA_ROOT}/{modelo.visualizar}'
+            se_existe = os.path.isfile(diretorio)
+            if se_existe:
+                os.remove(diretorio)
+            modelo.visualizar = None
+            modelo.save(update_fields=['titulo', 'comunidade', 'visualizar', ])
+
         if local_debug:
             print('criei um novo modelo')
 
