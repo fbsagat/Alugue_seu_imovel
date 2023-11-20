@@ -26,7 +26,7 @@ class Command(BaseCommand):
         first = 'Fábio'
         last = 'Augusto Macedo dos Santos'
         RG = '4852497'
-        CPF = '00522233295'
+        cript_cpf = b'gAAAAABlW2OE6p5S8j_Xoe7IiEWpSOGzWQr6SA2LRpSo4QDKku_DqOO3JDSm3mkK18FJWdW6Qlgv_eYWoyVdtiT_bZHOLRHf_A=='
         telefone = '91985707819'
         tickets = 100
         estadocivil = 0
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         dados_pagamento1 = 'Pix, chave: 91985707819 (Fábio A M Santos)'
 
         User.objects.create_superuser(username=username, password=password, email=email, first_name=first,
-                                      last_name=last, RG=RG, CPF=CPF, telefone=telefone, tickets=tickets,
+                                      last_name=last, RG=RG, cript_cpf=cript_cpf, telefone=telefone, tickets=tickets,
                                       estadocivil=estadocivil, ocupacao=ocupacao, endereco_completo=endereco_completo,
                                       dados_pagamento1=dados_pagamento1)
 

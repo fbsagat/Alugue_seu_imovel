@@ -95,12 +95,13 @@ Ok. Não utilizar diretamente o uuid do usuário no front-end, apenas derivados 
         Funções a corrigir: funcoes_proprias.py/gerar_contrato_pdf (não deve utilizar o username no nome do arquivo)
 Ok. Arrumar o aviso dde exclusão de locatário que se registrou no auto registro. Sem o alerta.
 Ok. Mostrar um histórico de compras do usuário em algum lugar.
+Ok. (coloquei excluir que fica melhor) Retirar a notificação de contrato criado quando o mesmo é rescindido.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
 Implementar filtros/buscas na comunidade no editor de modelos.
-Implementar filtros/buscas nas paginas do botão histórico.
+Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todos?).
 
 Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
         e botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
@@ -125,6 +126,8 @@ Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
 Criptografar informações sensíveis no banco de dados(ex: cpf dos locatários)
 
+Arrumar e organizar, deixar otimizado o painel administrativo(django admin) completo.
+
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
@@ -137,7 +140,6 @@ Melhorias muito futuras:
 Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
         informações de cada usuário nas queryes, nunca a partir de todos os objetos.
 Fazer um sistema de configurações do fake test, onde serão modificadas as probabilidades de cada variável aleatória.
-Arrumar e organizar, deixar otimizado o painel administrativo(django admin) completo.
 Criar o help (sistema de dicas e recomendações espalhados por to_do o site, referentes ao manuseio do mesmo e a regras
         e dicas de locação)
 Confirmação de email e celular.
@@ -149,6 +151,12 @@ Aplicar o celery.
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Regras do programador:
+2. Comando para o console:
+    2.1. import os
+    2.2 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Alugue_seu_imovel.settings')
+    2.3 import django
+    2.4 django.setup()
+    2.5 Agora só trabalhar: Ex: from home.models import Usuario
 
 1. Passos para criação de uma tarefa para uma model:
     1.1. A classe da model autora recebe este parâmetro:

@@ -43,6 +43,9 @@ STRIPE_ENDPOINT_SECRET = os.getenv('STRIPE_ENDPOINT_SECRET')
 if not STRIPE_ENDPOINT_SECRET:
     STRIPE_ENDPOINT_SECRET = 'whsec_5999d87bf09b37e7a926f2b3ef497b3555990fbf32d3eb37295793c028a10e7f'
 
+# Importante número um (chave de criptografia de CPFs para o banco de dados)
+IMPORT_UM = os.getenv('IMPORT_UM')
+
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

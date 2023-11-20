@@ -1,4 +1,5 @@
 import io, os, sys, string, secrets
+from cryptography.fernet import Fernet
 from math import ceil
 from textwrap import wrap
 
@@ -149,6 +150,26 @@ def uuid_20():
     con_codigo = ''.join(
         secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(20))
     return f'{con_codigo[:20]}'
+
+
+# 011: -----------------------------------------------
+
+
+def cpf_crypt(message):
+    site_code = str(settings.IMPORT_UM).encode()
+    fernet = Fernet(site_code)
+    enc_message = fernet.encrypt(message.encode())
+    return enc_message
+
+
+# 012: -----------------------------------------------
+
+
+def cpf_decrypt(enc_message):
+    site_code = str(settings.IMPORT_UM).encode()
+    fernet = Fernet(site_code)
+    dec_message = fernet.decrypt(enc_message).decode()
+    return dec_message
 
 
 # 100: -----------------------------------------------

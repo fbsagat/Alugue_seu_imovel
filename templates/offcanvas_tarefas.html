@@ -72,6 +72,11 @@
                                             Recebido
                                         </button>
                                     </form>
+                                    <form action="{% url 'home:Excluir Contrato' tarefa.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Excluir
+                                        </button>
+                                    </form>
                                 </div>
 
                                 {% elif tarefa.autor_tipo == 4 %}
@@ -180,6 +185,11 @@
                                             disabled>
                                         Recebido
                                     </button>
+                                    <form action="{% url 'home:Excluir Contrato' tarefa.pk %}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1">
+                                            Excluir
+                                        </button>
+                                    </form>
                                 </div>
 
                                 {% elif tarefa.autor_tipo == 4 %}

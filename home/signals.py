@@ -147,7 +147,7 @@ def usuario_pre_save(sender, instance, **kwargs):
         ante = Usuario.objects.get(pk=instance.pk)
 
         try:
-            if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.first_name != instance.first_name \
+            if ante.RG != instance.RG or ante.cpf() != instance.cpf() or ante.first_name != instance.first_name \
                     or ante.last_name != instance.last_name \
                     or ante.recibo_preenchimento != int(instance.recibo_preenchimento):
                 contratos = Contrato.objects.filter(do_locador=instance)
@@ -159,13 +159,13 @@ def usuario_pre_save(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Locatario)
 def locatario_pre_save(sender, instance, **kwargs):
-    if instance.pk is None or kwargs['raw']:  # Se criado
+    if instance.pk is None or kwargs['raw']:  # Se criado ou vem de fixture
         pass
     else:
         # Apaga todos os recibos em pdf do locatário(para que novos possam ser criados) quando se modifica
         # informações desta model contidas neles
         ante = Locatario.objects.get(pk=instance.pk)
-        if ante.RG != instance.RG or ante.CPF != instance.CPF or ante.nome != instance.nome:
+        if ante.RG != instance.RG or ante.cpf() != instance.cpf() or ante.nome != instance.nome:
             contratos = Contrato.objects.filter(do_locatario=instance)
             for contrato in contratos:
                 contrato.recibos_pdf.delete()
@@ -174,7 +174,7 @@ def locatario_pre_save(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Contrato)
 def contrato_pre_save(sender, instance, **kwargs):
-    if instance.pk is None or kwargs['raw']:
+    if instance.pk is None or kwargs['raw']:  # Se criado ou vem de fixture
         pass
     else:
         # Após modificar/editar um contrato(parameters: duracao e data_entrada):
@@ -196,7 +196,7 @@ def contrato_pre_save(sender, instance, **kwargs):
 @receiver(pre_save, sender=Anotacoe)
 def anotacao_pre_save(sender, instance, **kwargs):
     # Criar e apagar tarefa referente a anotações
-    if instance.pk is None or kwargs['raw']:  # if criado
+    if instance.pk is None or kwargs['raw']:  # Se criado ou vem de fixture
         pass
     else:
         # If editado
@@ -370,23 +370,38 @@ def pagamento_post_delete(sender, instance, **kwards):
 # Gerenciadores de login e logout \/  ---------------------------------------
 @receiver(user_logged_in)
 def usuario_fez_login(sender, user, **kwargs):
-    if user.username == 'fbaugusto' and user.is_superuser:
+    if user.is_superuser and user.username == 'fbaugusto':
         caminho = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\recibos_entregues.json"
         caminho_2 = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\dados_do_predio.json"
-        existe = os.path.exists(caminho)
-        if existe:
+        caminho_3 = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\locatarios_cpfs.json"
+
+        if os.path.isfile(caminho):
             arquivo = open(caminho)
             dados = json.load(arquivo)
             for key, value in dados['dados'].items():
                 parcelas = Parcela.objects.filter(do_contrato=key).order_by('data_pagm_ref')
                 for index, parcela in enumerate(parcelas):
                     parcela.recibo_entregue = 1 if index < value else 0
-                    parcela.save(update_fields=['recibo_entregue'])
+                    parcela.save(update_fields=['recibo_entregue', ])
             arquivo.close()
             os.remove(caminho)
-            if os.path.exists(caminho_2):
+            if os.path.isfile(caminho_2):
                 os.remove(caminho_2)
 
+        # Preencher os CPFs criptografados dos locatários
+        existe = os.path.isfile(caminho_3)
+        if existe:
+            arquivo = open(caminho_3)
+            dados = json.load(arquivo)
+            for n, cpf in enumerate(dados):
+                locatario = Locatario.objects.get(pk=n+1)
+                cpf_enc = bytes(cpf, 'UTF-8')
+                locatario.cript_cpf = cpf_enc
+                locatario.save(update_fields=['cript_cpf', ])
+                arquivo.close()
+            os.remove(caminho_3)
+
+            # Criar slots restantes
             imoveis_qtd = Imovei.objects.filter(do_locador=user).count()
             if imoveis_qtd > 3:
                 for n in range(3, imoveis_qtd):

@@ -18,7 +18,8 @@ from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
-from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, parcela_uuid, user_uuid, uuid_20
+from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, parcela_uuid, user_uuid, uuid_20, \
+    cpf_decrypt
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 
@@ -41,10 +42,10 @@ def gerar_codigo_contrato():
 
 
 class Usuario(AbstractUser):
+    # Informações de usuário
     RG = models.CharField(max_length=9, null=True, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
-    CPF = models.CharField(max_length=11, null=True, blank=True, unique=True, help_text='Digite apenas números',
-                           validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
+    cript_cpf = models.BinaryField(null=True, blank=True)
     telefone = models.CharField(max_length=11, null=False, blank=True, unique=True,
                                 help_text='Celular/Digite apenas números',
                                 validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
@@ -60,26 +61,31 @@ class Usuario(AbstractUser):
                                         verbose_name='Informações de pagamentos 2')
     uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
     tickets = models.IntegerField(default=10)
-    # Outros poderão ter acesso ao uuid por cópias digitais de pdfs que poderão ser repassadas pelo usuário
 
+    # Configurações de slots
     locat_slots = models.IntegerField(default=2)
 
+    # Configurações da view Visão geral
     vis_ger_ultim_order_by = models.CharField(default='vencimento_atual', null=True, blank=True, max_length=60)
 
+    # Configurações da view Eventos
     data_eventos_i = models.DateField(blank=True, null=True)
     itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=['1', '2', '3', '4', '5', '6'])
     qtd_eventos = models.IntegerField(blank=True, null=True, default=25)
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
+    # Configurações da view Gerador de recibos PDF
     recibo_ultimo = models.ForeignKey('Contrato', null=True, blank=True, related_name='usuario_recibo_set',
                                       on_delete=models.SET_NULL)
     recibo_preenchimento = models.IntegerField(null=True, blank=True)
 
+    # Configurações da view Gerador de Tabela PDF
     tabela_ultima_data_ger = models.IntegerField(null=True, blank=True)
     tabela_meses_qtd = models.IntegerField(null=True, blank=True)
     tabela_imov_qtd = models.IntegerField(null=True, blank=True)
     tabela_mostrar_ativos = models.BooleanField(null=True, blank=True)
 
+    # Configurações da view Gerador de contratos PDF
     contrato_ultimo = models.ForeignKey('Contrato', null=True, blank=True, related_name='usuario_contrato_set',
                                         on_delete=models.SET_NULL)
 
@@ -114,9 +120,14 @@ class Usuario(AbstractUser):
         nome = self.nome_completo().split()
         return f'{nome[0]} {nome[len(nome) - 1]}'
 
+    def cpf(self):
+        if self.cript_cpf:
+            cpf = cpf_decrypt(self.cript_cpf)
+            return cpf
+
     def f_cpf(self):
-        if self.CPF:
-            return cpf_format(self.CPF)
+        if self.cript_cpf:
+            return cpf_format(self.cpf())
 
     def f_tel(self):
         if self.telefone:
@@ -220,7 +231,7 @@ class Slot(models.Model):
 
     def posicao(self):
         slots = Slot.objects.filter(do_usuario=self.do_usuario).order_by('pk')
-        return list(slots).index(self)+1
+        return list(slots).index(self) + 1
 
     def imovel(self):
         try:
@@ -289,8 +300,7 @@ class Locatario(models.Model):
                              verbose_name='Documentos', validators=[tratar_imagem, FileExtensionValidator])
     RG = models.CharField(max_length=9, null=False, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
-    CPF = models.CharField(max_length=11, null=False, blank=False, help_text='Digite apenas números',
-                           validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
+    cript_cpf = models.BinaryField(null=True, blank=True)
     ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
     endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
     telefone1 = models.CharField(max_length=11, blank=False, verbose_name='Telefone 1',
@@ -308,7 +318,7 @@ class Locatario(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["CPF", "do_locador"], name="cpf_locatario_por_usuario"),
+            models.UniqueConstraint(fields=["cript_cpf", "do_locador"], name="cpf_locatario_por_usuario"),
         ]
         verbose_name_plural = 'Locatários'
 
@@ -338,9 +348,14 @@ class Locatario(models.Model):
         x = Imovei.objects.filter(com_locatario=self.pk)
         return x
 
+    def cpf(self):
+        if self.cript_cpf:
+            cpf = cpf_decrypt(self.cript_cpf)
+            return cpf
+
     def f_cpf(self):
-        if self.CPF:
-            return cpf_format(self.CPF)
+        if self.cript_cpf:
+            return cpf_format(self.cpf())
 
     def f_tel1(self):
         if self.telefone1:
@@ -914,9 +929,7 @@ class ContratoDocConfig(models.Model):
     fiador_RG = models.CharField(max_length=9, null=True, blank=True, help_text='Digite apenas números',
                                  validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros],
                                  verbose_name='RG')
-    fiador_CPF = models.CharField(max_length=11, null=True, blank=True, help_text='Digite apenas números',
-                                  validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros],
-                                  verbose_name='CPF')
+    fiador_cript_cpf = models.BinaryField(null=True, blank=True)
     fiador_ocupacao = models.CharField(max_length=85, null=True, blank=True, verbose_name='Ocupação')
     fiador_endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
     fiador_nacionalidade = models.CharField(max_length=40, null=True, blank=True, verbose_name='Nacionalidade')
@@ -928,8 +941,14 @@ class ContratoDocConfig(models.Model):
     def __str__(self):
         return f'{self.do_contrato} ({self.do_modelo})'
 
+    def fiador_cpf(self):
+        if self.fiador_cript_cpf:
+            cpf = cpf_decrypt(self.fiador_cript_cpf)
+            return cpf
+
     def f_cpf(self):
-        return cpf_format(self.fiador_CPF)
+        if self.fiador_cript_cpf:
+            return cpf_format(self.fiador_cpf())
 
 
 class Parcela(models.Model):
@@ -1198,7 +1217,7 @@ class Tarefa(models.Model):
                 mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
                            f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
                            f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
-                           f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} foi detectado. '\
+                           f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} foi detectado. ' \
                            f'Confirme a entrega do recibo.'
             except:
                 pass

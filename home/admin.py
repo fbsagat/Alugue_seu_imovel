@@ -11,10 +11,13 @@ class UsuarioAdmin(admin.ModelAdmin):
     search_fields = ('first_name', 'email',)
     fieldsets = (
         ('Informações', {"fields": (
-            'first_name', 'last_name', 'telefone', 'RG', 'CPF', 'locat_slots', 'email', 'nacionalidade', 'estadocivil',
-            'ocupacao', 'endereco_completo', 'password', 'data_eventos_i', 'itens_eventos', 'qtd_eventos',
-            'ordem_eventos', 'recibo_ultimo', 'recibo_preenchimento', 'tabela_ultima_data_ger', 'tabela_meses_qtd',
-            'tabela_imov_qtd',)}),
+            'first_name', 'last_name', 'telefone', 'RG', 'cript_cpf', 'locat_slots', 'email', 'nacionalidade',
+            'estadocivil',
+            'ocupacao', 'endereco_completo', 'password')}),
+
+        ("Configurações", {'fields': ('data_eventos_i', 'itens_eventos', 'qtd_eventos',
+                                      'ordem_eventos', 'recibo_ultimo', 'recibo_preenchimento',
+                                      'tabela_ultima_data_ger', 'tabela_meses_qtd', 'tabela_imov_qtd')}),
 
         ("Permissões", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
     )
@@ -32,8 +35,12 @@ class UsuarioAdmin(admin.ModelAdmin):
 
 @admin.register(Locatario)
 class LocatarioAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'do_locador', 'telefone1', 'telefone2', 'email', 'docs', 'data_registro', 'estadocivil')
-    search_fields = ('nome',)
+    list_display = (
+        'nome', 'do_locador', 'RG', 'cript_cpf', 'ocupacao', 'endereco_completo', 'telefone1', 'telefone2', 'email',
+        'docs',
+        'nacionalidade', 'estadocivil', 'temporario', 'data_registro')
+    search_fields = ('nome', 'temporario')
+    readonly_fields = ['cript_cpf']
 
 
 @admin.register(ImovGrupo)

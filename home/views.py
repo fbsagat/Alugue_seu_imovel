@@ -28,7 +28,7 @@ from django.template.defaultfilters import date as data_ptbr
 from home.fakes_test import porcentagem_de_chance
 
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
-    valor_por_extenso, modelo_variaveis, modelo_condicoes, uuid_20
+    valor_por_extenso, modelo_variaveis, modelo_condicoes, uuid_20, cpf_crypt, cpf_decrypt, cpf_format
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias, \
     modelos_contratos_ficticios
@@ -414,6 +414,8 @@ def registrar_locat(request):
     if form.is_valid():
         locatario = form.save(commit=False)
         locatario.do_locador = request.user
+        cpf = cpf_crypt(message=form.cleaned_data['cpf'])
+        locatario.cript_cpf = cpf
         locatario.save()
         messages.success(request, "Locatário registrado com sucesso!")
         if 'form4' in request.session:
@@ -441,6 +443,8 @@ def locat_auto_registro(request, username, code):
                 locatario = form.save(commit=False)
                 locatario.do_locador = user
                 locatario.temporario = True
+                cpf = cpf_crypt(message=form.cleaned_data['cpf'])
+                locatario.cript_cpf = cpf
                 locatario.save()
                 messages.success(request, "Dados enviados com sucesso! Aguarde o contato do locador.")
                 return redirect(reverse('home:Locatario Auto-Registro', args=[user.username, code]))
@@ -484,7 +488,7 @@ class RevisarLocat(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_initial(self):
-        return {'nome': self.object.nome, 'RG': self.object.RG, 'CPF': self.object.CPF,
+        return {'nome': self.object.nome, 'RG': self.object.RG, 'cpf': self.object.cpf(),
                 'ocupacao': self.object.ocupacao,
                 'endereco_completo': self.object.endereco_completo,
                 'telefone1': self.object.telefone1, 'telefone2': self.object.telefone2,
@@ -662,7 +666,7 @@ def recibos(request):
 
         # Indica para o template se o usuário prenencheu os dados necessários para gerar os recibos\/
         pede_dados = False
-        if usuario.first_name == '' or usuario.last_name == '' or usuario.CPF == '':
+        if usuario.first_name == '' or usuario.last_name == '' or usuario.cpf() == '':
             pede_dados = True
         else:
             if request.user.recibo_ultimo:
@@ -733,10 +737,10 @@ def recibos(request):
                 dados = {'cod_contrato': f'{contrato.codigo}',
                          'nome_locador': f'{usuario.first_name.upper()} {usuario.last_name.upper()}',
                          'rg_locd': f'{usuario.RG}',
-                         'cpf_locd': f'{usuario.CPF}',
+                         'cpf_locd': f'{usuario.cpf()}',
                          'nome_locatario': f'{locatario.nome.upper()}',
                          'rg_loct': f'{locatario.RG}',
-                         'cpf_loct': f'{locatario.CPF}',
+                         'cpf_loct': f'{locatario.cpf()}',
                          'valor_e_extenso': f'{contrato.valor_format()} ({num_ptbr_reais.upper()} REAIS{completo.upper()})',
                          'endereco': f"{imovel.endereco_completo()}",
                          'cidade': f'{imovel.cidade}',
@@ -1030,11 +1034,11 @@ def gerar_contrato(request):
             if form2.is_valid():
                 configs = form2.save(commit=False)
                 configs.do_contrato = contrato_ultimo
-                if form2.cleaned_data['fiador_nome'] and form2.cleaned_data['fiador_CPF']:
+                if form2.cleaned_data['fiador_nome'] and form2.cleaned_data['fiador_cript_cpf']:
                     pass
                 else:
                     configs.fiador_RG = None
-                    configs.fiador_CPF = None
+                    configs.fiador_cript_cpf = None
                     configs.fiador_ocupacao = None
                     configs.fiador_nacionalidade = None
                     configs.fiador_estadocivil = None
@@ -1044,10 +1048,14 @@ def gerar_contrato(request):
                     # Se o form for válido e houver configs para o contrato selecionado, atualiza a instância do
                     # ContratoDocConfig deste contrato.
                     configs.pk = contr_doc_configs.pk
+                    cpf = form2.cleaned_data['fiador_cript_cpf']
+                    configs.fiador_cript_cpf = cpf_crypt(cpf)
                     configs.save()
                 else:
                     # Se o form for válido e não houver configs para o contrato selecionado, cria uma instância do
                     # ContratoDocConfig para o contrato selecionado.
+                    cpf = form2.cleaned_data['fiador_cript_cpf']
+                    configs.fiador_cript_cpf = cpf_crypt(cpf)
                     configs.save()
                 return redirect(reverse('home:Contrato PDF'))
             else:
@@ -1061,7 +1069,7 @@ def gerar_contrato(request):
                          'caucao': contr_doc_configs.caucao,
                          'fiador_nome': contr_doc_configs.fiador_nome,
                          'fiador_RG': contr_doc_configs.fiador_RG,
-                         'fiador_CPF': contr_doc_configs.fiador_CPF,
+                         'fiador_cript_cpf': contr_doc_configs.f_cpf(),
                          'fiador_ocupacao': contr_doc_configs.fiador_ocupacao,
                          'fiador_endereco_completo': contr_doc_configs.fiador_endereco_completo,
                          'fiador_nacionalidade': contr_doc_configs.fiador_nacionalidade,
@@ -1661,8 +1669,14 @@ class EditarLocat(LoginRequiredMixin, UpdateView):
             form_class = self.get_form_class()
         return form_class(**self.get_form_kwargs(), usuario=self.request.user)
 
+    def form_valid(self, form):
+        self.object = form.save()
+        cpf = cpf_crypt(message=form.cleaned_data['cpf'])
+        self.object.cript_cpf = cpf
+        return super().form_valid(form)
+
     def get_initial(self):
-        return {'nome': self.object.nome, 'RG': self.object.RG, 'CPF': self.object.CPF,
+        return {'nome': self.object.nome, 'RG': self.object.RG, 'cpf': self.object.cpf(),
                 'ocupacao': self.object.ocupacao,
                 'endereco_completo': self.object.endereco_completo,
                 'telefone1': self.object.telefone1, 'telefone2': self.object.telefone2,
@@ -1919,8 +1933,17 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         form = super(EditarPerfil, self).get_form(form_class)
         form.fields['first_name'].required = True
         form.fields['last_name'].required = True
-        form.fields['CPF'].required = True
+        form.fields['cpf'].required = True
+        if self.object.cript_cpf:
+            cpf = cpf_format(cpf_decrypt(self.object.cript_cpf))
+            form.fields['cpf'].initial = cpf
         return form
+
+    def form_valid(self, form):
+        self.object = form.save()
+        cpf = cpf_crypt(message=form.cleaned_data['cpf'])
+        self.object.cript_cpf = cpf
+        return super().form_valid(form)
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(EditarPerfil, self).get_context_data(**kwargs)
@@ -2292,7 +2315,8 @@ def criar_locatarios_ficticios(request, quantidade, multiplicador, usuario_s, di
                 locatario.do_locador = usuario
                 locatario.nome = aleatorio.get('nome')
                 locatario.RG = aleatorio.get('RG')
-                locatario.CPF = aleatorio.get('CPF')
+                cpf = cpf_crypt(str(aleatorio.get('CPF')))
+                locatario.cript_cpf = cpf
                 locatario.ocupacao = aleatorio.get('ocupacao')
                 locatario.endereco_completo = aleatorio.get('endereco_completo')
                 locatario.telefone1 = aleatorio.get('telefone1')
@@ -2588,7 +2612,8 @@ def criar_usuarios_ficticios(request, quantidade, multiplicador):
                 user.dados_pagamento1 = aleatorio.get('dados_pagamento1')
                 user.dados_pagamento2 = aleatorio.get('dados_pagamento2')
                 user.RG = aleatorio.get('RG')
-                user.CPF = aleatorio.get('CPF')
+                cpf = cpf_crypt(str(aleatorio.get('CPF')))
+                user.cript_cpf = cpf
                 user.save()
                 break
     messages.success(request, f"Criado(s) {count} usuário(s)")

@@ -36,18 +36,23 @@ class FormCriarConta(UserCreationForm):
 
 
 class FormUsuario(UserChangeForm):
+    cpf = forms.CharField(max_length=11, min_length=11, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                          help_text='Digite apenas números', label='CPF')
+
     class Meta:
         model = Usuario
-        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'CPF', 'nacionalidade',
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefone', 'RG', 'nacionalidade',
                   'estadocivil', 'ocupacao', 'endereco_completo', 'dados_pagamento1', 'dados_pagamento2']
 
     def __init__(self, *args, **kwargs):
         super(FormUsuario, self).__init__(*args, **kwargs)
         self.fields['dados_pagamento1'].widget.attrs['class'] = 'form-control-sm'
         self.fields['dados_pagamento2'].widget.attrs['class'] = 'form-control-sm'
+        self.fields['cpf'].widget.attrs['class'] = 'mask-cpf'
+        self.fields['cpf'].widget.attrs['id'] = 'id_CPF'
 
-    def clean_CPF(self):
-        cpf = self.cleaned_data['CPF']
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
         if validar_cpf(cpf):
             return cpf
         else:
@@ -182,6 +187,9 @@ class FormGasto(forms.ModelForm):
 
 
 class FormLocatario(forms.ModelForm):
+    cpf = forms.CharField(max_length=11, min_length=11, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                          help_text='Digite apenas números', label='CPF')
+
     class Meta:
         model = Locatario
         fields = '__all__'
@@ -189,15 +197,16 @@ class FormLocatario(forms.ModelForm):
 
     def __init__(self, *args, usuario, **kwargs):
         super(FormLocatario, self).__init__(*args, **kwargs)
-        self.fields['CPF'].widget.attrs.update({'class': 'mask-cpf'})
+        self.fields['cpf'].widget.attrs.update({'class': 'mask-cpf'})
+        self.fields['cpf'].widget.attrs['id'] = 'id_CPF'
         self.fields['telefone1'].widget.attrs.update({'class': 'mask-telefone1'})
         self.fields['telefone2'].widget.attrs.update({'class': 'mask-telefone2'})
         self.locador_pk = usuario
 
-    def clean_CPF(self):
-        cpf = self.cleaned_data['CPF']
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
         cpfs_dos_locat_deste_user = Locatario.objects.filter(do_locador=self.locador_pk).exclude(
-            pk=self.instance.pk).values_list('CPF', flat=True)
+            pk=self.instance.pk).values_list('cript_cpf', flat=True)
         if cpf in cpfs_dos_locat_deste_user:
             raise forms.ValidationError("Já existe um locatário registrado com este CPF.")
         elif validar_cpf(cpf) is False:
@@ -284,6 +293,9 @@ class FormContratoDoc(forms.Form):
 class FormContratoDocConfig(forms.ModelForm):
     caucao = forms.IntegerField(help_text='Multiplicado pelo valor de uma parcela', label='Caução (parcela multipl.)',
                                 max_value=3, min_value=0, initial=1, required=False)
+    fiador_cript_cpf = forms.CharField(max_length=11, min_length=11,
+                                       widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                       help_text='Digite apenas números', label='CPF')
 
     class Meta:
         model = ContratoDocConfig
@@ -292,7 +304,7 @@ class FormContratoDocConfig(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FormContratoDocConfig, self).__init__(*args, **kwargs)
-        self.fields['fiador_CPF'].widget.attrs['id'] = 'id_CPF'
+        self.fields['fiador_cript_cpf'].widget.attrs['id'] = 'id_CPF'
         self.fields['tipo_de_locacao'].choices = ((None, '-----------'), (1, 'Residencial'), (2, 'Não residencial'))
 
     def clean(self):
@@ -300,14 +312,14 @@ class FormContratoDocConfig(forms.ModelForm):
         msg2 = 'Número de CPF inválido'
         cleaned_data = super(FormContratoDocConfig, self).clean()
         fiador_nome = cleaned_data.get("fiador_nome")
-        fiador_cpf = cleaned_data.get("fiador_CPF")
+        fiador_cpf = cleaned_data.get("fiador_cript_cpf")
 
         if fiador_nome and fiador_cpf is None:
-            self.add_error('fiador_CPF', msg)
+            self.add_error('fiador_cript_cpf', msg)
         elif fiador_cpf and fiador_nome is None:
             self.add_error('fiador_nome', msg)
         if fiador_cpf and validar_cpf(fiador_cpf) is False:
-            self.add_error('fiador_CPF', msg2)
+            self.add_error('fiador_cript_cpf', msg2)
         return cleaned_data
 
 

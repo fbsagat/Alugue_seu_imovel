@@ -270,7 +270,6 @@ def modelos_contratos_ficticios(usuario):
                     break
                 count += 1
     usuarios = alguns_usuarios
-    print(usuarios)
     descricao = fake.paragraph(nb_sentences=randrange(2, 3))
 
     return {'titulo': titulo, 'corpo': corpo, 'usuarios': usuarios, 'descricao': descricao,
