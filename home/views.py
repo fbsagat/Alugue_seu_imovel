@@ -2464,7 +2464,6 @@ def criar_pagamentos_ficticios(request, quantidade, multiplicador, usuario_s, di
                     pagamento.valor_pago = aleatorio.get('valor_pago')
                     pagamento.data_pagamento = aleatorio.get('data_pagamento')
                     pagamento.forma = aleatorio.get('forma')
-                    pagamento.recibo = aleatorio.get('recibo')
                     pagamento.save()
 
                 # Marcar recibo_entregue de algumas parcelas, porém em ordem sequencial desde o primeiro. Marcar todos
@@ -2486,6 +2485,8 @@ def criar_pagamentos_ficticios(request, quantidade, multiplicador, usuario_s, di
                         for n, parcela in enumerate(parcelas):
                             if parcela.recibo_entregue is False and n < recibos_qtd:
                                 parcela.recibo_entregue = True
+                                if parcela.da_tarefa:
+                                    parcela.da_tarefa.lida_e_data()
                                 parcela.save(update_fields=['recibo_entregue', ])
                             else:
                                 break

@@ -106,7 +106,9 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id, lida=False):
         tarefa.do_usuario = usuario
         tarefa.autor_classe = tipo_conteudo
         tarefa.objeto_id = objeto_id
-        tarefa.lida = lida
+        if lida:
+            tarefa.lida = lida
+            tarefa.data_registro = datetime.datetime.now()
         tarefa.save()
         return tarefa
 
@@ -122,7 +124,7 @@ def parcela_pre_save(sender, instance, **kwargs):
         objeto_id = instance.pk
         if instance.esta_pago():
             usuario = instance.do_contrato.do_locador
-            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, lida=True)
+            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
             Parcela.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
         else:
             try:
@@ -388,10 +390,11 @@ def usuario_fez_login(sender, user, **kwargs):
                 for index, parcela in enumerate(parcelas):
                     parcela.recibo_entregue = 1 if index < value else 0
                     parcela.save(update_fields=['recibo_entregue', ])
-                    if parcela.da_tarefa:
-                        parcela.da_tarefa.lida_e_data() if index < value else 0
+                    if parcela.da_tarefa and index < value:
+                        parcela.da_tarefa.lida_e_data()
+
             arquivo.close()
-            os.remove(caminho)
+            # os.remove(caminho)
 
         if os.path.isfile(caminho_2):
             os.remove(caminho_2)

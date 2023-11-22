@@ -193,11 +193,9 @@ def pagamentos_ficticios(usuario):
         pix_vista = randrange(0, 1)
         todas = randrange(0, 4)
         forma = pix_vista if porcentagem_de_chance(65) else todas
-        recibo = True if porcentagem_de_chance(60) else False
     else:
         return None
-    return {'ao_contrato': ao_contrato, 'valor_pago': valor_pago, 'data_pagamento': data_pagamento, 'forma': forma,
-            'recibo': recibo}
+    return {'ao_contrato': ao_contrato, 'valor_pago': valor_pago, 'data_pagamento': data_pagamento, 'forma': forma}
 
 
 def gastos_ficticios():

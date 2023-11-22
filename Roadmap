@@ -125,6 +125,9 @@ Tarefas:
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
+Criar um sistema que notifica o desenvolvedor, no painel adm, em algum campo, quando algo é disparado no código,
+por exemplo, quando uma função de redundância é usada, para maior controle e fiscalização de funcionalidade.
+
 Colocar a variável 'mobiliado' no contrato pdf(ou um sistema personalizado de ativação de trechos para os usuários
         onde eles criam as próprias condições, seria interessante).
 
