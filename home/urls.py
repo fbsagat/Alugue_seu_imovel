@@ -13,7 +13,7 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, \
     arquivos_gastos_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
     adicionar_ticket, adicionar_ticket_todos, painel_configs, ModelosComunidade, \
-    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo
+    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, tarefa_lida
 from financeiro.views import painel_loja
 
 from Alugue_seu_imovel import settings
@@ -39,12 +39,12 @@ urlpatterns = [
     path('editar_registro_de_gasto/<int:pk>/', EditarGasto.as_view(), name='Editar Gasto'),
     path('excluir_registro_de_gasto/<int:pk>/', ExcluirGasto.as_view(), name='Excluir Gasto'),
 
-    # LOCATARIO -------------------
+    # LOCATÁRIO -------------------
     path('registro_de_locatario/', registrar_locat, name='Registrar Locatario'),
     path('editar_registro_de_locatario/<int:pk>/', EditarLocat.as_view(), name='Editar Locatario'),
     path('excluir_registro_de_locatario/<int:pk>/', ExcluirLocat.as_view(), name='Excluir Locatario'),
 
-    # LOCATARIO Auto-registro -------------------
+    # LOCATÁRIO AUTO-REGISTRO -------------------
     path('locatario_auto_registro/<username>/<str:code>/', locat_auto_registro, name='Locatario Auto-Registro'),
     path('revisar_registro_de_locatario/<int:pk>/', RevisarLocat.as_view(), name='Revisar Locatário'),
 
@@ -60,7 +60,7 @@ urlpatterns = [
     path('editar_grupo/<int:pk>/', EditarGrup.as_view(), name='Editar Grupo Imóveis'),
     path('excluir_grupo/<int:pk>/', ExcluirGrupo.as_view(), name='Excluir Grupo Imóveis'),
 
-    # IMOVEL -------------------
+    # IMÓVEL -------------------
     path('registrar_imovel/', registrar_imovel, name='Registrar Imóvel'),
     path('editar_regimov/<int:pk>/', EditarImov.as_view(), name='Editar Imóvel'),
     path('excluir_regimov/<int:pk>/', ExcluirImov.as_view(), name='Excluir Imóvel'),
@@ -84,7 +84,7 @@ urlpatterns = [
     path('excluir_modelo/<int:pk>/<int:pag_orig>/', ExcluirModelo.as_view(), name='Excluir Modelo'),
     path('contrato_modelos_comunidade/', ModelosComunidade.as_view(), name='Modelos Comunidade'),
 
-    # ABA HISTORICO -------------------
+    # ABA HISTÓRICO -------------------
     path('pagamentos/', Pagamentos.as_view(), name='Pagamentos'),
     path('gastos/', Gastos.as_view(), name='Gastos'),
     path('locatarios/', Locatarios.as_view(), name='Locatários'),
@@ -92,9 +92,10 @@ urlpatterns = [
     path('anotacoes/', Notas.as_view(), name='Anotações'),
     path('contratos/', Contratos.as_view(), name='Contratos'),
 
-    # AFAZERES -------------------
+    # NOTIFICAÇÕES -------------------
     path('recibo_entregue/<int:pk>/', recibo_entregue, name='Recibo Entregue'),
     path('afazer_concluida/<int:pk>/', afazer_concluida, name='Afazer Concluida'),
+    path('tarefa_lida/<int:pk>/', tarefa_lida, name='Tarefa Lida'),
 
     # DESENVOLVIMENTO -------------------
     path('msgm/', mensagem_desenvolvedor, name='Mensagem pro Desenvolvedor'),
@@ -103,9 +104,6 @@ urlpatterns = [
     path('sugestao_apagar/<int:pk>/', apagar_sugestao, name='Apagar Sugestão'),
     path('sugestao_implementar/<int:pk>/', implementar_sugestao, name='Implementar Sugestão'),
     path('sugestao_aprovar/<int:pk>/', aprovar_sugestao, name='Aprovar Sugestão'),
-
-    # AVISOS -------------------
-    path('aviso_lido/<int:pk>/', aviso_lido, name='Aviso Lido'),
 
     # PAINEL -------------------
     path('painel_slots/', painel_slots, name='Painel Slots'),

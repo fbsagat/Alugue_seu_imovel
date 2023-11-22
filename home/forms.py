@@ -193,7 +193,7 @@ class FormLocatario(forms.ModelForm):
     class Meta:
         model = Locatario
         fields = '__all__'
-        exclude = ['do_locador', 'data_registro', 'temporario', 'da_tarefa']
+        exclude = ['do_locador', 'data_registro', 'temporario']
 
     def __init__(self, *args, usuario, **kwargs):
         super(FormLocatario, self).__init__(*args, **kwargs)

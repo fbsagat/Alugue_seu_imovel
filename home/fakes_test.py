@@ -213,10 +213,10 @@ def anotacoes_ficticias():
     titulo = f'Titulo fictício sem nexo total: {fake.paragraph(nb_sentences=1)}'
     data_registro = fake.date_between(datetime.today() + timedelta(days=-80), datetime.today())
     texto = f'Frase sem nexo aleatória: {fake.paragraph(nb_sentences=randrange(6, 7))} kkkk q engraçado.'
-    tarefa = True if porcentagem_de_chance(50) else False
+    tarefa = True if porcentagem_de_chance(70) else False
     feito = False
     if tarefa:
-        feito = True if porcentagem_de_chance(25) else False
+        feito = True if porcentagem_de_chance(60) else False
     return {'titulo': titulo, 'data_registro': data_registro, 'texto': texto, 'tarefa': tarefa, 'feito': feito}
 
 

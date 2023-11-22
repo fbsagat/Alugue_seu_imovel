@@ -1093,26 +1093,6 @@ class Anotacoe(models.Model):
             return [2, f'{self.texto[:tamanho]}...']
 
 
-class TarefaManager(models.Manager):
-    def tarefas_novas(self):
-        tarefas_qs = self.filter(apagada=False)
-        lista = []
-        for tarefa in tarefas_qs:
-            if tarefa.tarefa_nova() is True:
-                lista.append(tarefa.pk)
-        tarefas_novas = Tarefa.objects.filter(pk__in=lista)
-        return tarefas_novas
-
-    def tarefas_historico(self):
-        tarefas_qs = self.filter(apagada=False)
-        lista = []
-        for tarefa in tarefas_qs:
-            if tarefa.tarefa_nova() is False:
-                lista.append(tarefa.pk)
-        tarefas_novas = Tarefa.objects.filter(pk__in=lista)
-        return tarefas_novas
-
-
 class Tarefa(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
     autor_classe = models.ForeignKey(ContentType, null=False, on_delete=models.CASCADE)
@@ -1120,10 +1100,9 @@ class Tarefa(models.Model):
     content_object = GenericForeignKey('autor_classe', 'objeto_id')
 
     data_registro = models.DateTimeField(auto_now_add=True)
-    lida = models.BooleanField(null=True)
+    lida = models.BooleanField(default=False)
     apagada = models.BooleanField(default=False)
     data_lida = models.DateTimeField(null=True)
-    objects = TarefaManager()
 
     class Meta:
         ordering = ['-data_registro']
@@ -1158,42 +1137,6 @@ class Tarefa(models.Model):
             return '👨‍💼 Locatário'
         elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             return '⚠️ Aviso'
-
-    def tarefa_nova(self):
-        # Vai retornar True ou none, True se o autor desta tarefa estiver marcado como concluido(ps: concluídos em
-        # seus respectivos formatos; ex: recibo: 'recibo_entregue', ex: Anotação: 'feito', ex: contrato: 'em_posse',
-        # ex: sugestão: 'neste caso utiliza o próprio parâmetro 'lida' desta model.'...)
-        # Retorna none caso o objeto não exista, (caso gere um except)
-        if self.autor_classe == ContentType.objects.get_for_model(Parcela):
-            try:
-                return True if self.content_object.recibo_entregue is False else False
-            except:
-                return None
-        elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
-            try:
-                return True if self.content_object.feito is False else False
-            except:
-                return None
-        elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
-            try:
-                return True if self.content_object.em_posse is False else False
-            except:
-                return None
-        elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
-            try:
-                return False if self.lida else True
-            except:
-                return None
-        elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
-            try:
-                return True if self.content_object.temporario is True else False
-            except:
-                return None
-        elif self.autor_classe == ContentType.objects.get_for_model(Slot):
-            try:
-                return False if self.lida else True
-            except:
-                return None
 
     def borda(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -1280,6 +1223,16 @@ class Tarefa(models.Model):
         self.data_lida = None
         self.data_registro = datetime.now()
         self.save(update_fields=['lida', 'data_registro'])
+
+    def lida_e_data(self):
+        self.lida = True
+        self.data_lida = datetime.now()
+        self.save(update_fields=['lida', 'data_lida'])
+
+    def nao_lida_e_data(self):
+        self.lida = False
+        self.data_lida = None
+        self.save(update_fields=['lida', 'data_lida'])
 
 
 lista_mensagem = (

@@ -118,7 +118,7 @@ class MensagemDevAdmin(admin.ModelAdmin):
 @admin.register(Tarefa)
 class TarefasAdmin(admin.ModelAdmin):
     list_display = (
-        'texto', 'content_object', 'do_usuario', 'autor_classe', 'objeto_id', 'data_registro', 'tarefa_nova',
+        'texto', 'content_object', 'do_usuario', 'autor_classe', 'objeto_id', 'data_registro', 'lida',
         'data_lida')
-    readonly_fields = ['content_object', 'texto', 'tarefa_nova']
+    readonly_fields = ['content_object', 'texto']
     list_filter = ('autor_classe', 'apagada')

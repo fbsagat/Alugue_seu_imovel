@@ -96,6 +96,9 @@ Ok. Não utilizar diretamente o uuid do usuário no front-end, apenas derivados 
 Ok. Arrumar o aviso dde exclusão de locatário que se registrou no auto registro. Sem o alerta.
 Ok. Mostrar um histórico de compras do usuário em algum lugar.
 Ok. (coloquei excluir que fica melhor) Retirar a notificação de contrato criado quando o mesmo é rescindido.
+OK. Criptografar informações sensíveis no banco de dados(ex: cpf dos locatários)
+Ok. Colocar o botão lida em todas as tarefas e desvincular ele das suas funções, ou seja, o usuário pode marcar
+        lida sem um recibo ter sido entregue(por exemplo), ela vai para o histórico como botão de entregue ativo.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -105,7 +108,8 @@ Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todo
 
 Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
         e botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
-        Configs: Habilitar ou desabilitar o auto registro de locatários.
+        Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link), quantidade de tarefas a
+        exibir: notificações/histórico.
 
 Tarefas:
 1. Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
@@ -113,6 +117,8 @@ Tarefas:
         tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
         ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
         ficar o atributo da_tarefa?
+
+        -=-=-=PRÓXIMO EPISÓDIO FÁBIO DO FUTURO!=-=-=- \/\/\/
 2. Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando a sugestão do usuário for aprovada = OK.
         Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
         Quando o desenvolvedor responder uma mensagem.
@@ -123,8 +129,6 @@ Colocar a variável 'mobiliado' no contrato pdf(ou um sistema personalizado de a
         onde eles criam as próprias condições, seria interessante).
 
 Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
-
-Criptografar informações sensíveis no banco de dados(ex: cpf dos locatários)
 
 Arrumar e organizar, deixar otimizado o painel administrativo(django admin) completo.
 
@@ -137,6 +141,9 @@ Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir tam
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Melhorias muito futuras:
+Criar o resumo textual e gráfico de cada contrato, textual dizendo quando chegou, quando vai sair, meses que pagou,
+        se rescindiu: quanto deve ou quanto pagou a mais e etc... no gráfico mostrar um gráfico parecido ou melhor que
+        o gráfico da planilha.
 Testar os métodos e managers procurando formas de diminuir o uso do banco de dados por parte deles, buscando sempre
         informações de cada usuário nas queryes, nunca a partir de todos os objetos.
 Fazer um sistema de configurações do fake test, onde serão modificadas as probabilidades de cada variável aleatória.

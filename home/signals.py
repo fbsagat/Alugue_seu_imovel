@@ -85,7 +85,7 @@ def tratar_pagamentos(instance_contrato):
         parcela.save(update_fields=['tt_pago'])
 
 
-def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
+def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id, lida=False):
     # Caso exista: Tenta recuperar apagada, desfazer lida, etc...
     # cada ContentType tem sua regra, personalizar abaixo \/
     try:
@@ -106,6 +106,7 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id):
         tarefa.do_usuario = usuario
         tarefa.autor_classe = tipo_conteudo
         tarefa.objeto_id = objeto_id
+        tarefa.lida = lida
         tarefa.save()
         return tarefa
 
@@ -121,7 +122,7 @@ def parcela_pre_save(sender, instance, **kwargs):
         objeto_id = instance.pk
         if instance.esta_pago():
             usuario = instance.do_contrato.do_locador
-            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, lida=True)
             Parcela.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
         else:
             try:
@@ -209,7 +210,7 @@ def anotacao_pre_save(sender, instance, **kwargs):
                 tarefa.definir_apagada()
 
         elif instance.tarefa is True and ante.tarefa != instance.tarefa:
-            # Criar a tarefa referente à anotação se o usuário ao editar a anotação, marcando o botão tarefa.
+            # Criar a tarefa referente à anotação se o usuário ao editar a anotação, marcar o botão tarefa.
             usuario = ante.do_usuario
             tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
             objeto_id = instance.pk
@@ -274,7 +275,8 @@ def anotacao_post_save(sender, instance, **kwargs):
         usuario = instance.do_usuario
         tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
         objeto_id = instance.pk
-        tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+        tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id,
+                                  lida=True if instance.feito else False)
         Anotacoe.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
 
 
@@ -291,13 +293,15 @@ def locatario_post_save(sender, instance, **kwargs):
 @transaction.atomic
 @receiver(post_save, sender=Contrato)
 def contrato_post_save(sender, instance, created, **kwargs):
+    lida = True if instance.em_posse else False
     # Pega os dados para tratamento:
     if created:
         # Gera as parcelas quando o contrato é criado:
         gerenciar_parcelas(instance)
         # Criar tarefa 'contrato criado' com o botão 'receber contrato'
         tipo_conteudo = ContentType.objects.get_for_model(Contrato)
-        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
+        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk,
+                                  lida=lida)
         Contrato.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
 
 
@@ -375,6 +379,7 @@ def usuario_fez_login(sender, user, **kwargs):
         caminho_2 = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\dados_do_predio.json"
         caminho_3 = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures\locatarios_cpfs.json"
 
+        # Marcar os recibos entregues
         if os.path.isfile(caminho):
             arquivo = open(caminho)
             dados = json.load(arquivo)
@@ -383,18 +388,20 @@ def usuario_fez_login(sender, user, **kwargs):
                 for index, parcela in enumerate(parcelas):
                     parcela.recibo_entregue = 1 if index < value else 0
                     parcela.save(update_fields=['recibo_entregue', ])
+                    if parcela.da_tarefa:
+                        parcela.da_tarefa.lida_e_data() if index < value else 0
             arquivo.close()
             os.remove(caminho)
-            if os.path.isfile(caminho_2):
-                os.remove(caminho_2)
+
+        if os.path.isfile(caminho_2):
+            os.remove(caminho_2)
 
         # Preencher os CPFs criptografados dos locatários
-        existe = os.path.isfile(caminho_3)
-        if existe:
+        if os.path.isfile(caminho_3):
             arquivo = open(caminho_3)
             dados = json.load(arquivo)
             for n, cpf in enumerate(dados):
-                locatario = Locatario.objects.get(pk=n+1)
+                locatario = Locatario.objects.get(pk=n + 1)
                 cpf_enc = bytes(cpf, 'UTF-8')
                 locatario.cript_cpf = cpf_enc
                 locatario.save(update_fields=['cript_cpf', ])

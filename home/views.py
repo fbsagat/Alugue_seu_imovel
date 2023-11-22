@@ -428,10 +428,11 @@ def registrar_locat(request):
 
 
 def locat_auto_registro(request, username, code):
+    usuario = Usuario.objects.get(username=username)
     site_code = settings.UUID_CODES['auto-registro']
-    hash_uuid = sha256(str(f'{request.user.uuid}{site_code}').encode())
+    hash_uuid = sha256(str(f'{usuario.uuid}{site_code}').encode())
     uuid_digest = hash_uuid.hexdigest()[:25]
-    if code != uuid_digest or username != request.user.username:
+    if code != uuid_digest or username != usuario.username:
         raise Http404
     else:
         user = get_object_or_404(Usuario, username=username)
@@ -483,8 +484,7 @@ class RevisarLocat(LoginRequiredMixin, UpdateView):
         self.object = form.save()
         self.object.temporario = None
         tarefa = get_object_or_404(Tarefa, pk=self.kwargs.get('pk'), do_usuario=self.request.user)
-        tarefa.data_lida = datetime.now()
-        tarefa.save(update_fields=['data_lida', ])
+        tarefa.lida_e_data()
         return super().form_valid(form)
 
     def get_initial(self):
@@ -591,12 +591,11 @@ def recebido_contrat(request, pk):
     if contrato.do_locador == request.user:
         if contrato.em_posse is True:
             contrato.em_posse = False
-            contrato.save(update_fields=['em_posse', ])
-            return redirect(request.META['HTTP_REFERER'])
         else:
             contrato.em_posse = True
-            contrato.save(update_fields=['em_posse', ])
+            tarefa.lida_e_data()
             messages.success(request, f"Cópia do contrato do locador em mãos!")
+        contrato.save(update_fields=['em_posse', ])
         return redirect(request.META['HTTP_REFERER'])
     else:
         raise Http404
@@ -1849,8 +1848,7 @@ def recibo_entregue(request, pk):
         parcela.recibo_entregue = False
     else:
         parcela.recibo_entregue = True
-        tarefa.data_lida = datetime.now()
-        tarefa.save(update_fields=['data_lida', ])
+        tarefa.lida_e_data()
     parcela.save(update_fields=['recibo_entregue', ])
     return redirect(request.META['HTTP_REFERER'])
 
@@ -1863,8 +1861,7 @@ def afazer_concluida(request, pk):
         nota.feito = False
     else:
         nota.feito = True
-        tarefa.data_lida = datetime.now()
-        tarefa.save(update_fields=['data_lida', ])
+        tarefa.lida_e_data()
     nota.save(update_fields=['feito', ])
     return redirect(request.META['HTTP_REFERER'])
 
@@ -1873,12 +1870,20 @@ def afazer_concluida(request, pk):
 def aviso_lido(request, pk):
     tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
     if tarefa.lida is False or tarefa.lida is None:
-        tarefa.lida = True
-        tarefa.data_lida = datetime.now()
-        tarefa.save(update_fields=['lida', 'data_lida', ])
+        tarefa.lida_e_data()
     else:
         tarefa.lida = False
         tarefa.save(update_fields=['lida', ])
+    return redirect(request.META['HTTP_REFERER'])
+
+
+@login_required
+def tarefa_lida(request, pk):
+    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
+    if tarefa.lida is False or tarefa.lida is None:
+        tarefa.lida_e_data()
+    else:
+        tarefa.nao_lida_e_data()
     return redirect(request.META['HTTP_REFERER'])
 
 
