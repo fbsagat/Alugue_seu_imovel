@@ -35,13 +35,13 @@
             <div class="offcanvas-body d-grid gap-1">
 
                 {% for tarefa in tarefas %}
-                <div class="card bg-gray-900 {% if tarefa.lido %}text-secondary{% endif %} {{ tarefa.borda }}">
+                <div class="card bg-gray-900 text-white {% if tarefa.lido %}text-secondary{% endif %} {{ tarefa.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ tarefa.autor_tipo_display }}:</p>
                         <p class="card-text small lh-sm">{{ tarefa.texto|safe }}</p>
                     </div>
                     <div class="col text-muted text-end align-text-bottom">
-                        <small class="me-1">{{ tarefa.data_registro }}</small>
+                        <small class="me-1 text-white-50">{{ tarefa.data_registro }}</small>
                     </div>
                     <div class="card-footer">
                         <div class="row">
@@ -64,13 +64,13 @@
             <div class="offcanvas-body d-grid gap-1">
 
                 {% for tarefa in tarefas_hist %}
-                <div class="card bg-dark text-secondary {{ tarefa.borda }}">
+                <div class="card bg-dark text-white text-white text-secondary {{ tarefa.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ tarefa.autor_tipo_display }}:</p>
                         <p class="card-text small lh-sm">{{ tarefa.texto|safe }}</p>
                     </div>
                     <div class="col text-muted text-end align-text-bottom">
-                        <small class="me-1">{{ tarefa.data_registro }} </small>
+                        <small class="me-1 text-white-50">{{ tarefa.data_registro }} </small>
                     </div>
                     <div class="card-footer">
                         <div class="row">

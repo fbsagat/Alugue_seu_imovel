@@ -688,7 +688,7 @@ def recibos(request):
                     usuario.save(update_fields=['recibo_ultimo', 'recibo_preenchimento'])
 
             # Criar o arquivo se não existe ou carregar se existe:
-            if contrato.recibos_pdf and path.exists(f'{settings.MEDIA_ROOT}/{contrato.recibos_pdf}'):
+            if contrato.recibos_pdf and path.isfile(f'{settings.MEDIA_ROOT}/{contrato.recibos_pdf}'):
                 pass
             else:
                 locatario = contrato.do_locatario

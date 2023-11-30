@@ -25,7 +25,7 @@ Painel / {{ SITE_NAME }}
 
             {% for card in loja_info %}
             <div class="col">
-                <div class="card bg-black bg-opacity-75 border-secondary h-100">
+                <div class="card bg-black text-white bg-opacity-75 border-secondary h-100">
                     <div class="card-title">
                         <h1 class=" fs-2">{{ card.nome }}</h1>
                         <h1 class="fs-4">{{ card.ticket_qtd }} tickets 🎫</h1>
@@ -41,13 +41,13 @@ Painel / {{ SITE_NAME }}
                                     Comprar com REAL
                                 </button>
                             </form>
-                            <small class="text-muted">Comprar com Cartão de Crédito via</small>
-                            <small class="text-muted">Stripe Pagamentos</small>
+                            <small class="text-white-50">Comprar com Cartão de Crédito via</small>
+                            <small class="text-white-50">Stripe Pagamentos</small>
                         </div>
                         <span class="h2">R${{ card.valor_pct_brl }}</span>
                         <br>
-                        <small class='text-muted'>R${{ card.valor_por_ticket_brl }}/ticket</small>
-                        <small class='text-muted'>{% if card.desconto_p_un_brl > 0 %} - Desconto de
+                        <small class='text-white-50'>R${{ card.valor_por_ticket_brl }}/ticket</small>
+                        <small class='text-white-50'>{% if card.desconto_p_un_brl > 0 %} - Desconto de
                             {{ card.desconto_p_un_brl }}% por unidade{% else %}(Valor base)
                             {% endif %}</small>
                         <ul>
@@ -63,19 +63,19 @@ Painel / {{ SITE_NAME }}
                         <div class="d-grid my-3">
                             <form action="" method="POST">
                                 {% csrf_token %}
-                                <small class="text-muted">-=Indisponível no momento=-</small>
+                                <small class="text-white-50">-=Indisponível no momento=-</small>
                                 <button type="submit" class="btn btn-outline-warning btn-block" disabled>
                                     Comprar com BTC
                                 </button>
                             </form>
-                            <small class="text-muted">Comprar com Bitcoin via</small>
-                            <small class="text-muted">Lightning Network</small>
+                            <small class="text-white-50">Comprar com Bitcoin via</small>
+                            <small class="text-white-50">Lightning Network</small>
                         </div>
                         <span class="h2">~{{ card.valor_pacote_em_satoshis }} sats</span>
-                        <span class="text-muted">R${{ card.valor_pct_btc }}</span>
+                        <span class="text-white-50">R${{ card.valor_pct_btc }}</span>
                         <br>
-                        <small class='text-muted'>R${{ card.valor_por_ticket_btc }}/ticket - </small>
-                        <small class='text-muted'>Desconto de {{ card.desconto_p_un_btc }}% por unidade</small>
+                        <small class='text-white-50'>R${{ card.valor_por_ticket_btc }}/ticket - </small>
+                        <small class='text-white-50'>Desconto de {{ card.desconto_p_un_btc }}% por unidade</small>
                         <ul>
                             <li>Comprando com Bitcoin via</li>
                             <li>lightning network você ganha</li>

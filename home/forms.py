@@ -293,7 +293,7 @@ class FormContratoDoc(forms.Form):
 class FormContratoDocConfig(forms.ModelForm):
     caucao = forms.IntegerField(help_text='Multiplicado pelo valor de uma parcela', label='Caução (parcela multipl.)',
                                 max_value=3, min_value=0, initial=1, required=False)
-    fiador_cript_cpf = forms.CharField(max_length=11, min_length=11,
+    fiador_cript_cpf = forms.CharField(max_length=11, min_length=11, required=False,
                                        widget=forms.TextInput(attrs={'class': 'form-control'}),
                                        help_text='Digite apenas números', label='CPF')
 

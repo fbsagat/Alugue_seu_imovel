@@ -70,11 +70,12 @@ Editar Perfil / {{ SITE_NAME }}
                             {{ form.dados_pagamento2|as_crispy_field }}
                         </div>
                     </div>
-
                 </fieldset>
+
                 {% else %}
                 {{ form|crispy }}
                 {% endif %}
+
                 <button class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md" type="submit">Confirmar</button>
                 <button type="button" class="bg-blue-600 py-1 px-3 text-white md:text-lg rounded-md"
                         onClick="history.go(-1)">Voltar
