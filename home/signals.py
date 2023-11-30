@@ -394,7 +394,7 @@ def usuario_fez_login(sender, user, **kwargs):
                         parcela.da_tarefa.lida_e_data()
 
             arquivo.close()
-            # os.remove(caminho)
+            os.remove(caminho)
 
         if os.path.isfile(caminho_2):
             os.remove(caminho_2)
