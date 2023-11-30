@@ -11,9 +11,9 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     editar_modelo, ExcluirModelo, MeusModelos, forum_sugestoes, like_de_sugestoes, apagar_sugestao, \
     implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, arquivos_locatarios_docs, \
     arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, \
-    arquivos_gastos_docs, aviso_lido, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
+    arquivos_gastos_docs, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
     adicionar_ticket, adicionar_ticket_todos, painel_configs, ModelosComunidade, \
-    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, tarefa_lida
+    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, tarefa_lida, conversa_com_o_dev
 from financeiro.views import painel_loja
 
 from Alugue_seu_imovel import settings
@@ -98,7 +98,8 @@ urlpatterns = [
     path('tarefa_lida/<int:pk>/', tarefa_lida, name='Tarefa Lida'),
 
     # DESENVOLVIMENTO -------------------
-    path('msgm/', mensagem_desenvolvedor, name='Mensagem pro Desenvolvedor'),
+    path('mensagem_para_o_dev/', mensagem_desenvolvedor, name='Mensagem pro Desenvolvedor'),
+    path('mensagem_para_o_dev_resposta/<int:pk>/', conversa_com_o_dev, name='Conversa Dev'),
     path('sugestoes_docs/', forum_sugestoes, name='Sugestões'),
     path('sugestao_like/<int:pk>/', like_de_sugestoes, name='like de Sugestão'),
     path('sugestao_apagar/<int:pk>/', apagar_sugestao, name='Apagar Sugestão'),

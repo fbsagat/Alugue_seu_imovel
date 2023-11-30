@@ -1123,6 +1123,8 @@ class Tarefa(models.Model):
             return 5
         elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             return 6
+        elif self.autor_classe == ContentType.objects.get_for_model(DevMensagen):
+            return 7
 
     def autor_tipo_display(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -1137,6 +1139,8 @@ class Tarefa(models.Model):
             return '👨‍💼 Locatário'
         elif self.autor_classe == ContentType.objects.get_for_model(Slot):
             return '⚠️ Aviso'
+        elif self.autor_classe == ContentType.objects.get_for_model(DevMensagen):
+            return '⚠️ Aviso'
 
     def borda(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -1150,6 +1154,8 @@ class Tarefa(models.Model):
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
             return 'border-secondary'
         elif self.autor_classe == ContentType.objects.get_for_model(Slot):
+            return 'border-success'
+        elif self.autor_classe == ContentType.objects.get_for_model(DevMensagen):
             return 'border-success'
 
     def texto(self):
@@ -1208,6 +1214,13 @@ class Tarefa(models.Model):
                 habilitá-lo.'''
             except:
                 pass
+        elif self.autor_classe == ContentType.objects.get_for_model(DevMensagen):
+            try:
+                dev_msg = self.content_object
+                mensagem = f'''O desenvolvedor respondeu a sua mensagem:<br> 
+                "{dev_msg.titulo}"'''
+            except:
+                pass
         return mensagem
 
     def definir_apagada(self):
@@ -1244,10 +1257,12 @@ lista_mensagem = (
 
 class DevMensagen(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
+    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     data_registro = models.DateTimeField(auto_now=True)
     titulo = models.CharField(blank=False, max_length=100)
     mensagem = models.TextField(blank=False)
+    resposta = models.TextField(blank=True)
     tipo_msg = models.IntegerField(blank=False, choices=lista_mensagem)
     imagem = ResizedImageField(size=[1280, None], upload_to='mensagens_ao_dev/%Y/%m/', blank=True,
                                validators=[tratar_imagem, FileExtensionValidator])

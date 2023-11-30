@@ -108,7 +108,7 @@ class FormMensagem(forms.ModelForm):
     class Meta:
         model = DevMensagen
         fields = '__all__'
-        exclude = ['do_usuario', 'data_criacao']
+        exclude = ['do_usuario', 'data_criacao', 'resposta', 'da_tarefa']
         widgets = {
             'mensagem': Textarea(),
         }

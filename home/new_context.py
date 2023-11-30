@@ -146,8 +146,8 @@ def navbar_forms(request):
 
 def navbar_notificacoes(request):
     if request.user.is_authenticated:
-        tarefas = Tarefa.objects.filter(do_usuario=request.user, lida=False).order_by('-data_registro')
-        tarefas_historico = Tarefa.objects.filter(do_usuario=request.user, lida=True).order_by('-data_lida')
+        tarefas = Tarefa.objects.filter(do_usuario=request.user, lida=False, apagada=False).order_by('-data_registro')
+        tarefas_historico = Tarefa.objects.filter(do_usuario=request.user, lida=True, apagada=False).order_by('-data_lida')
 
         context = {'tarefas': tarefas[:40], 'tarefas_hist': tarefas_historico[:40]}
         return context

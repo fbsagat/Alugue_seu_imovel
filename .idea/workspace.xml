@@ -7,21 +7,18 @@
     <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias.">
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/fixtures/recibos_entregues.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/home/migrations/0002_devmensagen_da_tarefa_devmensagen_resposta.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/home/templates/dev_chat.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" beforeDir="false" afterPath="$PROJECT_DIR$/financeiro/templates/painel_loja.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_perfil.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_perfil.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_ativos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_ativos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_modelos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_modelos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/offcanvas_tarefas.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/offcanvas_tarefas.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/offcanvas_variaveis.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/offcanvas_variaveis.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/tarefas_cards.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/tarefas_cards.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +108,7 @@
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\financeiro\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver">
+  <component name="RunManager" selected="Python.Execução inicial add/predio">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -502,7 +499,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="177" />
+    <option name="localTasksCounter" value="179" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

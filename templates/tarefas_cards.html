@@ -184,4 +184,28 @@
     {% endif %}
 </div>
 
+{% elif tarefa.autor_tipo == 7 %}
+<div class="d-flex justify-content-start">
+    <form action="{% url 'home:Conversa Dev' tarefa.content_object.pk %}">
+        <button type="submit" class="btn btn-outline-primary btn-sm small ms-1" title="Clique para ver a reposta">
+            Ler Resposta
+        </button>
+    </form>
+    {% if tarefa.lida %}
+    <form action="{% url 'home:Tarefa Lida' tarefa.pk %}">
+        <button type="submit" class="btn btn-secondary btn-sm small ms-1"
+                title="Marcar notificação como não lida">
+            Não lida
+        </button>
+    </form>
+    {% else %}
+    <form action="{% url 'home:Tarefa Lida' tarefa.pk %}">
+        <button type="submit" class="btn btn-secondary btn-sm small ms-1"
+                title="Marcar notificação como lida">
+            Lida
+        </button>
+    </form>
+    {% endif %}
+</div>
+
 {% endif %}

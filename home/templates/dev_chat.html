@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Chat com o desenvolvedor / {{ SITE_NAME }}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-xxl">
+    <div class="z-10 md:py-0 mb-3 text-gray-100 text-center flex items-center flex-col">
+
+        <div class="col g-2 mt-2 w-full">
+            <div class="card bg-black bg-opacity-100 border g-2 mt-2">
+                <div class="card-header col">
+                    <div class="row fw-bold fs-4">{{ mensagem.get_tipo_msg_display }}:
+                        {{ mensagem.titulo }}
+                    </div>
+                </div>
+                <div class="card-body col">
+                    <div class="row fw-bold">Mensagem:</div>
+                    <div class="row">{{ mensagem.mensagem }}</div>
+                    {% if mensagem.imagem %}
+                    <br>
+                    <img src="{{ mensagem.imagem.url }}">
+                    {% endif %}
+                    <br>
+                    <div class="row fw-bold">Resposta:</div>
+                    <div class="row">{{ mensagem.resposta }}</div>
+                    <br>
+                    <div class="col text-muted text-end align-text-bottom">
+                        <small class="me-1 text-white-50">{{ mensagem.data_registro }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

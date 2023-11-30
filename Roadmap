@@ -161,6 +161,7 @@ Ja ta na hora de instalar o celery e começar a usar.
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
 aplicar ajax um dia: https://www.youtube.com/watch?v=hISSGMafzvU / https://www.youtube.com/watch?v=QDdLvImfq_g
 Aplicar o celery.
+        Criar uma forma de entrar em um chat entre o dev e os usuários.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -181,12 +182,10 @@ Regras do programador:
     1.3. Configurar a nova tarefa na classe Tarefa em models, nos seguintes métodos:
         1.3.1. autor_tipo = Adicionar o numero referente ao novo autor da tarefa (usada pelo template).
         1.3.2. autor_tipo_display = Adicionar o display para esta tarefa (usada pelo template).
-        1.3.3. tarefa_nova = Verifica se a tarefa aparecerá em 'tarefas novas' ou em 'histórico de tarefas' (cada autor tem
-            a sua regra).
-        1.3.4. borda = Retorna a classe(html) que gerencia a cor da borda do card da tarefa em questão(usada pelo template).
-        1.3.5. texto = Retorna o texto a ser exibido na aba de tarefas(cada autor tem seu texto).
-    1.4. Adicionar a exibição da tarefa nova e as urls(criar elas tbm, em urls.py) necessárias para as modificações do
-        estado do autor e/ou tarefa no template (offcanvas_tarefas.html).
+        1.3.3. borda = Retorna a classe(html) que gerencia a cor da borda do card da tarefa em questão(usada pelo template).
+        1.3.4. texto = Retorna o texto a ser exibido na aba de tarefas(cada autor tem seu texto).
+    1.4. Adicionar a exibição da tarefa nova em templates/tarefas_cards.html, criar tbm as urls necessárias para as
+        modificações do estado do autor.
     1.5. Modificar a função criar_uma_tarefa em signals.py adicionando a forma/regra de recuperação(desfazer exclusão)
         da tarefa especifica desta model autora.
     1.6. Criar o signal pre delete que vai apagar a tarefa no momento em que a instancia referenciada por ela for

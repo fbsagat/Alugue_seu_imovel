@@ -2219,6 +2219,17 @@ def mensagem_desenvolvedor(request):
 
 
 @login_required
+def conversa_com_o_dev(request, pk):
+    mensagem = get_object_or_404(DevMensagen, do_usuario=request.user, pk=pk)
+    if mensagem.resposta == '':
+        raise Http404
+    tarefa = get_object_or_404(Tarefa, pk=mensagem.da_tarefa.pk, do_usuario=request.user)
+    tarefa.lida_e_data()
+    context = {'mensagem': mensagem, 'SITE_NAME': settings.SITE_NAME}
+    return render(request, 'dev_chat.html', context)
+
+
+@login_required
 def forum_sugestoes(request):
     if request.user.is_superuser:
         sugestoes = Sugestao.objects.filter(implementada=False).order_by('-data_registro')

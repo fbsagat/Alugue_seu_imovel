@@ -11,7 +11,7 @@ from django.dispatch import receiver
 
 from home.funcoes_proprias import gerar_contrato_pdf
 from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao, Slot, Imovei, \
-    ContratoModelo, modelo_variaveis, modelo_condicoes
+    ContratoModelo, modelo_variaveis, modelo_condicoes, DevMensagen
 
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
@@ -97,6 +97,9 @@ def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id, lida=False):
             tarefa.restaurar()
         elif tarefa.autor_classe == ContentType.objects.get_for_model(Sugestao):
             tarefa.restaurar()
+        elif tarefa.autor_classe == ContentType.objects.get_for_model(DevMensagen):
+            tarefa.restaurar()
+            tarefa.definir_nao_lida()
         elif tarefa.autor_classe == ContentType.objects.get_for_model(Slot):
             tarefa.definir_nao_lida()
         return tarefa
@@ -315,6 +318,22 @@ def pagamento_post_save(sender, instance, created, **kwargs):
     # no seu respectivo contrato
     # 2. Enviar as tarefas relacionadas
     tratar_pagamentos(instance_contrato=instance.ao_contrato)
+
+
+@receiver(pre_save, sender=DevMensagen)
+def dev_mensagem_pre_save(sender, instance, **kwargs):
+    if instance.pk is None:  # if criado
+        pass
+    else:
+        ante = DevMensagen.objects.get(pk=instance.pk)
+        if instance.resposta is not '' and ante.resposta != instance.resposta:
+            usuario = instance.do_usuario
+            objeto_id = instance.pk
+            tipo_conteudo = ContentType.objects.get_for_model(DevMensagen)
+            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+            instance.da_tarefa = tarefa
+        elif instance.resposta == '':
+            instance.da_tarefa.definir_apagada()
 
 
 # Gerenciadores de pre_delete \/  ---------------------------------------
