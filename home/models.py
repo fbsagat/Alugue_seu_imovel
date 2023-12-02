@@ -92,7 +92,7 @@ class Usuario(AbstractUser):
     def locat_auto_registro_link(self):
         code = _crypt(self.uuid)
         print(code)
-        return reverse('home:Locatario Auto-Registro', args=[str(code)[12:-3]])
+        return reverse('home:Locatario Auto-Registro', args=[str(code)[2:-1]])
 
     def recibos_code(self):
         site_code = settings.UUID_CODES['recibos']
