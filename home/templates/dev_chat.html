@@ -17,7 +17,7 @@ Chat com o desenvolvedor / {{ SITE_NAME }}
 
         <div class="col g-2 mt-2 w-full">
             <div class="card bg-black bg-opacity-100 border g-2 mt-2">
-                <div class="card-header col">
+                <div class="card-header col mx-auto">
                     <div class="row fw-bold fs-4">{{ mensagem.get_tipo_msg_display }}:
                         {{ mensagem.titulo }}
                     </div>
@@ -27,7 +27,11 @@ Chat com o desenvolvedor / {{ SITE_NAME }}
                     <div class="row">{{ mensagem.mensagem }}</div>
                     {% if mensagem.imagem %}
                     <br>
-                    <img src="{{ mensagem.imagem.url }}">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#modal"
+                            data-bs-whatever="@mdo" class="border border-white">
+                        <img style="text-align:center; vertical-align:middle; max-width:720px;  max-height:480px;"
+                             class="mx-auto" src="{{ mensagem.imagem.url }}"/>
+                    </button>
                     {% endif %}
                     <br>
                     <div class="row fw-bold">Resposta:</div>
@@ -37,6 +41,25 @@ Chat com o desenvolvedor / {{ SITE_NAME }}
                         <small class="me-1 text-white-50">{{ mensagem.data_registro }}</small>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal modal-xl fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-scrollable" style="max-width : 1280px;">
+        <div class="modal-content bg-dark bg-opacity-75 border border-white">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <img src="{{ mensagem.imagem.url }}"
+                     class="figure-img img-fluid border border-white">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>
