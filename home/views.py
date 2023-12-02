@@ -28,7 +28,7 @@ from django.template.defaultfilters import date as data_ptbr
 from home.fakes_test import porcentagem_de_chance
 
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
-    valor_por_extenso, modelo_variaveis, modelo_condicoes, uuid_20, cpf_crypt, cpf_decrypt, cpf_format
+    valor_por_extenso, modelo_variaveis, modelo_condicoes, uuid_20, _crypt, _decrypt, cpf_format
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias, \
     modelos_contratos_ficticios
@@ -414,7 +414,7 @@ def registrar_locat(request):
     if form.is_valid():
         locatario = form.save(commit=False)
         locatario.do_locador = request.user
-        cpf = cpf_crypt(message=form.cleaned_data['cpf'])
+        cpf = _crypt(message=form.cleaned_data['cpf'])
         locatario.cript_cpf = cpf
         locatario.save()
         messages.success(request, "Locatário registrado com sucesso!")
@@ -427,15 +427,14 @@ def registrar_locat(request):
         return redirect(request.META['HTTP_REFERER'])
 
 
-def locat_auto_registro(request, username, code):
-    usuario = Usuario.objects.get(username=username)
-    site_code = settings.UUID_CODES['auto-registro']
-    hash_uuid = sha256(str(f'{usuario.uuid}{site_code}').encode())
-    uuid_digest = hash_uuid.hexdigest()[:25]
-    if code != uuid_digest or username != usuario.username:
+def locat_auto_registro(request, code):
+    try:
+        code_enc = bytes(code, 'UTF-8')
+        user_uuid = _decrypt(code_enc)
+    except:
         raise Http404
     else:
-        user = get_object_or_404(Usuario, username=username)
+        user = get_object_or_404(Usuario, uuid=user_uuid)
         context = {}
         if request.method == 'POST':
             form = FormLocatario(request.POST, request.FILES, usuario=request.user.pk)
@@ -444,11 +443,11 @@ def locat_auto_registro(request, username, code):
                 locatario = form.save(commit=False)
                 locatario.do_locador = user
                 locatario.temporario = True
-                cpf = cpf_crypt(message=form.cleaned_data['cpf'])
+                cpf = _crypt(message=form.cleaned_data['cpf'])
                 locatario.cript_cpf = cpf
                 locatario.save()
                 messages.success(request, "Dados enviados com sucesso! Aguarde o contato do locador.")
-                return redirect(reverse('home:Locatario Auto-Registro', args=[user.username, code]))
+                return redirect(reverse('home:Locatario Auto-Registro', args=[code]))
             else:
                 messages.error(request, f"Formulário inválido.")
                 context['form'] = form
@@ -1048,13 +1047,13 @@ def gerar_contrato(request):
                     # ContratoDocConfig deste contrato.
                     configs.pk = contr_doc_configs.pk
                     cpf = form2.cleaned_data['fiador_cript_cpf']
-                    configs.fiador_cript_cpf = cpf_crypt(cpf)
+                    configs.fiador_cript_cpf = _crypt(cpf)
                     configs.save()
                 else:
                     # Se o form for válido e não houver configs para o contrato selecionado, cria uma instância do
                     # ContratoDocConfig para o contrato selecionado.
                     cpf = form2.cleaned_data['fiador_cript_cpf']
-                    configs.fiador_cript_cpf = cpf_crypt(cpf)
+                    configs.fiador_cript_cpf = _crypt(cpf)
                     configs.save()
                 return redirect(reverse('home:Contrato PDF'))
             else:
@@ -1670,7 +1669,7 @@ class EditarLocat(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        cpf = cpf_crypt(message=form.cleaned_data['cpf'])
+        cpf = _crypt(message=form.cleaned_data['cpf'])
         self.object.cript_cpf = cpf
         return super().form_valid(form)
 
@@ -1940,13 +1939,13 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         form.fields['last_name'].required = True
         form.fields['cpf'].required = True
         if self.object.cript_cpf:
-            cpf = cpf_format(cpf_decrypt(self.object.cript_cpf))
+            cpf = cpf_format(_decrypt(self.object.cript_cpf))
             form.fields['cpf'].initial = cpf
         return form
 
     def form_valid(self, form):
         self.object = form.save()
-        cpf = cpf_crypt(message=form.cleaned_data['cpf'])
+        cpf = _crypt(message=form.cleaned_data['cpf'])
         self.object.cript_cpf = cpf
         return super().form_valid(form)
 
@@ -2331,7 +2330,7 @@ def criar_locatarios_ficticios(request, quantidade, multiplicador, usuario_s, di
                 locatario.do_locador = usuario
                 locatario.nome = aleatorio.get('nome')
                 locatario.RG = aleatorio.get('RG')
-                cpf = cpf_crypt(str(aleatorio.get('CPF')))
+                cpf = _crypt(str(aleatorio.get('CPF')))
                 locatario.cript_cpf = cpf
                 locatario.ocupacao = aleatorio.get('ocupacao')
                 locatario.endereco_completo = aleatorio.get('endereco_completo')
@@ -2629,7 +2628,7 @@ def criar_usuarios_ficticios(request, quantidade, multiplicador):
                 user.dados_pagamento1 = aleatorio.get('dados_pagamento1')
                 user.dados_pagamento2 = aleatorio.get('dados_pagamento2')
                 user.RG = aleatorio.get('RG')
-                cpf = cpf_crypt(str(aleatorio.get('CPF')))
+                cpf = _crypt(str(aleatorio.get('CPF')))
                 user.cript_cpf = cpf
                 user.save()
                 break

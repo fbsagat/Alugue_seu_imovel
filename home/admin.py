@@ -31,6 +31,7 @@ class UsuarioAdmin(admin.ModelAdmin):
          ),
     )
     ordering = ("first_name",)
+    readonly_fields = ['cript_cpf']
 
 
 @admin.register(Locatario)

@@ -155,7 +155,7 @@ def uuid_20():
 # 011: -----------------------------------------------
 
 
-def cpf_crypt(message):
+def _crypt(message):
     site_code = str(settings.IMPORT_UM).encode()
     fernet = Fernet(site_code)
     enc_message = fernet.encrypt(message.encode())
@@ -165,7 +165,7 @@ def cpf_crypt(message):
 # 012: -----------------------------------------------
 
 
-def cpf_decrypt(enc_message):
+def _decrypt(enc_message):
     site_code = str(settings.IMPORT_UM).encode()
     fernet = Fernet(site_code)
     dec_message = fernet.decrypt(enc_message).decode()

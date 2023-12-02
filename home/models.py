@@ -19,7 +19,7 @@ from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
 from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, parcela_uuid, user_uuid, uuid_20, \
-    cpf_decrypt
+    _decrypt, _crypt
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 
@@ -90,10 +90,8 @@ class Usuario(AbstractUser):
                                         on_delete=models.SET_NULL)
 
     def locat_auto_registro_link(self):
-        site_code = settings.UUID_CODES['auto-registro']
-        hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
-        code = hash_uuid.hexdigest()[:25]
-        return reverse('home:Locatario Auto-Registro', args=[self.username, code])
+        code = _crypt(self.uuid)
+        return reverse('home:Locatario Auto-Registro', args=[str(code)[2:-1]])
 
     def recibos_code(self):
         site_code = settings.UUID_CODES['recibos']
@@ -122,7 +120,7 @@ class Usuario(AbstractUser):
 
     def cpf(self):
         if self.cript_cpf:
-            cpf = cpf_decrypt(self.cript_cpf)
+            cpf = _decrypt(self.cript_cpf)
             return cpf
 
     def f_cpf(self):
@@ -350,7 +348,7 @@ class Locatario(models.Model):
 
     def cpf(self):
         if self.cript_cpf:
-            cpf = cpf_decrypt(self.cript_cpf)
+            cpf = _decrypt(self.cript_cpf)
             return cpf
 
     def f_cpf(self):
@@ -943,7 +941,7 @@ class ContratoDocConfig(models.Model):
 
     def fiador_cpf(self):
         if self.fiador_cript_cpf:
-            cpf = cpf_decrypt(self.fiador_cript_cpf)
+            cpf = _decrypt(self.fiador_cript_cpf)
             return cpf
 
     def f_cpf(self):

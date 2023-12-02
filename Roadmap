@@ -106,10 +106,12 @@ Fazer:
 Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todos?).
 
-Criar um botão de painel com configurações diversas,compra de tickets com bitcoin via lightning network,
-        e botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
-        Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link), quantidade de tarefas a
+Criar um botão de painel com configurações diversas:
+        1. Compra de tickets com real e bitcoin via lightning network,
+        2. Botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
+        3. Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link), quantidade de tarefas a
         exibir: notificações/histórico.
+        4. Ativar/desativar as notificações individualmente.
 
 Tarefas:
 1. Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
@@ -117,11 +119,12 @@ Tarefas:
         tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
         ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
         ficar o atributo da_tarefa?
-
-        -=-=-=PRÓXIMO EPISÓDIO FÁBIO DO FUTURO!=-=-=- \/\/\/
-2. Receber contrato(marcar contrato como em mãos na tarefa) = OK. Quando a sugestão do usuário for aprovada = OK.
-        Quando o aluguel de alguém vencer(e faltando 5 dias). Quando o contrato de alguém vencer(e faltando 30 dias),
-        Quando o desenvolvedor responder uma mensagem.
+2. Tarefa de qdo:
+        Receber contrato(marcar contrato como em mãos na tarefa) = OK.
+        Quando a sugestão do usuário for aprovada = OK.
+        Quando o desenvolvedor responder uma mensagem. = OK.
+        Quando o aluguel de alguém vencer(e faltando 5 dias).
+        Quando o contrato de alguém vencer(e faltando 30 dias).
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
@@ -144,6 +147,7 @@ Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir tam
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Melhorias muito futuras:
+Criar um sistema que utiliza o mesmo link de auto-registro gerado por sessão, para não puxar muito do servidor.
 Página de exclusão de item: Ao invés de mostrar um página, abrir um modal(que ficará na pagina principal(base.html)),
         após isto, fazer os redirects das views para o 'request.META['HTTP_REFERER']', isto corrige o problema quando
         se apaga a partir da aba de notificações, que pode ser aberta de qualquer página, redirecionando para outra,
