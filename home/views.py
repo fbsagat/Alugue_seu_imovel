@@ -429,7 +429,7 @@ def registrar_locat(request):
 
 def locat_auto_registro(request, code):
     try:
-        code_enc = bytes(code, 'UTF-8')
+        code_enc = bytes(f'gAAAAABlaz{code}==', 'UTF-8')
         user_uuid = _decrypt(code_enc)
     except:
         raise Http404
