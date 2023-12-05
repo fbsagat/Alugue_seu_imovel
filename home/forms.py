@@ -108,7 +108,7 @@ class FormMensagem(forms.ModelForm):
     class Meta:
         model = DevMensagen
         fields = '__all__'
-        exclude = ['do_usuario', 'data_criacao', 'resposta', 'da_tarefa']
+        exclude = ['do_usuario', 'data_criacao', 'resposta', 'da_notificacao']
         widgets = {
             'mensagem': Textarea(),
         }
@@ -227,7 +227,7 @@ class FormContrato(forms.ModelForm):
         model = Contrato
         fields = '__all__'
         exclude = ['do_locador', 'em_posse', 'rescindido', 'vencido', 'codigo', 'data_de_rescisao', 'recibos_pdf',
-                   'data_registro', 'da_tarefa']
+                   'data_registro', 'da_notificacao']
         widgets = {
             'data_entrada': DateInput(),
             'duracao': Numeros(),
@@ -312,11 +312,13 @@ class FormContratoDocConfig(forms.ModelForm):
         msg2 = 'Número de CPF inválido'
         cleaned_data = super(FormContratoDocConfig, self).clean()
         fiador_nome = cleaned_data.get("fiador_nome")
+        print(fiador_nome)
         fiador_cpf = cleaned_data.get("fiador_cript_cpf")
+        print(fiador_cpf)
 
-        if fiador_nome and fiador_cpf is None:
+        if fiador_nome and fiador_cpf is str('') or fiador_cpf is None:
             self.add_error('fiador_cript_cpf', msg)
-        elif fiador_cpf and fiador_nome is None:
+        elif fiador_cpf and fiador_nome is str('') or fiador_nome is None:
             self.add_error('fiador_nome', msg)
         if fiador_cpf and validar_cpf(fiador_cpf) is False:
             self.add_error('fiador_cript_cpf', msg2)
@@ -409,7 +411,7 @@ class FormAnotacoes(forms.ModelForm):
     class Meta:
         model = Anotacoe
         fields = '__all__'
-        exclude = ['do_usuario', 'feito', 'da_tarefa']
+        exclude = ['do_usuario', 'feito', 'da_notificacao']
         widgets = {
             'data_registro': DateInput(attrs={'style': 'width: 140px;'}),
             'texto': Textarea(attrs={'cols': 10, 'rows': 15}),

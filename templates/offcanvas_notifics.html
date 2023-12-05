@@ -28,26 +28,26 @@
     <!-- Exibir conteúdo dos botões -->
     <div class="tab-content" style="height:100%; overflow-y:scroll; width:100%;" id="myTabContent">
 
-        <!-- TAREFAS NOVAS -->
+        <!-- NOTIFICAÇÕES NOVAS -->
         <div class="tab-pane fade show active" id="home-tab-pane"
              role="tabpanel" aria-labelledby="home-tab"
              tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
 
-                {% for tarefa in tarefas %}
-                <div class="card bg-gray-900 text-white {% if tarefa.lido %}text-secondary{% endif %} {{ tarefa.borda }}">
+                {% for notific in notificacoes %}
+                <div class="card bg-gray-900 text-white {% if notific.lido %}text-secondary{% endif %} {{ notific.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
-                        <p class="fw-bold">{{ tarefa.autor_tipo_display }}:</p>
-                        <p class="card-text small lh-sm">{{ tarefa.texto|safe }}</p>
+                        <p class="fw-bold">{{ notific.autor_tipo_display }}:</p>
+                        <p class="card-text small lh-sm">{{ notific.texto|safe }}</p>
                     </div>
                     <div class="col text-muted text-end align-text-bottom">
-                        <small class="me-1 text-white-50">{{ tarefa.data_registro }}</small>
+                        <small class="me-1 text-white-50">{{ notific.data_registro }}</small>
                     </div>
                     <div class="card-footer">
                         <div class="row">
                             <div class="col">
 
-                                {% include 'tarefas_cards.html' %}
+                                {% include 'notific_cards.html' %}
 
                             </div>
                         </div>
@@ -57,26 +57,26 @@
                 {% endfor %}
             </div>
         </div>
-        <!-- Fim do TAREFAS NOVAS -->
+        <!-- Fim do NOTIFICAÇÕES NOVAS -->
 
-        <!-- HISTÓRICO DE TAREFAS -->
+        <!-- HISTÓRICO DE NOTIFICAÇÕES -->
         <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
             <div class="offcanvas-body d-grid gap-1">
 
-                {% for tarefa in tarefas_hist %}
-                <div class="card bg-dark text-white text-white text-secondary {{ tarefa.borda }}">
+                {% for notific in notificacoes_hist %}
+                <div class="card bg-dark text-white text-white text-secondary {{ notific.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
-                        <p class="fw-bold">{{ tarefa.autor_tipo_display }}:</p>
-                        <p class="card-text small lh-sm">{{ tarefa.texto|safe }}</p>
+                        <p class="fw-bold">{{ notific.autor_tipo_display }}:</p>
+                        <p class="card-text small lh-sm">{{ notific.texto|safe }}</p>
                     </div>
                     <div class="col text-muted text-end align-text-bottom">
-                        <small class="me-1 text-white-50">{{ tarefa.data_registro }} </small>
+                        <small class="me-1 text-white-50">{{ notific.data_registro }} </small>
                     </div>
                     <div class="card-footer">
                         <div class="row">
                             <div class="col">
 
-                                {% include 'tarefas_cards.html' %}
+                                {% include 'notific_cards.html' %}
 
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                 {% endfor %}
             </div>
         </div>
-        <!-- Fim do HISTÓRICO DE TAREFAS -->
+        <!-- Fim do HISTÓRICO DE NOTIFICAÇÕES -->
 
     </div>
     <!--Fim do Exibir conteúdo dos botões -->

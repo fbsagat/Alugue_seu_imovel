@@ -5,20 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Correções de bugs e melhorias.">
-      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0002_devmensagen_da_tarefa_devmensagen_resposta.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/templates/dev_chat.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/funcoes_proprias.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/funcoes_proprias.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/exibir_contratos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_contratos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_configs.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_configs.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/tarefas_cards.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/tarefas_cards.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/offcanvas_tarefas.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/offcanvas_notifics.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/tarefas_cards.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/notific_cards.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +56,20 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;fbsagat&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="b4403114-2d84-4862-b6ef-9141eceda603" />
+        <option name="url" value="https://github.com/fbsagat/Alugue_seu_imovel.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -80,7 +96,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="Push.Settings">
@@ -108,7 +124,7 @@
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\financeiro\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Execução inicial add/predio">
+  <component name="RunManager" selected="Python.Runserver">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -499,7 +515,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="179" />
+    <option name="localTasksCounter" value="184" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -532,8 +548,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções e melhorias no código.&#10;&#10;Melhorado o gerador de fictícios(preenchedor.js, zera (0) os inputs).&#10;Iniciada(falta concluir) a prevenção de cliques duplos que ocasionam múltiplos requests, congestionando a rede.&#10;Correções gerais no footer.&#10;Melhorias gerais na navbar." />
-    <MESSAGE value="Correções e melhorias no código.&#10;&#10;Corrigido um bug de distribuição de recibos na função criar_pagamentos_ficticios." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;gastos_comprovantes estava sem a view servidora de servidor de arquivos, agora tem." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Servidores de arquivos melhorados. Retornam http404 caso não haja algum arquivo onde era pra haver." />
     <MESSAGE value="Correções e melhorias no código.&#10;&#10;Criada a comunidade para partilhamento de modelos de contratos entre os usuários. (faltam alguns detalhes)&#10;Criado o visualizar modelos de contratos.&#10;Melhorias no gerador de fictícios. Mais inteligente e mais dados.&#10;Criado o botão 'Mostrar somente imóveis ativos' no gerador de tabelas pdf.&#10;Arrumada e melhorada a página new context." />
@@ -556,6 +570,8 @@
     <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Melhorias nos botões do painel.&#10;Criada a view histórico de compras." />
     <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Encriptação de CPFs no banco de dados (de todos os modelos que usam cpf)." />
     <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;correções e melhorias nas tarefas, agora o botão lida está independente do modelo que a emitiu." />
+    <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Criada a notificação de resposta do desenvolvedor a uma dev_mensagem. View: conversa_com_o_dev." />
+    <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Corrigida falha no locatario_auto_registro, onde se utilizava o nome do usuário no link, agora um link criptografado gerado pelo modelo do usuário (método: locat_auto_registro_link)" />
     <MESSAGE value="Correções de bugs e melhorias." />
     <option name="LAST_COMMIT_MESSAGE" value="Correções de bugs e melhorias." />
   </component>

@@ -5,7 +5,7 @@ from Alugue_seu_imovel import settings
 
 from django.urls import resolve
 
-from home.models import Tarefa
+from home.models import Notificacao
 from home.forms import FormMensagem, FormAdmin
 from home.forms import FormPagamento, FormGasto, FormLocatario, FormContrato, FormImovel, FormAnotacoes
 from home.models import Contrato, Imovei
@@ -146,10 +146,13 @@ def navbar_forms(request):
 
 def navbar_notificacoes(request):
     if request.user.is_authenticated:
-        tarefas = Tarefa.objects.filter(do_usuario=request.user, lida=False, apagada=False).order_by('-data_registro')
-        tarefas_historico = Tarefa.objects.filter(do_usuario=request.user, lida=True, apagada=False).order_by('-data_lida')
+        notific = Notificacao.objects.filter(do_usuario=request.user, lida=False, apagada_oculta=False).order_by(
+            '-data_registro')
+        notific_hist = Notificacao.objects.filter(do_usuario=request.user, lida=True, apagada_oculta=False).order_by(
+            '-data_lida')
 
-        context = {'tarefas': tarefas[:40], 'tarefas_hist': tarefas_historico[:40]}
+        context = {'notificacoes': notific[:request.user.notif_qtd],
+                   'notificacoes_hist': notific_hist[:request.user.notif_qtd_hist]}
         return context
     else:
         context = {}

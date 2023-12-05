@@ -71,7 +71,7 @@ class Usuario(AbstractUser):
     # Configurações da view Eventos
     data_eventos_i = models.DateField(blank=True, null=True)
     itens_eventos = models.CharField(blank=True, null=True, max_length=31, default=['1', '2', '3', '4', '5', '6'])
-    qtd_eventos = models.IntegerField(blank=True, null=True, default=25)
+    qtd_eventos = models.IntegerField(blank=True, null=True, default=10)
     ordem_eventos = models.IntegerField(default=1, blank=False)
 
     # Configurações da view Gerador de recibos PDF
@@ -89,9 +89,29 @@ class Usuario(AbstractUser):
     contrato_ultimo = models.ForeignKey('Contrato', null=True, blank=True, related_name='usuario_contrato_set',
                                         on_delete=models.SET_NULL)
 
+    # Configurações da aplicação
+    notif_qtd = models.IntegerField(default=40, blank=False, help_text='Quantidade de novas notificações',
+                                    validators=[MinValueValidator(10), MaxValueValidator(40)])
+    notif_qtd_hist = models.IntegerField(default=40, blank=False, help_text='Quantidade de notificações no histórico',
+                                         validators=[MinValueValidator(10), MaxValueValidator(40)])
+    itens_pag_visao_geral = models.IntegerField(default=27, blank=False, help_text='Itens por página em Visão Geral',
+                                                validators=[MinValueValidator(10), MaxValueValidator(40)])
+
+    # Configurações de notificações
+    notif_recibo = models.BooleanField(default=True, blank=True,
+                                       help_text='Notificar quando um pagamento for detectado')
+    notif_contrato_criado = models.BooleanField(default=True, blank=True,
+                                                help_text='Notificar quando um contrato for criado')
+    notif_contrato_venc_1 = models.BooleanField(
+        default=True, blank=True, help_text='Notificar quando o contrato estiver a 30 dias de seu vencimento')
+    notif_contrato_venc_2 = models.BooleanField(default=True, blank=True,
+                                                help_text='Notificar quando o contrato vencer')
+    notif_parc_venc_1 = models.BooleanField(default=True, blank=True,
+                                            help_text='Notificar quando faltar 5 dias para o vencimento da parcela')
+    notif_parc_venc_2 = models.BooleanField(default=True, blank=True, help_text='Notificar quando a parcela vencer')
+
     def locat_auto_registro_link(self):
         code = _crypt(self.uuid)
-        print(code)
         return reverse('home:Locatario Auto-Registro', args=[str(code)[2:-1]])
 
     def recibos_code(self):
@@ -213,7 +233,7 @@ class SlotsManager(models.Manager):
 
 class Slot(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, blank=False, on_delete=models.CASCADE)
-    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+    da_notificacao = models.OneToOneField('Notificacao', null=True, blank=True, on_delete=models.SET_NULL)
 
     gratuito = models.BooleanField(null=False, default=False)
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -292,7 +312,7 @@ class LocatariosManager(models.Manager):
 
 class Locatario(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
-    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+    da_notificacao = models.OneToOneField('Notificacao', null=True, blank=True, on_delete=models.SET_NULL)
 
     nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
     docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', null=True, blank=True,
@@ -605,7 +625,7 @@ class Contrato(models.Model):
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE,
                                      verbose_name='Locatário')
     do_imovel = models.ForeignKey('Imovei', on_delete=models.CASCADE, verbose_name='No imóvel')
-    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+    da_notificacao = models.OneToOneField('Notificacao', null=True, blank=True, on_delete=models.SET_NULL)
 
     data_entrada = models.DateField(blank=False, verbose_name='Data de Entrada')
     duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)',
@@ -955,7 +975,7 @@ class Parcela(models.Model):
     do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
     do_imovel = models.ForeignKey('Imovei', null=False, blank=False, on_delete=models.CASCADE)
     do_locatario = models.ForeignKey('Locatario', null=False, blank=False, on_delete=models.CASCADE)
-    da_tarefa = models.OneToOneField('Tarefa', null=True, on_delete=models.SET_NULL)
+    da_notificacao = models.OneToOneField('Notificacao', null=True, on_delete=models.SET_NULL)
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=7, unique_for_month=True,
                               default=parcela_uuid)
     data_pagm_ref = models.DateField(null=False, blank=False,
@@ -1058,7 +1078,7 @@ class Gasto(models.Model):
 
 class Anotacoe(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
-    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+    da_notificacao = models.OneToOneField('Notificacao', null=True, blank=True, on_delete=models.SET_NULL)
 
     titulo = models.CharField(blank=False, max_length=100, verbose_name='Título')
     data_registro = models.DateTimeField(blank=True)
@@ -1092,7 +1112,7 @@ class Anotacoe(models.Model):
             return [2, f'{self.texto[:tamanho]}...']
 
 
-class Tarefa(models.Model):
+class Notificacao(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
     autor_classe = models.ForeignKey(ContentType, null=False, on_delete=models.CASCADE)
     objeto_id = models.PositiveIntegerField(null=False)
@@ -1100,14 +1120,15 @@ class Tarefa(models.Model):
 
     data_registro = models.DateTimeField(auto_now_add=True)
     lida = models.BooleanField(default=False)
-    apagada = models.BooleanField(default=False)
+    apagada_oculta = models.BooleanField(default=False)
     data_lida = models.DateTimeField(null=True)
 
     class Meta:
         ordering = ['-data_registro']
+        verbose_name_plural = 'Notificações'
 
     def __str__(self):
-        return f'Tarefa: classe:{self.autor_classe}/objeto_id:{self.objeto_id}'
+        return f'Notificação: classe:{self.autor_classe}/objeto_id:{self.objeto_id}'
 
     def autor_tipo(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
@@ -1223,12 +1244,12 @@ class Tarefa(models.Model):
         return mensagem
 
     def definir_apagada(self):
-        self.apagada = True
-        self.save(update_fields=['apagada'])
+        self.apagada_oculta = True
+        self.save(update_fields=['apagada_oculta'])
 
     def restaurar(self):
-        self.apagada = False
-        self.save(update_fields=['apagada'])
+        self.apagada_oculta = False
+        self.save(update_fields=['apagada_oculta'])
 
     def definir_nao_lida(self):
         self.lida = False
@@ -1236,14 +1257,9 @@ class Tarefa(models.Model):
         self.data_registro = datetime.now()
         self.save(update_fields=['lida', 'data_registro'])
 
-    def lida_e_data(self):
+    def definir_lida(self):
         self.lida = True
         self.data_lida = datetime.now()
-        self.save(update_fields=['lida', 'data_lida'])
-
-    def nao_lida_e_data(self):
-        self.lida = False
-        self.data_lida = None
         self.save(update_fields=['lida', 'data_lida'])
 
 
@@ -1256,7 +1272,7 @@ lista_mensagem = (
 
 class DevMensagen(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
-    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+    da_notificacao = models.OneToOneField('Notificacao', null=True, blank=True, on_delete=models.SET_NULL)
 
     data_registro = models.DateTimeField(auto_now=True)
     titulo = models.CharField(blank=False, max_length=100)
@@ -1275,7 +1291,7 @@ class DevMensagen(models.Model):
 
 class Sugestao(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
-    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+    da_notificacao = models.OneToOneField('Notificacao', null=True, blank=True, on_delete=models.SET_NULL)
 
     data_registro = models.DateTimeField(auto_now=True)
     corpo = models.TextField(max_length=1500, blank=False, null=False, verbose_name='')

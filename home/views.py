@@ -4,7 +4,6 @@ from os import path
 from math import floor
 from random import randrange
 from dateutil.relativedelta import relativedelta
-from hashlib import sha256
 
 from Alugue_seu_imovel import settings
 from num2words import num2words
@@ -36,7 +35,7 @@ from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, 
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots
 
-from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Tarefa, \
+from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Notificacao, \
     ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot, UsuarioContratoModelo
 
 
@@ -91,7 +90,7 @@ def visao_geral(request):
     # Sistema de ordenação fim /\
 
     parametro_page = request.GET.get('page', '1')
-    parametro_limite = request.GET.get('limit', '30')
+    parametro_limite = request.GET.get('limit', request.user.itens_pag_visao_geral)
     contrato_pagination = Paginator(contratos, parametro_limite)
 
     try:
@@ -430,7 +429,6 @@ def registrar_locat(request):
 def locat_auto_registro(request, code):
     try:
         code_enc = bytes(code, 'UTF-8')
-        print(code_enc)
         user_uuid = _decrypt(code_enc)
     except:
         raise Http404
@@ -470,8 +468,8 @@ class RevisarLocat(LoginRequiredMixin, UpdateView):
         return reverse_lazy('home:Locatários')
 
     def get_object(self, queryset=None):
-        tarefa = get_object_or_404(Tarefa, pk=self.kwargs.get('pk'), do_usuario=self.request.user)
-        self.object = get_object_or_404(Locatario, pk=tarefa.content_object.pk, do_locador=self.request.user,
+        notific = get_object_or_404(Notificacao, pk=self.kwargs.get('pk'), do_usuario=self.request.user)
+        self.object = get_object_or_404(Locatario, pk=notific.content_object.pk, do_locador=self.request.user,
                                         temporario=True)
         return self.object
 
@@ -483,8 +481,8 @@ class RevisarLocat(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save()
         self.object.temporario = None
-        tarefa = get_object_or_404(Tarefa, pk=self.kwargs.get('pk'), do_usuario=self.request.user)
-        tarefa.lida_e_data()
+        notific = get_object_or_404(Notificacao, pk=self.kwargs.get('pk'), do_usuario=self.request.user)
+        notific.definir_lida()
         return super().form_valid(form)
 
     def get_initial(self):
@@ -586,14 +584,14 @@ def rescindir_contrat(request, pk):
 
 @login_required
 def recebido_contrat(request, pk):
-    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
-    contrato = tarefa.content_object
+    notific = get_object_or_404(Notificacao, pk=pk, do_usuario=request.user)
+    contrato = notific.content_object
     if contrato.do_locador == request.user:
         if contrato.em_posse is True:
             contrato.em_posse = False
         else:
             contrato.em_posse = True
-            tarefa.lida_e_data()
+            notific.definir_lida()
             messages.success(request, f"Cópia do contrato do locador em mãos!")
         contrato.save(update_fields=['em_posse', ])
         return redirect(request.META['HTTP_REFERER'])
@@ -1209,7 +1207,7 @@ def gerar_contrato(request):
 
         gerar_contrato_pdf(dados=dados)
         # Link do contrato_doc
-        link = rf'/media/contrato_docs/{dados["contrato_code"]}-modelo_{dados["modelo"].pk}-contrato_{dados["contrato_pk"]}.pdf'
+        link = rf'/media/contrato_docs/{dados["contrato_code"]}{dados["modelo"].pk}-contrato_{dados["contrato_pk"]}.pdf'
         # Preparar o context
         context['contrato_doc'] = link
     else:
@@ -1491,7 +1489,7 @@ class Pagamentos(LoginRequiredMixin, ListView):
     template_name = 'exibir_pagamentos.html'
     model = Pagamento
     context_object_name = 'pagamentos'
-    paginate_by = 50
+    paginate_by = 54
 
     def get_queryset(self):
         self.object_list = Pagamento.objects.filter(ao_locador=self.request.user).order_by('-data_criacao')
@@ -1508,7 +1506,7 @@ class Gastos(LoginRequiredMixin, ListView):
     template_name = 'exibir_gastos.html'
     model = Gasto
     context_object_name = 'gastos'
-    paginate_by = 50
+    paginate_by = 54
 
     def get_queryset(self):
         self.object_list = Gasto.objects.filter(do_locador=self.request.user).order_by('-data_criacao')
@@ -1578,7 +1576,7 @@ class Imoveis(LoginRequiredMixin, ListView):
     template_name = 'exibir_imoveis.html'
     model = Imovei
     context_object_name = 'imoveis'
-    paginate_by = 30
+    paginate_by = 27
 
     def get_queryset(self):
         self.object_list = Imovei.objects.filter(do_locador=self.request.user).order_by('-data_registro')
@@ -1637,7 +1635,7 @@ class Locatarios(LoginRequiredMixin, ListView):
     template_name = 'exibir_locatarios.html'
     model = Locatario
     context_object_name = 'locatarios'
-    paginate_by = 30
+    paginate_by = 27
 
     def get_queryset(self):
         self.object_list = Locatario.objects.nao_temporarios().filter(do_locador=self.request.user).order_by(
@@ -1717,7 +1715,7 @@ class Contratos(LoginRequiredMixin, ListView):
     template_name = 'exibir_contratos.html'
     model = Contrato
     context_object_name = 'contratos'
-    paginate_by = 30
+    paginate_by = 27
 
     def get_queryset(self):
         self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_registro')
@@ -1787,7 +1785,7 @@ class Notas(LoginRequiredMixin, ListView):
     template_name = 'exibir_anotacao.html'
     model = Anotacoe
     context_object_name = 'anotacoes'
-    paginate_by = 26
+    paginate_by = 27
     form_class = FormAnotacoes
 
     def get_queryset(self):
@@ -1842,48 +1840,48 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
 # -=-=-=-=-=-=-=-= TAREFAS -=-=-=-=-=-=-=-=
 @login_required
 def recibo_entregue(request, pk):
-    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
-    parcela = Parcela.objects.get(pk=tarefa.objeto_id)
+    notific = get_object_or_404(Notificacao, pk=pk, do_usuario=request.user)
+    parcela = Parcela.objects.get(pk=notific.objeto_id)
     if parcela.recibo_entregue is True:
         parcela.recibo_entregue = False
     else:
         parcela.recibo_entregue = True
-        tarefa.lida_e_data()
+        notific.definir_lida()
     parcela.save(update_fields=['recibo_entregue', ])
     return redirect(request.META['HTTP_REFERER'])
 
 
 @login_required
 def afazer_concluida(request, pk):
-    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
-    nota = Anotacoe.objects.get(pk=tarefa.objeto_id)
+    notific = get_object_or_404(Notificacao, pk=pk, do_usuario=request.user)
+    nota = Anotacoe.objects.get(pk=notific.objeto_id)
     if nota.feito is True:
         nota.feito = False
     else:
         nota.feito = True
-        tarefa.lida_e_data()
+        notific.definir_lida()
     nota.save(update_fields=['feito', ])
     return redirect(request.META['HTTP_REFERER'])
 
 
 @login_required
 def aviso_lido(request, pk):
-    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
-    if tarefa.lida is False or tarefa.lida is None:
-        tarefa.lida_e_data()
+    notific = get_object_or_404(Notificacao, pk=pk, do_usuario=request.user)
+    if notific.lida is False or notific.lida is None:
+        notific.definir_lida()
     else:
-        tarefa.lida = False
-        tarefa.save(update_fields=['lida', ])
+        notific.lida = False
+        notific.save(update_fields=['lida', ])
     return redirect(request.META['HTTP_REFERER'])
 
 
 @login_required
-def tarefa_lida(request, pk):
-    tarefa = get_object_or_404(Tarefa, pk=pk, do_usuario=request.user)
-    if tarefa.lida is False or tarefa.lida is None:
-        tarefa.lida_e_data()
+def notificacao_lida(request, pk):
+    notific = get_object_or_404(Notificacao, pk=pk, do_usuario=request.user)
+    if notific.lida is False or notific.lida is None:
+        notific.definir_lida()
     else:
-        tarefa.nao_lida_e_data()
+        notific.definir_nao_lida()
     return redirect(request.META['HTTP_REFERER'])
 
 
@@ -2223,8 +2221,8 @@ def conversa_com_o_dev(request, pk):
     mensagem = get_object_or_404(DevMensagen, do_usuario=request.user, pk=pk)
     if mensagem.resposta == '':
         raise Http404
-    tarefa = get_object_or_404(Tarefa, pk=mensagem.da_tarefa.pk, do_usuario=request.user)
-    tarefa.lida_e_data()
+    notific = get_object_or_404(Notificacao, pk=mensagem.da_notificacao.pk, do_usuario=request.user)
+    notific.definir_lida()
     context = {'mensagem': mensagem, 'SITE_NAME': settings.SITE_NAME}
     return render(request, 'dev_chat.html', context)
 
@@ -2496,8 +2494,8 @@ def criar_pagamentos_ficticios(request, quantidade, multiplicador, usuario_s, di
                         for n, parcela in enumerate(parcelas):
                             if parcela.recibo_entregue is False and n < recibos_qtd:
                                 parcela.recibo_entregue = True
-                                if parcela.da_tarefa:
-                                    parcela.da_tarefa.lida_e_data()
+                                if parcela.da_notificacao:
+                                    parcela.da_notificacao.definir_lida()
                                 parcela.save(update_fields=['recibo_entregue', ])
                             else:
                                 break

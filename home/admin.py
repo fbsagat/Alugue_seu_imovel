@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anotacoe, DevMensagen, ImovGrupo, Parcela, \
-    Tarefa, ContratoDocConfig, ContratoModelo, Sugestao, UsuarioContratoModelo
+    Notificacao, ContratoDocConfig, ContratoModelo, Sugestao, UsuarioContratoModelo
 
 
 @admin.register(Usuario)
@@ -98,7 +98,7 @@ class GastoAdmin(admin.ModelAdmin):
 
 @admin.register(Anotacoe)
 class AnotacoeAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'do_usuario', 'data_registro', 'tarefa', 'da_tarefa')
+    list_display = ('titulo', 'do_usuario', 'data_registro', 'tarefa', 'da_notificacao')
     search_fields = ('titulo',)
 
 
@@ -116,10 +116,10 @@ class MensagemDevAdmin(admin.ModelAdmin):
     search_fields = ('corpo',)
 
 
-@admin.register(Tarefa)
-class TarefasAdmin(admin.ModelAdmin):
+@admin.register(Notificacao)
+class NotificacoesAdmin(admin.ModelAdmin):
     list_display = (
         'texto', 'content_object', 'do_usuario', 'autor_classe', 'objeto_id', 'data_registro', 'lida',
         'data_lida')
     readonly_fields = ['content_object', 'texto']
-    list_filter = ('autor_classe', 'apagada')
+    list_filter = ('autor_classe', 'apagada_oculta')

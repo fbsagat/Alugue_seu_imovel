@@ -109,22 +109,23 @@ Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todo
 Criar um botão de painel com configurações diversas:
         1. Compra de tickets com real e bitcoin via lightning network,
         2. Botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
+        (enviar o arquivo para o email de cadastro do usuário ao invés de baixar diretamente/evitar problemas)
         3. Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link), quantidade de tarefas a
         exibir: notificações/histórico.
         4. Ativar/desativar as notificações individualmente.
 
 Tarefas:
 1. Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
-        tarefa. Ex: locatario.da_tarefa --> locatario.da_tarefa(filtros). Por enquanto todos os item que possuem
+        tarefa. Ex: locatario.da_notificacao --> locatario.da_notificacao(filtros). Por enquanto todos os item que possuem
         tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
         ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
-        ficar o atributo da_tarefa?
+        ficar o atributo da_notificacao?
 2. Tarefa de qdo:
         Receber contrato(marcar contrato como em mãos na tarefa) = OK.
         Quando a sugestão do usuário for aprovada = OK.
         Quando o desenvolvedor responder uma mensagem. = OK.
-        Quando o aluguel de alguém vencer(e faltando 5 dias).
-        Quando o contrato de alguém vencer(e faltando 30 dias).
+        Quando o aluguel de alguém vencer(e/ou faltando 5 dias).
+        Quando o contrato de alguém vencer(e/ou faltando 30 dias).
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
@@ -179,7 +180,7 @@ Regras do programador:
 
 1. Passos para criação de uma tarefa para uma model:
     1.1. A classe da model autora recebe este parâmetro:
-    da_tarefa = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
+    da_notificacao = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     1.2. Criar o signal que vai criar a tarefa de acordo com o momento desejado(na criação do objeto, na modificação
         de algum parâmetro, gatilho temporal(celery), etc...)

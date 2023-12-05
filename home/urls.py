@@ -13,7 +13,7 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, \
     arquivos_gastos_docs, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
     adicionar_ticket, adicionar_ticket_todos, painel_configs, ModelosComunidade, \
-    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, tarefa_lida, conversa_com_o_dev
+    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, notificacao_lida, conversa_com_o_dev
 from financeiro.views import painel_loja
 
 from Alugue_seu_imovel import settings
@@ -95,7 +95,7 @@ urlpatterns = [
     # NOTIFICAÇÕES -------------------
     path('recibo_entregue/<int:pk>/', recibo_entregue, name='Recibo Entregue'),
     path('afazer_concluida/<int:pk>/', afazer_concluida, name='Afazer Concluida'),
-    path('tarefa_lida/<int:pk>/', tarefa_lida, name='Tarefa Lida'),
+    path('notificacao_lida/<int:pk>/', notificacao_lida, name='Notificação Lida'),
 
     # DESENVOLVIMENTO -------------------
     path('mensagem_para_o_dev/', mensagem_desenvolvedor, name='Mensagem pro Desenvolvedor'),

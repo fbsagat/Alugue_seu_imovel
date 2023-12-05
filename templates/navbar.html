@@ -217,8 +217,8 @@
         </div>
     </div>
 
-    <!-- TAREFAS -->
-    {% if tarefas|length == 0 %}
+    <!-- NOTIFICAÇÕES -->
+    {% if notificacoes|length == 0 %}
     <button class="position-relative" title="Notificações" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
         <ion-icon size="large" name="reader-outline"></ion-icon>
@@ -228,11 +228,11 @@
             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
         <ion-icon size="large" name="reader-outline"></ion-icon>
         <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
-    {{ tarefas|length }}
+    {{ notificacoes|length }}
     <span class="visually-hidden">Notificações não lidas</span></span>
     </button>
     {% endif %}
-    {% include 'offcanvas_tarefas.html' %}
+    {% include 'offcanvas_notifics.html' %}
 
     <!-- PAINEL EDITAR PERFIL SAIR -->
     <div class="flex justify-content-end">

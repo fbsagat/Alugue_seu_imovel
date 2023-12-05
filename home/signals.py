@@ -10,7 +10,7 @@ from django.db import transaction
 from django.dispatch import receiver
 
 from home.funcoes_proprias import gerar_contrato_pdf
-from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Tarefa, Anotacoe, Sugestao, Slot, Imovei, \
+from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Notificacao, Anotacoe, Sugestao, Slot, Imovei, \
     ContratoModelo, modelo_variaveis, modelo_condicoes, DevMensagen
 
 
@@ -35,12 +35,12 @@ def gerenciar_parcelas(instance_contrato):
         for parcela in parcelas:
             if parcela.data_pagm_ref not in datas:
                 parcela.definir_apagada()
-                if parcela.da_tarefa:
-                    Tarefa.objects.filter(pk=parcela.da_tarefa.pk).update(apagada=True)
+                if parcela.da_notificacao:
+                    Notificacao.objects.filter(pk=parcela.da_notificacao.pk).update(apagada=True)
             else:
                 parcela.restaurar()
-                if parcela.da_tarefa:
-                    Tarefa.objects.filter(pk=parcela.da_tarefa.pk).update(apagada=False)
+                if parcela.da_notificacao:
+                    Notificacao.objects.filter(pk=parcela.da_notificacao.pk).update(apagada=False)
 
         for data in datas:
             if data not in parcelas_datas:
@@ -85,35 +85,35 @@ def tratar_pagamentos(instance_contrato):
         parcela.save(update_fields=['tt_pago'])
 
 
-def criar_uma_tarefa(usuario, tipo_conteudo, objeto_id, lida=False):
+def criar_uma_notificacao(usuario, tipo_conteudo, objeto_id, lida=False):
     # Caso exista: Tenta recuperar apagada, desfazer lida, etc...
     # cada ContentType tem sua regra, personalizar abaixo \/
     try:
-        tarefa = Tarefa.objects.get(autor_classe=tipo_conteudo, objeto_id=objeto_id)
-        if tarefa.autor_classe == ContentType.objects.get_for_model(Parcela):
-            if tarefa.content_object.apagada is False:
-                tarefa.restaurar()
-        elif tarefa.autor_classe == ContentType.objects.get_for_model(Anotacoe):
-            tarefa.restaurar()
-        elif tarefa.autor_classe == ContentType.objects.get_for_model(Sugestao):
-            tarefa.restaurar()
-        elif tarefa.autor_classe == ContentType.objects.get_for_model(DevMensagen):
-            tarefa.restaurar()
-            tarefa.definir_nao_lida()
-        elif tarefa.autor_classe == ContentType.objects.get_for_model(Slot):
-            tarefa.definir_nao_lida()
-        return tarefa
+        notific = Notificacao.objects.get(autor_classe=tipo_conteudo, objeto_id=objeto_id)
+        if notific.autor_classe == ContentType.objects.get_for_model(Parcela):
+            if notific.content_object.apagada is False:
+                notific.restaurar()
+        elif notific.autor_classe == ContentType.objects.get_for_model(Anotacoe):
+            notific.restaurar()
+        elif notific.autor_classe == ContentType.objects.get_for_model(Sugestao):
+            notific.restaurar()
+        elif notific.autor_classe == ContentType.objects.get_for_model(DevMensagen):
+            notific.restaurar()
+            notific.definir_nao_lida()
+        elif notific.autor_classe == ContentType.objects.get_for_model(Slot):
+            notific.definir_nao_lida()
+        return notific
     except:
-        # Caso não exista, criar a tarefa requisitada para o objeto
-        tarefa = Tarefa()
-        tarefa.do_usuario = usuario
-        tarefa.autor_classe = tipo_conteudo
-        tarefa.objeto_id = objeto_id
+        # Caso não exista, criar a notificação requisitada para o objeto
+        notific = Notificacao()
+        notific.do_usuario = usuario
+        notific.autor_classe = tipo_conteudo
+        notific.objeto_id = objeto_id
         if lida:
-            tarefa.lida = lida
-            tarefa.data_registro = datetime.datetime.now()
-        tarefa.save()
-        return tarefa
+            notific.lida = lida
+            notific.data_registro = datetime.datetime.now()
+        notific.save()
+        return notific
 
 
 # Gerenciadores de pre_save \/  ---------------------------------------
@@ -122,24 +122,19 @@ def parcela_pre_save(sender, instance, **kwargs):
     if instance.pk is None:  # if criado
         pass
     else:
-        # Parcela quitada? então criar uma tarefa para este objeto e atribuí-la à parcela
+        # Parcela quitada? então criar uma notificação para este objeto e atribuí-la à parcela
         tipo_conteudo = ContentType.objects.get_for_model(Parcela)
         objeto_id = instance.pk
         if instance.esta_pago():
             usuario = instance.do_contrato.do_locador
-            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
-            Parcela.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+            if instance.da_notificacao is None:
+                notific = criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+                Parcela.objects.filter(pk=instance.pk).update(da_notificacao=notific)
         else:
-            try:
-                tarefa = Tarefa.objects.get(autor_classe=tipo_conteudo, objeto_id=objeto_id)
-                tarefa.definir_apagada()
-            except:
-                pass
-        if instance.recibo_entregue:
-            try:
-                Tarefa.objects.filter(pk=instance.da_tarefa.pk).update(data_lida=datetime.datetime.now())
-            except:
-                pass
+            # Se não quitada definir apagada (caso haja).
+            notific = Notificacao.objects.filter(autor_classe=tipo_conteudo, objeto_id=objeto_id)
+            if notific.first():
+                notific.first().definir_apagada()
 
 
 @receiver(pre_save, sender=Usuario)
@@ -188,7 +183,7 @@ def contrato_pre_save(sender, instance, **kwargs):
         # E com a função: tratar_pagamentos \/
         #   1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
         #   no seu respectivo contrato.
-        #   2. Enviar as tarefas relacionadas.
+        #   2. Enviar as notificações relacionadas.
 
         ante = Contrato.objects.get(pk=instance.pk)
         if ante.duracao != instance.duracao or ante.data_entrada != instance.data_entrada:
@@ -196,33 +191,33 @@ def contrato_pre_save(sender, instance, **kwargs):
             tratar_pagamentos(instance_contrato=instance)
 
         if instance.em_posse:
-            Tarefa.objects.filter(pk=instance.da_tarefa.pk).update(data_lida=datetime.datetime.now())
+            Notificacao.objects.filter(pk=instance.da_notificacao.pk).update(data_lida=datetime.datetime.now())
 
 
 @receiver(pre_save, sender=Anotacoe)
 def anotacao_pre_save(sender, instance, **kwargs):
-    # Criar e apagar tarefa referente a anotações
+    # Criar e apagar notificação referente a anotações
     if instance.pk is None or kwargs['raw']:  # Se criado ou vem de fixture
         pass
     else:
         # If editado
         ante = Anotacoe.objects.get(pk=instance.pk)
         if instance.tarefa is False and ante.tarefa != instance.tarefa:
-            # Defini apagada a tarefa referente à anotação se o usuário ao editar a anotação, desmarcar o botão tarefa.
-            tarefa = Tarefa.objects.filter(autor_classe=ContentType.objects.get_for_model(Anotacoe),
-                                           objeto_id=instance.pk).first()
-            if tarefa:
-                tarefa.definir_apagada()
+            # Defini apagada a notificação referente à anotação se o usuário ao editar a anotação.
+            notific = Notificacao.objects.filter(autor_classe=ContentType.objects.get_for_model(Anotacoe),
+                                                objeto_id=instance.pk).first()
+            if notific:
+                notific.definir_apagada()
 
         elif instance.tarefa is True and ante.tarefa != instance.tarefa:
-            # Criar a tarefa referente à anotação se o usuário ao editar a anotação, marcar o botão tarefa.
+            # Criar a notificação referente à anotação se o usuário ao editar a anotação, marcar o botão tarefa.
             usuario = ante.do_usuario
             tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
             objeto_id = instance.pk
-            criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+            criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
         if instance.feito:
             try:
-                Tarefa.objects.filter(pk=instance.da_tarefa.pk).update(data_lida=datetime.datetime.now())
+                Notificacao.objects.filter(pk=instance.da_notificacao.pk).update(data_lida=datetime.datetime.now())
             except:
                 pass
 
@@ -236,11 +231,11 @@ def sugestao_pre_save(sender, instance, **kwargs):
             usuario = instance.do_usuario
             tipo_conteudo = ContentType.objects.get_for_model(Sugestao)
             objeto_id = instance.pk
-            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
-            Sugestao.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+            notific = criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+            Sugestao.objects.filter(pk=instance.pk).update(da_notificacao=notific)
         else:
-            if instance.da_tarefa:
-                instance.da_tarefa.definir_apagada()
+            if instance.da_notificacao:
+                instance.da_notificacao.definir_apagada()
 
 
 # Gerenciadores de post_save \/  ---------------------------------------
@@ -275,14 +270,14 @@ def usuario_post_save(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Anotacoe)
 def anotacao_post_save(sender, instance, **kwargs):
-    # Criar e apagar tarefa referente a anotações
+    # Criar e apagar notificação referente a anotações
     if instance.tarefa:
         usuario = instance.do_usuario
         tipo_conteudo = ContentType.objects.get_for_model(Anotacoe)
         objeto_id = instance.pk
-        tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id,
-                                  lida=True if instance.feito else False)
-        Anotacoe.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+        notific = criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id,
+                                       lida=True if instance.feito else False)
+        Anotacoe.objects.filter(pk=instance.pk).update(da_notificacao=notific)
 
 
 @transaction.atomic
@@ -290,9 +285,9 @@ def anotacao_post_save(sender, instance, **kwargs):
 def locatario_post_save(sender, instance, **kwargs):
     if instance.temporario is True:
         tipo_conteudo = ContentType.objects.get_for_model(Locatario)
-        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
-        instance.da_tarefa = tarefa
-        Locatario.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+        notific = criar_uma_notificacao(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk)
+        instance.da_notificacao = notific
+        Locatario.objects.filter(pk=instance.pk).update(da_notificacao=notific)
 
 
 @transaction.atomic
@@ -303,11 +298,11 @@ def contrato_post_save(sender, instance, created, **kwargs):
     if created:
         # Gera as parcelas quando o contrato é criado:
         gerenciar_parcelas(instance)
-        # Criar tarefa 'contrato criado' com o botão 'receber contrato'
+        # Criar notificação 'contrato criado' com o botão 'receber contrato'
         tipo_conteudo = ContentType.objects.get_for_model(Contrato)
-        tarefa = criar_uma_tarefa(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk,
-                                  lida=lida)
-        Contrato.objects.filter(pk=instance.pk).update(da_tarefa=tarefa)
+        notific = criar_uma_notificacao(usuario=instance.do_locador, tipo_conteudo=tipo_conteudo, objeto_id=instance.pk,
+                                       lida=lida)
+        Contrato.objects.filter(pk=instance.pk).update(da_notificacao=notific)
 
 
 @receiver(post_save, sender=Pagamento)
@@ -316,7 +311,7 @@ def pagamento_post_save(sender, instance, created, **kwargs):
     # Com a função: tratar_pagamentos \/
     # 1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
     # no seu respectivo contrato
-    # 2. Enviar as tarefas relacionadas
+    # 2. Enviar as notificações relacionadas
     tratar_pagamentos(instance_contrato=instance.ao_contrato)
 
 
@@ -326,59 +321,59 @@ def dev_mensagem_pre_save(sender, instance, **kwargs):
         pass
     else:
         ante = DevMensagen.objects.get(pk=instance.pk)
-        if instance.resposta is not '' and ante.resposta != instance.resposta:
+        if instance.resposta != '' and ante.resposta != instance.resposta:
             usuario = instance.do_usuario
             objeto_id = instance.pk
             tipo_conteudo = ContentType.objects.get_for_model(DevMensagen)
-            tarefa = criar_uma_tarefa(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
-            instance.da_tarefa = tarefa
+            notific = criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
+            instance.da_notificacao = notific
         elif instance.resposta == '':
-            instance.da_tarefa.definir_apagada()
+            instance.da_notificacao.definir_apagada()
 
 
 # Gerenciadores de pre_delete \/  ---------------------------------------
 @transaction.atomic
 @receiver(pre_delete, sender=Contrato)
 def contrato_pre_delete(sender, instance, **kwards):
-    # Apagar a tarefa desta anotação
-    if instance.da_tarefa:
-        instance.da_tarefa.delete()
+    # Apagar a notificação desta anotação
+    if instance.da_notificacao:
+        instance.da_notificacao.delete()
 
 
-# Apaga as tarefas dos objetos quando eles forem apagados \/
+# Apaga as notificações dos objetos quando eles forem apagados \/
 @receiver(pre_delete, sender=Anotacoe)
 def anotacao_pre_delete(sender, instance, **kwargs):
-    # Apagar a tarefa desta anotação
-    if instance.da_tarefa:
-        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
+    # Apagar a notificação desta anotação
+    if instance.da_notificacao:
+        Notificacao.objects.filter(pk=instance.da_notificacao.pk).delete()
 
 
 @receiver(pre_delete, sender=Sugestao)
 def sugestao_pre_delete(sender, instance, **kwargs):
-    # Apagar a tarefa desta anotação
-    if instance.da_tarefa:
-        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
+    # Apagar a notificação desta anotação
+    if instance.da_notificacao:
+        Notificacao.objects.filter(pk=instance.da_notificacao.pk).delete()
 
 
 @receiver(pre_delete, sender=Locatario)
 def locatario_pre_delete(sender, instance, **kwargs):
-    # Apagar a tarefa deste locatário
-    if instance.da_tarefa:
-        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
+    # Apagar a notificação deste locatário
+    if instance.da_notificacao:
+        Notificacao.objects.filter(pk=instance.da_notificacao.pk).delete()
 
 
 @receiver(pre_delete, sender=Parcela)
 def parcela_pre_delete(sender, instance, **kwargs):
-    # Apagar a tarefa desta parcela
-    if instance.da_tarefa:
-        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
+    # Apagar a notificação desta parcela
+    if instance.da_notificacao:
+        Notificacao.objects.filter(pk=instance.da_notificacao.pk).delete()
 
 
 @receiver(pre_delete, sender=Slot)
 def slot_pre_delete(sender, instance, **kwargs):
-    # Apagar a tarefa desta parcela
-    if instance.da_tarefa:
-        Tarefa.objects.filter(pk=instance.da_tarefa.pk).delete()
+    # Apagar a notificação desta parcela
+    if instance.da_notificacao:
+        Notificacao.objects.filter(pk=instance.da_notificacao.pk).delete()
 
 
 # Gerenciadores de post_delete \/  ---------------------------------------
@@ -388,7 +383,7 @@ def pagamento_post_delete(sender, instance, **kwards):
     # Com a função: tratar_pagamentos \/
     # 1. Recalcular as parcelas (model Parcela) pagas a partir do total de pagamentos armazenados
     # no seu respectivo contrato
-    # 2. Enviar as tarefas relacionadas
+    # 2. Enviar as notificações relacionadas
     tratar_pagamentos(instance_contrato=instance.ao_contrato)
 
 
@@ -409,12 +404,14 @@ def usuario_fez_login(sender, user, **kwargs):
                 for index, parcela in enumerate(parcelas):
                     parcela.recibo_entregue = 1 if index < value else 0
                     parcela.save(update_fields=['recibo_entregue', ])
-                    if parcela.da_tarefa and index < value:
-                        parcela.da_tarefa.lida_e_data()
-
+                    if parcela.da_notificacao and index < value:
+                        # \/ Aqui as parcelas pagas e recibo entregue
+                        parcela.da_notificacao.definir_lida()
+                    elif parcela.da_notificacao and index >= value:
+                        # \/ Aqui as parcelas pagas, mas recibo não entregue
+                        parcela.da_notificacao.definir_nao_lida()
             arquivo.close()
             os.remove(caminho)
-
         if os.path.isfile(caminho_2):
             os.remove(caminho_2)
 
@@ -441,8 +438,8 @@ def usuario_fez_login(sender, user, **kwargs):
     inativos_com_imovel = Slot.objects.inativos_com_imovel().filter(do_usuario=user)
     for slot in inativos_com_imovel:
         tipo_conteudo = ContentType.objects.get_for_model(Slot)
-        tarefa = criar_uma_tarefa(usuario=user, tipo_conteudo=tipo_conteudo, objeto_id=slot.pk)
-        Slot.objects.filter(pk=slot.pk).update(da_tarefa=tarefa)
+        notific = criar_uma_notificacao(usuario=user, tipo_conteudo=tipo_conteudo, objeto_id=slot.pk)
+        Slot.objects.filter(pk=slot.pk).update(da_notificacao=notific)
 
 
 @receiver(user_logged_out)
