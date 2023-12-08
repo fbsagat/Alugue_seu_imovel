@@ -309,18 +309,16 @@ class FormContratoDocConfig(forms.ModelForm):
 
     def clean(self):
         msg = 'Para fiador este campo deve ser preenchido'
-        msg2 = 'Número de CPF inválido'
+        msg2 = 'Este número náo é um CPF válido'
         cleaned_data = super(FormContratoDocConfig, self).clean()
         fiador_nome = cleaned_data.get("fiador_nome")
-        print(fiador_nome)
         fiador_cpf = cleaned_data.get("fiador_cript_cpf")
-        print(fiador_cpf)
 
-        if fiador_nome and fiador_cpf is str('') or fiador_cpf is None:
+        if fiador_nome is not None and fiador_cpf == '':
             self.add_error('fiador_cript_cpf', msg)
-        elif fiador_cpf and fiador_nome is str('') or fiador_nome is None:
+        if len(fiador_cpf) > 0 and fiador_nome is None:
             self.add_error('fiador_nome', msg)
-        if fiador_cpf and validar_cpf(fiador_cpf) is False:
+        if fiador_cpf != '' and validar_cpf(fiador_cpf) is False:
             self.add_error('fiador_cript_cpf', msg2)
         return cleaned_data
 
