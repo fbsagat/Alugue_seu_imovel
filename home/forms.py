@@ -59,6 +59,22 @@ class FormUsuario(UserChangeForm):
             raise forms.ValidationError("Número de CPF inválido")
 
 
+class FormConfigNotific(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['notif_recibo', 'notif_contrato_criado', 'notif_contrato_venc_1', 'notif_contrato_venc_2',
+                  'notif_parc_venc_1', 'notif_parc_venc_2']
+
+    def __init__(self, *args, **kwargs):
+        super(FormConfigNotific, self).__init__(*args, **kwargs)
+        self.fields['notif_recibo'].label = 'Notificar quando um pagamento de aluguel for detectado'
+        self.fields['notif_contrato_criado'].label = 'Notificar quando um contrato for criado'
+        self.fields['notif_contrato_venc_1'].label = 'Notificar quando um contrato estiver a 30 dias de seu vencimento'
+        self.fields['notif_contrato_venc_2'].label = 'Notificar quando um contrato vencer'
+        self.fields['notif_parc_venc_1'].label = 'Notificar quando faltar 5 dias para um vencimento de aluguel'
+        self.fields['notif_parc_venc_2'].label = 'Notificar quando um aluguel vencer'
+
+
 class FormEventos(forms.Form):
     mostrar_em_eventos = [
         (1, 'Pagamentos'),

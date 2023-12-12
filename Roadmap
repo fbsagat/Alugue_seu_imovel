@@ -139,6 +139,11 @@ Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
 Arrumar e organizar, deixar otimizado o painel administrativo(django admin) completo.
 
+Página de exclusão de item: Ao invés de mostrar um página, abrir um modal(que ficará na pagina principal(base.html)),
+        após isto, fazer os redirects das views para o 'request.META['HTTP_REFERER']', isto corrige o problema quando
+        se apaga a partir da aba de notificações, que pode ser aberta de qualquer página, redirecionando para outra,
+        o que pode causar uma confusão no usuário.
+
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 PROBLEMAS encontrados, SEM SOLUÇÃO até agora:
@@ -149,10 +154,6 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 
 Melhorias muito futuras:
 Criar um sistema que utiliza o mesmo link de auto-registro gerado por sessão, para não puxar muito do servidor.
-Página de exclusão de item: Ao invés de mostrar um página, abrir um modal(que ficará na pagina principal(base.html)),
-        após isto, fazer os redirects das views para o 'request.META['HTTP_REFERER']', isto corrige o problema quando
-        se apaga a partir da aba de notificações, que pode ser aberta de qualquer página, redirecionando para outra,
-        o que pode causar uma confusão no usuário.
 Criar o resumo textual e gráfico de cada contrato, textual dizendo quando chegou, quando vai sair, meses que pagou,
         se rescindiu: quanto deve ou quanto pagou a mais e etc... no gráfico mostrar um gráfico parecido ou melhor que
         o gráfico da planilha.

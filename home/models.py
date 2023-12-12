@@ -98,17 +98,12 @@ class Usuario(AbstractUser):
                                                 validators=[MinValueValidator(10), MaxValueValidator(40)])
 
     # Configurações de notificações
-    notif_recibo = models.BooleanField(default=True, blank=True,
-                                       help_text='Notificar quando um pagamento for detectado')
-    notif_contrato_criado = models.BooleanField(default=True, blank=True,
-                                                help_text='Notificar quando um contrato for criado')
-    notif_contrato_venc_1 = models.BooleanField(
-        default=True, blank=True, help_text='Notificar quando o contrato estiver a 30 dias de seu vencimento')
-    notif_contrato_venc_2 = models.BooleanField(default=True, blank=True,
-                                                help_text='Notificar quando o contrato vencer')
-    notif_parc_venc_1 = models.BooleanField(default=True, blank=True,
-                                            help_text='Notificar quando faltar 5 dias para o vencimento da parcela')
-    notif_parc_venc_2 = models.BooleanField(default=True, blank=True, help_text='Notificar quando a parcela vencer')
+    notif_recibo = models.BooleanField(default=True, blank=True)
+    notif_contrato_criado = models.BooleanField(default=True, blank=True)
+    notif_contrato_venc_1 = models.BooleanField(default=True, blank=True)
+    notif_contrato_venc_2 = models.BooleanField(default=True, blank=True)
+    notif_parc_venc_1 = models.BooleanField(default=True, blank=True)
+    notif_parc_venc_2 = models.BooleanField(default=True, blank=True)
 
     def locat_auto_registro_link(self):
         code = _crypt(self.uuid)

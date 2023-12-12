@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
         first = 'Fábio'
         last = 'Augusto Macedo dos Santos'
-        RG = '4852497'
+        RG = '4853497'
         cript_cpf = b'gAAAAABlW2OE6p5S8j_Xoe7IiEWpSOGzWQr6SA2LRpSo4QDKku_DqOO3JDSm3mkK18FJWdW6Qlgv_eYWoyVdtiT_bZHOLRHf_A=='
         telefone = '91985707819'
         tickets = 100

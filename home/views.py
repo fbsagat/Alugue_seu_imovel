@@ -33,7 +33,7 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
     modelos_contratos_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
-    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots
+    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots, FormConfigNotific
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Notificacao, \
     ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot, UsuarioContratoModelo
@@ -719,7 +719,8 @@ def recibos(request):
                         data = contrato.data_entrada + relativedelta(months=x)
                         data_preenchimento.append(
                             f'{contrato.do_imovel.cidade}, '
-                            f'____________ ,____ de {data_ptbr(data.replace(day=contrato.dia_vencimento), "F Y")}')
+                            f'____________ ,____ de {data_ptbr(data.replace(day=contrato.dia_vencimento), "F")} de '
+                            f'{data_ptbr(data.replace(day=contrato.dia_vencimento), "Y")}')
                 elif usuario.recibo_preenchimento == '3':
                     dia_venc = contrato.dia_vencimento
                     for x in range(0, contrato.duracao):
@@ -1996,7 +1997,8 @@ def painel_slots(request):
 
 @login_required
 def painel_configs(request):
-    context = {'SITE_NAME': settings.SITE_NAME}
+    form_config = FormConfigNotific()
+    context = {'SITE_NAME': settings.SITE_NAME, 'form_config': form_config}
     return render(request, 'painel_configs.html', context)
 
 

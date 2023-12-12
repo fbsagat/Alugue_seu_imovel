@@ -19,14 +19,14 @@ Painel / {{ SITE_NAME }}
     </div>
 
     <div class="px-2 py-2 bg-black bg-opacity-50 border border-secondary rounded bg-gradient text-dark">
-        <div class="z-10 h-full md:py-0 text-gray-100 text-center flex items-center flex-col">
+        <div class="z-10 h-full md:py-0 text-gray-100 text-start flex items-center flex-col">
 
             <div class="row row-cols-1 row-cols-md-1 g-3" style="width: 100%;">
 
                 <!-- Configurações da aplicação -->
                 <div class="card bg-black text-white bg-opacity-50 border-secondary">
                     <div class="card-header fs-5">
-                        Configurações da aplicação
+                        Configurações da aplicação:
                     </div>
                     <div class="card-body">
                         <button type="button" class="btn btn-secondary" title="Salvar configurações">
@@ -38,22 +38,53 @@ Painel / {{ SITE_NAME }}
 
                 <!-- Configurações de notificações -->
                 <div class="card bg-black text-white bg-opacity-50 border-secondary">
-                    <div class="card-header fs-5">
-                        Configurações de notificações
+                    <div class="card-header fs-5 text-start">
+                        Configurações de notificações:
                     </div>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col mx-auto">
+                                {% for field in form_config %}
+                                {% if forloop.counter|divisibleby:2 %}
+                                {% else %}
+                                <div class="col mt-2 mb-2">
+                                    <div class="fs-6">{{ field.label_tag }}</div>
+                                    <div class="fs-6">{{ field }}</div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="col mx-auto">
+                                {% for field in form_config %}
+                                {% if forloop.counter|divisibleby:2 %}
+                                <div class="col mt-2 mb-2">
+                                    <div class="fs-6">{{ field.label_tag }}</div>
+                                    <div class="fs-6">{{ field }}</div>
+                                </div>
+                                {% else %}
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card-body">
                         <button type="button" class="btn btn-secondary" title="Salvar configurações">
                             Salvar
                         </button>
                     </div>
+
                 </div>
+
                 <!-- Configurações de notificações FIM -->
 
                 <!-- Backup e restauração de dados -->
                 <div class="card bg-black text-white bg-opacity-50 border-secondary">
                     <div class="card-header fs-5">
-                        Backup e restauração de dados
+                        Backup e restauração de dados:
                     </div>
+
                     <div class="card-body">
                         <button type="button" class="btn btn-secondary"
                                 title="Baixar arquivo com todos os dados">
@@ -62,7 +93,11 @@ Painel / {{ SITE_NAME }}
                         <button type="button" class="btn btn-secondary"
                                 title="Carregar arquivo de backup para restauração de dados">Restaurar Backup
                         </button>
+                        <br>
+                        <small class="text-muted">Por questão de segurança o arquivo de backup será criptografado e
+                            só poderá ser recuperado nesta conta.</small>
                     </div>
+
                 </div>
                 <!-- Backup e restauração de dados FIM -->
 
