@@ -20,8 +20,22 @@ from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Notifi
 # Quando o aluguel de alguém vencer(e/ou faltando 5 dias).
 # Quando o contrato de alguém vencer(e/ou faltando 30 dias).
 # A função é chamada ao fazer login e ao editar um contrato.
-# Se condição True e ainda não existe notificação(relacionada a esta parcela) e sua execução está autorizada em
-# 'configurações de notificações', criar uma notificação para o usuário informando o fato.
+# Se 1.condição True e 2.ainda não existe notificação(relacionada a esta parcela) e 3.sua execução está autorizada em
+# 'configurações de notificações': criar uma notificação para o usuário informando o fato.
+def verificar_aluguel_vencimento(usuario, dias=0):
+    contratos_ativos = Contrato.objects.ativos_hoje().filter(do_locador=usuario)
+    parcelas = Parcela.objects.filter(do_usuario=usuario, apagada=False, do_contrato__in=contratos_ativos)
+    tipo_conteudo = ContentType.objects.get_for_model(Parcela)
+    if dias == 0:
+        for parcela in parcelas:
+            if parcela.esta_vencido():
+                objeto_id = parcela.pk
+                criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, assunto=2)
+    elif dias != 0:
+        for parcela in parcelas:
+            if parcela.vence_em_x_dias(dias):
+                objeto_id = parcela.pk
+                criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, assunto=3)
 
 
 def gerenciar_parcelas(instance_contrato):
@@ -44,12 +58,12 @@ def gerenciar_parcelas(instance_contrato):
         for parcela in parcelas:
             if parcela.data_pagm_ref not in datas:
                 parcela.definir_apagada()
-                if parcela.da_notificacao:
-                    Notificacao.objects.filter(pk=parcela.da_notificacao.pk).update(apagada=True)
+                if parcela.get_notific_pgm():
+                    Notificacao.objects.filter(pk=parcela.get_notific_pgm().pk).update(apagada=True)
             else:
                 parcela.restaurar()
-                if parcela.da_notificacao:
-                    Notificacao.objects.filter(pk=parcela.da_notificacao.pk).update(apagada=False)
+                if parcela.get_notific_pgm():
+                    Notificacao.objects.filter(pk=parcela.get_notific_pgm().pk).update(apagada=False)
 
         for data in datas:
             if data not in parcelas_datas:
@@ -94,7 +108,7 @@ def tratar_pagamentos(instance_contrato):
         parcela.save(update_fields=['tt_pago'])
 
 
-def criar_uma_notificacao(usuario, tipo_conteudo, objeto_id, lida=False):
+def criar_uma_notificacao(usuario, tipo_conteudo, objeto_id, lida=False, assunto=int()):
     # Caso exista: Tenta recuperar apagada, desfazer lida, etc...
     # cada ContentType tem sua regra, personalizar abaixo \/
     try:
@@ -121,6 +135,8 @@ def criar_uma_notificacao(usuario, tipo_conteudo, objeto_id, lida=False):
         if lida:
             notific.lida = lida
             notific.data_registro = datetime.datetime.now()
+        if assunto:
+            notific.assunto = assunto
         notific.save()
         return notific
 
@@ -131,14 +147,13 @@ def parcela_pre_save(sender, instance, **kwargs):
     if instance.pk is None:  # if criado
         pass
     else:
-        # Parcela quitada? então criar uma notificação para este objeto e atribuí-la à parcela
+        # Parcela quitada? então criar uma notificação de pagamento para este objeto
         tipo_conteudo = ContentType.objects.get_for_model(Parcela)
         objeto_id = instance.pk
         if instance.esta_pago():
             usuario = instance.do_contrato.do_locador
-            if instance.da_notificacao is None:
-                notific = criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id)
-                Parcela.objects.filter(pk=instance.pk).update(da_notificacao=notific)
+            if instance.get_notific_pgm() is None:
+                criar_uma_notificacao(usuario=usuario, tipo_conteudo=tipo_conteudo, objeto_id=objeto_id, assunto=1)
         else:
             # Se não quitada definir apagada (caso haja).
             notific = Notificacao.objects.filter(autor_classe=tipo_conteudo, objeto_id=objeto_id)
@@ -373,9 +388,11 @@ def locatario_pre_delete(sender, instance, **kwargs):
 
 @receiver(pre_delete, sender=Parcela)
 def parcela_pre_delete(sender, instance, **kwargs):
-    # Apagar a notificação desta parcela
-    if instance.da_notificacao:
-        Notificacao.objects.filter(pk=instance.da_notificacao.pk).delete()
+    # Apagar sa notificações desta parcela
+    parcelas = instance.get_notific_all()
+    if parcelas:
+        for parcela in parcelas:
+            parcela.delete()
 
 
 @receiver(pre_delete, sender=Slot)
@@ -413,12 +430,12 @@ def usuario_fez_login(sender, user, **kwargs):
                 for index, parcela in enumerate(parcelas):
                     parcela.recibo_entregue = 1 if index < value else 0
                     parcela.save(update_fields=['recibo_entregue', ])
-                    if parcela.da_notificacao and index < value:
+                    if parcela.get_notific_pgm() and index < value:
                         # \/ Aqui as parcelas pagas e recibo entregue
-                        parcela.da_notificacao.definir_lida()
-                    elif parcela.da_notificacao and index >= value:
+                        parcela.get_notific_pgm().definir_lida()
+                    elif parcela.get_notific_pgm() and index >= value:
                         # \/ Aqui as parcelas pagas, mas recibo não entregue
-                        parcela.da_notificacao.definir_nao_lida()
+                        parcela.get_notific_pgm().definir_nao_lida()
             arquivo.close()
             os.remove(caminho)
         if os.path.isfile(caminho_2):
@@ -448,6 +465,9 @@ def usuario_fez_login(sender, user, **kwargs):
         tipo_conteudo = ContentType.objects.get_for_model(Slot)
         notific = criar_uma_notificacao(usuario=user, tipo_conteudo=tipo_conteudo, objeto_id=slot.pk)
         Slot.objects.filter(pk=slot.pk).update(da_notificacao=notific)
+
+    verificar_aluguel_vencimento(usuario=user, dias=0)
+    verificar_aluguel_vencimento(usuario=user, dias=5)
 
 
 @receiver(user_logged_out)

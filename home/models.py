@@ -970,7 +970,6 @@ class Parcela(models.Model):
     do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
     do_imovel = models.ForeignKey('Imovei', null=False, blank=False, on_delete=models.CASCADE)
     do_locatario = models.ForeignKey('Locatario', null=False, blank=False, on_delete=models.CASCADE)
-    da_notificacao = models.OneToOneField('Notificacao', null=True, on_delete=models.SET_NULL)
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=7, unique_for_month=True,
                               default=parcela_uuid)
     data_pagm_ref = models.DateField(null=False, blank=False,
@@ -997,6 +996,13 @@ class Parcela(models.Model):
     def esta_vencido(self):
         return True if datetime.today().date() > self.data_pagm_ref else False
 
+    def vence_em_x_dias(self, dias=int()):
+        # Retorna True se esta parcela vence na quantidade definida em 'dias'
+        vencimento = self.data_pagm_ref
+        hoje = datetime.today().date() + timedelta(days=dias)
+        delta = vencimento - hoje
+        return True if delta.days < 0 else False
+
     def posicao(self):
         try:
             parcelas = list(
@@ -1021,8 +1027,27 @@ class Parcela(models.Model):
         else:
             return False
 
-    def get_notificacao_pgm(self):
-        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk)
+    def get_notific_all(self):
+        # Retorna todas as notificações desda parcela
+        notificacoes = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk)
+        if notificacoes:
+            return notificacoes
+
+    def get_notific_pgm(self):
+        # Retorna a notificação de pagamento detectado
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=1)
+        if notificacao:
+            return notificacao.first()
+
+    def get_notific_falta_x_d(self):
+        # Retorna a notificação de aviso: 'faltam 5 dias para vencer'
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=2)
+        if notificacao:
+            return notificacao.first()
+
+    def get_notificacao_venceu(self):
+        # Retorna a notificação de aviso: 'aluguel venceu'
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=3)
         if notificacao:
             return notificacao.first()
 
@@ -1117,6 +1142,7 @@ class Notificacao(models.Model):
     autor_classe = models.ForeignKey(ContentType, null=False, on_delete=models.CASCADE)
     objeto_id = models.PositiveIntegerField(null=False)
     content_object = GenericForeignKey('autor_classe', 'objeto_id')
+    assunto = models.PositiveIntegerField(null=True)
 
     data_registro = models.DateTimeField(auto_now_add=True)
     lida = models.BooleanField(default=False)
@@ -1132,7 +1158,12 @@ class Notificacao(models.Model):
 
     def autor_tipo(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
-            return 1
+            if self.assunto == 1 or self.assunto is None:
+                return 1
+            elif self.assunto == 2:
+                return 4
+            elif self.assunto == 3:
+                return 4
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return 2
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
@@ -1148,7 +1179,12 @@ class Notificacao(models.Model):
 
     def autor_tipo_display(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
-            return '🧾 Recibo'
+            if self.assunto == 1 or self.assunto is None:
+                return '🧾 Recibo'
+            elif self.assunto == 2:
+                return '⚠️ Aviso'
+            elif self.assunto == 3:
+                return '⚠️ Aviso'
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return '🗒️ Tarefa'
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
@@ -1164,7 +1200,12 @@ class Notificacao(models.Model):
 
     def borda(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
-            return 'border-white'
+            if self.assunto == 1 or self.assunto is None:
+                return 'border-white'
+            elif self.assunto == 2:
+                return 'border-success'
+            elif self.assunto == 3:
+                return 'border-success'
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return 'border-warning'
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
@@ -1182,12 +1223,27 @@ class Notificacao(models.Model):
         mensagem = ''
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):
             try:
-                parcela = self.content_object
-                mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
-                           f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
-                           f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
-                           f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} foi detectado. ' \
-                           f'Confirme a entrega do recibo.'
+                if self.assunto == 1 or self.assunto is None:
+                    parcela = self.content_object
+                    mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
+                               f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
+                               f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
+                               f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} foi detectado. ' \
+                               f'Confirme a entrega do recibo.'
+                if self.assunto == 2:
+                    parcela = self.content_object
+                    mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
+                               f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
+                               f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
+                               f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} está atrasado ' \
+                               f'desde {parcela.data_pagm_ref.strftime("%d/%m/%Y")}.'
+                if self.assunto == 3:
+                    parcela = self.content_object
+                    mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
+                               f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
+                               f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
+                               f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} vencerá em ' \
+                               f'{parcela.data_pagm_ref.strftime("%d/%m/%Y")}. '
             except:
                 pass
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):

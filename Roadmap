@@ -115,13 +115,19 @@ Criar um botão de painel com configurações diversas:
         4. Ativar/desativar as notificações individualmente.
 
 Tarefas:
-1. Modelos devem buscar suas tarefas a partir de método, não de atributos, já que cada modelo poderá ter mais do que uma
-        tarefa. Ex: locatario.da_notificacao --> locatario.da_notificacao(filtros). Por enquanto todos os item que possuem
-        tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
-        ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
-        ficar o atributo da_notificacao?
-        Resposta: Retirei o atributo: da_notificacao e coloquei o método: get_notificacao_pgm(este para adquirir a
-        noticação de pagamento), criando os outros.
+1. Modelos devem buscar suas notificações a partir de método, não de atributos, já que cada modelo poderá ter mais que
+        uma notificação. Ex: locatario.da_notificacao --> locatario.da_notificacao(filtros). Por enquanto todos os
+        item que possuem notificações, podem ter apenas uma notificação atribuída a sí cada, porém, o modelo do usuário
+        e do locatário poderão ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um
+        único modelo? como vai ficar o atributo da_notificacao?
+            Resposta: Das models que precisem de mais de um tipo de notificação(ex Parcela): Retirei o atributo:
+            da_notificacao e coloquei o método: get_notificacao_pgm(Retorna a notificação de pagamento detectado),
+            get_notific_falta_5d(Retorna a notificação de aviso: 'faltam 5 dias para vencer'),
+            get_notificacao_venceu(Retorna a notificação de aviso: 'aluguel venceu') e get_notific_all(Retorna todas as
+            notificações desda parcela).
+            Na model de notificações criei o atributo assunto, onde, em caso de o autor_classe tiver vário tipos de
+            notificação vinculado a sí, como a parcela(o outras no futuro), pode ser usado para salvar o seu tipo.
+
 2. Tarefa de qdo:
         Receber contrato(marcar contrato como em mãos na tarefa) = OK.
         Quando a sugestão do usuário for aprovada = OK.
@@ -175,14 +181,14 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 
 Regras do programador:
 2. Comando para o console:
-    2.1. import os
-    2.2 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Alugue_seu_imovel.settings')
-    2.3 import django
-    2.4 django.setup()
-    2.5 Agora só trabalhar: Ex: from home.models import Usuario
+    import os
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Alugue_seu_imovel.settings')
+    import django
+    django.setup()
+    from home.models import Parcela
 
 1. Passos para criação de uma tarefa para uma model:
-    1.1. A classe da model autora recebe este parâmetro:
+    1.1. A classe da model autora recebe este parâmetro(se tiver):
     da_notificacao = models.OneToOneField('Tarefa', null=True, blank=True, on_delete=models.SET_NULL)
 
     1.2. Criar o signal que vai criar a tarefa de acordo com o momento desejado(na criação do objeto, na modificação

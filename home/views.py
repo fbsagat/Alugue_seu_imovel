@@ -2496,8 +2496,8 @@ def criar_pagamentos_ficticios(request, quantidade, multiplicador, usuario_s, di
                         for n, parcela in enumerate(parcelas):
                             if parcela.recibo_entregue is False and n < recibos_qtd:
                                 parcela.recibo_entregue = True
-                                if parcela.da_notificacao:
-                                    parcela.da_notificacao.definir_lida()
+                                if parcela.get_notific_pgm():
+                                    parcela.get_notific_pgm().definir_lida()
                                 parcela.save(update_fields=['recibo_entregue', ])
                             else:
                                 break
