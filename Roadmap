@@ -120,6 +120,8 @@ Tarefas:
         tarefa, podem ter apenas uma tarefa atribuída a sí, cada, porém, o modelo do usuário e do locatário poderão
         ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um único modelo? como vai
         ficar o atributo da_notificacao?
+        Resposta: Retirei o atributo: da_notificacao e coloquei o método: get_notificacao_pgm(este para adquirir a
+        noticação de pagamento), criando os outros.
 2. Tarefa de qdo:
         Receber contrato(marcar contrato como em mãos na tarefa) = OK.
         Quando a sugestão do usuário for aprovada = OK.

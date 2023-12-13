@@ -1021,6 +1021,11 @@ class Parcela(models.Model):
         else:
             return False
 
+    def get_notificacao_pgm(self):
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk)
+        if notificacao:
+            return notificacao.first()
+
 
 lista_pagamentos = (
     (0, 'PIX'),

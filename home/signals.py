@@ -15,6 +15,15 @@ from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Notifi
 
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
+
+# Criar a função que verifica:
+# Quando o aluguel de alguém vencer(e/ou faltando 5 dias).
+# Quando o contrato de alguém vencer(e/ou faltando 30 dias).
+# A função é chamada ao fazer login e ao editar um contrato.
+# Se condição True e ainda não existe notificação(relacionada a esta parcela) e sua execução está autorizada em
+# 'configurações de notificações', criar uma notificação para o usuário informando o fato.
+
+
 def gerenciar_parcelas(instance_contrato):
     # Criar as parcelas que não existem, definir apagadas as parcelas fora do range('data_pagm_ref')
     # e manter as que já existem e estão no range
@@ -432,7 +441,6 @@ def usuario_fez_login(sender, user, **kwargs):
             if imoveis_qtd > 3:
                 for n in range(3, imoveis_qtd):
                     Slot.objects.create(do_usuario=user, gratuito=False, tickets=1)
-
     # Verificar se tem algum slot vencido e enviar uma notificação avisando o usuário, caso a notificação já exista,
     # não enviar nada.
     inativos_com_imovel = Slot.objects.inativos_com_imovel().filter(do_usuario=user)
