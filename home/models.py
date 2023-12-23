@@ -620,7 +620,6 @@ class Contrato(models.Model):
     do_locatario = models.ForeignKey('Locatario', on_delete=models.CASCADE,
                                      verbose_name='Locatário')
     do_imovel = models.ForeignKey('Imovei', on_delete=models.CASCADE, verbose_name='No imóvel')
-    da_notificacao = models.OneToOneField('Notificacao', null=True, blank=True, on_delete=models.SET_NULL)
 
     data_entrada = models.DateField(blank=False, verbose_name='Data de Entrada')
     duracao = models.IntegerField(null=False, blank=False, verbose_name='Duração do contrato(Meses)',
@@ -708,7 +707,14 @@ class Contrato(models.Model):
         return data
 
     def periodo_vencido(self):
-        return True if self.data_saida() > datetime.today() else False
+        return True if self.data_saida() < datetime.today().date() else False
+
+    def vence_em_ate_x_dias(self, dias=int()):
+        # Retorna True se este contrato vence na quantidade definida em 'dias'
+        data_saida = self.data_saida()
+        x_dias = datetime.today().date() + timedelta(days=dias)
+        delta = data_saida - x_dias
+        return True if delta.days < 0 else False
 
     def periodo_ativo_hoje(self):
         hoje = datetime.today().date()
@@ -827,6 +833,24 @@ class Contrato(models.Model):
         soma_tt_pg = sum([i for i in parcelas_vencidas_n_quitadas])
         valor = (len(parcelas_vencidas_n_quitadas) * int(self.valor_mensal)) - (int(soma_tt_pg) if soma_tt_pg else 0)
         return valor, valor_format(str(valor))
+
+    def get_notific_criado(self):
+        # Retorna a notificação de aviso que o contrato foi criado
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk, assunto=1)
+        if notificacao:
+            return notificacao.first()
+
+    def get_notific_vence_em_ate_x_dias(self):
+        # Retorna a notificação de aviso: 'faltam 30 dias para vencer'
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk, assunto=2)
+        if notificacao:
+            return notificacao.first()
+
+    def get_notific_periodo_vencido(self):
+        # Retorna a notificação de aviso: 'contrato venceu'
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk, assunto=3)
+        if notificacao:
+            return notificacao.first()
 
 
 class ContratoModelo(models.Model):
@@ -993,15 +1017,15 @@ class Parcela(models.Model):
         contrato = Contrato.objects.get(pk=self.do_contrato.pk)
         return True if int(self.tt_pago) == int(contrato.valor_mensal) else False
 
-    def esta_vencido(self):
+    def esta_vencida(self):
         return True if datetime.today().date() > self.data_pagm_ref else False
 
-    def vence_em_x_dias(self, dias=int()):
+    def vence_em_ate_x_dias(self, dias=int()):
         # Retorna True se esta parcela vence na quantidade definida em 'dias'
         vencimento = self.data_pagm_ref
-        hoje = datetime.today().date() + timedelta(days=dias)
-        delta = vencimento - hoje
-        return True if delta.days < 0 else False
+        x_dias = datetime.today().date() + timedelta(days=dias)
+        delta = vencimento - x_dias
+        return True if delta.days < 0 and not self.esta_vencida() else False
 
     def posicao(self):
         try:
@@ -1039,14 +1063,14 @@ class Parcela(models.Model):
         if notificacao:
             return notificacao.first()
 
-    def get_notific_falta_x_d(self):
-        # Retorna a notificação de aviso: 'faltam 5 dias para vencer'
+    def get_notific_esta_vencida(self):
+        # Retorna a notificação de aviso: 'aluguel venceu'
         notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=2)
         if notificacao:
             return notificacao.first()
 
-    def get_notificacao_venceu(self):
-        # Retorna a notificação de aviso: 'aluguel venceu'
+    def get_notific_vence_em_ate_x_dias(self):
+        # Retorna a notificação de aviso: 'faltam 5 dias para vencer'
         notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=3)
         if notificacao:
             return notificacao.first()
@@ -1147,7 +1171,7 @@ class Notificacao(models.Model):
     data_registro = models.DateTimeField(auto_now_add=True)
     lida = models.BooleanField(default=False)
     apagada_oculta = models.BooleanField(default=False)
-    data_lida = models.DateTimeField(null=True)
+    data_lida = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['-data_registro']
@@ -1167,7 +1191,12 @@ class Notificacao(models.Model):
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return 2
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
-            return 3
+            if self.assunto == 1 or self.assunto is None:
+                return 3
+            elif self.assunto == 2:
+                return 4
+            elif self.assunto == 3:
+                return 4
         elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
             return 4
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
@@ -1188,7 +1217,12 @@ class Notificacao(models.Model):
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return '🗒️ Tarefa'
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
-            return '📃 Contrato'
+            if self.assunto == 1 or self.assunto is None:
+                return '📃 Contrato'
+            elif self.assunto == 2:
+                return '⚠️ Aviso'
+            elif self.assunto == 3:
+                return '⚠️ Aviso'
         elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
             return '⚠️ Aviso'
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
@@ -1209,7 +1243,12 @@ class Notificacao(models.Model):
         elif self.autor_classe == ContentType.objects.get_for_model(Anotacoe):
             return 'border-warning'
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
-            return 'border-primary'
+            if self.assunto == 1 or self.assunto is None:
+                return 'border-primary'
+            elif self.assunto == 2:
+                return 'border-success'
+            elif self.assunto == 3:
+                return 'border-success'
         elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
             return 'border-success'
         elif self.autor_classe == ContentType.objects.get_for_model(Locatario):
@@ -1235,14 +1274,16 @@ class Notificacao(models.Model):
                     mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
                                f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
                                f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
-                               f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} está atrasado ' \
-                               f'desde {parcela.data_pagm_ref.strftime("%d/%m/%Y")}.'
+                               f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} está ' \
+                               f'<span style="color:red">atrasado</span> desde ' \
+                               f'{parcela.data_pagm_ref.strftime("%d/%m/%Y")}.'
                 if self.assunto == 3:
                     parcela = self.content_object
                     mensagem = f'O Pagamento de {parcela.do_contrato.do_locatario.primeiro_ultimo_nome().upper()}' \
                                f' referente à parcela de {data_ptbr(parcela.data_pagm_ref, "F/Y").upper()}' \
                                f'(Parcela {parcela.posicao()} de {parcela.do_contrato.duracao}) do contrato ' \
-                               f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} vencerá em ' \
+                               f'{parcela.do_contrato.codigo} em {parcela.do_contrato.do_imovel} ' \
+                               f'<span style="color:yellow">vencerá</span> em ' \
                                f'{parcela.data_pagm_ref.strftime("%d/%m/%Y")}. '
             except:
                 pass
@@ -1255,16 +1296,30 @@ class Notificacao(models.Model):
             except:
                 pass
         elif self.autor_classe == ContentType.objects.get_for_model(Contrato):
+
             try:
-                contrato = self.content_object
-                mensagem = f'''O contrato {contrato} foi criado com sucesso!<br><br>
-                Depois de:<br>
-                1. Gerar e imprimir o documento referente(Gerar PDF de Contrato), <br>
-                2. Entregar ao locatário para reconhecimento em cartório, e <br>
-                3. Recebê-lo novamente com a firma reconhecida. <br>
-                Confirme a posse de sua via no botão abaixo para ativá-lo no sistema.'''
+                if self.assunto == 1 or self.assunto is None:
+                    contrato = self.content_object
+                    mensagem = f'O contrato {contrato} foi criado com sucesso!<br><br>' \
+                               f'Depois de:<br>' \
+                               f'1. Gerar e imprimir o documento referente(Gerar PDF de Contrato), <br>' \
+                               f'2. Entregar ao locatário para reconhecimento em cartório, e <br>' \
+                               f'3. Recebê-lo novamente com a firma reconhecida. <br>' \
+                               f'Confirme a posse de sua via no botão abaixo para ativá-lo no sistema.'
+                if self.assunto == 2:
+                    contrato = self.content_object
+                    mensagem = f'O contrato {contrato} <span style="color:yellow">está perto de seu vencimento</span>!' \
+                               f'<br><br>' \
+                               f'Data do vencimento: {contrato.data_saida().strftime("%d/%m/%Y")}<br><br>' \
+                               f'Você pode providenciar um termo de renovação contratual ou pedir a entrega do ' \
+                               f'imóvel ao locatário atual.'
+                if self.assunto == 3:
+                    contrato = self.content_object
+                    mensagem = f'O contrato {contrato} <span style="color:red">venceu</span>!<br><br>' \
+                               f'Data do vencimento: {contrato.data_saida()}<br><br>'
             except:
                 pass
+
         elif self.autor_classe == ContentType.objects.get_for_model(Sugestao):
             try:
                 tamanho_max_txt = 200

@@ -33,9 +33,11 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
     modelos_contratos_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
-    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots, FormConfigNotific
+    FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots, \
+    FormConfigNotific
 
-from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, Notificacao, \
+from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, \
+    Notificacao, \
     ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot, UsuarioContratoModelo
 
 
@@ -583,15 +585,21 @@ def rescindir_contrat(request, pk):
 
 
 @login_required
-def recebido_contrat(request, pk):
-    notific = get_object_or_404(Notificacao, pk=pk, do_usuario=request.user)
-    contrato = notific.content_object
+def recebido_contrat(request, pk, tipo):
+    if tipo == 'n':
+        notific = get_object_or_404(Notificacao, do_usuario=request.user, pk=pk)
+        contrato = notific.content_object
+    elif tipo == 'c':
+        contrato = get_object_or_404(Contrato, do_locador=request.user, pk=pk)
+        notific = contrato.get_notific_criado()
+
     if contrato.do_locador == request.user:
         if contrato.em_posse is True:
             contrato.em_posse = False
         else:
             contrato.em_posse = True
-            notific.definir_lida()
+            if notific:
+                notific.definir_lida()
             messages.success(request, f"Cópia do contrato do locador em mãos!")
         contrato.save(update_fields=['em_posse', ])
         return redirect(request.META['HTTP_REFERER'])
@@ -893,7 +901,7 @@ def tabela(request):
                         if parc is not None:
                             pago = parc.esta_pago()
                             recibo = parc.recibo_entregue
-                            vencido = parc.esta_vencido()
+                            vencido = parc.esta_vencida()
                             sinal = ''
                             if pago and recibo:
                                 enviar = 'Pago! Recibo entregue'

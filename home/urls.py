@@ -51,7 +51,7 @@ urlpatterns = [
     # CONTRATO -------------------
     path('registrar_contrato/', registrar_contrato, name='Registrar Contrato'),
     path('contrato_rescindido/<int:pk>/', rescindir_contrat, name='Rescindir Contrato'),
-    path('receber_contrato/<int:pk>/', recebido_contrat, name='Contrato Recebido'),
+    path('receber_contrato/<int:pk>/<str:tipo>/', recebido_contrat, name='Contrato Recebido'),
     path('editar_contrato/<int:pk>/', EditarContrato.as_view(), name='Editar Contrato'),
     path('excluir_contrato/<int:pk>/', ExcluirContrato.as_view(), name='Excluir Contrato'),
 

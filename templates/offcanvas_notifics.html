@@ -35,7 +35,7 @@
             <div class="offcanvas-body d-grid gap-1">
 
                 {% for notific in notificacoes %}
-                <div class="card bg-gray-900 text-white {% if notific.lido %}text-secondary{% endif %} {{ notific.borda }}">
+                <div class="card bg-gray-900 {% if notific.lido %}text-muted{% else %}text-white{% endif %} {{ notific.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ notific.autor_tipo_display }}:</p>
                         <p class="card-text small lh-sm">{{ notific.texto|safe }}</p>
@@ -64,7 +64,7 @@
             <div class="offcanvas-body d-grid gap-1">
 
                 {% for notific in notificacoes_hist %}
-                <div class="card bg-dark text-white text-white text-secondary {{ notific.borda }}">
+                <div class="card bg-dark text-muted {{ notific.borda }}">
                     <div class="card-body mx-1 my-1 px-1 py-1">
                         <p class="fw-bold">{{ notific.autor_tipo_display }}:</p>
                         <p class="card-text small lh-sm">{{ notific.texto|safe }}</p>

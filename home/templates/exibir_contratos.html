@@ -50,7 +50,7 @@ Contratos / {{ SITE_NAME }}
 
             {% if contrato.em_posse %}
             <th scope="col">
-                <form action="{% url 'home:Contrato Recebido' contrato.da_notificacao.pk %}">
+                <form action="{% url 'home:Contrato Recebido' contrato.pk 'c' %}">
                     <button type="submit" class="link-primary" title="Em mãos, clique para designar não recebido">
                         ✅️
                     </button>
@@ -58,7 +58,7 @@ Contratos / {{ SITE_NAME }}
             </th>
             {% else %}
             <th scope="col">
-                <form action="{% url 'home:Contrato Recebido' contrato.da_notificacao.pk %}">
+                <form action="{% url 'home:Contrato Recebido' contrato.pk 'c' %}">
                     <button type="submit" class="link-primary" title="Não recebido, clique para designar recebido">
                         ✖️
                     </button>
