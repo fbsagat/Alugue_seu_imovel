@@ -48,16 +48,15 @@ def verificar_contrato_vencimento(do_locador, contrato=None):
     if contrato:
         contrato_s = Contrato.objects.filter(do_locador=do_locador, pk=contrato.pk)
     else:
-
         contrato_s = Contrato.objects.ativos_hoje().filter(do_locador=do_locador)
-        contrato_y = Contrato.objects.filter(do_locador=do_locador)
-    tipo_conteudo = ContentType.objects.get_for_model(Contrato)
+        contrato_y = Contrato.objects.ativos_margem(dias_atras=15).filter(do_locador=do_locador)
 
+    tipo_conteudo = ContentType.objects.get_for_model(Contrato)
     for contrato in contrato_y:
         if contrato.periodo_vencido():
             if not contrato.get_notific_periodo_vencido():
                 criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
-                                      assunto=3)
+                                      assunto=3, lida=True if contrato.rescindido is False else False)
         for contrato in contrato_s:
             if contrato.vence_em_ate_x_dias(30):
                 if not contrato.get_notific_vence_em_ate_x_dias():

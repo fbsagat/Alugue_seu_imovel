@@ -99,6 +99,25 @@ Ok. (coloquei excluir que fica melhor) Retirar a notificação de contrato criad
 OK. Criptografar informações sensíveis no banco de dados(ex: cpf dos locatários)
 Ok. Colocar o botão lida em todas as tarefas e desvincular ele das suas funções, ou seja, o usuário pode marcar
         lida sem um recibo ter sido entregue(por exemplo), ela vai para o histórico como botão de entregue ativo.
+Ok. Tarefas:
+        1. Modelos devem buscar suas notificações a partir de método, não de atributos, já que cada modelo poderá ter mais que
+                uma notificação. Ex: locatario.da_notificacao --> locatario.da_notificacao(filtros). Por enquanto todos os
+                item que possuem notificações, podem ter apenas uma notificação atribuída a sí cada, porém, o modelo do usuário
+                e do locatário poderão ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um
+                único modelo? como vai ficar o atributo da_notificacao?
+                    Resposta: Das models que precisem de mais de um tipo de notificação(ex Parcela): Retirei o atributo:
+                    da_notificacao e coloquei o método: get_notificacao_pgm(Retorna a notificação de pagamento detectado),
+                    get_notific_falta_5d(Retorna a notificação de aviso: 'faltam 5 dias para vencer'),
+                    get_notificacao_venceu(Retorna a notificação de aviso: 'aluguel venceu') e get_notific_all(Retorna todas as
+                    notificações desda parcela).
+                    Na model de notificações criei o atributo assunto, onde, em caso de o autor_classe tiver vário tipos de
+                    notificação vinculado a sí, como a parcela(o outras no futuro), pode ser usado para salvar o seu tipo.
+        2. Tarefa de qdo:
+                Receber contrato(marcar contrato como em mãos na tarefa) = OK.
+                Quando a sugestão do usuário for aprovada = OK.
+                Quando o desenvolvedor responder uma mensagem. = OK.
+                Quando o aluguel de alguém vencer(e/ou faltando 5 dias). = OK.
+                Quando o contrato de alguém vencer(e/ou faltando 30 dias). = OK.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -113,27 +132,6 @@ Criar um botão de painel com configurações diversas:
         3. Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link), quantidade de tarefas a
         exibir: notificações/histórico.
         4. Ativar/desativar as notificações individualmente.
-
-Tarefas:
-1. Modelos devem buscar suas notificações a partir de método, não de atributos, já que cada modelo poderá ter mais que
-        uma notificação. Ex: locatario.da_notificacao --> locatario.da_notificacao(filtros). Por enquanto todos os
-        item que possuem notificações, podem ter apenas uma notificação atribuída a sí cada, porém, o modelo do usuário
-        e do locatário poderão ter mais de uma no futuro, portanto, resolver isto. Como atribuir várias tarefas a um
-        único modelo? como vai ficar o atributo da_notificacao?
-            Resposta: Das models que precisem de mais de um tipo de notificação(ex Parcela): Retirei o atributo:
-            da_notificacao e coloquei o método: get_notificacao_pgm(Retorna a notificação de pagamento detectado),
-            get_notific_falta_5d(Retorna a notificação de aviso: 'faltam 5 dias para vencer'),
-            get_notificacao_venceu(Retorna a notificação de aviso: 'aluguel venceu') e get_notific_all(Retorna todas as
-            notificações desda parcela).
-            Na model de notificações criei o atributo assunto, onde, em caso de o autor_classe tiver vário tipos de
-            notificação vinculado a sí, como a parcela(o outras no futuro), pode ser usado para salvar o seu tipo.
-
-2. Tarefa de qdo:
-        Receber contrato(marcar contrato como em mãos na tarefa) = OK.
-        Quando a sugestão do usuário for aprovada = OK.
-        Quando o desenvolvedor responder uma mensagem. = OK.
-        Quando o aluguel de alguém vencer(e/ou faltando 5 dias).
-        Quando o contrato de alguém vencer(e/ou faltando 30 dias).
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 

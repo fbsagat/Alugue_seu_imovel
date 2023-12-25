@@ -580,13 +580,13 @@ class ContratoManager(models.Manager):
         contratos_ativos = Contrato.objects.filter(pk__in=lista)
         return contratos_ativos
 
-    def ativos_margem(self):
+    def ativos_margem(self, dias_atras=45):
         hoje = datetime.today().date()
         contratos_qs = self.filter(rescindido=False)
         lista = []
         for contrato in contratos_qs:
             if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente() or \
-                    contrato.periodo_ativo_xx_dias_atras():
+                    contrato.periodo_ativo_xx_dias_atras(dias_atras):
                 lista.append(contrato.pk)
         contratos_ativos = Contrato.objects.filter(pk__in=lista)
         return contratos_ativos
@@ -714,7 +714,7 @@ class Contrato(models.Model):
         data_saida = self.data_saida()
         x_dias = datetime.today().date() + timedelta(days=dias)
         delta = data_saida - x_dias
-        return True if delta.days < 0 else False
+        return True if delta.days <= 0 else False
 
     def periodo_ativo_hoje(self):
         hoje = datetime.today().date()
@@ -1014,18 +1014,20 @@ class Parcela(models.Model):
         return valor_format(str(int(contrato.valor_mensal) - int(self.tt_pago)))
 
     def esta_pago(self):
-        contrato = Contrato.objects.get(pk=self.do_contrato.pk)
+        contrato = self.do_contrato
         return True if int(self.tt_pago) == int(contrato.valor_mensal) else False
 
     def esta_vencida(self):
-        return True if datetime.today().date() > self.data_pagm_ref else False
+        passou_data_pagm = True if datetime.today().date() > self.data_pagm_ref else False
+        return True if self.esta_pago() is False and passou_data_pagm else False
 
     def vence_em_ate_x_dias(self, dias=int()):
-        # Retorna True se esta parcela vence na quantidade definida em 'dias'
+        # Retorna True se esta parcela vence na quantidade definida em 'dias' a partir do momento da execução da função
         vencimento = self.data_pagm_ref
         x_dias = datetime.today().date() + timedelta(days=dias)
         delta = vencimento - x_dias
-        return True if delta.days < 0 and not self.esta_vencida() else False
+        ja_passou = True if self.data_pagm_ref <= datetime.today().date() else False
+        return True if delta.days <= 0 and not self.esta_vencida() and not ja_passou else False
 
     def posicao(self):
         try:
