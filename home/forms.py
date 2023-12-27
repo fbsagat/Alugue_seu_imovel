@@ -59,19 +59,23 @@ class FormUsuario(UserChangeForm):
             raise forms.ValidationError("Número de CPF inválido")
 
 
-class FormConfigNotific(forms.ModelForm):
-    class Meta:
-        model = Usuario
-        fields = ['notif_recibo', 'notif_contrato_criado', 'notif_contrato_venc_1', 'notif_contrato_venc_2',
-                  'notif_parc_venc_1', 'notif_parc_venc_2']
+class FormConfigNotific(forms.Form):
+    notif_recibo = forms.BooleanField(initial=True, required=False)
+    notif_contrato_criado = forms.BooleanField(initial=True, required=False)
+    notif_contrato_venc_1 = forms.BooleanField(initial=True, required=False)
+    notif_contrato_venc_2 = forms.BooleanField(initial=True, required=False)
+    notif_parc_venc_1 = forms.BooleanField(initial=True, required=False)
+    notif_parc_venc_2 = forms.BooleanField(initial=True, required=False)
 
     def __init__(self, *args, **kwargs):
         super(FormConfigNotific, self).__init__(*args, **kwargs)
         self.fields['notif_recibo'].label = 'Notificar quando um pagamento de aluguel for detectado'
         self.fields['notif_contrato_criado'].label = 'Notificar quando um contrato for criado'
-        self.fields['notif_contrato_venc_1'].label = 'Notificar quando um contrato estiver a 30 dias de seu vencimento'
+        self.fields[
+            'notif_contrato_venc_1'].label = 'Notificar quando faltar menos de 30 dias para o vencimento de um contrato'
         self.fields['notif_contrato_venc_2'].label = 'Notificar quando um contrato vencer'
-        self.fields['notif_parc_venc_1'].label = 'Notificar quando faltar 5 dias para um vencimento de aluguel'
+        self.fields[
+            'notif_parc_venc_1'].label = 'Notificar quando faltar menos de 5 dias para o vencimento de um aluguel'
         self.fields['notif_parc_venc_2'].label = 'Notificar quando um aluguel vencer'
 
 

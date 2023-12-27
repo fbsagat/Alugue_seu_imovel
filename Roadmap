@@ -159,6 +159,7 @@ Arrumar os parâmetros das models que estão em letras maiúsculas, corrigir tam
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Melhorias muito futuras:
+Colocar um botão 'gerar PDF' na página eventos.
 Criar um sistema que utiliza o mesmo link de auto-registro gerado por sessão, para não puxar muito do servidor.
 Criar o resumo textual e gráfico de cada contrato, textual dizendo quando chegou, quando vai sair, meses que pagou,
         se rescindiu: quanto deve ou quanto pagou a mais e etc... no gráfico mostrar um gráfico parecido ou melhor que
@@ -173,7 +174,8 @@ Ja ta na hora de instalar o celery e começar a usar.
 melhorar a performance nas querys: https://www.youtube.com/watch?v=FNn_qwH1Yi0
 aplicar ajax um dia: https://www.youtube.com/watch?v=hISSGMafzvU / https://www.youtube.com/watch?v=QDdLvImfq_g
 Aplicar o celery.
-        Criar uma forma de entrar em um chat entre o dev e os usuários.
+Criar uma forma de entrar em um chat entre o dev e os usuários.
+Implementar o django storages com o dropbox para armazenamento de arquivos.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 

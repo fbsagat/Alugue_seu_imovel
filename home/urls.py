@@ -13,7 +13,8 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, \
     arquivos_gastos_docs, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
     adicionar_ticket, adicionar_ticket_todos, painel_configs, ModelosComunidade, \
-    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, notificacao_lida, conversa_com_o_dev
+    arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, notificacao_lida, conversa_com_o_dev, \
+    configurar_notificacoes
 from financeiro.views import painel_loja
 
 from Alugue_seu_imovel import settings
@@ -109,6 +110,7 @@ urlpatterns = [
     # PAINEL -------------------
     path('painel_slots/', painel_slots, name='Painel Slots'),
     path('painel_configuracoes/', painel_configs, name='Painel Configs'),
+    path('configurar_notificacoes/', configurar_notificacoes, name='Configurar Notificações'),
     path('painel_loja/', painel_loja, name='Painel Loja'),
     path('adicionar_slot/', add_slot, name='Add Slot'),
     path('apagar_slot/<int:pk>/', apagar_slot, name='Apagar Slot'),

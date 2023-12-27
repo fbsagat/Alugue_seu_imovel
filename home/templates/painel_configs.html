@@ -41,39 +41,41 @@ Painel / {{ SITE_NAME }}
                     <div class="card-header fs-5 text-start">
                         Configurações de notificações:
                     </div>
-
-                    <div class="container">
-                        <div class="row">
-                            <div class="col mx-auto">
-                                {% for field in form_config %}
-                                {% if forloop.counter|divisibleby:2 %}
-                                {% else %}
-                                <div class="col mt-2 mb-2">
-                                    <div class="fs-6">{{ field.label_tag }}</div>
-                                    <div class="fs-6">{{ field }}</div>
+                    <form action="{% url 'home:Configurar Notificações' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="container">
+                            <div class="row">
+                                <div class="col mx-auto">
+                                    {% for field in form_config %}
+                                    {% if forloop.counter|divisibleby:2 %}
+                                    {% else %}
+                                    <div class="col mt-2 mb-2">
+                                        <div class="fs-6">{{ field.label_tag }}</div>
+                                        <div class="fs-6">{{ field }}</div>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
                                 </div>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                            <div class="col mx-auto">
-                                {% for field in form_config %}
-                                {% if forloop.counter|divisibleby:2 %}
-                                <div class="col mt-2 mb-2">
-                                    <div class="fs-6">{{ field.label_tag }}</div>
-                                    <div class="fs-6">{{ field }}</div>
+                                <div class="col mx-auto">
+                                    {% for field in form_config %}
+                                    {% if forloop.counter|divisibleby:2 %}
+                                    <div class="col mt-2 mb-2">
+                                        <div class="fs-6">{{ field.label_tag }}</div>
+                                        <div class="fs-6">{{ field }}</div>
+                                    </div>
+                                    {% else %}
+                                    {% endif %}
+                                    {% endfor %}
                                 </div>
-                                {% else %}
-                                {% endif %}
-                                {% endfor %}
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card-body">
-                        <button type="button" class="btn btn-secondary" title="Salvar configurações">
-                            Salvar
-                        </button>
-                    </div>
+                        <div class="card-body">
+                            <button type="submit" class="btn btn-secondary" title="Salvar configurações">
+                                Salvar
+                            </button>
+                        </div>
+                    </form>
 
                 </div>
 
@@ -86,12 +88,16 @@ Painel / {{ SITE_NAME }}
                     </div>
 
                     <div class="card-body">
-                        <button type="button" class="btn btn-secondary"
+                        <button type="button" class="btn btn-outline-primary"
                                 title="Baixar arquivo com todos os dados">
                             Baixar Backup
                         </button>
-                        <button type="button" class="btn btn-secondary"
+                        <button type="button" class="btn btn-outline-primary"
                                 title="Carregar arquivo de backup para restauração de dados">Restaurar Backup
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary"
+                                title="Baixar todos os registros em formato de planilha/Formato não restaurável">
+                            Baixar Planilha
                         </button>
                         <br>
                         <small class="text-muted">Por questão de segurança o arquivo de backup será criptografado e

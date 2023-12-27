@@ -98,12 +98,12 @@ class Usuario(AbstractUser):
                                                 validators=[MinValueValidator(10), MaxValueValidator(40)])
 
     # Configurações de notificações
-    notif_recibo = models.BooleanField(default=True, blank=True)
-    notif_contrato_criado = models.BooleanField(default=True, blank=True)
-    notif_contrato_venc_1 = models.BooleanField(default=True, blank=True)
-    notif_contrato_venc_2 = models.BooleanField(default=True, blank=True)
-    notif_parc_venc_1 = models.BooleanField(default=True, blank=True)
-    notif_parc_venc_2 = models.BooleanField(default=True, blank=True)
+    notif_recibo = models.DateTimeField(default=datetime.now, null=True)
+    notif_contrato_criado = models.DateTimeField(default=datetime.now, null=True)
+    notif_contrato_venc_1 = models.DateTimeField(default=datetime.now, null=True)
+    notif_contrato_venc_2 = models.DateTimeField(default=datetime.now, null=True)
+    notif_parc_venc_1 = models.DateTimeField(default=datetime.now, null=True)
+    notif_parc_venc_2 = models.DateTimeField(default=datetime.now, null=True)
 
     def locat_auto_registro_link(self):
         code = _crypt(self.uuid)
@@ -834,6 +834,12 @@ class Contrato(models.Model):
         valor = (len(parcelas_vencidas_n_quitadas) * int(self.valor_mensal)) - (int(soma_tt_pg) if soma_tt_pg else 0)
         return valor, valor_format(str(valor))
 
+    def get_notific_all(self):
+        # Retorna todas as notificações desda parcela
+        notificacoes = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk)
+        if notificacoes:
+            return notificacoes
+
     def get_notific_criado(self):
         # Retorna a notificação de aviso que o contrato foi criado
         notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk, assunto=1)
@@ -1076,6 +1082,9 @@ class Parcela(models.Model):
         notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=3)
         if notificacao:
             return notificacao.first()
+
+    def lancar_entre(self):
+        """Aqui temos as regras para o lançamento da notificação desta instância"""
 
 
 lista_pagamentos = (

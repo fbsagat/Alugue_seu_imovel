@@ -921,7 +921,7 @@ def tabela(request):
                                             P:{parc.tt_pago_format()} F:{parc.falta_pagar_format()}
                                             """
                             parcelas.append(f"""Com: {parc.do_locatario.primeiro_ultimo_nome()}
-                                Con. cód.: {parc.do_contrato.codigo}
+                                Contr. cód.: {parc.do_contrato.codigo}
                                 Valor: {parc.do_contrato.valor_format()}
                                 {enviar}""")
                             sinais.append(sinal)
@@ -2005,9 +2005,42 @@ def painel_slots(request):
 
 @login_required
 def painel_configs(request):
-    form_config = FormConfigNotific()
+    form_config = FormConfigNotific(initial={
+        'notif_recibo': True if request.user.notif_recibo else False,
+        'notif_contrato_criado': True if request.user.notif_contrato_criado else False,
+        'notif_contrato_venc_1': True if request.user.notif_contrato_venc_1 else False,
+        'notif_contrato_venc_2': True if request.user.notif_contrato_venc_2 else False,
+        'notif_parc_venc_1': True if request.user.notif_parc_venc_1 else False,
+        'notif_parc_venc_2': True if request.user.notif_parc_venc_2 else False})
     context = {'SITE_NAME': settings.SITE_NAME, 'form_config': form_config}
     return render(request, 'painel_configs.html', context)
+
+
+@login_required
+def configurar_notificacoes(request):
+    if request.method == 'POST':
+        form = FormConfigNotific(request.POST)
+        if form.is_valid():
+            user = request.user
+            notif_recibo = form.cleaned_data['notif_recibo']
+            notif_contrato_criado = form.cleaned_data['notif_contrato_criado']
+            notif_contrato_venc_1 = form.cleaned_data['notif_contrato_venc_1']
+            notif_contrato_venc_2 = form.cleaned_data['notif_contrato_venc_2']
+            notif_parc_venc_1 = form.cleaned_data['notif_parc_venc_1']
+            notif_parc_venc_2 = form.cleaned_data['notif_parc_venc_2']
+
+            user.notif_recibo = datetime.now() if notif_recibo else None
+            user.notif_contrato_criado = datetime.now() if notif_contrato_criado else None
+            user.notif_contrato_venc_1 = datetime.now() if notif_contrato_venc_1 else None
+            user.notif_contrato_venc_2 = datetime.now() if notif_contrato_venc_2 else None
+            user.notif_parc_venc_1 = datetime.now() if notif_parc_venc_1 else None
+            user.notif_parc_venc_2 = datetime.now() if notif_parc_venc_2 else None
+            user.save(update_fields=['notif_recibo', 'notif_contrato_criado', 'notif_contrato_venc_1',
+                                     'notif_contrato_venc_2', 'notif_parc_venc_1', 'notif_parc_venc_2', ])
+
+            messages.success(request, f"As novas configurações foram salvas")
+
+    return redirect(request.META['HTTP_REFERER'])
 
 
 @login_required

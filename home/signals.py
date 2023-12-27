@@ -25,18 +25,28 @@ def verificar_aluguel_vencimento(do_usuario, contrato=None):
     if contrato:
         contrato_s = Contrato.objects.filter(do_locador=do_usuario, pk=contrato.pk)
     else:
-        contrato_s = Contrato.objects.ativos_hoje().filter(do_locador=do_usuario)
+        contrato_s = Contrato.objects.ativos_margem(dias_atras=15).filter(do_locador=do_usuario)
     parcelas = Parcela.objects.filter(do_usuario=do_usuario, apagada=False, do_contrato__in=contrato_s)
     tipo_conteudo = ContentType.objects.get_for_model(Parcela)
     for parcela in parcelas:
         if parcela.esta_vencida():
             if not parcela.get_notific_esta_vencida():
-                criar_uma_notificacao(do_usuario=do_usuario, autor_classe=tipo_conteudo, objeto_id=parcela.pk,
-                                      assunto=2)
+                # Verificar se deve ou não criar notificação, neste caso, criar se user.notif_parc_venc_2 não está no
+                # None e se a data de vencimento desta parcela é maior que a data em user.notif_parc_venc_2
+                if do_usuario.notif_parc_venc_2 is not None:
+                    if parcela.data_pagm_ref >= do_usuario.notif_parc_venc_2.date():
+                        criar_uma_notificacao(do_usuario=do_usuario, autor_classe=tipo_conteudo, objeto_id=parcela.pk,
+                                              assunto=2)
+
         if parcela.vence_em_ate_x_dias(5):
             if not parcela.get_notific_vence_em_ate_x_dias():
-                criar_uma_notificacao(do_usuario=do_usuario, autor_classe=tipo_conteudo, objeto_id=parcela.pk,
-                                      assunto=3)
+                # Verificar se deve ou não criar notificação, neste caso, criar se user.notif_parc_venc_1 não está no
+                # None e se a data de vencimento desta parcela -5 dias é maior que a data em user.notif_parc_venc_2
+                # ou menor que hoje
+                if do_usuario.notif_parc_venc_1 is not None:
+                    if parcela.data_pagm_ref + datetime.timedelta(days=-5) >= do_usuario.notif_parc_venc_2.date():
+                        criar_uma_notificacao(do_usuario=do_usuario, autor_classe=tipo_conteudo, objeto_id=parcela.pk,
+                                              assunto=3)
 
 
 def verificar_contrato_vencimento(do_locador, contrato=None):
@@ -48,20 +58,29 @@ def verificar_contrato_vencimento(do_locador, contrato=None):
     if contrato:
         contrato_s = Contrato.objects.filter(do_locador=do_locador, pk=contrato.pk)
     else:
-        contrato_s = Contrato.objects.ativos_hoje().filter(do_locador=do_locador)
-        contrato_y = Contrato.objects.ativos_margem(dias_atras=15).filter(do_locador=do_locador)
+        contrato_s = Contrato.objects.ativos_margem(dias_atras=15).filter(do_locador=do_locador)
 
     tipo_conteudo = ContentType.objects.get_for_model(Contrato)
-    for contrato in contrato_y:
+    for contrato in contrato_s:
         if contrato.periodo_vencido():
             if not contrato.get_notific_periodo_vencido():
-                criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
-                                      assunto=3, lida=True if contrato.rescindido is False else False)
-        for contrato in contrato_s:
-            if contrato.vence_em_ate_x_dias(30):
-                if not contrato.get_notific_vence_em_ate_x_dias():
-                    criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
-                                          assunto=2)
+                # Verificar se deve ou não criar notificação, neste caso, criar se user.notif_contrato_venc_2 não está
+                # no None e se a data de vencimento deste contrato é maior que a data em user.notif_parc_venc_2
+                if do_locador.notif_contrato_venc_2 is not None:
+                    if contrato.data_saida() >= do_locador.notif_contrato_venc_2.date():
+                        criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
+                                              assunto=3, lida=True if contrato.rescindido is False else False)
+
+        if contrato.vence_em_ate_x_dias(30):
+            if not contrato.get_notific_vence_em_ate_x_dias():
+                # Verificar se deve ou não criar notificação, neste caso, criar se user.notif_contrato_venc_1 não está
+                # no None e se a data de vencimento deste contrato -30 dias é maior que a data em user.notif_parc_venc_2
+                # ou menor que hoje
+                if do_locador.notif_contrato_venc_1 is not None:
+                    if contrato.data_saida() + datetime.timedelta(
+                            days=-30) >= do_locador.notif_contrato_venc_1.date():
+                        criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
+                                              assunto=2)
 
 
 def gerenciar_parcelas(instance_contrato):
@@ -348,7 +367,9 @@ def contrato_post_save(sender, instance, created, **kwargs):
         tipo_conteudo = ContentType.objects.get_for_model(Contrato)
         criar_uma_notificacao(do_usuario=instance.do_locador, autor_classe=tipo_conteudo, objeto_id=instance.pk,
                               lida=lida, assunto=1)
+    else:
         verificar_aluguel_vencimento(do_usuario=instance.do_locador, contrato=instance)
+        verificar_contrato_vencimento(do_locador=instance.do_locador, contrato=instance)
 
 
 @receiver(post_save, sender=Pagamento)
@@ -381,9 +402,11 @@ def dev_mensagem_pre_save(sender, instance, **kwargs):
 @transaction.atomic
 @receiver(pre_delete, sender=Contrato)
 def contrato_pre_delete(sender, instance, **kwards):
-    # Apagar a notificação desta anotação
-    if instance.get_notific_criado():
-        instance.get_notific_criado().delete()
+    # Apagar as notificações deste contrato
+    notificacoes = instance.get_notific_all()
+    if notificacoes:
+        for notificacao in notificacoes:
+            notificacao.delete()
 
 
 # Apaga as notificações dos objetos quando eles forem apagados \/
@@ -396,7 +419,7 @@ def anotacao_pre_delete(sender, instance, **kwargs):
 
 @receiver(pre_delete, sender=Sugestao)
 def sugestao_pre_delete(sender, instance, **kwargs):
-    # Apagar a notificação desta anotação
+    # Apagar a notificação desta sugestão
     if instance.da_notificacao:
         Notificacao.objects.filter(pk=instance.da_notificacao.pk).delete()
 
@@ -410,16 +433,16 @@ def locatario_pre_delete(sender, instance, **kwargs):
 
 @receiver(pre_delete, sender=Parcela)
 def parcela_pre_delete(sender, instance, **kwargs):
-    # Apagar sa notificações desta parcela
-    parcelas = instance.get_notific_all()
-    if parcelas:
-        for parcela in parcelas:
+    # Apagar as notificações desta parcela
+    notificacoes = instance.get_notific_all()
+    if notificacoes:
+        for parcela in notificacoes:
             parcela.delete()
 
 
 @receiver(pre_delete, sender=Slot)
 def slot_pre_delete(sender, instance, **kwargs):
-    # Apagar a notificação desta parcela
+    # Apagar as notificações deste slot
     if instance.da_notificacao:
         Notificacao.objects.filter(pk=instance.da_notificacao.pk).delete()
 
