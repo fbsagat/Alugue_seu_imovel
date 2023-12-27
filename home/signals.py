@@ -70,15 +70,15 @@ def verificar_contrato_vencimento(do_locador, contrato=None):
                     if contrato.data_saida() >= do_locador.notif_contrato_venc_2.date():
                         criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
                                               assunto=3, lida=True if contrato.rescindido is False else False)
-
-        if contrato.vence_em_ate_x_dias(30):
+        dias = 31
+        if contrato.vence_em_ate_x_dias(dias):
             if not contrato.get_notific_vence_em_ate_x_dias():
                 # Verificar se deve ou não criar notificação, neste caso, criar se user.notif_contrato_venc_1 não está
                 # no None e se a data de vencimento deste contrato -30 dias é maior que a data em user.notif_parc_venc_2
                 # ou menor que hoje
                 if do_locador.notif_contrato_venc_1 is not None:
                     if contrato.data_saida() + datetime.timedelta(
-                            days=-30) >= do_locador.notif_contrato_venc_1.date():
+                            days=-dias) >= do_locador.notif_contrato_venc_1.date():
                         criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
                                               assunto=2)
 
@@ -180,7 +180,9 @@ def parcela_pre_save(sender, instance, **kwargs):
         if instance.esta_pago():
             usuario = instance.do_contrato.do_locador
             if instance.get_notific_pgm() is None:
-                criar_uma_notificacao(do_usuario=usuario, autor_classe=tipo_conteudo, objeto_id=objeto_id, assunto=1)
+                if instance.do_usuario.notif_recibo is not None:
+                    criar_uma_notificacao(do_usuario=usuario, autor_classe=tipo_conteudo, objeto_id=objeto_id,
+                                          assunto=1)
 
             vencera = Notificacao.objects.filter(do_usuario=usuario, autor_classe=tipo_conteudo,
                                                  objeto_id=objeto_id, assunto=3).first()
@@ -365,8 +367,9 @@ def contrato_post_save(sender, instance, created, **kwargs):
         gerenciar_parcelas(instance)
         # Criar notificação 'contrato criado' com o botão 'receber contrato'
         tipo_conteudo = ContentType.objects.get_for_model(Contrato)
-        criar_uma_notificacao(do_usuario=instance.do_locador, autor_classe=tipo_conteudo, objeto_id=instance.pk,
-                              lida=lida, assunto=1)
+        if instance.do_locador.notif_contrato_criado is not None:
+            criar_uma_notificacao(do_usuario=instance.do_locador, autor_classe=tipo_conteudo, objeto_id=instance.pk,
+                                  lida=lida, assunto=1)
     else:
         verificar_aluguel_vencimento(do_usuario=instance.do_locador, contrato=instance)
         verificar_contrato_vencimento(do_locador=instance.do_locador, contrato=instance)

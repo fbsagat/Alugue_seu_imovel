@@ -131,7 +131,7 @@ Criar um botão de painel com configurações diversas:
         (enviar o arquivo para o email de cadastro do usuário ao invés de baixar diretamente/evitar problemas)
         3. Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link), quantidade de tarefas a
         exibir: notificações/histórico.
-        4. Ativar/desativar as notificações individualmente.
+        4. OK. Ativar/desativar as notificações individualmente.
 
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 
