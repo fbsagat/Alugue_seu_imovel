@@ -149,6 +149,10 @@ Página de exclusão de item: Ao invés de mostrar um página, abrir um modal(qu
         após isto, fazer os redirects das views para o 'request.META['HTTP_REFERER']', isto corrige o problema quando
         se apaga a partir da aba de notificações, que pode ser aberta de qualquer página, redirecionando para outra,
         o que pode causar uma confusão no usuário.
+        Vou resolver assim: Quando ocorrer este tipo de exclusão(a partir do offcanvas) vou enviar um parâmetro para
+         a view de exclusão, com o reverse da página atual, para quando excluir o item, redirecionar para esta página.
+         Ou
+         Buscar a página anterior a atual(no caso, a da exclusão) na view Excluir e dar o redirect lá(em get_success_url).
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 

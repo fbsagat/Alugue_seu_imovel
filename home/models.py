@@ -63,7 +63,7 @@ class Usuario(AbstractUser):
     tickets = models.IntegerField(default=10)
 
     # Configurações de slots
-    locat_slots = models.IntegerField(default=2)
+    locat_slots = models.IntegerField(default=3)
 
     # Configurações da view Visão geral
     vis_ger_ultim_order_by = models.CharField(default='vencimento_atual', null=True, blank=True, max_length=60)
@@ -90,12 +90,26 @@ class Usuario(AbstractUser):
                                         on_delete=models.SET_NULL)
 
     # Configurações da aplicação
-    notif_qtd = models.IntegerField(default=40, blank=False, help_text='Quantidade de novas notificações',
+    notif_qtd = models.IntegerField(default=20, blank=False, help_text='Quantidade de novas notificações',
                                     validators=[MinValueValidator(10), MaxValueValidator(40)])
-    notif_qtd_hist = models.IntegerField(default=40, blank=False, help_text='Quantidade de notificações no histórico',
+    notif_qtd_hist = models.IntegerField(default=20, blank=False, help_text='Quantidade de notificações no histórico',
                                          validators=[MinValueValidator(10), MaxValueValidator(40)])
     itens_pag_visao_geral = models.IntegerField(default=27, blank=False, help_text='Itens por página em Visão Geral',
                                                 validators=[MinValueValidator(10), MaxValueValidator(40)])
+    itens_pag_ativos = models.IntegerField(default=12, blank=False, help_text='Itens por página em Itens Ativos',
+                                           validators=[MinValueValidator(12), MaxValueValidator(24)])
+    itens_pag_pagamentos = models.IntegerField(default=54, blank=False, help_text='Itens por página em Pagamentos',
+                                               validators=[MinValueValidator(54), MaxValueValidator(86)])
+    itens_pag_gastos = models.IntegerField(default=54, blank=False, help_text='Itens por página em Gastos',
+                                           validators=[MinValueValidator(54), MaxValueValidator(86)])
+    itens_pag_imoveis = models.IntegerField(default=27, blank=False, help_text='Itens por página em Imóveis',
+                                            validators=[MinValueValidator(27), MaxValueValidator(54)])
+    itens_pag_locatarios = models.IntegerField(default=27, blank=False, help_text='Itens por página em Locatários',
+                                               validators=[MinValueValidator(27), MaxValueValidator(54)])
+    itens_pag_contratos = models.IntegerField(default=27, blank=False, help_text='Itens por página em Contratos',
+                                              validators=[MinValueValidator(27), MaxValueValidator(54)])
+    itens_pag_notas = models.IntegerField(default=27, blank=False, help_text='Itens por página em Anotações',
+                                          validators=[MinValueValidator(27), MaxValueValidator(54)])
 
     # Configurações de notificações
     notif_recibo = models.DateTimeField(default=datetime.now, null=True)
@@ -817,7 +831,8 @@ class Contrato(models.Model):
         return txt, title
 
     def divida_atual_meses(self):
-        parcelas = Parcela.objects.filter(do_contrato=self, apagada=False, data_pagm_ref__lte=datetime.today().date())
+        parcelas = Parcela.objects.filter(do_contrato=self, apagada=False,
+                                          data_pagm_ref__lte=datetime.today().date() - timedelta(days=1))
         parcelas_vencidas_n_quitadas = 0
         for parcela in parcelas:
             if int(parcela.tt_pago) < int(self.valor_mensal):
@@ -825,7 +840,8 @@ class Contrato(models.Model):
         return parcelas_vencidas_n_quitadas
 
     def divida_atual_valor(self):
-        parcelas = Parcela.objects.filter(do_contrato=self, apagada=False, data_pagm_ref__lte=datetime.today().date())
+        parcelas = Parcela.objects.filter(do_contrato=self, apagada=False,
+                                          data_pagm_ref__lte=datetime.today().date() - timedelta(days=1))
         parcelas_vencidas_n_quitadas = []
         for parcela in parcelas:
             if int(parcela.tt_pago) < int(self.valor_mensal) and parcela.apagada is False:
@@ -836,25 +852,33 @@ class Contrato(models.Model):
 
     def get_notific_all(self):
         # Retorna todas as notificações desda parcela
-        notificacoes = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk)
+        tipo_conteudo = ContentType.objects.get_for_model(Contrato)
+        notificacoes = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk,
+                                                  autor_classe=tipo_conteudo)
         if notificacoes:
             return notificacoes
 
     def get_notific_criado(self):
         # Retorna a notificação de aviso que o contrato foi criado
-        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk, assunto=1)
+        tipo_conteudo = ContentType.objects.get_for_model(Contrato)
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk,
+                                                 autor_classe=tipo_conteudo, assunto=1)
         if notificacao:
             return notificacao.first()
 
     def get_notific_vence_em_ate_x_dias(self):
         # Retorna a notificação de aviso: 'faltam 30 dias para vencer'
-        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk, assunto=2)
+        tipo_conteudo = ContentType.objects.get_for_model(Contrato)
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk,
+                                                 autor_classe=tipo_conteudo, assunto=2)
         if notificacao:
             return notificacao.first()
 
     def get_notific_periodo_vencido(self):
         # Retorna a notificação de aviso: 'contrato venceu'
-        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk, assunto=3)
+        tipo_conteudo = ContentType.objects.get_for_model(Contrato)
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_locador, objeto_id=self.pk,
+                                                 autor_classe=tipo_conteudo, assunto=3)
         if notificacao:
             return notificacao.first()
 
@@ -1061,25 +1085,35 @@ class Parcela(models.Model):
 
     def get_notific_all(self):
         # Retorna todas as notificações desda parcela
-        notificacoes = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk)
+        tipo_conteudo = ContentType.objects.get_for_model(Parcela)
+        notificacoes = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk,
+                                                  autor_classe=tipo_conteudo)
         if notificacoes:
             return notificacoes
 
     def get_notific_pgm(self):
         # Retorna a notificação de pagamento detectado
-        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=1)
+        tipo_conteudo = ContentType.objects.get_for_model(Parcela)
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk,
+                                                 autor_classe=tipo_conteudo, assunto=1)
         if notificacao:
+            if notificacao.first().pk == 51:
+                print('get_notific_pgm')
             return notificacao.first()
 
     def get_notific_esta_vencida(self):
         # Retorna a notificação de aviso: 'aluguel venceu'
-        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=2)
+        tipo_conteudo = ContentType.objects.get_for_model(Parcela)
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk,
+                                                 autor_classe=tipo_conteudo, assunto=2)
         if notificacao:
             return notificacao.first()
 
     def get_notific_vence_em_ate_x_dias(self):
         # Retorna a notificação de aviso: 'faltam 5 dias para vencer'
-        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk, assunto=3)
+        tipo_conteudo = ContentType.objects.get_for_model(Parcela)
+        notificacao = Notificacao.objects.filter(do_usuario=self.do_usuario, objeto_id=self.pk,
+                                                 autor_classe=tipo_conteudo, assunto=3)
         if notificacao:
             return notificacao.first()
 
@@ -1189,7 +1223,7 @@ class Notificacao(models.Model):
         verbose_name_plural = 'Notificações'
 
     def __str__(self):
-        return f'Notificação: classe:{self.autor_classe}/objeto_id:{self.objeto_id}'
+        return f'Notificação: classe:{self.autor_classe} / objeto_id:{self.objeto_id}'
 
     def autor_tipo(self):
         if self.autor_classe == ContentType.objects.get_for_model(Parcela):

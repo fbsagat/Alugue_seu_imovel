@@ -15,8 +15,8 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     adicionar_ticket, adicionar_ticket_todos, painel_configs, ModelosComunidade, \
     arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, notificacao_lida, conversa_com_o_dev, \
     configurar_notificacoes
-from financeiro.views import painel_loja
 
+from financeiro.views import painel_loja
 from Alugue_seu_imovel import settings
 
 app_name = 'home'

@@ -256,6 +256,10 @@ class ImoveisAtivos(LoginRequiredMixin, ListView):
     context_object_name = 'imoveis'
     paginate_by = 12
 
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_ativos
+        return self.paginate_by
+
     def get_queryset(self):
         self.object_list = Contrato.objects.ativos_hoje().filter(do_locador=self.request.user).order_by('-data_entrada')
         ativo_tempo = []
@@ -274,7 +278,11 @@ class LocatariosAtivos(LoginRequiredMixin, ListView):
     template_name = 'exibir_ativos.html'
     model = Locatario
     context_object_name = 'locatarios'
-    paginate_by = 9
+    paginate_by = 12
+
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_ativos
+        return self.paginate_by
 
     def get_queryset(self):
         self.object_list = Contrato.objects.ativos_hoje().filter(do_locador=self.request.user).order_by('-data_entrada')
@@ -296,6 +304,10 @@ class ContratosAtivos(LoginRequiredMixin, ListView):
     model = Contrato
     context_object_name = 'contratos'
     paginate_by = 12
+
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_ativos
+        return self.paginate_by
 
     def get_queryset(self):
         self.object_list = Contrato.objects.ativos_hoje().filter(do_locador=self.request.user).order_by('-data_entrada')
@@ -1500,6 +1512,10 @@ class Pagamentos(LoginRequiredMixin, ListView):
     context_object_name = 'pagamentos'
     paginate_by = 54
 
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_pagamentos
+        return self.paginate_by
+
     def get_queryset(self):
         self.object_list = Pagamento.objects.filter(ao_locador=self.request.user).order_by('-data_criacao')
         return self.object_list
@@ -1516,6 +1532,10 @@ class Gastos(LoginRequiredMixin, ListView):
     model = Gasto
     context_object_name = 'gastos'
     paginate_by = 54
+
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_gastos
+        return self.paginate_by
 
     def get_queryset(self):
         self.object_list = Gasto.objects.filter(do_locador=self.request.user).order_by('-data_criacao')
@@ -1587,6 +1607,10 @@ class Imoveis(LoginRequiredMixin, ListView):
     context_object_name = 'imoveis'
     paginate_by = 27
 
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_imoveis
+        return self.paginate_by
+
     def get_queryset(self):
         self.object_list = Imovei.objects.filter(do_locador=self.request.user).order_by('-data_registro')
         return self.object_list
@@ -1645,6 +1669,10 @@ class Locatarios(LoginRequiredMixin, ListView):
     model = Locatario
     context_object_name = 'locatarios'
     paginate_by = 27
+
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_locatarios
+        return self.paginate_by
 
     def get_queryset(self):
         self.object_list = Locatario.objects.nao_temporarios().filter(do_locador=self.request.user).order_by(
@@ -1726,6 +1754,10 @@ class Contratos(LoginRequiredMixin, ListView):
     context_object_name = 'contratos'
     paginate_by = 27
 
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_contratos
+        return self.paginate_by
+
     def get_queryset(self):
         self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_registro')
         return self.object_list
@@ -1796,6 +1828,10 @@ class Notas(LoginRequiredMixin, ListView):
     context_object_name = 'anotacoes'
     paginate_by = 27
     form_class = FormAnotacoes
+
+    def get_paginate_by(self, queryset):
+        self.paginate_by = self.request.user.itens_pag_notas
+        return self.paginate_by
 
     def get_queryset(self):
         self.object_list = Anotacoe.objects.filter(do_usuario=self.request.user).order_by('-data_registro')

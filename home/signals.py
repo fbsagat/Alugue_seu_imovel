@@ -68,8 +68,9 @@ def verificar_contrato_vencimento(do_locador, contrato=None):
                 # no None e se a data de vencimento deste contrato é maior que a data em user.notif_parc_venc_2
                 if do_locador.notif_contrato_venc_2 is not None:
                     if contrato.data_saida() >= do_locador.notif_contrato_venc_2.date():
+                        lida = True if contrato.rescindido is False else False
                         criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
-                                              assunto=3, lida=True if contrato.rescindido is False else False)
+                                              assunto=3, lida=lida)
         dias = 31
         if contrato.vence_em_ate_x_dias(dias):
             if not contrato.get_notific_vence_em_ate_x_dias():
@@ -158,7 +159,7 @@ def criar_uma_notificacao(do_usuario, autor_classe, objeto_id, lida=False, assun
     notific.do_usuario = do_usuario
     notific.autor_classe = autor_classe
     notific.objeto_id = objeto_id
-    if lida:
+    if lida is True:
         notific.lida = lida
         notific.data_registro = datetime.datetime.now()
     if assunto:
@@ -252,10 +253,11 @@ def contrato_pre_save(sender, instance, **kwargs):
             gerenciar_parcelas(instance_contrato=instance)
             tratar_pagamentos(instance_contrato=instance)
 
-        if instance.em_posse:
+        if instance.em_posse is True:
+            # Ao editar um contrato, se em_posse is true, marcar a sua notificação como lida.
             try:
-                Notificacao.objects.filter(pk=instance.get_notific_criado().pk).update(
-                    data_lida=datetime.datetime.now())
+                notificacao = Notificacao.objects.filter(pk=instance.get_notific_criado().pk)
+                notificacao.definir_lida()
             except:
                 pass
 
@@ -305,6 +307,14 @@ def sugestao_pre_save(sender, instance, **kwargs):
 
 
 # Gerenciadores de post_save \/  ---------------------------------------
+# @receiver(post_save, sender=Notificacao)
+# def notificacao_pre_save(sender, instance, **kwargs):
+#     if instance.pk == 51:
+#         print('51')
+#         print(instance)
+#         print(instance.lida)
+
+
 @receiver(post_save, sender=ContratoModelo)
 def contrato_modelo_post_save(sender, instance, created, **kwargs):
     # Tem outro gerar_contrato_pdf em visualizar_modelo em views (backup deste)
@@ -330,7 +340,7 @@ def contrato_modelo_post_save(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Usuario)
 def usuario_post_save(sender, instance, created, **kwargs):
     if created:
-        for _ in range(0, 3):
+        for _ in range(0, instance.locat_slots):
             Slot.objects.create(do_usuario=instance, gratuito=True)
 
 
@@ -360,7 +370,6 @@ def locatario_post_save(sender, instance, **kwargs):
 @transaction.atomic
 @receiver(post_save, sender=Contrato)
 def contrato_post_save(sender, instance, created, **kwargs):
-    lida = True if instance.em_posse else False
     # Pega os dados para tratamento:
     if created:
         # Gera as parcelas quando o contrato é criado:
@@ -368,8 +377,9 @@ def contrato_post_save(sender, instance, created, **kwargs):
         # Criar notificação 'contrato criado' com o botão 'receber contrato'
         tipo_conteudo = ContentType.objects.get_for_model(Contrato)
         if instance.do_locador.notif_contrato_criado is not None:
-            criar_uma_notificacao(do_usuario=instance.do_locador, autor_classe=tipo_conteudo, objeto_id=instance.pk,
-                                  lida=lida, assunto=1)
+            lida = True if instance.em_posse is True else False
+            criar_uma_notificacao(do_usuario=instance.do_locador, autor_classe=tipo_conteudo,
+                                         objeto_id=instance.pk, lida=lida, assunto=1)
     else:
         verificar_aluguel_vencimento(do_usuario=instance.do_locador, contrato=instance)
         verificar_contrato_vencimento(do_locador=instance.do_locador, contrato=instance)
