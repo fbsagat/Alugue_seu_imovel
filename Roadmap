@@ -118,6 +118,12 @@ Ok. Tarefas:
                 Quando o desenvolvedor responder uma mensagem. = OK.
                 Quando o aluguel de alguém vencer(e/ou faltando 5 dias). = OK.
                 Quando o contrato de alguém vencer(e/ou faltando 30 dias). = OK.
+Ok. Página de exclusão de item: Ao invés de mostrar um página, abrir um modal(que ficará na pagina principal(base.html)),
+        após isto, fazer os redirects das views para o 'request.META['HTTP_REFERER']', isto corrige o problema quando
+        se apaga a partir da aba de notificações, que pode ser aberta de qualquer página, redirecionando para outra,
+        o que pode causar uma confusão no usuário.
+        Vou resolver assim: Buscar a página anterior a atual(no caso, a da exclusão) na view Excluir e dar o redirect
+        lá(em get_success_url).
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
@@ -145,14 +151,6 @@ Aplicar o redis cache https://youtu.be/7rc5KA0nrwk
 
 Arrumar e organizar, deixar otimizado o painel administrativo(django admin) completo.
 
-Página de exclusão de item: Ao invés de mostrar um página, abrir um modal(que ficará na pagina principal(base.html)),
-        após isto, fazer os redirects das views para o 'request.META['HTTP_REFERER']', isto corrige o problema quando
-        se apaga a partir da aba de notificações, que pode ser aberta de qualquer página, redirecionando para outra,
-        o que pode causar uma confusão no usuário.
-        Vou resolver assim: Quando ocorrer este tipo de exclusão(a partir do offcanvas) vou enviar um parâmetro para
-         a view de exclusão, com o reverse da página atual, para quando excluir o item, redirecionar para esta página.
-         Ou
-         Buscar a página anterior a atual(no caso, a da exclusão) na view Excluir e dar o redirect lá(em get_success_url).
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 

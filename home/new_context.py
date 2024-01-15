@@ -150,10 +150,22 @@ def navbar_notificacoes(request):
             '-data_registro')
         notific_hist = Notificacao.objects.filter(do_usuario=request.user, lida=True, apagada_oculta=False).order_by(
             '-data_lida')
-
         context = {'notificacoes': notific[:request.user.notif_qtd],
                    'notificacoes_hist': notific_hist[:request.user.notif_qtd_hist]}
         return context
     else:
         context = {}
         return context
+
+
+def ultima_pagina_valida(request):
+    """Esta função registra na sessão do usuário, para qualquer tipo de uso pelo programa, o reverse da última página
+     visitada pelo usuário, desde que esta página não seja a de exclusão de algum objeto. Criada para resolver um
+      problema em que após excluir um item, o site não conseguia redirecionar para a última página anterior a de
+      exclusão"""
+    from django.urls import resolve
+    current_reverse = f"{resolve(request.path_info).namespace}:{resolve(request.path_info).url_name}"
+    context = {}
+    if 'Excluir' not in current_reverse:
+        request.session['ult_pag_valida_reverse'] = current_reverse
+    return context

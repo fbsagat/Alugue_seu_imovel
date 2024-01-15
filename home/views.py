@@ -1729,7 +1729,10 @@ class ExcluirLocat(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        return reverse_lazy('home:Locatários')
+        if self.request.session.get('ult_pag_valida_reverse', None):
+            return reverse(self.request.session.get('ult_pag_valida_reverse'))
+        else:
+            return reverse('home:Locatários')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Locatario, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -1803,11 +1806,10 @@ class ExcluirContrato(LoginRequiredMixin, DeleteView):
     template_name = 'excluir_item.html'
 
     def get_success_url(self):
-        imov_do_contrato = Contrato.objects.get(pk=self.kwargs['pk']).do_imovel.pk
-        imovel = Imovei.objects.get(pk=imov_do_contrato)
-        imovel.com_locatario = None
-        imovel.save()
-        return reverse_lazy('home:Contratos')
+        if self.request.session.get('ult_pag_valida_reverse', None):
+            return reverse(self.request.session.get('ult_pag_valida_reverse'))
+        else:
+            return reverse('home:Contratos')
 
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Contrato, pk=self.kwargs['pk'], do_locador=self.request.user)
@@ -1944,6 +1946,7 @@ class Homepage(FormView):
 
     def get_success_url(self):
         email = self.request.POST.get('email')
+        self.request.session['email_inicio'] = email
         usuarios = Usuario.objects.filter(email=email)
         if usuarios:
             return reverse('home:Login')
@@ -1964,6 +1967,8 @@ class CriarConta(CreateView):
     def get_form(self, form_class=None):
         form = super(CriarConta, self).get_form(form_class)
         form.fields['email'].required = True
+        if self.request.session.get('email_inicio', None):
+            form.initial = {'email': self.request.session.get('email_inicio')}
         return form
 
     def get_context_data(self, *, object_list=True, **kwargs):

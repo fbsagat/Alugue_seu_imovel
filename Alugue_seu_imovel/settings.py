@@ -127,6 +127,7 @@ TEMPLATES = [
                 'home.new_context.titulo_pagina',
                 'home.new_context.navbar_forms',
                 'home.new_context.navbar_notificacoes',
+                'home.new_context.ultima_pagina_valida',
             ],
         },
     },
