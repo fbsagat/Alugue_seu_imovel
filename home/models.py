@@ -90,26 +90,16 @@ class Usuario(AbstractUser):
                                         on_delete=models.SET_NULL)
 
     # Configurações da aplicação
-    notif_qtd = models.IntegerField(default=20, blank=False, help_text='Quantidade de novas notificações',
-                                    validators=[MinValueValidator(10), MaxValueValidator(40)])
-    notif_qtd_hist = models.IntegerField(default=20, blank=False, help_text='Quantidade de notificações no histórico',
-                                         validators=[MinValueValidator(10), MaxValueValidator(40)])
-    itens_pag_visao_geral = models.IntegerField(default=27, blank=False, help_text='Itens por página em Visão Geral',
-                                                validators=[MinValueValidator(10), MaxValueValidator(40)])
-    itens_pag_ativos = models.IntegerField(default=12, blank=False, help_text='Itens por página em Itens Ativos',
-                                           validators=[MinValueValidator(12), MaxValueValidator(24)])
-    itens_pag_pagamentos = models.IntegerField(default=54, blank=False, help_text='Itens por página em Pagamentos',
-                                               validators=[MinValueValidator(54), MaxValueValidator(86)])
-    itens_pag_gastos = models.IntegerField(default=54, blank=False, help_text='Itens por página em Gastos',
-                                           validators=[MinValueValidator(54), MaxValueValidator(86)])
-    itens_pag_imoveis = models.IntegerField(default=27, blank=False, help_text='Itens por página em Imóveis',
-                                            validators=[MinValueValidator(27), MaxValueValidator(54)])
-    itens_pag_locatarios = models.IntegerField(default=27, blank=False, help_text='Itens por página em Locatários',
-                                               validators=[MinValueValidator(27), MaxValueValidator(54)])
-    itens_pag_contratos = models.IntegerField(default=27, blank=False, help_text='Itens por página em Contratos',
-                                              validators=[MinValueValidator(27), MaxValueValidator(54)])
-    itens_pag_notas = models.IntegerField(default=27, blank=False, help_text='Itens por página em Anotações',
-                                          validators=[MinValueValidator(27), MaxValueValidator(54)])
+    notif_qtd = models.IntegerField(default=20, blank=False)
+    notif_qtd_hist = models.IntegerField(default=20, blank=False)
+    itens_pag_visao_geral = models.IntegerField(default=27, blank=False)
+    itens_pag_ativos = models.IntegerField(default=12, blank=False)
+    itens_pag_pagamentos = models.IntegerField(default=56, blank=False)
+    itens_pag_gastos = models.IntegerField(default=56, blank=False)
+    itens_pag_imoveis = models.IntegerField(default=28, blank=False)
+    itens_pag_locatarios = models.IntegerField(default=28, blank=False)
+    itens_pag_contratos = models.IntegerField(default=28, blank=False)
+    itens_pag_notas = models.IntegerField(default=28, blank=False)
 
     # Configurações de notificações
     notif_recibo = models.DateTimeField(default=datetime.now, null=True)

@@ -28,11 +28,41 @@ Painel / {{ SITE_NAME }}
                     <div class="card-header fs-5">
                         Configurações da aplicação:
                     </div>
-                    <div class="card-body">
-                        <button type="button" class="btn btn-secondary" title="Salvar configurações">
-                            Salvar
-                        </button>
-                    </div>
+                    <form action="{% url 'home:Configurar App' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="container">
+                            <div class="row">
+                                <div class="col mx-auto">
+                                    {% for field in form_config_app %}
+                                    {% if forloop.counter|divisibleby:2 %}
+                                    {% else %}
+                                    <div class="col mt-2 mb-2">
+                                        <div class="fs-6">{{ field.label_tag }}</div>
+                                        <div class="fs-6 text-black">{{ field }}</div>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="col mx-auto">
+                                    {% for field in form_config_app %}
+                                    {% if forloop.counter|divisibleby:2 %}
+                                    <div class="col mt-2 mb-2">
+                                        <div class="fs-6">{{ field.label_tag }}</div>
+                                        <div class="fs-6 text-black">{{ field }}</div>
+                                    </div>
+                                    {% else %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <button type="submit" class="btn btn-secondary" title="Salvar configurações">
+                                Salvar
+                            </button>
+                        </div>
+                    </form>
                 </div>
                 <!-- Configurações de notificações FIM -->
 
@@ -99,9 +129,12 @@ Painel / {{ SITE_NAME }}
                                 title="Baixar todos os registros em formato de planilha/Formato não restaurável">
                             Baixar Planilha
                         </button>
-                        <br>
+                        <br><br>
                         <small class="text-muted">Por questão de segurança o arquivo de backup será criptografado e
                             só poderá ser recuperado nesta conta.</small>
+                        <br>
+                        <small class="text-muted">A planilha é um arquivo no formato csv não criptografado, este
+                            documento não poderá ser recuperado neste site.</small>
                     </div>
 
                 </div>

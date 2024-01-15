@@ -34,7 +34,7 @@ from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots, \
-    FormConfigNotific
+    FormConfigNotific, FormConfigApp
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, \
     Notificacao, \
@@ -2046,14 +2046,28 @@ def painel_slots(request):
 
 @login_required
 def painel_configs(request):
+    user = request.user
     form_config = FormConfigNotific(initial={
-        'notif_recibo': True if request.user.notif_recibo else False,
-        'notif_contrato_criado': True if request.user.notif_contrato_criado else False,
-        'notif_contrato_venc_1': True if request.user.notif_contrato_venc_1 else False,
-        'notif_contrato_venc_2': True if request.user.notif_contrato_venc_2 else False,
-        'notif_parc_venc_1': True if request.user.notif_parc_venc_1 else False,
-        'notif_parc_venc_2': True if request.user.notif_parc_venc_2 else False})
-    context = {'SITE_NAME': settings.SITE_NAME, 'form_config': form_config}
+        'notif_recibo': True if user.notif_recibo else False,
+        'notif_contrato_criado': True if user.notif_contrato_criado else False,
+        'notif_contrato_venc_1': True if user.notif_contrato_venc_1 else False,
+        'notif_contrato_venc_2': True if user.notif_contrato_venc_2 else False,
+        'notif_parc_venc_1': True if user.notif_parc_venc_1 else False,
+        'notif_parc_venc_2': True if user.notif_parc_venc_2 else False})
+
+    form_config_app = FormConfigApp(initial={
+        'notif_qtd': user.notif_qtd,
+        'notif_qtd_hist': user.notif_qtd_hist,
+        'itens_pag_visao_geral': user.itens_pag_visao_geral,
+        'itens_pag_ativos': user.itens_pag_ativos,
+        'itens_pag_pagamentos': user.itens_pag_pagamentos,
+        'itens_pag_gastos': user.itens_pag_gastos,
+        'itens_pag_imoveis': user.itens_pag_imoveis,
+        'itens_pag_locatarios': user.itens_pag_locatarios,
+        'itens_pag_contratos': user.itens_pag_contratos,
+        'itens_pag_notas': user.itens_pag_notas})
+
+    context = {'SITE_NAME': settings.SITE_NAME, 'form_config': form_config, 'form_config_app': form_config_app}
     return render(request, 'painel_configs.html', context)
 
 
@@ -2078,9 +2092,30 @@ def configurar_notificacoes(request):
             user.notif_parc_venc_2 = datetime.now() if notif_parc_venc_2 else None
             user.save(update_fields=['notif_recibo', 'notif_contrato_criado', 'notif_contrato_venc_1',
                                      'notif_contrato_venc_2', 'notif_parc_venc_1', 'notif_parc_venc_2', ])
-
             messages.success(request, f"As novas configurações foram salvas")
+    return redirect(request.META['HTTP_REFERER'])
 
+
+@login_required
+def configurar_app(request):
+    if request.method == 'POST':
+        form = FormConfigApp(request.POST)
+        if form.is_valid():
+            user = request.user
+            user.notif_qtd = form.cleaned_data['notif_qtd']
+            user.notif_qtd_hist = form.cleaned_data['notif_qtd_hist']
+            user.itens_pag_visao_geral = form.cleaned_data['itens_pag_visao_geral']
+            user.itens_pag_ativos = form.cleaned_data['itens_pag_ativos']
+            user.itens_pag_pagamentos = form.cleaned_data['itens_pag_pagamentos']
+            user.itens_pag_gastos = form.cleaned_data['itens_pag_gastos']
+            user.itens_pag_imoveis = form.cleaned_data['itens_pag_imoveis']
+            user.itens_pag_locatarios = form.cleaned_data['itens_pag_locatarios']
+            user.itens_pag_contratos = form.cleaned_data['itens_pag_contratos']
+            user.itens_pag_notas = form.cleaned_data['itens_pag_notas']
+            user.save(update_fields=['notif_qtd', 'notif_qtd_hist', 'itens_pag_visao_geral', 'itens_pag_ativos',
+                                     'itens_pag_pagamentos', 'itens_pag_gastos', 'itens_pag_imoveis',
+                                     'itens_pag_locatarios', 'itens_pag_contratos', 'itens_pag_notas', ])
+            messages.success(request, f"As novas configurações foram salvas")
     return redirect(request.META['HTTP_REFERER'])
 
 

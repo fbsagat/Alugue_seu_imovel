@@ -59,6 +59,47 @@ class FormUsuario(UserChangeForm):
             raise forms.ValidationError("Número de CPF inválido")
 
 
+class FormConfigApp(forms.Form):
+    notif_qtd = forms.IntegerField(max_value=40, min_value=10, step_size=10,
+                                   widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+    notif_qtd_hist = forms.IntegerField(max_value=40, min_value=10, step_size=10,
+                                        widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+
+    itens_pag_visao_geral = forms.IntegerField(max_value=54, min_value=27, step_size=1,
+                                               widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+
+    itens_pag_ativos = forms.IntegerField(max_value=27, min_value=12, step_size=3,
+                                          widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+
+    itens_pag_pagamentos = forms.IntegerField(max_value=108, min_value=28, step_size=4,
+                                              widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+    itens_pag_gastos = forms.IntegerField(max_value=108, min_value=28, step_size=4,
+                                          widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+
+    itens_pag_imoveis = forms.IntegerField(max_value=56, min_value=16, step_size=4,
+                                           widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+    itens_pag_locatarios = forms.IntegerField(max_value=56, min_value=16, step_size=4,
+                                              widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+    itens_pag_contratos = forms.IntegerField(max_value=56, min_value=16, step_size=4,
+                                             widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+    itens_pag_notas = forms.IntegerField(max_value=56, min_value=16, step_size=4,
+                                         widget=forms.NumberInput(attrs={'class': 'form-control-sm'}))
+
+    def __init__(self, *args, **kwargs):
+        super(FormConfigApp, self).__init__(*args, **kwargs)
+        self.fields['notif_qtd'].label = 'Quantidade máxima de novas notificações a exibir na aba notificações'
+        self.fields[
+            'notif_qtd_hist'].label = 'Quantidade máxima de notificações a exibir na aba histórico de notificações'
+        self.fields['itens_pag_visao_geral'].label = 'Quantidade máxima de itens por página em Visão Geral'
+        self.fields['itens_pag_ativos'].label = 'Quantidade máxima de itens por página em Itens Ativos'
+        self.fields['itens_pag_pagamentos'].label = 'Quantidade máxima de itens por página em Pagamentos'
+        self.fields['itens_pag_gastos'].label = 'Quantidade máxima de itens por página em Gastos'
+        self.fields['itens_pag_imoveis'].label = 'Quantidade máxima de itens por página em Imóveis'
+        self.fields['itens_pag_locatarios'].label = 'Quantidade máxima de itens por página em Locatários'
+        self.fields['itens_pag_contratos'].label = 'Quantidade máxima de itens por página em Contratos'
+        self.fields['itens_pag_notas'].label = 'Quantidade máxima de itens por página em Anotações'
+
+
 class FormConfigNotific(forms.Form):
     notif_recibo = forms.BooleanField(initial=True, required=False)
     notif_contrato_criado = forms.BooleanField(initial=True, required=False)

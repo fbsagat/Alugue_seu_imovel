@@ -4,14 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria).">
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/new_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/new_context.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_configs.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_configs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -124,7 +128,7 @@
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\financeiro\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver">
+  <component name="RunManager" selected="Python.Execução inicial add/predio">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="ENV_FILES" value="" />
@@ -523,7 +527,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="195" />
+    <option name="localTasksCounter" value="196" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -556,7 +560,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;View editar_modelo foi aprimorada: mais inteligente, economizadora de espaço no banco de dados." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Iniciado o aplicativo financeiro do site, que vai cuidar dos pagamentos." />
@@ -581,6 +584,7 @@
     <MESSAGE value="Melhorias.&#10;&#10;Iniciado o gatilho de notificação de parcelas a vencer e parcelas vencidas." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Melhorias e correções no gatilho de notificação de parcelas a vencer(5d) e parcelas vencidas e contratos a vencer(30d) e contratos vencidas.&#10;&#10;Criadas as funções de verificar_aluguel_vencimento e verificar_contrato_vencimento, que criam notificações de vencimento e/ou perto de vencimento de contratos e parcelas.&#10;&#10;Modificações na view recebido_contrat que agora executa suas funções a partir de dois tipos de pks: da notificação vinculada ao contrato ou diretamente da pk do próprio contrato.&#10;&#10;Cards da area de notificação melhorados." />
     <MESSAGE value="Melhorias e correções de bugs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs." />
+    <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria)." />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria)." />
   </component>
 </project>
