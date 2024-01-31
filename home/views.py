@@ -2285,8 +2285,15 @@ def baixar_planilha(request):
                                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", )
         response["Content-Disposition"] = "attachment; filename=%s" % filename
         return response
-
     return planilha_response()
+
+
+# 1. Primeiro criar a funcao restaurar, tentar restaurar como uma fixture, esta funcao deve restaurar o arquivo de
+# fixture gerado pelo aplicativo 'planilha_to_json' do prédio, perfeitamente e através da view; depois eu aplico a
+# criptografia. (vou precisar juntar os três arquivos em um zip)
+# 2. Depois que a funcao acima estiver apta, criar a funcao backup, criando os arquivos json como se cria em
+# 'planilha_to_json'. (vou precisar juntar os três arquivos em um zip)
+# Por último criar o sistema de criptografia/descriptografia e verificador de usuário.
 
 
 @login_required
