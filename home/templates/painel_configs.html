@@ -118,17 +118,30 @@ Painel / {{ SITE_NAME }}
                     </div>
 
                     <div class="card-body">
-                        <button type="button" class="btn btn-outline-primary"
-                                title="Baixar arquivo com todos os dados">
-                            Baixar Backup
-                        </button>
-                        <button type="button" class="btn btn-outline-primary"
-                                title="Carregar arquivo de backup para restauração de dados">Restaurar Backup
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary"
-                                title="Baixar todos os registros em formato de planilha/Formato não restaurável">
-                            Baixar Planilha
-                        </button>
+
+                        <div class="flex justify-content-start">
+                            <form action="" class="mr-2">
+                                <button type="submit" class="btn btn-outline-primary"
+                                        title="Baixar arquivo com todos os dados">
+                                    Baixar Backup
+                                </button>
+                            </form>
+
+                            <form action="" class="mr-2">
+                                <button type="submit" class="btn btn-outline-primary"
+                                        title="Carregar arquivo de backup para restauração de dados">
+                                    Restaurar Backup
+                                </button>
+                            </form>
+
+                            <form action="{% url 'home:Baixar Planilha' %}" class="mr-2">
+                                <button type="submit" class="btn btn-outline-secondary"
+                                        title="Baixar todos os registros em formato de planilha/Formato não restaurável">
+                                    Baixar Planilha
+                                </button>
+                            </form>
+                        </div>
+
                         <br><br>
                         <small class="text-muted">Por questão de segurança o arquivo de backup será criptografado e
                             só poderá ser restaurado nesta conta.</small>

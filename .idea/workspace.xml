@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front).">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.">
+      <change afterPath="$PROJECT_DIR$/ant_requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/administrador_de_locacao.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/administrador_de_locacao.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/painel_configs.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_configs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -518,7 +522,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="197" />
+    <option name="localTasksCounter" value="198" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -573,9 +577,9 @@
     <MESSAGE value="Iniciando a modificação da forma de aquisição da notificação de cada objeto, de um atributo para um método." />
     <MESSAGE value="Melhorias.&#10;&#10;Iniciado o gatilho de notificação de parcelas a vencer e parcelas vencidas." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Melhorias e correções no gatilho de notificação de parcelas a vencer(5d) e parcelas vencidas e contratos a vencer(30d) e contratos vencidas.&#10;&#10;Criadas as funções de verificar_aluguel_vencimento e verificar_contrato_vencimento, que criam notificações de vencimento e/ou perto de vencimento de contratos e parcelas.&#10;&#10;Modificações na view recebido_contrat que agora executa suas funções a partir de dois tipos de pks: da notificação vinculada ao contrato ou diretamente da pk do próprio contrato.&#10;&#10;Cards da area de notificação melhorados." />
-    <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria)." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front)." />
-    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front)." />
+    <MESSAGE value="Melhorias e correções de bugs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs." />
   </component>
 </project>

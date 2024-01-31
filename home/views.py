@@ -1,4 +1,5 @@
 import os
+import io
 from datetime import datetime, timedelta
 from os import path
 from math import floor
@@ -7,11 +8,12 @@ from dateutil.relativedelta import relativedelta
 
 from Alugue_seu_imovel import settings
 from num2words import num2words
+import xlsxwriter
 
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files import File
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect, render, reverse, get_object_or_404, Http404, HttpResponseRedirect
@@ -2117,6 +2119,105 @@ def configurar_app(request):
                                      'itens_pag_locatarios', 'itens_pag_contratos', 'itens_pag_notas', ])
             messages.success(request, f"As novas configurações foram salvas")
     return redirect(request.META['HTTP_REFERER'])
+
+
+def baixar_planilha(request):
+    # Criar o arquivo de planilha contendo todas as informações que o usuário colocou no site: Registros de Imóveis,
+    # locatários, contratos, pagamentos, gastos e anotações e enviar para download.
+    user = request.user
+    output = io.BytesIO()
+
+    imoveis_user = Imovei.objects.filter(do_locador=user).order_by('data_registro').values()
+    locatarios_user = Locatario.objects.filter(do_locador=user).values()
+    contratos_user = Contrato.objects.filter(do_locador=user).values()
+    pagamentos_user = Pagamento.objects.filter(ao_locador=user).values()
+    gastos_user = Gasto.objects.filter(do_locador=user).values()
+    notas_user = Anotacoe.objects.filter(do_usuario=user).values()
+
+    workbook = xlsxwriter.Workbook(output)
+    date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
+
+    imoveis = workbook.add_worksheet()
+    imoveis.name = 'imoveis'
+    excluidos = ['do_locador_id', ]
+    renomear = {'grupo_id': 'grupo'}
+    for col, imovel in enumerate(imoveis_user):
+        row = 0
+        for titulo, item in imovel.items():
+            if titulo not in excluidos:
+                if isinstance(item, datetime):
+                    imoveis.write_datetime(col + 1, row, item, date_format)
+                else:
+                    if titulo == 'grupo_id':
+                        imovel_id = imovel['id']
+                        imovel = Imovei.objects.get(pk=imovel_id)
+                        imoveis.write(col + 1, row, str(imovel.grupo))
+                    else:
+                        imoveis.write(col + 1, row, item)
+                if col == 0:
+                    if titulo in renomear.keys():
+                        titulo = renomear[f'{titulo}']
+                    imoveis.write(col, row, titulo)
+                row += 1
+
+    locatarios = workbook.add_worksheet()
+    locatarios.name = 'locatarios'
+    excluidos = ['do_locador_id', 'da_notificacao_id', 'docs', 'temporario']
+    renomear = {'RG': 'rg', 'cript_cpf': 'cpf'}
+    for col, locatario in enumerate(locatarios_user):
+        row = 0
+        for titulo, item in locatario.items():
+            if titulo not in excluidos:
+                if isinstance(item, datetime):
+                    locatarios.write_datetime(col + 1, row, item, date_format)
+                else:
+                    if titulo == 'cript_cpf':
+                        locatario_id = locatario['id']
+                        locat = Locatario.objects.get(pk=locatario_id)
+                        locatarios.write(col + 1, row, locat.cpf())
+                    elif titulo == 'estadocivil':
+                        locatario_id = locatario['id']
+                        locat = Locatario.objects.get(pk=locatario_id)
+                        locatarios.write(col + 1, row, locat.get_estadocivil_display())
+                    else:
+                        locatarios.write(col + 1, row, item)
+                if col == 0:
+                    if titulo in renomear.keys():
+                        titulo = renomear[f'{titulo}']
+                    locatarios.write(col, row, titulo)
+                row += 1
+
+    contratos = workbook.add_worksheet()
+    contratos.name = 'contratos'
+    excluidos = ['do_locador_id', 'codigo', 'recibos_pdf', 'objects']
+    renomear = {'duracao': 'duração'}
+    for col, contrato in enumerate(contratos_user):
+        row = 0
+        for titulo, item in contrato.items():
+            if titulo not in excluidos:
+                if isinstance(item, datetime):
+                    contratos.write_datetime(col + 1, row, item, date_format)
+                else:
+                    if titulo == 'valor_mensal':
+                        contrato_id = contrato['id']
+                        contrato = Contrato.objects.get(pk=contrato_id)
+                        contratos.write(col + 1, row, contrato.valor_format())
+                    else:
+                        contratos.write(col + 1, row, item)
+                if col == 0:
+                    if titulo in renomear.keys():
+                        titulo = renomear[f'{titulo}']
+                    contratos.write(col, row, titulo)
+                row += 1
+
+    workbook.close()
+
+    output.seek(0)
+    filename = f"{user.username}_planilha.xlsx"
+    response = HttpResponse(output, content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", )
+    response["Content-Disposition"] = "attachment; filename=%s" % filename
+
+    return response
 
 
 @login_required
