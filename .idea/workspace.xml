@@ -4,19 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria).">
-      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front).">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/login.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/painel_configs.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_configs.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,7 +119,7 @@
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\financeiro\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Execução inicial add/predio">
+  <component name="RunManager" selected="Python.Runserver">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="ENV_FILES" value="" />
@@ -171,7 +162,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-50da183f06c8-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.13135.95" />
+        <option value="bundled-python-sdk-5a2391486177-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.13763.11" />
       </set>
     </attachedChunks>
   </component>
@@ -527,7 +518,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="196" />
+    <option name="localTasksCounter" value="197" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -560,7 +551,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição.&#10;Agora quando o usuário 'copia' para sí um modelo, esta relação (manytomany) recebe uma data nova para ordenamento correto na página 'meus modelos' do usuário." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Iniciado o aplicativo financeiro do site, que vai cuidar dos pagamentos." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;corpo de um modelo fictício de contrato pdf agora é idêntico ao dos fixtures.&#10;Aplicativo novo para finanças, semaprado do app home, para melhor organização.&#10;validação adicionada para o corpo do contrato modelo, agora tem limite de tamanho em mb. validador: tamanho_max_mb.&#10;Titulo do contrato modelo agora é renomeado com uuid, quando só sobre a instanci para um contrato_doc_config, para evitar nome repetido, pois agora tem constraint no titulo do mesmo.&#10;Instalei o stripe, ainda não está implementado.&#10;Implementado o messanger de erro nos formularios de criação e edição de modelos de contratos.&#10;Implementado o debug da view de editar_modelo." />
@@ -585,6 +575,7 @@
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Melhorias e correções no gatilho de notificação de parcelas a vencer(5d) e parcelas vencidas e contratos a vencer(30d) e contratos vencidas.&#10;&#10;Criadas as funções de verificar_aluguel_vencimento e verificar_contrato_vencimento, que criam notificações de vencimento e/ou perto de vencimento de contratos e parcelas.&#10;&#10;Modificações na view recebido_contrat que agora executa suas funções a partir de dois tipos de pks: da notificação vinculada ao contrato ou diretamente da pk do próprio contrato.&#10;&#10;Cards da area de notificação melhorados." />
     <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria)." />
-    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria)." />
+    <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front)." />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front)." />
   </component>
 </project>

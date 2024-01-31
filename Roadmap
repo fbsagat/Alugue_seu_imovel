@@ -132,6 +132,13 @@ Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todos?).
 Colocar um botão 'gerar PDF' na página eventos.
 
+Criar um modelo para links temporários, que seão usados para enviar emails de exclusão de conta, baixar arquivos de
+ backup, etc...
+ Criar sistema de envio de emails(enviar email com link de exclusão de conta, mudança de senha,
+ download de arquivo de backup/planilha, e etc...).
+ Depois de criar a função backup e load_backup, atualizar o gerador de fixtures da planilha para gerar diretamente o
+  arquivo para carrega-lo no site, deixando de lado a forma atual, via fixture.
+
 Criar um botão de painel com configurações diversas:
         1. Compra de tickets com real e bitcoin via lightning network,
         2. Botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
