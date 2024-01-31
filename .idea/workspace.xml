@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.">
-      <change afterPath="$PROJECT_DIR$/ant_requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/administrador_de_locacao.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/administrador_de_locacao.iml" afterDir="false" />
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Iniciado o gerador de planilhas backup do painel de configurações. Com o framework: xlsxwriter.">
+      <change afterPath="$PROJECT_DIR$/Expenses01.xlsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fbaugusto_planilha.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/painel_configs.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_configs.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -522,7 +519,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="198" />
+    <option name="localTasksCounter" value="199" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -555,7 +552,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções de bugs e melhorias no código.&#10;&#10;Continuando o sistema de versionamento do modelo de contrato e lógica de exclusão, bem como lógica de edição." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Iniciado o aplicativo financeiro do site, que vai cuidar dos pagamentos." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;corpo de um modelo fictício de contrato pdf agora é idêntico ao dos fixtures.&#10;Aplicativo novo para finanças, semaprado do app home, para melhor organização.&#10;validação adicionada para o corpo do contrato modelo, agora tem limite de tamanho em mb. validador: tamanho_max_mb.&#10;Titulo do contrato modelo agora é renomeado com uuid, quando só sobre a instanci para um contrato_doc_config, para evitar nome repetido, pois agora tem constraint no titulo do mesmo.&#10;Instalei o stripe, ainda não está implementado.&#10;Implementado o messanger de erro nos formularios de criação e edição de modelos de contratos.&#10;Implementado o debug da view de editar_modelo." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado." />
@@ -580,6 +576,7 @@
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria)." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front)." />
     <MESSAGE value="Melhorias e correções de bugs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs." />
+    <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Iniciado o gerador de planilhas backup do painel de configurações. Com o framework: xlsxwriter." />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Iniciado o gerador de planilhas backup do painel de configurações. Com o framework: xlsxwriter." />
   </component>
 </project>
