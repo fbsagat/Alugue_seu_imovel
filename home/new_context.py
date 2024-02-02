@@ -14,7 +14,8 @@ from home.models import Contrato, Imovei
 def titulo_pagina(request):
     titulo = resolve(request.path_info).url_name
     ano_atual = datetime.date.today().year
-    return {'block_titulo': titulo, 'ano_atual': ano_atual, 'debug_true': True if settings.DEBUG else False}
+    return {'block_titulo': titulo, 'ano_atual': ano_atual, 'debug_true': True if settings.DEBUG else False,
+            'SITE_NAME': settings.SITE_NAME}
 
 
 def navbar_forms(request):

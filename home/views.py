@@ -118,7 +118,6 @@ def visao_geral(request):
     context['valor_total_contratos_ativos'] = usuario.valor_total_contratos_ativos()
     context['valor_total_contratos'] = usuario.valor_total_contratos()
     context['page_obj'] = page
-    context['SITE_NAME'] = settings.SITE_NAME
 
     return render(request, 'exibir_visao_geral.html', context)
 
@@ -247,7 +246,7 @@ def eventos(request):
     context = {'form': form, 'pagamentos': pagamentos, 'gastos': gastos, 'locatarios': locatarios,
                'contratos': contratos, 'imoveis': imoveis, 'anotacoes': anotacoes, 'pg_tt': pg_tt,
                'gasto_tt': gasto_tt, 'contr_tt': contr_tt, 'pag_m_gast': pag_m_gast,
-               'retornou_algo': retornou_algo, 'SITE_NAME': settings.SITE_NAME}
+               'retornou_algo': retornou_algo}
     return render(request, 'exibir_eventos.html', context)
 
 
@@ -272,7 +271,6 @@ class ImoveisAtivos(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ImoveisAtivos, self).get_context_data(**kwargs)
         context['imoveis_qtd'] = len(self.object_list)
-        context['SITE_NAME'] = settings.SITE_NAME
         return context
 
 
@@ -297,7 +295,6 @@ class LocatariosAtivos(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(LocatariosAtivos, self).get_context_data(**kwargs)
         context['locatario_qtd'] = len(self.object_list)
-        context['SITE_NAME'] = settings.SITE_NAME
         return context
 
 
@@ -318,7 +315,6 @@ class ContratosAtivos(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ContratosAtivos, self).get_context_data(**kwargs)
         context['contrato_qtd'] = len(self.object_list)
-        context['SITE_NAME'] = settings.SITE_NAME
         return context
 
 
@@ -366,7 +362,6 @@ class ExcluirPagm(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ExcluirPagm, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         return context
 
 
@@ -418,7 +413,6 @@ class ExcluirGasto(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ExcluirGasto, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         return context
 
 
@@ -471,7 +465,6 @@ def locat_auto_registro(request, code):
             form = FormLocatario(usuario=request.user.pk)
 
         context['form'] = form
-        context['SITE_NAME'] = settings.SITE_NAME
         return render(request, 'locatario_auto_registro.html', context)
 
 
@@ -511,7 +504,6 @@ class RevisarLocat(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(RevisarLocat, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         context['form'] = self.get_form()
         return context
 
@@ -774,11 +766,10 @@ def recibos(request):
                                             name=f'recibos_de_{usuario.recibos_code()}_{dados["cod_contrato"]}.pdf')
                 contrato.save()
 
-        context = {'form': form, 'contrato': contrato, 'tem_contratos': tem_contratos, 'pede_dados': pede_dados,
-                   'SITE_NAME': settings.SITE_NAME}
+        context = {'form': form, 'contrato': contrato, 'tem_contratos': tem_contratos, 'pede_dados': pede_dados}
         return render(request, 'gerar_recibos.html', context)
     else:
-        context = {'tem_contratos': tem_contratos, 'SITE_NAME': settings.SITE_NAME}
+        context = {'tem_contratos': tem_contratos}
         return render(request, 'gerar_recibos.html', context)
 
 
@@ -998,7 +989,7 @@ def tabela(request):
     # Finalizando para envio ao template -==-==-==-==-==-
 
     # Cria o context e já adiciona o campo SITE_NAME
-    context = {'SITE_NAME': settings.SITE_NAME}
+    context = {}
 
     # verifica se o usuario tem contrato para o template assumir outro comportamento
     tem_contratos = True if Contrato.objects.filter(do_locador=request.user.pk).first() else False
@@ -1240,7 +1231,6 @@ def gerar_contrato(request):
             context['form2'] = form2
             context['contrato_ultimo_nome'] = contrato_ultimo
 
-    context['SITE_NAME'] = settings.SITE_NAME
     context['tem_contratos'] = True if contratos_ativos else False
     context['contrato_ultimo'] = True if contrato_ultimo is not None else False
     return render(request, 'gerar_contrato.html', context)
@@ -1269,7 +1259,6 @@ def criar_modelo(request):
                                     f' {settings.TAMANHO_DO_MODELO_Mb}Mb')
 
     context['form'] = form
-    context['SITE_NAME'] = settings.SITE_NAME
     context['variaveis'] = modelo_variaveis
     context['condicoes'] = modelo_condicoes
     return render(request, 'criar_modelo.html', context)
@@ -1301,7 +1290,6 @@ def visualizar_modelo(request, pk):
 
         if modelo.autor == request.user or modelo.comunidade or request.user in modelo.usuarios.all():
             context['modelo'] = modelo
-            context['SITE_NAME'] = settings.SITE_NAME
             return render(request, 'visualizar_contratos_modelos.html', context)
         else:
             raise Http404
@@ -1319,11 +1307,6 @@ class MeusModelos(LoginRequiredMixin, ListView):
             contrato_modelo__excluidos__in=[user, ])
         return qs1.order_by('-data_criacao')
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(MeusModelos, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 class ModelosComunidade(LoginRequiredMixin, ListView):
     template_name = 'modelos_da_comunidade.html'
@@ -1339,11 +1322,6 @@ class ModelosComunidade(LoginRequiredMixin, ListView):
         qs2 = ContratoModelo.objects.filter(comunidade=True).exclude(excluidos__in=[user, ])
         return qs1.union(qs2).order_by('-data_criacao')
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(ModelosComunidade, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 @transaction.atomic
 @login_required
@@ -1352,7 +1330,6 @@ def editar_modelo(request, pk):
     context = {}
     modelo__ = get_object_or_404(ContratoModelo, pk=pk)
     form = FormContratoModelo(request.user, instance=modelo__)
-    context['SITE_NAME'] = settings.SITE_NAME
     context['form'] = form
     context['object'] = modelo__
     context['variaveis'] = modelo_variaveis
@@ -1496,7 +1473,6 @@ class ExcluirModelo(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirModelo, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         contratos_config = ContratoDocConfig.objects.filter(do_modelo=self.object,
                                                             do_contrato__do_locador=self.request.user).values_list(
             'do_contrato')
@@ -1522,11 +1498,6 @@ class Pagamentos(LoginRequiredMixin, ListView):
         self.object_list = Pagamento.objects.filter(ao_locador=self.request.user).order_by('-data_criacao')
         return self.object_list
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Pagamentos, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 # GASTOS ---------------------------------------
 class Gastos(LoginRequiredMixin, ListView):
@@ -1543,10 +1514,6 @@ class Gastos(LoginRequiredMixin, ListView):
         self.object_list = Gasto.objects.filter(do_locador=self.request.user).order_by('-data_criacao')
         return self.object_list
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(Gastos, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
 
 
 # GRUPO ---------------------------------------
@@ -1556,7 +1523,7 @@ def criar_grupo(request):
         grupos = ImovGrupo.objects.filter(do_usuario=request.user)
         form = FormimovelGrupo()
         context = {'form': form if ImovGrupo.objects.filter(do_usuario=request.user).count() <= 17 else '',
-                   'grupos': grupos, 'SITE_NAME': settings.SITE_NAME}
+                   'grupos': grupos}
         return render(request, 'criar_grupos.html', context)
     elif request.method == 'POST':
         nome = request.POST.get('nome')
@@ -1579,11 +1546,6 @@ class EditarGrup(LoginRequiredMixin, UpdateView):
         self.object = get_object_or_404(ImovGrupo, pk=self.kwargs['pk'], do_usuario=self.request.user)
         return self.object
 
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(EditarGrup, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 class ExcluirGrupo(LoginRequiredMixin, DeleteView):
     model = ImovGrupo
@@ -1595,11 +1557,6 @@ class ExcluirGrupo(LoginRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         self.object = get_object_or_404(ImovGrupo, pk=self.kwargs['pk'], do_usuario=self.request.user)
         return self.object
-
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(ExcluirGrupo, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
 
 
 # IMOVEIS ---------------------------------------
@@ -1616,11 +1573,6 @@ class Imoveis(LoginRequiredMixin, ListView):
     def get_queryset(self):
         self.object_list = Imovei.objects.filter(do_locador=self.request.user).order_by('-data_registro')
         return self.object_list
-
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(Imoveis, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
 
 
 class EditarImov(LoginRequiredMixin, UpdateView):
@@ -1640,11 +1592,6 @@ class EditarImov(LoginRequiredMixin, UpdateView):
         self.object = get_object_or_404(Imovei, pk=self.kwargs['pk'], do_locador=self.request.user)
         return self.object
 
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(EditarImov, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 class ExcluirImov(LoginRequiredMixin, DeleteView):
     model = Imovei
@@ -1659,7 +1606,6 @@ class ExcluirImov(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirImov, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         context['aviso'] = ('Tem certeza de que deseja apagar o imóvel selecionado? Todos os contratos e seus'
                             ' respectivos registros de pagamentos também serão removidos.')
         return context
@@ -1681,11 +1627,6 @@ class Locatarios(LoginRequiredMixin, ListView):
             '-data_registro').annotate(
             Count('do_locador'))
         return self.object_list
-
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(Locatarios, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
 
 
 class EditarLocat(LoginRequiredMixin, UpdateView):
@@ -1721,7 +1662,6 @@ class EditarLocat(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(EditarLocat, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         context['form'] = self.get_form()
         return context
 
@@ -1742,7 +1682,6 @@ class ExcluirLocat(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirLocat, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         if self.get_object().temporario is True:
             pass
         else:
@@ -1766,11 +1705,6 @@ class Contratos(LoginRequiredMixin, ListView):
     def get_queryset(self):
         self.object_list = Contrato.objects.filter(do_locador=self.request.user).order_by('-data_registro')
         return self.object_list
-
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(Contratos, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
 
 
 class EditarContrato(LoginRequiredMixin, UpdateView):
@@ -1797,11 +1731,6 @@ class EditarContrato(LoginRequiredMixin, UpdateView):
         self.object = get_object_or_404(Contrato, pk=self.kwargs['pk'], do_locador=self.request.user)
         return self.object
 
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(EditarContrato, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 class ExcluirContrato(LoginRequiredMixin, DeleteView):
     model = Contrato
@@ -1819,7 +1748,6 @@ class ExcluirContrato(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(ExcluirContrato, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         context['aviso'] = ('Tem certeza de que deseja apagar o contrato selecionado? Todos os pagamentos referentes a'
                             ' ele também serão removidos.')
         return context
@@ -1843,7 +1771,6 @@ class Notas(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=True, **kwargs):
         context = super(Notas, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
         return context
 
 
@@ -1863,11 +1790,6 @@ class EditarAnotacao(LoginRequiredMixin, UpdateView):
         self.object = get_object_or_404(Anotacoe, pk=self.kwargs['pk'], do_usuario=self.request.user)
         return self.object
 
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(EditarAnotacao, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
     model = Anotacoe
@@ -1879,11 +1801,6 @@ class ExcluirAnotacao(LoginRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         self.object = get_object_or_404(Anotacoe, pk=self.kwargs['pk'], do_usuario=self.request.user)
         return self.object
-
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(ExcluirAnotacao, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
 
 
 # -=-=-=-=-=-=-=-= TAREFAS -=-=-=-=-=-=-=-=
@@ -1955,11 +1872,6 @@ class Homepage(FormView):
         else:
             return reverse('home:Criar Conta')
 
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(Homepage, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 class CriarConta(CreateView):
     template_name = 'criar_conta.html'
@@ -1972,11 +1884,6 @@ class CriarConta(CreateView):
         if self.request.session.get('email_inicio', None):
             form.initial = {'email': self.request.session.get('email_inicio')}
         return form
-
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(CriarConta, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
 
 
 class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
@@ -2000,10 +1907,6 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         self.object.cript_cpf = cpf
         return super().form_valid(form)
 
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(EditarPerfil, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -2025,11 +1928,6 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         return self.request.user
 
-    def get_context_data(self, *, object_list=True, **kwargs):
-        context = super(ApagarConta, self).get_context_data(**kwargs)
-        context['SITE_NAME'] = settings.SITE_NAME
-        return context
-
 
 @login_required
 def painel_slots(request):
@@ -2040,7 +1938,6 @@ def painel_slots(request):
 
     slots = Slot.objects.filter(do_usuario=request.user).order_by('pk')
 
-    context['SITE_NAME'] = settings.SITE_NAME
     context['slots'] = slots
     context['tickets'] = request.user.tickets
     return render(request, 'painel_slots.html', context)
@@ -2050,7 +1947,7 @@ def painel_slots(request):
 def painel_configs(request):
     user = request.user
     tfa_verif = request.user.is_verified()
-    context = {'SITE_NAME': settings.SITE_NAME}
+    context = {}
 
     device = request.user.staticdevice_set.get_or_create(name='backup')[0]
     tokens_qtd = len(device.token_set.all())
@@ -2530,7 +2427,7 @@ def conversa_com_o_dev(request, pk):
         raise Http404
     notific = get_object_or_404(Notificacao, pk=mensagem.da_notificacao.pk, do_usuario=request.user)
     notific.definir_lida()
-    context = {'mensagem': mensagem, 'SITE_NAME': settings.SITE_NAME}
+    context = {'mensagem': mensagem}
     return render(request, 'dev_chat.html', context)
 
 
@@ -2564,7 +2461,6 @@ def forum_sugestoes(request):
             messages.success(request, f"Sugestão criada com sucesso!")
             return redirect(reverse('home:Sugestões'))
 
-    context['SITE_NAME'] = settings.SITE_NAME
     context['sugestoes'] = sugestoes
     context['sugestoes_curtidas'] = sugestoes_curtidas
     context['sugestoes_implementadas'] = sugestoes_implementadas
