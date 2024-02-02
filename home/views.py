@@ -1951,7 +1951,7 @@ class Homepage(FormView):
         self.request.session['email_inicio'] = email
         usuarios = Usuario.objects.filter(email=email)
         if usuarios:
-            return reverse('home:Login')
+            return reverse('two_factor:login')
         else:
             return reverse('home:Criar Conta')
 
@@ -1964,7 +1964,7 @@ class Homepage(FormView):
 class CriarConta(CreateView):
     template_name = 'criar_conta.html'
     form_class = FormCriarConta
-    success_url = reverse_lazy('home:Login')
+    success_url = reverse_lazy('two_factor:login')
 
     def get_form(self, form_class=None):
         form = super(CriarConta, self).get_form(form_class)
@@ -2049,6 +2049,13 @@ def painel_slots(request):
 @login_required
 def painel_configs(request):
     user = request.user
+    tfa_verif = request.user.is_verified()
+    context = {'SITE_NAME': settings.SITE_NAME}
+
+    device = request.user.staticdevice_set.get_or_create(name='backup')[0]
+    tokens_qtd = len(device.token_set.all())
+    context['tokens_qtd'] = tokens_qtd
+
     form_config = FormConfigNotific(initial={
         'notif_recibo': True if user.notif_recibo else False,
         'notif_contrato_criado': True if user.notif_contrato_criado else False,
@@ -2069,7 +2076,10 @@ def painel_configs(request):
         'itens_pag_contratos': user.itens_pag_contratos,
         'itens_pag_notas': user.itens_pag_notas})
 
-    context = {'SITE_NAME': settings.SITE_NAME, 'form_config': form_config, 'form_config_app': form_config_app}
+    context['form_config'] = form_config
+    context['form_config_app'] = form_config_app
+    context['tfa'] = tfa_verif
+
     return render(request, 'painel_configs.html', context)
 
 
@@ -2285,6 +2295,7 @@ def baixar_planilha(request):
                                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", )
         response["Content-Disposition"] = "attachment; filename=%s" % filename
         return response
+
     return planilha_response()
 
 

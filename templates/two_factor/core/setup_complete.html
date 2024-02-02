@@ -1,0 +1,34 @@
+{% extends "two_factor/_base_focus.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-sm flex justify-center items-center">
+
+    <div class="p-3 bg-black bg-opacity-75 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <div class="border-bottom mb-4">{% block title %}{% trans "Enable Two-Factor Authentication" %}
+                {% endblock %}
+            </div>
+            <br>
+
+            <p class="fs-2">Parabéns!</p>
+            <p>Você habilitou a verificação em duas etapas com sucesso.</p>
+            <br>
+
+            {% if not phone_methods %}
+            <a href="{% url 'home:Painel Configs'%}"
+               class="float-right btn btn-link">Voltar para configurações</a>
+            {% else %}
+            <p>{% blocktrans trimmed %}However, it might happen that you don't have access to
+                your primary token device. To enable account recovery, add a phone
+                number.{% endblocktrans %}</p>
+
+            <a href="{% url 'home:Painel Configs'%}"
+               class="float-right btn btn-link">Voltar para configurações</a>
+            <p><a href="{% url 'two_factor:phone_create' %}"
+                  class="btn btn-success">{% trans "Add Phone Number" %}</a></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

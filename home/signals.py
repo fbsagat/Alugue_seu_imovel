@@ -13,6 +13,10 @@ from home.funcoes_proprias import gerar_contrato_pdf
 from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Notificacao, Anotacoe, Sugestao, Slot, Imovei, \
     ContratoModelo, modelo_variaveis, modelo_condicoes, DevMensagen
 
+from django.contrib.sites.shortcuts import get_current_site
+from django.dispatch import receiver
+from two_factor.signals import user_verified
+
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
 

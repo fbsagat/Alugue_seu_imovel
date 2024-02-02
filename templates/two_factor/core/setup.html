@@ -1,0 +1,70 @@
+{% extends "two_factor/_base_focus.html" %}
+{% load i18n %}
+
+{% block extra_media %}
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="container-sm flex justify-center items-center">
+    <div class="p-3 bg-black bg-opacity-75 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
+
+            <div class="border-bottom mb-4">{% block title %}{% trans "Enable Two-Factor Authentication" %}
+                {% endblock %}
+            </div>
+            {% if wizard.steps.current == 'welcome' %}
+            <p>Você está prestes a levar a segurança da sua conta para o próximo nível. Siga as etapas deste assistente
+                para ativar dois fatores autenticação.</p>
+            {% elif wizard.steps.current == 'method' %}
+            <p>Por favor, selecione o método de autenticação que você gostaria de usar.</p>
+            {% elif wizard.steps.current == 'generator' %}
+            <p>Para começar a usar um gerador de tokens, use seu smartphone para escanear o código QR abaixo.
+                Você pode usar o aplicativo Google Authenticator, por exemplo, encontre-o na loja de
+                aplicativos do seu celular.</p>
+            <br>
+            <p><img src="{{ QR_URL }}" alt="QR Code" class="bg-white"/></p>
+            <br>
+            <p>Alternativamente, você pode usar o seguinte segredo para configurar manualmente o 2FA em seu
+                autenticador ou gerenciador de senhas: </p>
+            <div class="text-success">{{ secret_key }}</div>
+            <br>
+            <p>Em seguida, insira o token gerado pelo aplicativo.</p>
+
+            {% elif wizard.steps.current == 'sms' %}
+            <p>Por favor, insira o número de telefone no qual deseja receber as mensagens de texto. Este número será
+                validado na próxima etapa.</p>
+            {% elif wizard.steps.current == 'call' %}
+            <p>Por favor, insira o número de telefone para o qual deseja ser chamado. Este número será validado na
+                próxima etapa.</p>
+            {% elif wizard.steps.current == 'validation' %}
+            {% if challenge_succeeded %}
+            {% if device.method == 'call' %}
+            <p>Estamos ligando para seu telefone agora, digite os dígitos que você ouve.</p>
+            {% elif device.method == 'sms' %}
+            <p>Enviamos uma mensagem de texto para você. Insira os tokens que enviamos</p>
+            {% endif %}
+            {% else %}
+            <p class="alert alert-warning" role="alert">Encontramos um problema com o método de autenticação
+                selecionado. Volte e verifique se você digitou suas informações corretamente, tente novamente ou use um
+                método de autenticação diferente. Se o problema persistir, entre em contato com o administrador do
+                site.</p>
+            {% endif %}
+            {% elif wizard.steps.current == 'yubikey' %}
+            <p>Para identificar e verificar sua YubiKey, insira um token no campo abaixo. Seu YubiKey estará vinculado à
+                sua conta.</p>
+            {% endif %}
+
+            <form action="" method="post" class="text-black">{% csrf_token %}
+                {% include "two_factor/_wizard_forms.html" %}
+
+                {# hidden submit button to enable [enter] key #}
+                <input type="submit" value="" hidden/>
+
+                {% include "two_factor/_wizard_actions.html" %}
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Autenticação de dois fatores / {{ SITE_NAME }}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+<div class="alert alert-success"><p class="container">Provide a template named
+    <code>two_factor/_base.html</code> to style this page and remove this message.</p></div>
+
+{% block content_wrapper %}
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}

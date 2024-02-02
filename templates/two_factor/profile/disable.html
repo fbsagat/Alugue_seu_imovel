@@ -1,0 +1,25 @@
+{% extends "two_factor/_base_focus.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-sm flex justify-center items-center">
+
+    <div class="p-3 bg-black bg-opacity-75 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <div class="border-bottom mb-4">{% block title %}{% trans "Disable Two-factor Authentication" %}
+                {% endblock %}
+            </div>
+            <p>{% blocktrans trimmed %}You are about to disable two-factor authentication. This
+                weakens your account security, are you sure?{% endblocktrans %}</p>
+            <form method="post">
+                {% csrf_token %}
+                <br>
+                <table>{{ form.as_table }}</table>
+                <button class="btn btn-danger" type="submit">{% trans "Disable" %}
+                </button>
+            </form>
+            <a href="{% url 'home:Painel Configs'%}" class="float-right btn btn-link">Voltar para configurações</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
