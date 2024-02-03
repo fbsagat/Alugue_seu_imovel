@@ -8,6 +8,6 @@ Faker~=22.6.0
 cryptography~=42.0.2
 reportlab~=4.0.9
 xhtml2pdf==0.2.14
-stripe~=8.0.0
+stripe==8.1.0
 requests~=2.31.0
 python-dotenv~=1.0.1
