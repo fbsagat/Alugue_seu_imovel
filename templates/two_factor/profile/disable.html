@@ -9,7 +9,7 @@
             <div class="border-bottom mb-4">{% block title %}{% trans "Disable Two-factor Authentication" %}
                 {% endblock %}
             </div>
-            <p>{% blocktrans trimmed %}You are about to disable two-factor authentication. This
+            <p style="max-width: 600px;">{% blocktrans trimmed %}You are about to disable two-factor authentication. This
                 weakens your account security, are you sure?{% endblocktrans %}</p>
             <form method="post">
                 {% csrf_token %}
