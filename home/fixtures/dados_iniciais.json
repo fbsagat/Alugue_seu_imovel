@@ -33,7 +33,7 @@
     "model": "financeiro.PacoteConfig",
     "pk": 1,
     "fields": {
-      "ticket_valor_base_brl": 2.48,
+      "ticket_valor_base_brl": 2.78,
       "pacote_qtd_inicial": 10,
       "pacote_qtd_multiplicador": 40,
       "desconto_pacote_multiplicador": 5,
