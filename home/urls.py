@@ -6,15 +6,15 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     registrar_anotacao, registrar_contrato, registrar_locat, EditarLocat, ExcluirLocat, registrar_gasto, Pagamentos, \
     Gastos, Notas, EditarGrup, ExcluirGrupo, EditarImov, ExcluirImov, criar_grupo, rescindir_contrat, recebido_contrat, \
     ExcluirPagm, EditarContrato, ExcluirContrato, EditarGasto, ExcluirGasto, EditarAnotacao, ExcluirAnotacao, recibos, \
-    ApagarConta, Homepage, CriarConta, EditarPerfil, mensagem_desenvolvedor, botaoteste, ImoveisAtivos, \
+    ApagarConta, Homepage, CriarConta, EditarPerfil, mensagem_desenvolvedor, gerador_de_ficticios, ImoveisAtivos, \
     LocatariosAtivos, ContratosAtivos, eventos, tabela, recibo_entregue, afazer_concluida, gerar_contrato, criar_modelo, \
     editar_modelo, ExcluirModelo, MeusModelos, forum_sugestoes, like_de_sugestoes, apagar_sugestao, \
     implementar_sugestao, aprovar_sugestao, arquivos_sugestoes_docs, arquivos_locatarios_docs, \
     arquivos_mensagens_ao_dev, arquivos_recibos_docs, arquivos_tabela_docs, arquivos_contrato_docs, \
     arquivos_gastos_docs, locat_auto_registro, RevisarLocat, painel_slots, add_slot, apagar_slot, \
-    adicionar_ticket, adicionar_ticket_todos, painel_configs, ModelosComunidade, \
+    adicionar_ticket, adicionar_ticket_todos, painel_configs, ModelosComunidade, confirmar_email, \
     arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, notificacao_lida, conversa_com_o_dev, \
-    configurar_notificacoes, configurar_app, baixar_planilha
+    configurar_notificacoes, configurar_app, baixar_planilha, botao_teste, activate_account_link
 
 from financeiro.views import painel_loja
 from Alugue_seu_imovel import settings
@@ -120,15 +120,18 @@ urlpatterns = [
     path('adicionar_ticket_todos/', adicionar_ticket_todos, name='Adicionar Ticket Todos'),
 
     # GERAL -------------------
-    path('', Homepage.as_view(), name='home'),
+    path('', Homepage.as_view(), name='Home'),
     path('criar_conta/', CriarConta.as_view(), name='Criar Conta'),
+    path('confirmar_email/<str:user_pk>/', confirmar_email, name='Confirmar Email'),
+    path('ativar_conta_url/<str:link>/', activate_account_link, name='Ativar Conta Url'),
     path('apagar_conta/', ApagarConta.as_view(), name='Apagar Conta'),
     path('mudar_senha/', auth_view.PasswordChangeView.as_view(
-        template_name='editar_perfil.html/', success_url=reverse_lazy('home:home'),
+        template_name='editar_perfil.html/', success_url=reverse_lazy('home:Home'),
         extra_context={'SITE_NAME': settings.SITE_NAME}), name='Mudar Senha'),
     path('editar_perfil/', EditarPerfil.as_view(), name='Editar Perfil'),
     path('logout/', auth_view.LogoutView.as_view(), name='Logout'),
-    path('botao/', botaoteste, name='botaoteste'),
+    path('gerador_de_ficticios/', gerador_de_ficticios, name='Gerador de Fictícios'),
+    path('botao_teste/', botao_teste, name='Botão Teste'),
 
     # SERVIDORES DE ARQUIVOS -------------------
     path('media/contratos_modelos/<str:file>/', arquivos_contratos_modelos),

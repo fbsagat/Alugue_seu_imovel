@@ -34,6 +34,19 @@ class FormCriarConta(UserCreationForm):
         super(FormCriarConta, self).__init__(*args, **kwargs)
         self.fields['telefone'].widget.attrs['class'] = 'mask-telefone1'
 
+    def clean_telefone(self):
+        telefone = self.cleaned_data['telefone']
+        telefones_dos_user = Usuario.objects.all().values_list('telefone', flat=True)
+        if telefone in telefones_dos_user and telefone != '':
+            raise forms.ValidationError("Este telefone já está em uso.")
+        else:
+            return telefone
+
+
+class FormToken(forms.Form):
+    codigo_token = forms.CharField(max_length=6, min_length=6, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                          help_text='Digite apenas números', label='Código')
+
 
 class FormUsuario(UserChangeForm):
     cpf = forms.CharField(max_length=11, min_length=11, widget=forms.TextInput(attrs={'class': 'form-control'}),

@@ -30,7 +30,8 @@ def verificar_aluguel_vencimento(do_usuario, contrato=None):
         contrato_s = Contrato.objects.filter(do_locador=do_usuario, pk=contrato.pk)
     else:
         contrato_s = Contrato.objects.ativos_margem(dias_atras=15).filter(do_locador=do_usuario)
-    parcelas = Parcela.objects.filter(do_usuario=do_usuario, apagada=False, do_contrato__in=contrato_s)
+    parcelas = Parcela.objects.de_contratos_ativos().filter(do_usuario=do_usuario, apagada=False,
+                                                            do_contrato__in=contrato_s)
     tipo_conteudo = ContentType.objects.get_for_model(Parcela)
     for parcela in parcelas:
         if parcela.esta_vencida():
@@ -48,7 +49,12 @@ def verificar_aluguel_vencimento(do_usuario, contrato=None):
                 # None e se a data de vencimento desta parcela -5 dias é maior que a data em user.notif_parc_venc_2
                 # ou menor que hoje
                 if do_usuario.notif_parc_venc_1 is not None:
-                    if parcela.data_pagm_ref + datetime.timedelta(days=-5) >= do_usuario.notif_parc_venc_2.date():
+                    # Abaixo verificar se o usuario quer receber esta notificação, porém, deve-se notificar apenas
+                    # as parcelas que vencerão depois do dia em que ele autorizou a notificação, as de antes não, ou
+                    # seja, esta regra não retroage
+                    vence_em = parcela.data_pagm_ref
+                    data_autorizacao = do_usuario.notif_parc_venc_2.date()
+                    if vence_em > data_autorizacao:
                         criar_uma_notificacao(do_usuario=do_usuario, autor_classe=tipo_conteudo, objeto_id=parcela.pk,
                                               assunto=3)
 
@@ -60,7 +66,7 @@ def verificar_contrato_vencimento(do_locador, contrato=None):
     autorizada em 'configurações de notificações':
     criar uma notificação para o usuário informando o fato."""
     if contrato:
-        contrato_s = Contrato.objects.filter(do_locador=do_locador, pk=contrato.pk)
+        contrato_s = Contrato.objects.ativos_margem(dias_atras=15).filter(do_locador=do_locador, pk=contrato.pk)
     else:
         contrato_s = Contrato.objects.ativos_margem(dias_atras=15).filter(do_locador=do_locador)
 
@@ -82,8 +88,9 @@ def verificar_contrato_vencimento(do_locador, contrato=None):
                 # no None e se a data de vencimento deste contrato -30 dias é maior que a data em user.notif_parc_venc_2
                 # ou menor que hoje
                 if do_locador.notif_contrato_venc_1 is not None:
-                    if contrato.data_saida() + datetime.timedelta(
-                            days=-dias) >= do_locador.notif_contrato_venc_1.date():
+                    vence_em = contrato.data_saida()
+                    data_autorizacao = do_locador.notif_contrato_venc_1.date()
+                    if vence_em > data_autorizacao:
                         criar_uma_notificacao(do_usuario=do_locador, autor_classe=tipo_conteudo, objeto_id=contrato.pk,
                                               assunto=2)
 
@@ -383,7 +390,7 @@ def contrato_post_save(sender, instance, created, **kwargs):
         if instance.do_locador.notif_contrato_criado is not None:
             lida = True if instance.em_posse is True else False
             criar_uma_notificacao(do_usuario=instance.do_locador, autor_classe=tipo_conteudo,
-                                         objeto_id=instance.pk, lida=lida, assunto=1)
+                                  objeto_id=instance.pk, lida=lida, assunto=1)
     else:
         verificar_aluguel_vencimento(do_usuario=instance.do_locador, contrato=instance)
         verificar_contrato_vencimento(do_locador=instance.do_locador, contrato=instance)
@@ -534,22 +541,23 @@ def usuario_fez_login(sender, user, **kwargs):
 
 @receiver(user_logged_out)
 def usuario_fez_logout(sender, user, **kwargs):
-    # Apagar arquivos temporários da sessão do usuário
-    # 1. Tabela_docs
-    diretorio = rf'{settings.MEDIA_ROOT}/tabela_docs'
-    se_existe = os.path.exists(diretorio)
-    if not se_existe:
-        os.makedirs(diretorio)
-    for file in os.listdir(diretorio):
-        if file.endswith(f"{user}.pdf"):
-            os.remove(os.path.join(diretorio, file))
+    if user:
+        # Apagar arquivos temporários da sessão do usuário
+        # 1. Tabela_docs
+        diretorio = rf'{settings.MEDIA_ROOT}/tabela_docs'
+        se_existe = os.path.exists(diretorio)
+        if not se_existe:
+            os.makedirs(diretorio)
+        for file in os.listdir(diretorio):
+            if file.endswith(f"{user}.pdf"):
+                os.remove(os.path.join(diretorio, file))
 
-    # 2. Contrato_docs
-    diretorio = f'{settings.MEDIA_ROOT}/contrato_docs'
-    se_existe = os.path.exists(diretorio)
-    if not se_existe:
-        os.makedirs(diretorio)
-    code = user.contrato_code()
-    for file in os.listdir(diretorio):
-        if file.startswith(code):
-            os.remove(os.path.join(diretorio, file))
+        # 2. Contrato_docs
+        diretorio = f'{settings.MEDIA_ROOT}/contrato_docs'
+        se_existe = os.path.exists(diretorio)
+        if not se_existe:
+            os.makedirs(diretorio)
+        code = user.contrato_code()
+        for file in os.listdir(diretorio):
+            if file.startswith(code):
+                os.remove(os.path.join(diretorio, file))

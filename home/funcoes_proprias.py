@@ -2,9 +2,9 @@ import io, os, sys, string, secrets
 from cryptography.fernet import Fernet
 from math import ceil
 from textwrap import wrap
+from num2words import num2words
 
 from django.core.exceptions import ValidationError
-from num2words import num2words
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -128,28 +128,52 @@ def tamanho_max_mb(value):
 # 008: -----------------------------------------------
 
 
-def parcela_uuid():
-    recibo_codigo = ''.join(
-        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
-        range(6))
-    return f'{recibo_codigo[:3]}-{recibo_codigo[3:]}'
+def gerar_uuid_8(caracteres=8, dividir=True):
+    metade = int(caracteres / 2)
+    if caracteres % 2 == 0:
+        codigo_ = ''.join(
+            secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+            range(caracteres))
+        if dividir:
+            return f'{codigo_[:metade]}-{codigo_[metade:]}'
+        else:
+            return codigo_
+    else:
+        raise Exception("A quantidade de caracteres deve ser par")
 
 
 # 009: -----------------------------------------------
 
 
-def user_uuid():
-    con_codigo = ''.join(
-        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
-    return f'{con_codigo[:10]}'
+def gerar_uuid_10(caracteres=10, dividir=False):
+    metade = int(caracteres / 2)
+    if caracteres % 2 == 0:
+        codigo_ = ''.join(
+            secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+            range(caracteres))
+        if dividir:
+            return f'{codigo_[:metade]}-{codigo_[metade:]}'
+        else:
+            return codigo_
+    else:
+        raise Exception("A quantidade de caracteres deve ser par")
+
 
 # 010: -----------------------------------------------
 
 
-def uuid_20():
-    con_codigo = ''.join(
-        secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(20))
-    return f'{con_codigo[:20]}'
+def gerar_uuid_20(caracteres=20, dividir=False):
+    metade = int(caracteres / 2)
+    if caracteres % 2 == 0:
+        codigo_ = ''.join(
+            secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+            range(caracteres))
+        if dividir:
+            return f'{codigo_[:metade]}-{codigo_[metade:]}'
+        else:
+            return codigo_
+    else:
+        raise Exception("A quantidade de caracteres deve ser par")
 
 
 # 011: -----------------------------------------------
@@ -170,6 +194,23 @@ def _decrypt(enc_message):
     fernet = Fernet(site_code)
     dec_message = fernet.decrypt(enc_message).decode()
     return dec_message
+
+
+# 012: -----------------------------------------------
+
+
+def gerar_uuid_6(caracteres=6, dividir=False):
+    metade = int(caracteres / 2)
+    if caracteres % 2 == 0:
+        codigo_ = ''.join(
+            secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in
+            range(caracteres))
+        if dividir:
+            return f'{codigo_[:metade]}-{codigo_[metade:]}'
+        else:
+            return codigo_
+    else:
+        raise Exception("A quantidade de caracteres deve ser par")
 
 
 # 100: -----------------------------------------------

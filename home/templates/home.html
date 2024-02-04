@@ -13,48 +13,51 @@ Bem Vindo ao {{ SITE_NAME }}
     color: #000000;
     padding: 5px 5px;
     }
-
-
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="container-sm flex justify-center items-center">
 
-<div class="z-10 h-full  md:py-0 text-gray-100 text-center flex items-center flex-col">
+    <div class="p-5 bg-blue bg-opacity-25 mb-2 border border-secondary rounded bg-gradient text-dark">
+        <div class="p-5 z-10 h-full md:py-0 text-gray-100 text-center flex items-center flex-col">
 
-    <div class="jumbotron jumbotron-fluid">
-        <div class="container">
-            <h1 class="display-3 fw-bold">Alugue Seu Imóvel</h1>
-            <p class="lead fw-bold">Administre a Locação dos Seus Imóveis aqui!</p>
-        </div>
-    </div>
+            <div class="container container-fluid p-5">
+                <div class="container">
+                    <h1 class="display-3 fw-bold">Alugue Seu Imóvel</h1>
+                    <p class="lead fw-bold">Administre a Locação dos Seus Imóveis aqui!</p>
+                </div>
+            </div>
 
-    <h3 class="text-xl md:text-xl py-5">
-        É só criar sua conta, Cadastrar seus imóveis, Cadastrar inquilinos e o resto fica fácil!
-        <ion-icon name="happy-outline"></ion-icon>
-    </h3>
+            <h3 class="text-xl md:text-xl py-5">
+                É só criar sua conta, Cadastrar seus imóveis, Cadastrar inquilinos e o resto fica fácil!
+                <ion-icon name="happy-outline"></ion-icon>
+            </h3>
 
-    <h4 class="text-sm md:text-lg pb-3 fw-bold">
-        Quer começar? Coloque o seu melhor e-mail abaixo.
-    </h4>
+            <h4 class="text-sm md:text-lg pb-3 fw-bold">
+                Quer começar? Coloque o seu melhor e-mail abaixo.
+            </h4>
 
-    <form method="post" class="w-6/12 justify-center">
-        {% csrf_token %}
-        <div class="flex flex-grow items-stretch">
-            {{ form }}
-            <button class="bg-blue-600 font-medium md:font-normal flex justify-center items-center py-2 px-3 md:px-0 rounded-br-sm rounded-tr-sm md:text-2xl"
-                    type="submit">
+            <form method="post" class="w-6/12 justify-center">
+                {% csrf_token %}
+                <div class="flex flex-grow items-stretch">
+                    {{ form }}
+                    <button class="bg-blue-600 font-medium md:font-normal flex justify-center items-center py-2 px-3 md:px-0 rounded-br-sm rounded-tr-sm md:text-2xl"
+                            type="submit">
                             <span>
                                 Acessar
                             </span>
-                <ion-icon name="chevron-forward-outline"></ion-icon>
-            </button>
-        </div>
-    </form>
-    <br>
-    <a href="{% url 'two_factor:login' %}"><p class="badge bg-secondary bg-opacity-75 text-wrap fs-4 fw-bold">Já tenho
-        Cadastro</p></p></a>
+                        <ion-icon name="chevron-forward-outline"></ion-icon>
+                    </button>
+                </div>
+            </form>
+            <br>
+            <a href="{% url 'two_factor:login' %}"><p class="badge bg-secondary bg-opacity-75 text-wrap fs-4 fw-bold">Já
+                tenho
+                Cadastro</p></a>
 
+        </div>
+    </div>
 </div>
 
 {% endblock %}

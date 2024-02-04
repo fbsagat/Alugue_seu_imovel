@@ -6,14 +6,13 @@ from .models import Usuario, Locatario, Imovei, Contrato, Pagamento, Gasto, Anot
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
     model = Usuario
-    list_display = ('first_name', 'last_name', 'email', 'is_staff', 'is_active')
+    list_display = ('username', 'first_name', 'last_name', 'email', 'is_staff', 'is_active')
     list_filter = ("is_staff", "is_active", 'is_superuser',)
     search_fields = ('first_name', 'email',)
     fieldsets = (
         ('Informações', {"fields": (
-            'first_name', 'last_name', 'telefone', 'RG', 'cript_cpf', 'locat_slots', 'email', 'nacionalidade',
-            'estadocivil',
-            'ocupacao', 'endereco_completo', 'password')}),
+            'username', 'first_name', 'last_name', 'telefone', 'RG', 'cript_cpf', 'locat_slots', 'email',
+            'nacionalidade', 'estadocivil', 'ocupacao', 'endereco_completo', 'password')}),
 
         ("Configurações", {'fields': ('data_eventos_i', 'itens_eventos', 'qtd_eventos',
                                       'ordem_eventos', 'recibo_ultimo', 'recibo_preenchimento',

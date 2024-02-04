@@ -82,6 +82,7 @@
         <div class="mx-auto">
             <a href="" class="link-primary" data-bs-toggle="modal" data-bs-target="#modal2"><h1>Gerador de
                 fictícios</h1></a>
+            <a href="{% url 'home:Botão Teste' %}" class="link-primary"><h1>Botão Teste</h1></a>
         </div>
         {% endif %}
         <div class="mx-auto">
@@ -144,7 +145,7 @@
             <div class="modal-header">
                 <h2 class="modal-title fs-5">Gerador de fictícios</h2>
             </div>
-            <form method="POST" action="{% url 'home:botaoteste' %}">
+            <form method="POST" action="{% url 'home:Gerador de Fictícios' %}">
                 {% csrf_token %}
                 <div class="modal-body">
                     {{ botao_admin.criar_usuarios|as_crispy_field }}

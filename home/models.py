@@ -1,4 +1,4 @@
-import string, secrets, os
+import string, secrets, os, uuid
 from datetime import datetime, timedelta
 from math import floor
 from hashlib import sha256
@@ -18,8 +18,8 @@ from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
-from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, parcela_uuid, user_uuid, uuid_20, \
-    _decrypt, _crypt
+from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, gerar_uuid_6, gerar_uuid_8, gerar_uuid_10, \
+    gerar_uuid_20, _decrypt, _crypt
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')
 
@@ -46,8 +46,7 @@ class Usuario(AbstractUser):
     RG = models.CharField(max_length=9, null=True, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
     cript_cpf = models.BinaryField(null=True, blank=True)
-    telefone = models.CharField(max_length=11, null=False, blank=True, unique=True,
-                                help_text='Celular/Digite apenas números',
+    telefone = models.CharField(max_length=11, null=False, blank=True, help_text='Celular/Digite apenas números',
                                 validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
     email = models.EmailField(unique=True)
     nacionalidade = models.CharField(null=True, blank=True, max_length=40, default='Brasileiro(a)')
@@ -59,7 +58,7 @@ class Usuario(AbstractUser):
                                         help_text='Sua conta PIX ou dados bancários ou carteira crypto, etc...')
     dados_pagamento2 = models.CharField(null=True, blank=True, max_length=90,
                                         verbose_name='Informações de pagamentos 2')
-    uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=user_uuid)
+    uuid = models.CharField(null=False, editable=False, max_length=10, unique=True, default=gerar_uuid_10)
     tickets = models.IntegerField(default=10)
 
     # Configurações de slots
@@ -132,11 +131,19 @@ class Usuario(AbstractUser):
         return code
 
     def nome_completo(self):
-        return f'{str(self.first_name)} {str(self.last_name)}'
+        if self.first_name and self.last_name:
+            return f'{str(self.first_name)} {str(self.last_name)}'
+        elif self.first_name:
+            return str(self.first_name)
+        else:
+            return ''
 
     def primeiro_ultimo_nome(self):
-        nome = self.nome_completo().split()
-        return f'{nome[0]} {nome[len(nome) - 1]}'
+        if self.nome_completo() != '':
+            nome = self.nome_completo().split()
+            return f'{nome[0]} {nome[len(nome) - 1]}'
+        else:
+            return ''
 
     def cpf(self):
         if self.cript_cpf:
@@ -199,6 +206,21 @@ class Usuario(AbstractUser):
             if slot.imovel() is None:
                 return True
         return False
+
+
+class TempLink(models.Model):
+    do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
+    tempo_final = models.DateTimeField(null=False)
+    link_uuid = models.CharField(null=False, editable=False, max_length=45, default=secrets.token_urlsafe)
+
+    def get_link_completo(self):
+        return reverse('home:Ativar Conta Url', args=[str(self.link_uuid)])
+
+
+class TempCodigo(models.Model):
+    do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
+    tempo_final = models.DateTimeField(null=False)
+    codigo = models.CharField(null=False, editable=False, max_length=8, default=gerar_uuid_6)
 
 
 class SlotsManager(models.Manager):
@@ -586,7 +608,7 @@ class ContratoManager(models.Manager):
 
     def ativos_margem(self, dias_atras=45):
         hoje = datetime.today().date()
-        contratos_qs = self.filter(rescindido=False)
+        contratos_qs = self.filter(rescindido=False, em_posse=True)
         lista = []
         for contrato in contratos_qs:
             if contrato.periodo_ativo_hoje() or contrato.periodo_ativo_futuramente() or \
@@ -936,7 +958,7 @@ class ContratoModelo(models.Model):
                     self.excluidos.add(user)
                     self.save(update_fields=['comunidade', ])
                 if um and not dois:
-                    self.titulo = f'config/{uuid_20()}'
+                    self.titulo = f'config/{gerar_uuid_20(caracteres=20)}'
                     self.comunidade = False
 
                     # remover o arquivo visualizar e o campo visualizar da model
@@ -1009,18 +1031,30 @@ class ContratoDocConfig(models.Model):
             return cpf_format(self.fiador_cpf())
 
 
+class ParcelaManager(models.Manager):
+    def de_contratos_ativos(self):
+        parcela_qs = self.all()
+        lista = []
+        for parcela in parcela_qs:
+            if parcela.contrato_em_posse() is True and parcela.contrato_rescindido() is False:
+                lista.append(parcela.pk)
+        resultado = Parcela.objects.filter(pk__in=lista)
+        return resultado
+
+
 class Parcela(models.Model):
     do_usuario = models.ForeignKey('Usuario', blank=False, on_delete=models.CASCADE)
     do_contrato = models.ForeignKey('Contrato', null=False, blank=False, on_delete=models.CASCADE)
     do_imovel = models.ForeignKey('Imovei', null=False, blank=False, on_delete=models.CASCADE)
     do_locatario = models.ForeignKey('Locatario', null=False, blank=False, on_delete=models.CASCADE)
     codigo = models.CharField(blank=False, null=False, editable=False, max_length=7, unique_for_month=True,
-                              default=parcela_uuid)
+                              default=gerar_uuid_8)
     data_pagm_ref = models.DateField(null=False, blank=False,
                                      help_text='Data referente ao vencimento do pagamento desta parcela')
     tt_pago = models.CharField(max_length=9, blank=False, default=0)
     recibo_entregue = models.BooleanField(default=False)
     apagada = models.BooleanField(default=False)
+    objects = ParcelaManager()
 
     def __str__(self):
         return (f'Parcela do contr.: {str(self.do_contrato.codigo)}/{self.do_locatario.primeiro_ultimo_nome()}/'
@@ -1028,6 +1062,12 @@ class Parcela(models.Model):
 
     def tt_pago_format(self):
         return valor_format(self.tt_pago)
+
+    def contrato_em_posse(self):
+        return self.do_contrato.em_posse
+
+    def contrato_rescindido(self):
+        return self.do_contrato.rescindido
 
     def falta_pagar_format(self):
         contrato = Contrato.objects.get(pk=self.do_contrato.pk)
@@ -1042,12 +1082,12 @@ class Parcela(models.Model):
         return True if self.esta_pago() is False and passou_data_pagm else False
 
     def vence_em_ate_x_dias(self, dias=int()):
-        # Retorna True se esta parcela vence na quantidade definida em 'dias' a partir do momento da execução da função
+        # Retorna True se esta parcela vence na quantidade definida em 'dias' ou menos disso
+        # a partir do momento da execução da função
         vencimento = self.data_pagm_ref
+        hoje = datetime.today().date()
         x_dias = datetime.today().date() + timedelta(days=dias)
-        delta = vencimento - x_dias
-        ja_passou = True if self.data_pagm_ref <= datetime.today().date() else False
-        return True if delta.days <= 0 and not self.esta_vencida() and not ja_passou else False
+        return True if x_dias > vencimento > hoje and not self.esta_vencida() else False
 
     def posicao(self):
         try:

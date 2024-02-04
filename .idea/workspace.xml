@@ -4,8 +4,44 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Iniciado o gerador de planilhas backup do painel de configurações. Com o framework: xlsxwriter.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.">
+      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/home/templates/confirmacao_email.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/home/templates/email/confirmacao_senha.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/funcoes_proprias.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/funcoes_proprias.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/criar_conta.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/criar_conta.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/criar_grupos.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/criar_grupos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_contrato.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_contrato.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_gasto.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_gasto.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_grupo.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_grupo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_imovel.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_imovel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_locatario.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_locatario.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/editar_perfil.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_perfil.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/excluir_conta.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_conta.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/excluir_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_item.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/forum_sugestoes.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/locatario_auto_registro.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/locatario_auto_registro.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/painel_slots.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/painel_slots.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/revisar_locatario.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/revisar_locatario.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/two_factor/core/backup_tokens.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/two_factor/core/backup_tokens.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/two_factor/core/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/two_factor/core/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/two_factor/core/setup.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/two_factor/core/setup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/two_factor/links(apagar depois).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/two_factor/profile/disable.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/two_factor/profile/disable.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +72,7 @@
     </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="deploy_testes" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -86,7 +122,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Email&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
@@ -114,10 +150,13 @@
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\fixtures" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\media\contratos_modelos" />
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\templates" />
+      <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\templates\email" />
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\financeiro\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver">
+  <component name="RunManager" selected="Python.Execução inicial add/predio">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="ENV_FILES" value="" />
@@ -516,7 +555,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="201" />
+    <option name="localTasksCounter" value="206" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -549,7 +588,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Iniciado o aplicativo financeiro do site, que vai cuidar dos pagamentos." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;corpo de um modelo fictício de contrato pdf agora é idêntico ao dos fixtures.&#10;Aplicativo novo para finanças, semaprado do app home, para melhor organização.&#10;validação adicionada para o corpo do contrato modelo, agora tem limite de tamanho em mb. validador: tamanho_max_mb.&#10;Titulo do contrato modelo agora é renomeado com uuid, quando só sobre a instanci para um contrato_doc_config, para evitar nome repetido, pois agora tem constraint no titulo do mesmo.&#10;Instalei o stripe, ainda não está implementado.&#10;Implementado o messanger de erro nos formularios de criação e edição de modelos de contratos.&#10;Implementado o debug da view de editar_modelo." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;FormContratoModelo tem um validador de títulos, não pode mais salvar titulo repetido, ao não ser que o usuário seja o dono do objeto salvando o próprio.&#10;&#10;ContratoModelo mais organizado: Criado o contrato_modelo_post_save para auto-salvamento de informações: variaveis=variaveis, condicoes=condicoes, visualizar=link. Retirando repetições nas views.&#10;&#10;view editar_modelo muito mais organizada e inteligivel, funcionando sem bugs, testado e ok." />
@@ -572,8 +610,9 @@
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Melhorias e correções no gatilho de notificação de parcelas a vencer(5d) e parcelas vencidas e contratos a vencer(30d) e contratos vencidas.&#10;&#10;Criadas as funções de verificar_aluguel_vencimento e verificar_contrato_vencimento, que criam notificações de vencimento e/ou perto de vencimento de contratos e parcelas.&#10;&#10;Modificações na view recebido_contrat que agora executa suas funções a partir de dois tipos de pks: da notificação vinculada ao contrato ou diretamente da pk do próprio contrato.&#10;&#10;Cards da area de notificação melhorados." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Criado o context 'ultima_pagina_valida'(ver descrição da utilização na própria)." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front)." />
-    <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Iniciado o gerador de planilhas backup do painel de configurações. Com o framework: xlsxwriter." />
-    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Iniciado o gerador de planilhas backup do painel de configurações. Com o framework: xlsxwriter." />
+    <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Sistema de segurança melhorado, two factor 2FA aplicado." />
+    <MESSAGE value="Melhorias e correções de bugs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs." />
   </component>
 </project>

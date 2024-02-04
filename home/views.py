@@ -10,6 +10,9 @@ from Alugue_seu_imovel import settings
 from num2words import num2words
 import xlsxwriter
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files import File
@@ -29,21 +32,23 @@ from django.template.defaultfilters import date as data_ptbr
 from home.fakes_test import porcentagem_de_chance
 
 from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
-    valor_por_extenso, modelo_variaveis, modelo_condicoes, uuid_20, _crypt, _decrypt, cpf_format
+    valor_por_extenso, modelo_variaveis, modelo_condicoes, _crypt, _decrypt, cpf_format, gerar_uuid_20
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias, \
     modelos_contratos_ficticios
 from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots, \
-    FormConfigNotific, FormConfigApp
+    FormConfigNotific, FormConfigApp, FormToken
 
 from home.models import Locatario, Contrato, Pagamento, Gasto, Anotacoe, ImovGrupo, Usuario, Imovei, Parcela, \
-    Notificacao, \
-    ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot, UsuarioContratoModelo
+    Notificacao, ContratoDocConfig, ContratoModelo, Sugestao, DevMensagen, Slot, UsuarioContratoModelo, TempLink, \
+    TempCodigo
 
 
 # -=-=-=-=-=-=-=-= BOTÃO VISÃO GERAL -=-=-=-=-=-=-=-=
+
+
 @login_required
 def visao_geral(request):
     context = {}
@@ -1349,7 +1354,7 @@ def editar_modelo(request, pk):
         if _um and not _dois:
             if local_debug:
                 print('só config usa este modelo')
-            modelo.titulo = f'config/{uuid_20()}'
+            modelo.titulo = f'config/{gerar_uuid_20()}'
             modelo.comunidade = False
 
             # remover o arquivo visualizar e o campo visualizar da model
@@ -1513,7 +1518,6 @@ class Gastos(LoginRequiredMixin, ListView):
     def get_queryset(self):
         self.object_list = Gasto.objects.filter(do_locador=self.request.user).order_by('-data_criacao')
         return self.object_list
-
 
 
 # GRUPO ---------------------------------------
@@ -1868,7 +1872,7 @@ class Homepage(FormView):
         self.request.session['email_inicio'] = email
         usuarios = Usuario.objects.filter(email=email)
         if usuarios:
-            return reverse('two_factor:login')
+            return reverse(settings.LOGIN_URL)
         else:
             return reverse('home:Criar Conta')
 
@@ -1876,7 +1880,7 @@ class Homepage(FormView):
 class CriarConta(CreateView):
     template_name = 'criar_conta.html'
     form_class = FormCriarConta
-    success_url = reverse_lazy('two_factor:login')
+    success_url = reverse_lazy(settings.LOGIN_URL)
 
     def get_form(self, form_class=None):
         form = super(CriarConta, self).get_form(form_class)
@@ -1884,6 +1888,87 @@ class CriarConta(CreateView):
         if self.request.session.get('email_inicio', None):
             form.initial = {'email': self.request.session.get('email_inicio')}
         return form
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.is_active = False
+        self.object.save(update_fields=['is_active', ])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("home:Confirmar Email", kwargs={'user_pk': self.object.pk})
+
+
+def enviar_email_conf_de_senha(request, user):
+    tempo_h = 6
+    tempo_final = datetime.now() + timedelta(hours=tempo_h)
+    link = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final)
+    link_completo = request.build_absolute_uri(link.get_link_completo())
+    codigo = TempCodigo.objects.create(do_usuario=user, tempo_final=tempo_final)
+    remetente = settings.EMAIL_HOST_USER
+    destinatario = [user.email, ]
+    context = {'username': user.username, 'codigo': codigo.codigo, 'link': link_completo,
+               'site': settings.SITE_URL, 'tempo': tempo_h}
+    html_content = render_to_string('email/confirmacao_senha.html', context=context)
+    text_content = strip_tags(html_content)
+    email = EmailMultiAlternatives('Confirmação de Senha', text_content, remetente, destinatario)
+    email.attach_alternative(html_content, 'text/html')
+    email.send()
+    # send_mail('Assunto', 'Esse é o email de teste!', remetente, destinatarios)
+
+
+def confirmar_email(request, user_pk):
+    # Direcionar o usuário para essa página depois que ele se registrar ou sempre que ele tentar fazer login, até que
+    # ele execute o link ou coloque o código de confirmação no formulário, ambos enviados para o seu email.
+
+    # FABIO DO FUTURO: VERIFICAR E FAZER UMA REVISÃO GERAL\/
+
+    if request.method == 'GET':
+        form = FormToken()
+        context = {'form': form, 'user_pk': user_pk}
+        if user_pk is not None:
+            user = Usuario.objects.filter(pk=user_pk).first()
+            if user:
+                links = TempLink.objects.filter(do_usuario=user)
+                if not links and user.is_active is False:
+                    enviar_email_conf_de_senha(request, user=user)
+                    return render(request, 'confirmacao_email.html', context)
+                elif user.is_active is False:
+                    return render(request, 'confirmacao_email.html', context)
+
+    elif request.method == 'POST':
+        form = FormToken(request.POST)
+        if form.is_valid():
+            token_code = form.cleaned_data['codigo_token']
+            token = TempCodigo.objects.filter(codigo=token_code).first()
+            if token:
+                if token.tempo_final > datetime.now():
+                    user = token.do_usuario
+                    user.is_active = True
+                    user.save(update_fields=['is_active', ])
+                    messages.success(request, f"Email confirmado com sucesso!")
+                    token.delete()
+                    TempLink.objects.filter(do_usuario=user).delete()
+                    TempCodigo.objects.filter(do_usuario=user).delete()
+                    return redirect(reverse(settings.LOGIN_URL))
+            messages.error(request, f"Token inexistente")
+            return redirect(reverse('home:Confirmar Email', args=[user_pk]))
+    return redirect(reverse('home:Home'))
+
+
+def activate_account_link(request, link):
+    link = TempLink.objects.filter(link_uuid=link).first()
+    if link:
+        if link.tempo_final > datetime.now():
+            user = link.do_usuario
+            user.is_active = True
+            user.save(update_fields=['is_active', ])
+            messages.success(request, f"Email confirmado com sucesso!")
+            TempLink.objects.filter(do_usuario=user).delete()
+            TempCodigo.objects.filter(do_usuario=user).delete()
+            return redirect(reverse(settings.LOGIN_URL))
+    messages.error(request, f"Link inexistente")
+    return redirect(reverse('home:Home'))
 
 
 class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
@@ -1907,7 +1992,6 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         self.object.cript_cpf = cpf
         return super().form_valid(form)
 
-
     def get_object(self, queryset=None):
         return self.request.user
 
@@ -1923,7 +2007,7 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
     template_name = 'excluir_conta.html'
     model = Usuario
     success_message = 'Conta apagada'
-    success_url = reverse_lazy('home:home')
+    success_url = reverse_lazy('home:Home')
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -2838,7 +2922,7 @@ def criar_usuarios_ficticios(request, quantidade, multiplicador):
 
 
 @login_required
-def botaoteste(request):
+def gerador_de_ficticios(request):
     if request.user.is_superuser or settings.DEBUG:
         form_adm = FormAdmin(request.POST)
 
@@ -2907,3 +2991,9 @@ def botaoteste(request):
                                                       usuario_s=usuario_s, distribuir=distribuir)
 
         return redirect(request.META['HTTP_REFERER'])
+
+
+def botao_teste(request):
+    request.user.enviar_email_conf_de_senha(request)
+    messages.success(request, 'Botão de testes executado. Ok')
+    return redirect(request.META['HTTP_REFERER'])

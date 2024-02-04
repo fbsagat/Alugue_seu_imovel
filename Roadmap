@@ -124,10 +124,17 @@ Ok. Página de exclusão de item: Ao invés de mostrar um página, abrir um moda
         o que pode causar uma confusão no usuário.
         Vou resolver assim: Buscar a página anterior a atual(no caso, a da exclusão) na view Excluir e dar o redirect
         lá(em get_success_url).
+Ok. Verificar nos formulários se o usuário colocou um numero de telefone que já existe, de outro user, na hora do
+        cadastro, não pode colocar repetido mas deve poder colocar em branco.
+Ok. Criar o confirmador de email.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
+Email:
+Criar sistema que Apaga instancias de TempCodigo e TempLink vencidas periodicamente e/ou quando o usuário tenta
+        utilizá-los fora da validade. (Vou criar a partir do TempLink)
+
 Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todos?).
 Colocar um botão 'gerar PDF' na página eventos.
