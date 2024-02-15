@@ -133,7 +133,9 @@ _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-
 Fazer:
 Email:
 Criar sistema que Apaga instancias de TempCodigo e TempLink vencidas periodicamente e/ou quando o usuário tenta
-        utilizá-los fora da validade. (Vou criar a partir do TempLink)
+        utilizá-los fora da validade(ok, fora da validade). (Vou criar a partir do TempLink).
+
+Criar o sistema de links temporaries para mudanca de senha e exclusion de conta.
 
 Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todos?).

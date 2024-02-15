@@ -1941,7 +1941,7 @@ def confirmar_email(request, user_pk):
         if form.is_valid():
             token_code = form.cleaned_data['codigo_token']
             token = TempCodigo.objects.filter(codigo=token_code).first()
-            if token:
+            if token or token.tempo_final > datetime.now():
                 if token.tempo_final > datetime.now():
                     user = token.do_usuario
                     user.is_active = True
@@ -1951,6 +1951,8 @@ def confirmar_email(request, user_pk):
                     TempLink.objects.filter(do_usuario=user).delete()
                     TempCodigo.objects.filter(do_usuario=user).delete()
                     return redirect(reverse(settings.LOGIN_URL))
+                else:
+                    token.delete()
             messages.error(request, f"Token inexistente")
             return redirect(reverse('home:Confirmar Email', args=[user_pk]))
     return redirect(reverse('home:Home'))
@@ -1967,6 +1969,8 @@ def activate_account_link(request, link):
             TempLink.objects.filter(do_usuario=user).delete()
             TempCodigo.objects.filter(do_usuario=user).delete()
             return redirect(reverse(settings.LOGIN_URL))
+        else:
+            link.delete()
     messages.error(request, f"Link inexistente")
     return redirect(reverse('home:Home'))
 
