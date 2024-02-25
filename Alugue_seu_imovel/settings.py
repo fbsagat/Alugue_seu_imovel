@@ -291,7 +291,7 @@ if DEBUG is True and email_force is False:
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_DATA = ast.literal_eval(str(os.getenv('EMAIL_DATA')))
-    EMAIL_HOST_USER = 'alugueseuimovelapp@gmail.com'
+    EMAIL_HOST_USER = EMAIL_DATA['EMAIL_HOST_USER']
     EMAIL_HOST_PASSWORD = EMAIL_DATA['EMAIL_HOST_PASSWORD']
     EMAIL_HOST = EMAIL_DATA['EMAIL_HOST']
     EMAIL_PORT = int(EMAIL_DATA['EMAIL_PORT'])

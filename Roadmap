@@ -135,7 +135,9 @@ Email:
 Criar sistema que Apaga instancias de TempCodigo e TempLink vencidas periodicamente e/ou quando o usuário tenta
         utilizá-los fora da validade(ok, fora da validade). (Vou criar a partir do TempLink).
 
-Criar o sistema de links temporaries para mudanca de senha e exclusion de conta.
+Criar o sistema de links temporários para mudanca de senha(ok) e exclusão de conta.
+
+Criar a notificação que é gerada quando se rescinde um contrato com pendencias, descrevendo as pendencias.
 
 Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todos?).
@@ -176,6 +178,7 @@ signal post_delete não é chamado quando é deletado pela area admin do site
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Melhorias muito futuras:
+Usar o twilio. Usar número de celular também para recuperar conta e confirmar propriedade de número.
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
 Criar um sistema que utiliza o mesmo link de auto-registro gerado por sessão, para não puxar muito do servidor.
 Criar o resumo textual e gráfico de cada contrato, textual dizendo quando chegou, quando vai sair, meses que pagou,

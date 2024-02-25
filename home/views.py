@@ -36,7 +36,7 @@ from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias, \
     modelos_contratos_ficticios
-from home.forms import FormCriarConta, FormHomePage, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
+from home.forms import FormCriarConta, FormEmail, FormMensagem, FormEventos, FormAdmin, FormPagamento, FormGasto, \
     FormLocatario, FormImovel, FormAnotacoes, FormContrato, FormimovelGrupo, FormRecibos, FormTabela, \
     FormContratoDoc, FormContratoDocConfig, FormContratoModelo, FormUsuario, FormSugestao, FormTickets, FormSlots, \
     FormConfigNotific, FormConfigApp, FormToken
@@ -1859,7 +1859,7 @@ def notificacao_lida(request, pk):
 
 class Homepage(FormView):
     template_name = 'home.html'
-    form_class = FormHomePage
+    form_class = FormEmail
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -1899,7 +1899,7 @@ class CriarConta(CreateView):
         return reverse("home:Confirmar Email", kwargs={'user_pk': self.object.pk})
 
 
-def enviar_email_conf_de_senha(request, user):
+def enviar_email_conf_de_email(request, user):
     tempo_h = 6
     tempo_final = datetime.now() + timedelta(hours=tempo_h)
     link = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final)
@@ -1909,9 +1909,9 @@ def enviar_email_conf_de_senha(request, user):
     destinatario = [user.email, ]
     context = {'username': user.username, 'codigo': codigo.codigo, 'link': link_completo,
                'site': settings.SITE_URL, 'tempo': tempo_h}
-    html_content = render_to_string('email/confirmacao_senha.html', context=context)
+    html_content = render_to_string('registration/confirmacao_email_email.html', context=context)
     text_content = strip_tags(html_content)
-    email = EmailMultiAlternatives('Confirmação de Senha', text_content, remetente, destinatario)
+    email = EmailMultiAlternatives('Confirmação de Email', text_content, remetente, destinatario)
     email.attach_alternative(html_content, 'text/html')
     email.send()
     # send_mail('Assunto', 'Esse é o email de teste!', remetente, destinatarios)
@@ -1929,9 +1929,9 @@ def confirmar_email(request, user_pk):
         if user_pk is not None:
             user = Usuario.objects.filter(pk=user_pk).first()
             if user:
-                links = TempLink.objects.filter(do_usuario=user)
-                if not links and user.is_active is False:
-                    enviar_email_conf_de_senha(request, user=user)
+                link = TempLink.objects.filter(do_usuario=user)
+                if not link and user.is_active is False:
+                    enviar_email_conf_de_email(request, user=user)
                     return render(request, 'confirmacao_email.html', context)
                 elif user.is_active is False:
                     return render(request, 'confirmacao_email.html', context)
@@ -1941,7 +1941,7 @@ def confirmar_email(request, user_pk):
         if form.is_valid():
             token_code = form.cleaned_data['codigo_token']
             token = TempCodigo.objects.filter(codigo=token_code).first()
-            if token or token.tempo_final > datetime.now():
+            if token:
                 if token.tempo_final > datetime.now():
                     user = token.do_usuario
                     user.is_active = True
@@ -1961,17 +1961,20 @@ def confirmar_email(request, user_pk):
 def activate_account_link(request, link):
     link = TempLink.objects.filter(link_uuid=link).first()
     if link:
+        print(link)
         if link.tempo_final > datetime.now():
             user = link.do_usuario
             user.is_active = True
             user.save(update_fields=['is_active', ])
             messages.success(request, f"Email confirmado com sucesso!")
-            TempLink.objects.filter(do_usuario=user).delete()
+            link.delete()
             TempCodigo.objects.filter(do_usuario=user).delete()
             return redirect(reverse(settings.LOGIN_URL))
         else:
+            print(link.tempo_final)
+            print(datetime.now())
             link.delete()
-    messages.error(request, f"Link inexistente")
+            messages.error(request, f"Link inexistente")
     return redirect(reverse('home:Home'))
 
 
@@ -2998,6 +3001,5 @@ def gerador_de_ficticios(request):
 
 
 def botao_teste(request):
-    request.user.enviar_email_conf_de_senha(request)
     messages.success(request, 'Botão de testes executado. Ok')
     return redirect(request.META['HTTP_REFERER'])

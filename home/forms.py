@@ -45,7 +45,7 @@ class FormCriarConta(UserCreationForm):
 
 class FormToken(forms.Form):
     codigo_token = forms.CharField(max_length=6, min_length=6, widget=forms.TextInput(attrs={'class': 'form-control'}),
-                          help_text='Digite apenas números', label='Código')
+                                   help_text='Digite apenas números', label='Código')
 
 
 class FormUsuario(UserChangeForm):
@@ -174,8 +174,12 @@ class FormEventos(forms.Form):
         )
 
 
-class FormHomePage(forms.Form):
+class FormEmail(forms.Form):
     email = forms.EmailField(label=False)
+
+    def __init__(self, *args, **kwargs):
+        super(FormEmail, self).__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update(style="width: 450px;")
 
 
 class FormMensagem(forms.ModelForm):
