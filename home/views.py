@@ -1902,7 +1902,7 @@ class CriarConta(CreateView):
 def enviar_email_conf_de_email(request, user):
     tempo_h = 6
     tempo_final = datetime.now() + timedelta(hours=tempo_h)
-    link = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final)
+    link = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final, tipo=1)
     link_completo = request.build_absolute_uri(link.get_link_completo())
     codigo = TempCodigo.objects.create(do_usuario=user, tempo_final=tempo_final)
     remetente = settings.EMAIL_HOST_USER
@@ -1918,18 +1918,13 @@ def enviar_email_conf_de_email(request, user):
 
 
 def confirmar_email(request, user_pk):
-    # Direcionar o usuário para essa página depois que ele se registrar ou sempre que ele tentar fazer login, até que
-    # ele execute o link ou coloque o código de confirmação no formulário, ambos enviados para o seu email.
-
-    # FABIO DO FUTURO: VERIFICAR E FAZER UMA REVISÃO GERAL\/
-
     if request.method == 'GET':
         form = FormToken()
         context = {'form': form, 'user_pk': user_pk}
         if user_pk is not None:
             user = Usuario.objects.filter(pk=user_pk).first()
             if user:
-                link = TempLink.objects.filter(do_usuario=user)
+                link = TempLink.objects.filter(do_usuario=user, tempo_final__gte=datetime.now(), tipo=1)
                 if not link and user.is_active is False:
                     enviar_email_conf_de_email(request, user=user)
                     return render(request, 'confirmacao_email.html', context)
@@ -1948,7 +1943,7 @@ def confirmar_email(request, user_pk):
                     user.save(update_fields=['is_active', ])
                     messages.success(request, f"Email confirmado com sucesso!")
                     token.delete()
-                    TempLink.objects.filter(do_usuario=user).delete()
+                    TempLink.objects.filter(do_usuario=user, tipo=1).delete()
                     TempCodigo.objects.filter(do_usuario=user).delete()
                     return redirect(reverse(settings.LOGIN_URL))
                 else:
@@ -1959,22 +1954,17 @@ def confirmar_email(request, user_pk):
 
 
 def activate_account_link(request, link):
-    link = TempLink.objects.filter(link_uuid=link).first()
+    link = TempLink.objects.filter(link_uuid=link, tempo_final__gte=datetime.now(), tipo=1).first()
     if link:
-        print(link)
-        if link.tempo_final > datetime.now():
-            user = link.do_usuario
-            user.is_active = True
-            user.save(update_fields=['is_active', ])
-            messages.success(request, f"Email confirmado com sucesso!")
-            link.delete()
-            TempCodigo.objects.filter(do_usuario=user).delete()
-            return redirect(reverse(settings.LOGIN_URL))
-        else:
-            print(link.tempo_final)
-            print(datetime.now())
-            link.delete()
-            messages.error(request, f"Link inexistente")
+        user = link.do_usuario
+        user.is_active = True
+        user.save(update_fields=['is_active', ])
+        messages.success(request, f"Email confirmado com sucesso!")
+        link.delete()
+        TempCodigo.objects.filter(do_usuario=user).delete()
+        return redirect(reverse(settings.LOGIN_URL))
+    else:
+        messages.error(request, f"Link inexistente")
     return redirect(reverse('home:Home'))
 
 
@@ -2010,6 +2000,36 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         return reverse("home:Visão Geral")
 
 
+def enviar_email_exclusao_de_conta(request):
+    temp_link = TempLink.objects.filter(tipo=2, tempo_final__gte=datetime.now()).first()
+    if temp_link:
+        messages.warning(request,
+                         'Um e-mail com instruções já foi enviado para o endereço associado à sua conta. '
+                         'Por favor, verifique sua caixa de entrada e siga as orientações para concluir, verifique'
+                         ' também a pasta de spam.')
+    else:
+        TempLink.objects.filter(tipo=2).delete()
+        user = request.user
+        tempo_m = 30
+        tempo_final = datetime.now() + timedelta(minutes=tempo_m)
+        link = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final, tipo=2)
+        link_completo = request.build_absolute_uri(link.get_link_completo())
+        remetente = settings.EMAIL_HOST_USER
+        destinatario = [user.email, ]
+        context = {'username': user.username, 'link': link_completo,
+                   'site': settings.SITE_URL, 'tempo': tempo_m, 'site_name': settings.SITE_NAME}
+        html_content = render_to_string('registration/exclusao_email.html', context=context)
+        text_content = strip_tags(html_content)
+        email = EmailMultiAlternatives('Exclusão de conta', text_content, remetente, destinatario)
+        email.attach_alternative(html_content, 'text/html')
+        email.send()
+        messages.success(request,
+                         'Um e-mail com instruções foi enviado para o endereço associado à sua conta. '
+                         'Por favor, verifique sua caixa de entrada e siga as orientações para concluir, verifique'
+                         ' também a pasta de spam.')
+    return redirect(request.META['HTTP_REFERER'])
+
+
 class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
     template_name = 'excluir_conta.html'
     model = Usuario
@@ -2018,6 +2038,22 @@ class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+    def render_to_response(self, context, **response_kwargs):
+        link_uuid = self.kwargs['link']
+        temp_link = get_object_or_404(TempLink, link_uuid=link_uuid, tempo_final__gte=datetime.now(), tipo=2)
+        if self.request.user == temp_link.do_usuario:
+            if temp_link.tempo_final > datetime.now():
+                response_kwargs.setdefault("content_type", self.content_type)
+                return self.response_class(
+                    request=self.request,
+                    template=self.get_template_names(),
+                    context=context,
+                    using=self.template_engine,
+                    **response_kwargs,
+                )
+            else:
+                raise Http404
 
 
 @login_required

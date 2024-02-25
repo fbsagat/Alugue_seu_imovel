@@ -86,14 +86,39 @@ Editar Perfil / {{ SITE_NAME }}
             <br><br>
             <small><a href="{% url 'home:Mudar Senha' %}">Quer mudar sua senha?</a></small>
             <br>
-            <small><a href="{% url 'home:Apagar Conta' %}">Quer excluir sua conta?
-                <ion-icon name="trash-outline"></ion-icon>
-            </a></small>
+            <small>
+                <a data-bs-toggle="modal" data-bs-target="#apagar_conta" style="cursor:pointer;">
+                    Quer excluir sua conta?
+                    <ion-icon name="trash-outline"></ion-icon>
+                </a>
+
+            </small>
             {% endif %}
         </div>
     </div>
-    </div>
-
 </div>
 
+<!--Modal apagar conta -->
+<div class="modal fade" id="apagar_conta" tabindex="-1" aria-labelledby="APAGAR_CONTA" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-black text-white">
+            <div class="modal-header text-center flex items-center flex-col">
+                <h1 class="fs-3">Apagar conta</h1>
+            </div>
+            <div class="modal-body text-center items-center">
+                <h1 class="fs-5">Deseja mesmo apagar sua conta?</h1>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar
+                </button>
+                <form action="{% url 'home:Apagar Conta Email' %}">
+                    <button type="submit" class="btn btn-primary">
+                        Confirmar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal apagar conta fim -->
 {% endblock %}

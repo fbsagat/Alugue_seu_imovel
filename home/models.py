@@ -212,9 +212,13 @@ class TempLink(models.Model):
     do_usuario = models.ForeignKey('Usuario', null=False, on_delete=models.CASCADE)
     tempo_final = models.DateTimeField(null=False)
     link_uuid = models.CharField(null=False, editable=False, max_length=45, default=secrets.token_urlsafe)
+    tipo = models.PositiveIntegerField(default=1)
 
     def get_link_completo(self):
-        return reverse('home:Ativar Conta Url', args=[str(self.link_uuid)])
+        if self.tipo == 1:
+            return reverse('home:Ativar Conta Url', args=[str(self.link_uuid)])
+        elif self.tipo == 2:
+            return reverse('home:Apagar Conta', args=[str(self.link_uuid)])
 
 
 class TempCodigo(models.Model):

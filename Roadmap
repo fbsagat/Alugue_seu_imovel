@@ -126,16 +126,17 @@ Ok. Página de exclusão de item: Ao invés de mostrar um página, abrir um moda
         lá(em get_success_url).
 Ok. Verificar nos formulários se o usuário colocou um numero de telefone que já existe, de outro user, na hora do
         cadastro, não pode colocar repetido mas deve poder colocar em branco.
-Ok. Criar o confirmador de email.
+Ok. Criar o sistema de links temporários para mudanca de senha(ok) e exclusão de conta(ok).
+Ok. Criar um modelo para links temporários, que seão usados para enviar emails de exclusão de conta, baixar arquivos de
+        backup, etc...
+Ok. Criar sistema de envio de emails, confirmador, (enviar email com link de exclusão de conta, mudança de senha,
+        download de arquivo de backup/planilha, e etc...).
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Fazer:
-Email:
-Criar sistema que Apaga instancias de TempCodigo e TempLink vencidas periodicamente e/ou quando o usuário tenta
-        utilizá-los fora da validade(ok, fora da validade). (Vou criar a partir do TempLink).
-
-Criar o sistema de links temporários para mudanca de senha(ok) e exclusão de conta.
+Email: Criar sistema que Apaga instancias de TempCodigo e TempLink vencidas periodicamente e/ou quando o usuário tenta
+        utilizá-los fora da validade(ok, fora da validade). (Vou criar quando instalar o celery).
 
 Criar a notificação que é gerada quando se rescinde um contrato com pendencias, descrevendo as pendencias.
 
@@ -144,19 +145,15 @@ Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todo
 Colocar um botão 'gerar PDF' na página eventos.
 Implementar o esqueci minha senha.
 
-Criar um modelo para links temporários, que seão usados para enviar emails de exclusão de conta, baixar arquivos de
- backup, etc...
- Criar sistema de envio de emails(enviar email com link de exclusão de conta, mudança de senha,
- download de arquivo de backup/planilha, e etc...).
- Depois de criar a função backup e load_backup, atualizar o gerador de fixtures da planilha para gerar diretamente o
-  arquivo para carrega-lo no site, deixando de lado a forma atual, via fixture.
+Depois de criar a função backup e load_backup, atualizar o gerador de fixtures da planilha para gerar diretamente o
+        arquivo para carrega-lo no site, deixando de lado a forma atual, via fixture.
 
 Criar um botão de painel com configurações diversas:
-        1. Compra de tickets com real e bitcoin via lightning network,
+        1. Compra de tickets com real e bitcoin via lightning network (ok)
         2. Botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
         (enviar o arquivo para o email de cadastro do usuário ao invés de baixar diretamente/evita problemas)
-        3. Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link), quantidade de
-        notificações a exibir: notificações/histórico.
+        3. Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link).
+        4. Ok. Notificações a exibir, qtd: notificações/histórico.
         4. OK. Ativar/desativar as notificações individualmente.
 
 Criar um sistema que notifica o desenvolvedor, no painel adm, em algum campo, quando algo é disparado no código,
