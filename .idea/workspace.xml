@@ -4,18 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de email e reset de senha via email.">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de emai e reset de senha via email, links temporários para mudanca de senha(ok) e exclusão de conta(ok)">
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/financeiro/migrations/0002_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/home/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/registration/exclusao_email.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/editar_perfil.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/editar_perfil.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/excluir_conta.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/excluir_conta.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,29 +72,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Python.Criar SuperUser.executor": "Run",
-    "Python.Criar dados iniciais.executor": "Run",
-    "Python.Execução inicial add/predio.executor": "Run",
-    "Python.Execução inicial s/predio.executor": "Run",
-    "Python.Importar dados do predio.executor": "Run",
-    "Python.Makemigrations.executor": "Run",
-    "Python.Migrate.executor": "Run",
-    "Python.Runserver.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "Email",
-    "last_opened_file_path": "C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/templates/registration",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "settings.sync"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Python.Criar SuperUser.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Criar dados iniciais.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Execução inicial add/predio.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Execução inicial s/predio.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Importar dados do predio.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Makemigrations.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Migrate.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Runserver.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Email&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabio/PycharmProjects/Alugue_seu_imovel/templates/registration&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;
   }
-}]]></component>
+}</component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="main" />
@@ -131,7 +124,7 @@
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\templates\email" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Execução inicial add/predio">
+  <component name="RunManager" selected="Python.Runserver">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="ENV_FILES" value="" />
@@ -530,7 +523,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="208" />
+    <option name="localTasksCounter" value="209" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -563,7 +556,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;FormContratoModelo tem um validador de títulos, não pode mais salvar titulo repetido, ao não ser que o usuário seja o dono do objeto salvando o próprio.&#10;&#10;ContratoModelo mais organizado: Criado o contrato_modelo_post_save para auto-salvamento de informações: variaveis=variaveis, condicoes=condicoes, visualizar=link. Retirando repetições nas views.&#10;&#10;view editar_modelo muito mais organizada e inteligivel, funcionando sem bugs, testado e ok." />
     <MESSAGE value="Correções de bugs e melhorias no código.&#10;Roadmap atualizado.&#10;&#10;Feito: Não utilizar diretamente o uuid do usuário no front-end, apenas derivados deste uuid para cada tipo de utilização(link de auto cadastro do locatário).&#10;&#10;Feito: Apenas contratos ativos hoje ou futuramente e não quitados para os forms" />
     <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Mostra o valor em satoshi: api.bitpreco.&#10;Implementado o sistema de pagamentos Stripe." />
     <MESSAGE value="Correções de bugs e melhorias.&#10;&#10;Adicionadas mensagens de sucesso e erro na pagina de slots." />
@@ -588,6 +580,7 @@
     <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;Corrigido o sistema de ordenação da página visão geral." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de email e reset de senha via email." />
-    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de email e reset de senha via email." />
+    <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de emai e reset de senha via email, links temporários para mudanca de senha(ok) e exclusão de conta(ok)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de emai e reset de senha via email, links temporários para mudanca de senha(ok) e exclusão de conta(ok)" />
   </component>
 </project>
