@@ -1244,10 +1244,12 @@ def gerar_contrato(request):
 @login_required
 def criar_modelo(request):
     context = {}
-    form = FormContratoModelo(request.user)
+    form = FormContratoModelo(request=request)
 
     if request.method == 'POST':
-        form = FormContratoModelo(request.user, request.POST)
+        print('ate aqui')
+        form = FormContratoModelo(request.POST)
+        print(form)
         if form.is_valid():
             modelo = form.save(commit=False)
             modelo.autor = request.user
@@ -1334,7 +1336,7 @@ def editar_modelo(request, pk):
     local_debug = False
     context = {}
     modelo__ = get_object_or_404(ContratoModelo, pk=pk)
-    form = FormContratoModelo(request.user, instance=modelo__)
+    form = FormContratoModelo(request=request, instance=modelo__)
     context['form'] = form
     context['object'] = modelo__
     context['variaveis'] = modelo_variaveis
@@ -1398,7 +1400,7 @@ def editar_modelo(request, pk):
             print('atualizei esse modelo')
 
     if request.method == "POST":
-        form = FormContratoModelo(request.user, request.POST, instance=modelo__)
+        form = FormContratoModelo(request=request, data=request.POST, instance=modelo__)
         if form.is_valid():
             modelo_ = get_object_or_404(ContratoModelo, pk=pk)
             form_titulo = form.cleaned_data['titulo']
@@ -1451,7 +1453,7 @@ def editar_modelo(request, pk):
             if 'O tamanho do arquivo está maior do que o permitido' in str(form.errors):
                 messages.error(request, f'O tamanho do arquivo está maior do que o permitido, o limite é de'
                                         f' {settings.TAMANHO_DO_MODELO_Mb}Mb')
-            form = FormContratoModelo(request.user, request.POST, instance=modelo__)
+            form = FormContratoModelo(request=request, data=request.POST, instance=modelo__)
             context['form'] = form
 
     return render(request, 'editar_modelo.html', context)
@@ -2920,7 +2922,7 @@ def criar_modelos_contratos_ficticios(request, quantidade, multiplicador, usuari
             for x in range(range_):
                 count += 1
                 aleatorio = modelos_contratos_ficticios(usuario)
-                form = FormContratoModelo(request.user)
+                form = FormContratoModelo(request=request)
                 c_model = form.save(commit=False)
                 c_model.autor = usuario
                 c_model.titulo = aleatorio.get('titulo')

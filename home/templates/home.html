@@ -9,9 +9,9 @@ Bem Vindo ao {{ SITE_NAME }}
 {% block head %}
 <style>
     #id_email{
-    width: 100%;
+    width: 500px;
     color: #000000;
-    padding: 5px 5px;
+    padding: 12px 12px;
     }
 </style>
 {% endblock %}
@@ -38,7 +38,7 @@ Bem Vindo ao {{ SITE_NAME }}
                 Quer começar? Coloque o seu melhor e-mail abaixo.
             </h4>
 
-            <form method="post" class="w-6/12 justify-center">
+            <form method="post" class="justify-center">
                 {% csrf_token %}
                 <div class="flex flex-grow items-stretch">
                     {{ form }}

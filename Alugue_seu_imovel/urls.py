@@ -8,9 +8,11 @@ from django.contrib.auth import views as auth_view
 urlpatterns = [
     path('', include(tf_urls)),
     path('admin/', admin.site.urls),
+    path('oauth/', include('social_django.urls', namespace='social')),
+
     path('', include('home.urls', namespace='home')),
     path('', include('financeiro.urls', namespace='financeiro')),
-    path('oauth/', include('social_django.urls', namespace='social')),
+
     path('password_reset/',
          auth_view.PasswordResetView.as_view(html_email_template_name='registration/password_reset_email.html',
                                              template_name='password_reset/password_reset_form.html', ),

@@ -18,7 +18,8 @@ from django.contrib.auth.models import AbstractUser
 from django_resized import ResizedImageField
 from home.funcoes_proprias import valor_format, tratar_imagem, cpf_format, cel_format, cep_format
 from ckeditor.fields import RichTextField
-from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, gerar_uuid_6, gerar_uuid_8, gerar_uuid_10, \
+from home.funcoes_proprias import modelo_variaveis, modelo_condicoes, tamanho_max_mb, gerar_uuid_6, gerar_uuid_8, \
+    gerar_uuid_10, \
     gerar_uuid_20, _decrypt, _crypt
 
 apenas_numeros = RegexValidator(regex=r'^[0-9]*$', message='Digite apenas números.')

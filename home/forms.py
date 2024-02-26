@@ -177,10 +177,6 @@ class FormEventos(forms.Form):
 class FormEmail(forms.Form):
     email = forms.EmailField(label=False)
 
-    def __init__(self, *args, **kwargs):
-        super(FormEmail, self).__init__(*args, **kwargs)
-        self.fields['email'].widget.attrs.update(style="width: 450px;")
-
 
 class FormMensagem(forms.ModelForm):
     class Meta:
@@ -407,17 +403,18 @@ class FormContratoModelo(forms.ModelForm):
         fields = '__all__'
         exclude = ['autor', 'data_criacao', 'variaveis', 'condicoes', 'visualizar', 'usuarios', 'excluidos']
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request") if 'request' in kwargs else None
         super(FormContratoModelo, self).__init__(*args, **kwargs)
         self.fields['titulo'].widget.attrs.update({'class': 'text-center'})
         self.fields['descricao'].widget.attrs.update({'class': 'text-center'})
         self.fields['comunidade'].label = 'Compartilhar'
         self.fields['titulo'].label = ''
-        self.user = user
 
     def clean_titulo(self):
         titulo = self.cleaned_data['titulo']
-        if self.user == self.instance.autor or self.instance.verificar_utilizacao_usuarios() is False:
+        user = self.request.user if self.request else None
+        if user == self.instance.autor or self.instance.verificar_utilizacao_usuarios() is False:
             titulos_de_modelos = ContratoModelo.objects.all().exclude(pk=self.instance.pk).values_list('titulo',
                                                                                                        flat=True)
         else:

@@ -96,8 +96,8 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'crispy_forms',
     'crispy_bootstrap5',
-    'ckeditor',
     'social_django',
+    'ckeditor',
 
     # Site Apps
     'home',
@@ -192,6 +192,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'pt-BR'
 
 TIME_ZONE = 'America/Sao_Paulo'
+USE_TZ = False
 
 USE_I18N = True
 
@@ -296,12 +297,3 @@ else:
     EMAIL_HOST = EMAIL_DATA['EMAIL_HOST']
     EMAIL_PORT = int(EMAIL_DATA['EMAIL_PORT'])
     EMAIL_USE_TLS = True
-
-
-
-
-
-
-
-
-
