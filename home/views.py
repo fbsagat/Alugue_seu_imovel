@@ -1247,9 +1247,7 @@ def criar_modelo(request):
     form = FormContratoModelo(request=request)
 
     if request.method == 'POST':
-        print('ate aqui')
         form = FormContratoModelo(request.POST)
-        print(form)
         if form.is_valid():
             modelo = form.save(commit=False)
             modelo.autor = request.user
