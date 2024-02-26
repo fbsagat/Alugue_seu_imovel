@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from Alugue_seu_imovel import settings
 from num2words import num2words
 import xlsxwriter
-
+from django.views.decorators.cache import never_cache
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -1242,6 +1242,7 @@ def gerar_contrato(request):
 
 
 @login_required
+@never_cache
 def criar_modelo(request):
     context = {}
     form = FormContratoModelo(request=request)
