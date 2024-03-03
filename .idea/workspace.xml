@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de emai e reset de senha via email, links temporários para mudanca de senha(ok) e exclusão de conta(ok)">
+    <list default="true" id="821aae0c-af66-4bd0-9bcb-4113d2209df1" name="Changes" comment="Melhorias e correções de bugs.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Alugue_seu_imovel/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/Alugue_seu_imovel/wsgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Roadmap" beforeDir="false" afterPath="$PROJECT_DIR$/Roadmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/funcoes_proprias.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/funcoes_proprias.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/exibir_visao_geral.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +125,7 @@
       <recent name="C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel\home\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Execução inicial add/predio">
+  <component name="RunManager" selected="Python.Runserver">
     <configuration name="Execução inicial s/predio" type="PythonConfigurationType" factoryName="Python" singleton="false">
       <module name="administrador_de_locacao" />
       <option name="ENV_FILES" value="" />
@@ -530,7 +524,7 @@
       <option name="project" value="LOCAL" />
       <updated>1687463941621</updated>
     </task>
-    <option name="localTasksCounter" value="209" />
+    <option name="localTasksCounter" value="210" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -584,10 +578,10 @@
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Concluída o card de configurações do app(total, back e front)." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Iniciado o gerador de planilhas backup do painel de configurações. Com o framework: xlsxwriter." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Sistema de segurança melhorado, two factor 2FA aplicado." />
-    <MESSAGE value="Melhorias e correções de bugs." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;Corrigido o sistema de ordenação da página visão geral." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de email e reset de senha via email." />
     <MESSAGE value="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de emai e reset de senha via email, links temporários para mudanca de senha(ok) e exclusão de conta(ok)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs.&#10;&#10;Iniciado o sistema de confirmação de emai e reset de senha via email, links temporários para mudanca de senha(ok) e exclusão de conta(ok)" />
+    <MESSAGE value="Melhorias e correções de bugs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Melhorias e correções de bugs." />
   </component>
 </project>

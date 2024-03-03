@@ -1,5 +1,3 @@
-import ast
-import environ
 import dj_database_url
 from pathlib import Path
 from django.contrib.messages import constants as messages
@@ -7,8 +5,6 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-env = environ.Env()
-environ.Env.read_env()
 
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -54,8 +50,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj')
+INSECURE_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
+SECRET_KEY = os.environ.get('SECRET_KEY', INSECURE_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
