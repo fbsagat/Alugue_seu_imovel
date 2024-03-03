@@ -222,3 +222,5 @@ from home.models import Parcela
         da tarefa especifica desta model autora.
     1.6. Criar o signal pre delete que vai apagar a tarefa no momento em que a instancia referenciada por ela for
         apagada.
+3. Comandos host, render.com:
+    python manage.py migrate && python manage.py collectstatic --noinput && gunicorn alugueseuimovel.wsgi:application

@@ -114,19 +114,19 @@ class Usuario(AbstractUser):
         return reverse('home:Locatario Auto-Registro', args=[str(code)[2:-1]])
 
     def recibos_code(self):
-        site_code = settings.UUID_CODES['recibos']
+        site_code = os.environ.get('recibos')
         hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
         code = hash_uuid.hexdigest()[:25]
         return code
 
     def contrato_code(self):
-        site_code = settings.UUID_CODES['contrato']
+        site_code = os.environ.get('contrato')
         hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
         code = hash_uuid.hexdigest()[:25]
         return code
 
     def contrato_modelo_code(self):
-        site_code = settings.UUID_CODES['contrato-modelo']
+        site_code = os.environ.get('contrato-modelo')
         hash_uuid = sha256(str(f'{self.uuid}{site_code}').encode())
         code = hash_uuid.hexdigest()[:25]
         return code
@@ -340,13 +340,13 @@ class Locatario(models.Model):
     do_locador = models.ForeignKey('Usuario', null=True, blank=True, on_delete=models.CASCADE)
     da_notificacao = models.OneToOneField('Notificacao', null=True, blank=True, on_delete=models.SET_NULL)
 
-    nome = models.CharField(max_length=100, blank=False, verbose_name='Nome Completo')
+    nome = models.CharField(max_length=120, blank=False, verbose_name='Nome Completo')
     docs = ResizedImageField(size=[1280, None], upload_to='locatarios_docs/%Y/%m/', null=True, blank=True,
                              verbose_name='Documentos', validators=[tratar_imagem, FileExtensionValidator])
     RG = models.CharField(max_length=9, null=False, blank=True, help_text='Digite apenas números',
                           validators=[MinLengthValidator(7), MaxLengthValidator(9), apenas_numeros])
     cript_cpf = models.BinaryField(null=True, blank=True)
-    ocupacao = models.CharField(max_length=85, verbose_name='Ocupação')
+    ocupacao = models.CharField(max_length=200, verbose_name='Ocupação')
     endereco_completo = models.CharField(null=True, blank=True, max_length=150, verbose_name='Endereço Completo')
     telefone1 = models.CharField(max_length=11, blank=False, verbose_name='Telefone 1',
                                  help_text='Celular/Digite apenas números',
@@ -354,7 +354,7 @@ class Locatario(models.Model):
     telefone2 = models.CharField(max_length=11, null=True, blank=True, verbose_name='Telefone 2',
                                  help_text='Celular/Digite apenas números',
                                  validators=[MinLengthValidator(11), MaxLengthValidator(11), apenas_numeros])
-    email = models.EmailField(max_length=45, null=True, blank=True)
+    email = models.EmailField(max_length=65, null=True, blank=True)
     nacionalidade = models.CharField(max_length=40, blank=False, default='Brasileiro(a)')
     estadocivil = models.IntegerField(blank=False, verbose_name='Estado Civil', choices=estados_civis)
     data_registro = models.DateTimeField(auto_now_add=True)
@@ -511,7 +511,7 @@ class Imovei(models.Model):
     nome = models.CharField(max_length=25, blank=False, verbose_name='Rótulo')
     cep = models.CharField(max_length=8, blank=False, verbose_name='CEP',
                            validators=[MinLengthValidator(8), MaxLengthValidator(8), apenas_numeros])
-    endereco = models.CharField(max_length=150, blank=False, verbose_name='Endereço')
+    endereco = models.CharField(max_length=180, blank=False, verbose_name='Endereço')
     numero = models.IntegerField(blank=False,
                                  validators=[MinValueValidator(1), MaxValueValidator(999999), apenas_numeros])
     complemento = models.CharField(max_length=80, null=True, blank=True)

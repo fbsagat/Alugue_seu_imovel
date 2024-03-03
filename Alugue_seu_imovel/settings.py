@@ -14,7 +14,7 @@ environ.Env.read_env()
 
 SITE_NAME = 'Alugue Seu imóvel'
 # Coloque aqui a url onde o site ficará hospedado
-SITE_URL = 'https://alugueseuimovel.up.railway.app'
+SITE_URL = 'https://alugue-seu-imovel.onrender.com'
 USAR_DB = 1
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
@@ -54,26 +54,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-CSRF_TRUSTED_ORIGINS = ''
-SECRET_KEY = os.getenv('SECRET_KEY')
-if not SECRET_KEY:
-    SECRET_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
-else:
-    CSRF_TRUSTED_ORIGINS = [SITE_URL, ]
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALL_HOSTS = True
 
-ALLOWED_HOSTS = [SITE_URL.split('//')[1]]
-if ALL_HOSTS:
-    ALLOWED_HOSTS += ['*', ]
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = ''
+else:
+    CSRF_TRUSTED_ORIGINS = [SITE_URL, ]
 
-UUID_CODES = ast.literal_eval(str(os.getenv('UUID_CODES')))
-if not UUID_CODES:
-    UUID_CODES = {}
+ALLOWED_HOSTS = [SITE_URL.split('//')[1]] + ['*'] if DEBUG else []
 
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+# Códigos customizados
+os.environ.get('auto-registro')
+os.environ.get('recibos')
+os.environ.get('contrato-modelo')
+os.environ.get('contrato')
+os.environ.get('invoice')
 
 # Application definition
 
@@ -155,18 +154,20 @@ if USAR_DB == 1:
         }
     }
 elif USAR_DB == 2:
-    # PostGreSQL + railway.app ( with dj-database-url)
-    DATABASE_URL = os.getenv('DATABASE_URL')
+    # PostGreSQL + Render.com ( with dj-database-url)
+    DATABASE_URL = os.environ.get('DATABASE_URL')
     if DATABASE_URL:
         DATABASES = {'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)}
     else:
-        # Para criar a base de dados inicial(makemigrations e migrate). Conecta e cria.
-        DATABASES = {'default': dj_database_url.config(default=os.environ['DEFAULT'], conn_max_age=1800)}
-elif USAR_DB == 3:
-    # PostGreSQL + Render.com ( with dj-database-url)
-    DATABASES = {
-        'default': dj_database_url.parse(env('DATABASE_URL'))
-    }
+        DATABASES = {
+            'default': {'ENGINE': os.environ.get('ENGINE'),
+                        'NAME': os.environ.get('NAME'),
+                        'USER': os.environ.get('USER'),
+                        'PASSWORD': os.environ.get('PASSWORD'),
+                        'HOST': os.environ.get('HOST'),
+                        'PORT': os.environ.get('PORT')
+                        }
+        }
 
 # Modelo de usuário
 AUTH_USER_MODEL = "home.Usuario"
@@ -192,6 +193,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'pt-BR'
 
 TIME_ZONE = 'America/Sao_Paulo'
+
 USE_TZ = False
 
 USE_I18N = True
@@ -206,7 +208,9 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static').replace('\\', '/'), ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
-# STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+if USAR_DB != 1:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -222,7 +226,6 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.google.GoogleOAuth2',
-
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -291,9 +294,8 @@ if DEBUG is True and email_force is False:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_DATA = ast.literal_eval(str(os.getenv('EMAIL_DATA')))
-    EMAIL_HOST_USER = EMAIL_DATA['EMAIL_HOST_USER']
-    EMAIL_HOST_PASSWORD = EMAIL_DATA['EMAIL_HOST_PASSWORD']
-    EMAIL_HOST = EMAIL_DATA['EMAIL_HOST']
-    EMAIL_PORT = int(EMAIL_DATA['EMAIL_PORT'])
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+    EMAIL_HOST = os.environ.get('EMAIL_HOST')
+    EMAIL_PORT = os.environ.get('EMAIL_PORT')
     EMAIL_USE_TLS = True

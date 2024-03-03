@@ -486,9 +486,9 @@ def pagamento_post_delete(sender, instance, **kwards):
 @receiver(user_logged_in)
 def usuario_fez_login(sender, user, **kwargs):
     if user.is_superuser and user.username == 'fbaugusto':
-        caminho = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel2024\home\fixtures\recibos_entregues.json"
-        caminho_2 = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel2024\home\fixtures\dados_do_predio.json"
-        caminho_3 = fr"C:\Users\Fabio\PycharmProjects\Alugue_seu_imovel2024\home\fixtures\locatarios_cpfs.json"
+        caminho = fr"C:\Users\Fabio\PycharmProjects\alugueseuimovel2024\home\fixtures\recibos_entregues.json"
+        caminho_2 = fr"C:\Users\Fabio\PycharmProjects\alugueseuimovel2024\home\fixtures\dados_do_predio.json"
+        caminho_3 = fr"C:\Users\Fabio\PycharmProjects\alugueseuimovel2024\home\fixtures\locatarios_cpfs.json"
 
         # Marcar os recibos entregues
         if os.path.isfile(caminho):
