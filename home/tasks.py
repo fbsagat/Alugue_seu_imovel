@@ -413,7 +413,7 @@ def gerar_contrato_pdf(dados, visualizar=False):
         se_existe = os.path.exists(pasta)
         if not se_existe:
             os.makedirs(pasta)
-        local = f'contrato_docs/{dados["contrato_code"]}{dados['modelo']['id']}-contrato_{dados["contrato_pk"]}.pdf'
+        local = f'contrato_docs/{dados["contrato_code"]}{dados["modelo"]["id"]}-contrato_{dados["contrato_pk"]}.pdf'
 
     if visualizar is False:
         # Capturar trechos de cada condição registrada em modelo_condicoes
