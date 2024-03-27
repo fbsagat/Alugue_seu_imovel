@@ -2,16 +2,13 @@ import dj_database_url
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE \/ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 SITE_NAME = 'Alugue Seu imóvel'
 # Coloque aqui a url onde o site ficará hospedado
 SITE_URL = 'https://alugue-seu-imovel.onrender.com'
-USAR_DB = 1
+USAR_DB = 2
 # /\ 1. SQlite3 Local | 2. PostGreSQL + railway | 3. PostGreSQL + Render.com
 
 # tempo para apagar o form inválido da navbar das sessions (segundos)
