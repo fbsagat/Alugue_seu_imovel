@@ -131,30 +131,37 @@ Ok. Criar um modelo para links temporários, que seão usados para enviar emails
         backup, etc...
 Ok. Criar sistema de envio de emails, confirmador, (enviar email com link de exclusão de conta, mudança de senha,
         download de arquivo de backup/planilha, e etc...).
+Ok. Criar sistema que Apaga instancias de TempCodigo e TempLink vencidas periodicamente(Ok, usei o celery) e/ou
+        quando o usuário tenta utilizá-los fora da validade(ok, fora da validade).
+Ok. Apagar diariamente usuários que não concluíram o cadastro.
 
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
+
+Celery periódicos:
+...
+
 Fazer:
-Email: Criar sistema que Apaga instancias de TempCodigo e TempLink vencidas periodicamente e/ou quando o usuário tenta
-        utilizá-los fora da validade(ok, fora da validade). (Vou criar quando instalar o celery).
+Aplicar timezone no datetime datetime.now(timezone.utc)
+
+Arrumar o box de mensagens que estica na caixa na pagina de login(erra o login pra ver)
+
+Mudar o nome da aplicação principal de home para core.
+
+Criar um sistema que utiliza o mesmo link de auto-registro gerado por sessão, para não puxar muito do servidor.
 
 Criar a notificação que é gerada quando se rescinde um contrato com pendencias, descrevendo as pendencias.
 
 Implementar filtros/buscas na comunidade no editor de modelos.
 Implementar filtros/buscas nas paginas do botão histórico(alguns deles ou todos?).
 Colocar um botão 'gerar PDF' na página eventos.
-Implementar o esqueci minha senha.
+Implementar o esqueci minha senha(utilizar o sistema do django, se existe).
 
-Depois de criar a função backup e load_backup, atualizar o gerador de fixtures da planilha para gerar diretamente o
-        arquivo para carrega-lo no site, deixando de lado a forma atual, via fixture.
+Depois de criar a função backup e load_backup (criptografados e únicos para cada usuário), atualizar o gerador
+        de fixtures da planilha para gerar diretamente o de cadastro do usuário ao invés de baixar
+        diretamente/evita problemas)
 
-Criar um botão de painel com configurações diversas:
-        1. Compra de tickets com real e bitcoin via lightning network (ok)
-        2. Botão de backup de todos os dados, bem como, botão de restaurar (criptografados e únicos para cada usuário).
-        (enviar o arquivo para o email de cadastro do usuário ao invés de baixar diretamente/evita problemas)
-        3. Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link).
-        4. Ok. Notificações a exibir, qtd: notificações/histórico.
-        4. OK. Ativar/desativar as notificações individualmente.
+Configs: Habilitar ou desabilitar o auto registro de locatários(ou gerar novo link).
 
 Criar um sistema que notifica o desenvolvedor, no painel adm, em algum campo, quando algo é disparado no código,
 por exemplo, quando uma função de redundância é usada, para maior controle e fiscalização de funcionalidade.
@@ -175,9 +182,9 @@ signal post_delete não é chamado quando é deletado pela area admin do site
 _-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-__-''-_
 
 Melhorias muito futuras:
+Distribuir as funções principais do site em aplicações(app core, app de email, app financeiro, app etc...)
 Usar o twilio. Usar número de celular também para recuperar conta e confirmar propriedade de número.
 Adaptar o site para celulares(pelo menos a parte de auto cadastro do locatário).
-Criar um sistema que utiliza o mesmo link de auto-registro gerado por sessão, para não puxar muito do servidor.
 Criar o resumo textual e gráfico de cada contrato, textual dizendo quando chegou, quando vai sair, meses que pagou,
         se rescindiu: quanto deve ou quanto pagou a mais e etc... no gráfico mostrar um gráfico parecido ou melhor que
         o gráfico da planilha.
@@ -224,3 +231,15 @@ from home.models import Parcela
         apagada.
 3. Comandos host, render.com:
     python manage.py migrate && python manage.py collectstatic --noinput && gunicorn alugueseuimovel.wsgi:application
+
+4. Comandos Celery e agregados:
+    Celery(start worker):
+        1(pool solo). celery -A Alugue_seu_imovel.celery worker --pool=solo -l info
+        2(com gevent). celery -A Alugue_seu_imovel.celery worker -l info -P gevent -c 10
+
+    Celery flower(area adm interface):
+        celery -A Alugue_seu_imovel flower --port=5001 --basic_auth=admin:$%admin_password%1020
+        ps: login: admin / password: $%admin_password%1020
+
+    Celery beat(scheduler):
+        celery -A Alugue_seu_imovel beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler

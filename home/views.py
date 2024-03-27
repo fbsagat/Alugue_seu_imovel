@@ -1,5 +1,4 @@
-import os
-import io
+import io, os, json, base64
 from datetime import datetime, timedelta
 from os import path
 from math import floor
@@ -10,12 +9,11 @@ from Alugue_seu_imovel import settings
 from num2words import num2words
 import xlsxwriter
 from django.views.decorators.cache import never_cache
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from django.db import transaction
+from django.forms.models import model_to_dict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files import File
+from django.core.files.storage import default_storage
 from django.http import FileResponse, HttpResponse
 from django.views.generic import CreateView, DeleteView, FormView, UpdateView, ListView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -30,9 +28,11 @@ from django.db.models.aggregates import Count, Sum
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.template.defaultfilters import date as data_ptbr
 from home.fakes_test import porcentagem_de_chance
+from .tasks import enviar_email_conf_de_email, enviar_email_exclusao_de_conta, gerar_recibos_pdf, gerar_tabela_pdf, \
+    gerar_contrato_pdf
 
-from home.funcoes_proprias import valor_format, gerar_recibos_pdf, gerar_tabela_pdf, gerar_contrato_pdf, \
-    valor_por_extenso, modelo_variaveis, modelo_condicoes, _crypt, _decrypt, cpf_format, gerar_uuid_20
+from home.funcoes_proprias import valor_format, valor_por_extenso, _crypt, _decrypt, cpf_format, gerar_uuid_20, \
+    modelo_variaveis, modelo_condicoes
 from home.fakes_test import locatarios_ficticios, imoveis_ficticios, imov_grupo_fict, contratos_ficticios, \
     pagamentos_ficticios, gastos_ficticios, anotacoes_ficticias, usuarios_ficticios, sugestoes_ficticias, \
     modelos_contratos_ficticios
@@ -578,15 +578,15 @@ def rescindir_contrat(request, pk):
             if validar_contrato_no_imovel_na_data(contrato, entrada, saida) is False:
                 messages.warning(request, f"Já existe um contrato registrado para este imóvel neste período.")
             else:
-                contrato.data_de_rescisao = timezone.now()
-                data = dateformat.format(timezone.now(), 'd-m-Y')
+                contrato.data_de_rescisao = datetime.now()
+                data = dateformat.format(datetime.now(), 'd-m-Y')
                 contrato.rescindido = False
                 contrato.save(update_fields=['rescindido', 'data_de_rescisao'])
                 messages.success(request, f"Contrato ativado com sucesso! Registro criado em {data}.")
                 return redirect(request.META['HTTP_REFERER'])
         else:
-            contrato.data_de_rescisao = timezone.now()
-            data = dateformat.format(timezone.now(), 'd-m-Y')
+            contrato.data_de_rescisao = datetime.now()
+            data = dateformat.format(datetime.now(), 'd-m-Y')
             contrato.rescindido = True
             contrato.save(update_fields=['rescindido', 'data_de_rescisao'])
             messages.warning(request, f"Contrato rescindido com sucesso! Registro criado em {data}.")
@@ -680,7 +680,7 @@ def recibos(request):
     if tem_contratos:
         contrato = tem_contratos
 
-        # Indica para o template se o usuário prenencheu os dados necessários para gerar os recibos\/
+        # Indíca para o template se o usuário preencheu os dados necessários para gerar os recibos\/
         pede_dados = False
         if usuario.first_name == '' or usuario.last_name == '' or usuario.cpf() == '':
             pede_dados = True
@@ -766,8 +766,13 @@ def recibos(request):
                          'mes_e_ano': datas_tratadas,
                          }
 
-                local_temp = gerar_recibos_pdf(dados=dados)
-                contrato.recibos_pdf = File(local_temp,
+                local_temp = gerar_recibos_pdf.delay(dados)
+                pdf_data = json.loads(local_temp.get())
+                base64_encoded_pdf = pdf_data['file_content']
+                pdf_bytes = base64.b64decode(base64_encoded_pdf)
+                pdf_bytesio = io.BytesIO(pdf_bytes)
+
+                contrato.recibos_pdf = File(pdf_bytesio,
                                             name=f'recibos_de_{usuario.recibos_code()}_{dados["cod_contrato"]}.pdf')
                 contrato.save()
 
@@ -791,14 +796,14 @@ def tabela(request):
 
     # Cria os meses a partir da mes atual do usuario para escolher no form
     meses = []
-    mes_inicial = datetime.now().date().replace(day=1) - relativedelta(months=4)
+    mes_inicial = datetime.now().replace(day=1) - relativedelta(months=4)
 
     for mes in range(9):
         meses.append(
             (mes, str(data_ptbr(mes_inicial + relativedelta(months=mes), "F/Y"))))
 
     # Carregar os dados de mes para o form e tabela a partir da informação salva no perfil
-    # ou datetime.now() quando não há info salva
+    # ou timezone.now quando não há info salva
     if (usuario.tabela_ultima_data_ger is not None and usuario.tabela_meses_qtd is not None
             and usuario.tabela_imov_qtd is not None and usuario.tabela_mostrar_ativos is not None
             and request.method == 'GET'):
@@ -806,13 +811,13 @@ def tabela(request):
         form = FormTabela(initial={'mes': usuario.tabela_ultima_data_ger, 'mostrar_qtd': usuario.tabela_meses_qtd,
                                    'itens_qtd': usuario.tabela_imov_qtd,
                                    'mostrar_ativos': usuario.tabela_mostrar_ativos})
-        a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=4 - usuario.tabela_ultima_data_ger)
+        a_partir_de = datetime.now().replace(day=1) - relativedelta(months=4 - usuario.tabela_ultima_data_ger)
         mostrar_somente_ativos = usuario.tabela_mostrar_ativos
         meses_qtd = usuario.tabela_meses_qtd
         imov_qtd = usuario.tabela_imov_qtd
     else:
         form = FormTabela(initial={'mes': 4})
-        a_partir_de = datetime.now().date().replace(day=1)
+        a_partir_de = datetime.now().replace(day=1)
         mostrar_somente_ativos = False
         meses_qtd = 7
         imov_qtd = 10
@@ -827,7 +832,7 @@ def tabela(request):
             usuario.tabela_imov_qtd = int(form.cleaned_data['itens_qtd'])
             usuario.save(update_fields=["tabela_ultima_data_ger", 'tabela_meses_qtd', 'tabela_imov_qtd',
                                         'tabela_mostrar_ativos'])
-            a_partir_de = datetime.now().date().replace(day=1) - relativedelta(months=4 - int(form.cleaned_data['mes']))
+            a_partir_de = datetime.now().replace(day=1) - relativedelta(months=4 - int(form.cleaned_data['mes']))
             mostrar_somente_ativos = form.cleaned_data['mostrar_ativos']
             meses_qtd = int(form.cleaned_data['mostrar_qtd'])
             imov_qtd = int(form.cleaned_data['itens_qtd'])
@@ -978,15 +983,13 @@ def tabela(request):
     if mostrar_somente_ativos:
         contratos = Contrato.objects.ativos_hoje().filter(do_locador=request.user).order_by('-data_entrada')
     else:
-        contratos = Contrato.objects.ativos_hoje_e_antes_de(data=ate).filter(do_locador=request.user).order_by(
+        contratos = Contrato.objects.ativos_hoje_e_antes_de(data=ate.date()).filter(do_locador=request.user).order_by(
             '-data_entrada')
     imoveis = gerar_dados_de_imoveis_para_tabela_pdf(contratos)
 
-    dados = {'usuario': usuario,
-             "usuario_uuid": usuario.uuid,
+    dados = {"usuario_uuid": usuario.uuid,
              "usuario_username": usuario.username,
              "usuario_nome_compl": usuario.nome_completo().upper(),
-             'session_key': request.session.session_key,
              'imov_qtd': imov_qtd,
              'datas': datas,
              'imoveis': imoveis}
@@ -1005,12 +1008,25 @@ def tabela(request):
 
     if tem_contratos:
         # Gerar a tabela com os dados
-        gerar_tabela_pdf(dados)
-    # Link da tabela
-    link = rf'/media/tabela_docs/tabela_{request.session.session_key}_{usuario}.pdf'
+        local_temp = gerar_tabela_pdf.delay(dados)
 
+        # Link da tabela
+        link = '/tabela_docs/'
+        nome = f'tabela_{request.session.session_key}_{usuario}.pdf'
+
+        pdf_data = json.loads(local_temp.get())
+        base64_encoded_pdf = pdf_data['file_content']
+        pdf_bytes = base64.b64decode(base64_encoded_pdf)
+        pdf_bytesio = io.BytesIO(pdf_bytes)
+        file_path = f'{settings.MEDIA_ROOT}{link}{nome}'
+
+        with default_storage.open(file_path, 'wb') as destination:
+            pdf_bytesio.seek(0)
+            destination.write(pdf_bytesio.read())
+
+    file_path_django = rf'/media/tabela_docs/tabela_{request.session.session_key}_{usuario}.pdf'
     # Preparar o context
-    context['tabela'] = link
+    context['tabela'] = file_path_django
     context['form'] = form
 
     return render(request, 'gerar_tabela.html', context)
@@ -1130,7 +1146,8 @@ def gerar_contrato(request):
             caucao = valor_format(str(contr_doc_configs.caucao * int(contrato.valor_mensal)))
             caucao_por_extenso = valor_por_extenso(str(contr_doc_configs.caucao * int(contrato.valor_mensal)))
 
-        dados = {'modelo': contr_doc_configs.do_modelo,
+        fields = ['id', 'corpo', ]
+        dados = {'modelo': model_to_dict(contr_doc_configs.do_modelo, fields=fields),
                  'contrato_pk': contrato.pk,
                  'contrato_code': usuario.contrato_code(),
 
@@ -1224,11 +1241,10 @@ def gerar_contrato(request):
                  'locatario_email': getattr(locatario, 'email') or erro6,
                  }
 
-        gerar_contrato_pdf(dados=dados)
-        # Link do contrato_doc
-        link = rf'/media/contrato_docs/{dados["contrato_code"]}{dados["modelo"].pk}-contrato_{dados["contrato_pk"]}.pdf'
+        link = gerar_contrato_pdf.delay(dados=dados)
+
         # Preparar o context
-        context['contrato_doc'] = link
+        context['contrato_doc'] = fr'/media/{link.get()}'
     else:
         if contrato_ultimo:
             # Se o contrato não tem configurações, carrega o formulário de configuração para criar uma instância
@@ -1239,7 +1255,6 @@ def gerar_contrato(request):
     context['tem_contratos'] = True if contratos_ativos else False
     context['contrato_ultimo'] = True if contrato_ultimo is not None else False
     return render(request, 'gerar_contrato.html', context)
-
 
 @login_required
 @never_cache
@@ -1289,10 +1304,12 @@ def visualizar_modelo(request, pk):
         # Cria o modelo caso não tenha sido criado, por algum erro, pelo signals ou tenha sido apagado do armazenamento.
         path_completo = fr'{settings.MEDIA_ROOT}/{modelo.visualizar}'
         if not os.path.isfile(path_completo):
-            dados = {'modelo_pk': modelo.pk, 'modelo': modelo, 'usuario_username': str(modelo.autor.username),
+            fields = ['id', 'corpo', ]
+            dados = {'modelo_pk': modelo.pk, 'modelo': model_to_dict(modelo, fields=fields),
+                     'usuario_username': str(modelo.autor.username),
                      'contrato_modelo_code': modelo.autor.contrato_modelo_code()}
-            link = gerar_contrato_pdf(dados=dados, visualizar=True)
-            ContratoModelo.objects.filter(pk=modelo.pk).update(visualizar=link)
+            link = gerar_contrato_pdf.delay(dados=dados, visualizar=True)
+            ContratoModelo.objects.filter(pk=modelo.pk).update(visualizar=link.get())
 
         if modelo.autor == request.user or modelo.comunidade or request.user in modelo.usuarios.all():
             context['modelo'] = modelo
@@ -1878,6 +1895,29 @@ class Homepage(FormView):
             return reverse('home:Criar Conta')
 
 
+def exclusao_de_conta(request):
+    temp_link = TempLink.objects.filter(tipo=2, tempo_final__gte=datetime.now()).first()
+    if temp_link:
+        messages.warning(request,
+                         'Um e-mail com instruções já foi enviado para o endereço associado à sua conta. '
+                         'Por favor, verifique sua caixa de entrada e siga as orientações para concluir, verifique'
+                         ' também a pasta de spam.')
+    else:
+        TempLink.objects.filter(tipo=2).delete()
+        user = request.user
+        tempo_m = 30
+        tempo_final = datetime.now() + timedelta(minutes=tempo_m)
+        link = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final, tipo=2)
+        absolute_uri = request.build_absolute_uri(link.get_link_completo())
+        enviar_email_exclusao_de_conta.delay(absolute_uri=absolute_uri, tempo_m=tempo_m, username=user.username,
+                                             email=user.email)
+        messages.success(request,
+                         'Um e-mail com instruções foi enviado para o endereço associado à sua conta. '
+                         'Por favor, verifique sua caixa de entrada e siga as orientações para concluir, verifique'
+                         ' também a pasta de spam.')
+    return redirect(request.META['HTTP_REFERER'])
+
+
 class CriarConta(CreateView):
     template_name = 'criar_conta.html'
     form_class = FormCriarConta
@@ -1900,24 +1940,6 @@ class CriarConta(CreateView):
         return reverse("home:Confirmar Email", kwargs={'user_pk': self.object.pk})
 
 
-def enviar_email_conf_de_email(request, user):
-    tempo_h = 6
-    tempo_final = datetime.now() + timedelta(hours=tempo_h)
-    link = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final, tipo=1)
-    link_completo = request.build_absolute_uri(link.get_link_completo())
-    codigo = TempCodigo.objects.create(do_usuario=user, tempo_final=tempo_final)
-    remetente = settings.EMAIL_HOST_USER
-    destinatario = [user.email, ]
-    context = {'username': user.username, 'codigo': codigo.codigo, 'link': link_completo,
-               'site': settings.SITE_URL, 'tempo': tempo_h}
-    html_content = render_to_string('registration/confirmacao_email_email.html', context=context)
-    text_content = strip_tags(html_content)
-    email = EmailMultiAlternatives('Confirmação de Email', text_content, remetente, destinatario)
-    email.attach_alternative(html_content, 'text/html')
-    email.send()
-    # send_mail('Assunto', 'Esse é o email de teste!', remetente, destinatarios)
-
-
 def confirmar_email(request, user_pk):
     if request.method == 'GET':
         form = FormToken()
@@ -1927,7 +1949,15 @@ def confirmar_email(request, user_pk):
             if user:
                 link = TempLink.objects.filter(do_usuario=user, tempo_final__gte=datetime.now(), tipo=1)
                 if not link and user.is_active is False:
-                    enviar_email_conf_de_email(request, user=user)
+                    tempo_h = 6
+                    tempo_final = datetime.now() + timedelta(hours=tempo_h)
+                    link_ = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final, tipo=1)
+                    codigo = TempCodigo.objects.create(do_usuario=user, tempo_final=tempo_final)
+                    absolute_uri = request.build_absolute_uri(link_.get_link_completo())
+
+                    enviar_email_conf_de_email.delay(absolute_uri=absolute_uri, tempo_h=tempo_h, codigo=codigo.codigo,
+                                                     username=user.username, email=user.email)
+
                     return render(request, 'confirmacao_email.html', context)
                 elif user.is_active is False:
                     return render(request, 'confirmacao_email.html', context)
@@ -1999,36 +2029,6 @@ class EditarPerfil(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("home:Visão Geral")
-
-
-def enviar_email_exclusao_de_conta(request):
-    temp_link = TempLink.objects.filter(tipo=2, tempo_final__gte=datetime.now()).first()
-    if temp_link:
-        messages.warning(request,
-                         'Um e-mail com instruções já foi enviado para o endereço associado à sua conta. '
-                         'Por favor, verifique sua caixa de entrada e siga as orientações para concluir, verifique'
-                         ' também a pasta de spam.')
-    else:
-        TempLink.objects.filter(tipo=2).delete()
-        user = request.user
-        tempo_m = 30
-        tempo_final = datetime.now() + timedelta(minutes=tempo_m)
-        link = TempLink.objects.create(do_usuario=user, tempo_final=tempo_final, tipo=2)
-        link_completo = request.build_absolute_uri(link.get_link_completo())
-        remetente = settings.EMAIL_HOST_USER
-        destinatario = [user.email, ]
-        context = {'username': user.username, 'link': link_completo,
-                   'site': settings.SITE_URL, 'tempo': tempo_m, 'site_name': settings.SITE_NAME}
-        html_content = render_to_string('registration/exclusao_email.html', context=context)
-        text_content = strip_tags(html_content)
-        email = EmailMultiAlternatives('Exclusão de conta', text_content, remetente, destinatario)
-        email.attach_alternative(html_content, 'text/html')
-        email.send()
-        messages.success(request,
-                         'Um e-mail com instruções foi enviado para o endereço associado à sua conta. '
-                         'Por favor, verifique sua caixa de entrada e siga as orientações para concluir, verifique'
-                         ' também a pasta de spam.')
-    return redirect(request.META['HTTP_REFERER'])
 
 
 class ApagarConta(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
@@ -3038,5 +3038,7 @@ def gerador_de_ficticios(request):
 
 
 def botao_teste(request):
-    messages.success(request, 'Botão de testes executado. Ok')
-    return redirect(request.META['HTTP_REFERER'])
+    # test_func.delay(5)
+    # test_func2.delay(10)
+    messages.success(request, 'Fim!')
+    return HttpResponse('Done')

@@ -7,15 +7,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import pre_delete, post_save, pre_save, post_delete
 from django.db import transaction
+from django.forms.models import model_to_dict
 from django.dispatch import receiver
 
-from home.funcoes_proprias import gerar_contrato_pdf
 from home.models import Contrato, Locatario, Parcela, Pagamento, Usuario, Notificacao, Anotacoe, Sugestao, Slot, Imovei, \
     ContratoModelo, modelo_variaveis, modelo_condicoes, DevMensagen
 
-from django.contrib.sites.shortcuts import get_current_site
 from django.dispatch import receiver
+from django.contrib.sites.shortcuts import get_current_site
 from two_factor.signals import user_verified
+
+from .tasks import gerar_contrato_pdf
 
 
 # FUNÇÕES COMPARTILHADAS \/  ---------------------------------------
@@ -317,24 +319,17 @@ def sugestao_pre_save(sender, instance, **kwargs):
                 instance.da_notificacao.definir_apagada()
 
 
-# Gerenciadores de post_save \/  ---------------------------------------
-# @receiver(post_save, sender=Notificacao)
-# def notificacao_pre_save(sender, instance, **kwargs):
-#     if instance.pk == 51:
-#         print('51')
-#         print(instance)
-#         print(instance.lida)
-
-
 @receiver(post_save, sender=ContratoModelo)
 def contrato_modelo_post_save(sender, instance, created, **kwargs):
     # Tem outro gerar_contrato_pdf em visualizar_modelo em views (backup deste)
     if instance.verificar_utilizacao_config() and not instance.verificar_utilizacao_usuarios():
         pass
     else:
-        dados = {'modelo_pk': instance.pk, 'modelo': instance, 'usuario_username': str(instance.autor.username),
+        fields = ['id', 'corpo', ]
+        dados = {'modelo_pk': instance.pk, 'modelo': model_to_dict(instance, fields=fields),
+                 'usuario_username': str(instance.autor.username),
                  'contrato_modelo_code': instance.autor.contrato_modelo_code()}
-        link = gerar_contrato_pdf(dados=dados, visualizar=True)
+        link = gerar_contrato_pdf.delay(dados=dados, visualizar=True)
         variaveis = []
         for i, j in modelo_variaveis.items():
             if j[0] in instance.corpo:
@@ -345,7 +340,8 @@ def contrato_modelo_post_save(sender, instance, created, **kwargs):
             if j[0] in instance.corpo:
                 condicoes.append(i)
         condicoes = list(dict.fromkeys(condicoes))
-        ContratoModelo.objects.filter(pk=instance.pk).update(variaveis=variaveis, condicoes=condicoes, visualizar=link)
+        ContratoModelo.objects.filter(pk=instance.pk).update(variaveis=variaveis, condicoes=condicoes,
+                                                             visualizar=link.get())
 
 
 @receiver(post_save, sender=Usuario)

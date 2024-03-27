@@ -15,7 +15,7 @@ from home.views import visao_geral, Locatarios, Imoveis, Contratos, registrar_pa
     adicionar_ticket, adicionar_ticket_todos, painel_configs, ModelosComunidade, confirmar_email, \
     arquivos_contratos_modelos, visualizar_modelo, copiar_modelo, notificacao_lida, conversa_com_o_dev, \
     configurar_notificacoes, configurar_app, baixar_planilha, botao_teste, activate_account_link, \
-    enviar_email_exclusao_de_conta
+    exclusao_de_conta
 
 from financeiro.views import painel_loja
 from Alugue_seu_imovel import settings
@@ -125,7 +125,7 @@ urlpatterns = [
     path('criar_conta/', CriarConta.as_view(), name='Criar Conta'),
     path('confirmar_email/<str:user_pk>/', confirmar_email, name='Confirmar Email'),
     path('ativar_conta_url/<str:link>/', activate_account_link, name='Ativar Conta Url'),
-    path('apagar_conta_enviar_email/', enviar_email_exclusao_de_conta, name='Apagar Conta Email'),
+    path('apagar_conta_enviar_email/', exclusao_de_conta, name='Apagar Conta Email'),
     path('apagar_conta/<str:link>/', ApagarConta.as_view(), name='Apagar Conta'),
     path('mudar_senha/', auth_view.PasswordChangeView.as_view(
         template_name='editar_perfil.html/', success_url=reverse_lazy('home:Home'),

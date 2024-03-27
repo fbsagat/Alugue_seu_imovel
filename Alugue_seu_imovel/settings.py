@@ -41,7 +41,7 @@ if not STRIPE_ENDPOINT_SECRET:
     STRIPE_ENDPOINT_SECRET = 'whsec_5999d87bf09b37e7a926f2b3ef497b3555990fbf32d3eb37295793c028a10e7f'
 
 # Importante 'número um' (chave de criptografia de CPFs para o banco de dados)
-IMPORT_UM = os.getenv('IMPORT_UM')
+IMPORT_UM = os.getenv('ASI_IMPORT_UM')
 
 # CONFIGURAÇÕES CUSTOMIZADAS DO SITE /\ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -51,24 +51,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 INSECURE_KEY = 'django-insecure-)t-u^e^z1+z&ni%#(gd2vuc^0uxovq(5k4(w_=r3-2jr^*snqj'
-SECRET_KEY = os.environ.get('SECRET_KEY', INSECURE_KEY)
+SECRET_KEY = os.environ.get('DJ_SECRET_KEY', INSECURE_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 if DEBUG:
-    CSRF_TRUSTED_ORIGINS = ''
+    CSRF_TRUSTED_ORIGINS = []
 else:
     CSRF_TRUSTED_ORIGINS = [SITE_URL, ]
 
 ALLOWED_HOSTS = [SITE_URL.split('//')[1]] + ['*'] if DEBUG else []
 
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
 # Códigos customizados
-os.environ.get('auto-registro')
-os.environ.get('recibos')
-os.environ.get('contrato-modelo')
-os.environ.get('contrato')
-os.environ.get('invoice')
+RECIBOS_CODE = os.environ.get('ASI_recibos')
+CONTR_MODEL_CODE = os.environ.get('ASI_contrato-modelo')
+CONTRATO_CODE = os.environ.get('ASI_contrato')
 
 # Application definition
 
@@ -93,6 +93,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'social_django',
     'ckeditor',
+    'django_celery_results',
+    'django_celery_beat',
 
     # Site Apps
     'home',
@@ -151,19 +153,42 @@ if USAR_DB == 1:
     }
 elif USAR_DB == 2:
     # PostGreSQL + Render.com ( with dj-database-url)
-    DATABASE_URL = os.environ.get('DATABASE_URL')
+    DATABASE_URL = os.environ.get('DB_URL')
     if DATABASE_URL:
         DATABASES = {'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)}
     else:
         DATABASES = {
-            'default': {'ENGINE': os.environ.get('ENGINE'),
-                        'NAME': os.environ.get('NAME'),
-                        'USER': os.environ.get('USER'),
-                        'PASSWORD': os.environ.get('PASSWORD'),
-                        'HOST': os.environ.get('HOST'),
-                        'PORT': os.environ.get('PORT')
+            'default': {'ENGINE': os.environ.get('DB_ENGINE'),
+                        'NAME': os.environ.get('DB_NAME'),
+                        'USER': os.environ.get('DB_USER'),
+                        'PASSWORD': os.environ.get('DB_PASSWORD'),
+                        'HOST': os.environ.get('DB_HOST'),
+                        'PORT': os.environ.get('DB_PORT')
                         }
         }
+
+# Redis/Celery Configuration
+# No modo de desenvolvimento ele utilizará o servidor local (programa Redis for windows /  Redis-x64-5.0.14.1)
+# No modo de produção utilizará o Redis do host
+
+if USAR_DB != 1:
+    CELERY_BROKER_URL = 'redis://red-cnico9021fec73cr7r1g:6379'
+else:
+    CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'America/Sao_Paulo'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_RESULT_EXTENDED = True
+
+# Django Celery beat configurations
+CELERY_BEAT_SCHERDULLER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 
 # Modelo de usuário
 AUTH_USER_MODEL = "home.Usuario"
@@ -285,6 +310,7 @@ CKEDITOR_CONFIGS = {
 }
 
 # Email
+# Ative email_force para usar o console como receptor de emails(modo de testes)
 email_force = True
 if DEBUG is True and email_force is False:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

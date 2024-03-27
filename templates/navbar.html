@@ -259,7 +259,8 @@
                     </form>
                 </li>
                 <li>
-                    <form action="{% url 'home:Logout' %}">
+                    <form action="{% url 'home:Logout' %}" method="POST">
+                        {% csrf_token %}
                         <button type="submit" class="dropdown-item">
                             Sair 🚪
                         </button>
